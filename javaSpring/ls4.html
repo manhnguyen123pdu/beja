@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 4: KẾT NỐI DATABASE VỚI SPRING DATA JPA (PHẦN 1)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .nav-link1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-run {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .visual-array {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .array-item {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .array-index {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        .array-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .algorithm-steps {
+            background: #f0f7ff;
+            border-left: 4px solid #4dabf7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .algorithm-steps ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .algorithm-steps li {
+            margin-bottom: 5px;
+        }
+
+        .method-demo {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo .wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .demo .array {
+            display: flex;
+        }
+
+        .demo .item {
+            width: 100px;
+            padding: 15px;
+            margin: 5px;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.4s;
+        }
+
+        .demo .active {
+            background: #ffcc00;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .demo .arrow {
+            position: absolute;
+            top: -35px;
+            font-size: 28px;
+            transition: 0.4s;
+        }
+
+        .demo .index {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-database"></i> BÀI 4: KẾT NỐI DATABASE VỚI SPRING DATA JPA (PHẦN 1)</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu bài học</a></li>
+                    <li class="nav-item"><a href="#database-overview" class="nav-link"><i class="fas fa-server"></i> Tổng quan Database</a></li>
+                    <li class="nav-item"><a href="#jpa-hibernate" class="nav-link"><i class="fas fa-layer-group"></i> JPA & Hibernate</a></li>
+                    <li class="nav-item"><a href="#install-mysql" class="nav-link"><i class="fas fa-download"></i> Cài đặt MySQL</a></li>
+                    <li class="nav-item"><a href="#install-workbench" class="nav-link"><i class="fas fa-tools"></i> Cài đặt MySQL Workbench</a></li>
+                    <li class="nav-item"><a href="#create-project" class="nav-link"><i class="fas fa-plus-circle"></i> Tạo project với JPA</a></li>
+                    <li class="nav-item"><a href="#configure-database" class="nav-link"><i class="fas fa-cog"></i> Cấu hình kết nối</a></li>
+                    <li class="nav-item"><a href="#entity" class="nav-link"><i class="fas fa-cube"></i> Entity - Ánh xạ bảng</a></li>
+                    <li class="nav-item"><a href="#entity-annotations" class="nav-link"><i class="fas fa-hashtag"></i> JPA Annotations</a></li>
+                    <li class="nav-item"><a href="#entity-examples" class="nav-link"><i class="fas fa-code"></i> Ví dụ Entity</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link"><i class="fas fa-clipboard-check"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN GIỚI THIỆU BÀI HỌC -->
+                <section id="intro" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU BÀI HỌC</h2>
+
+                    <h3>1. Mở đầu</h3>
+                    <p>Chào mừng các bạn đến với <strong>Bài 4</strong> của khóa học RESTful API với Spring Boot.</p>
+
+                    <h4>Ở các bài trước, chúng ta đã học:</h4>
+                    <ul>
+                        <li><strong>Bài 1:</strong> Tạo project Spring Boot, Controller cơ bản</li>
+                        <li><strong>Bài 2:</strong> Xử lý GET, POST, DELETE với Model User</li>
+                        <li><strong>Bài 3:</strong> Xử lý PUT, ResponseEntity và CORS</li>
+                    </ul>
+
+                    <h4>Vấn đề của các bài trước:</h4>
+                    <div class="note">
+                        <ul>
+                            <li><strong>Dữ liệu được lưu trong List (bộ nhớ tạm)</strong> - Khi restart ứng dụng → mất hết dữ liệu</li>
+                            <li><strong>Không thể lưu trữ lâu dài</strong> - Cần lưu vĩnh viễn</li>
+                            <li><strong>Không thể truy vấn phức tạp</strong> - Tìm kiếm, lọc, sắp xếp</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Giải pháp:</strong> Sử dụng <strong>Database (Cơ sở dữ liệu)</strong> để lưu trữ vĩnh viễn.</p>
+
+                    <h3>2. Mục tiêu bài học (Phần 1)</h3>
+                    <p>Sau khi hoàn thành phần 1 của bài học này, học viên sẽ:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mục tiêu</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Hiểu về Database</td>
+                                    <td>Biết database là gì, tại sao cần database</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Hiểu về JPA</td>
+                                    <td>JPA là gì, vai trò trong lưu trữ dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Hiểu về Hibernate</td>
+                                    <td>Hibernate là gì, quan hệ với JPA</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Cài đặt MySQL</td>
+                                    <td>Cài đặt và cấu hình MySQL thành công</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Cài đặt MySQL Workbench</td>
+                                    <td>Công cụ quản lý database trực quan</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Tạo database</td>
+                                    <td>Tạo database cho project</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Cấu hình project</td>
+                                    <td>Thêm dependencies và cấu hình kết nối</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN TỔNG QUAN VỀ DATABASE -->
+                <section id="database-overview" class="section">
+                    <h2><i class="fas fa-server"></i> TỔNG QUAN VỀ DATABASE</h2>
+
+                    <h3>1. Database là gì?</h3>
+                    <p><strong>Database</strong> (cơ sở dữ liệu) là nơi lưu trữ dữ liệu có tổ chức, cho phép:</p>
+                    <ul>
+                        <li><strong>Lưu trữ lâu dài</strong> - không mất khi tắt ứng dụng</li>
+                        <li><strong>Truy xuất nhanh chóng</strong> - tối ưu cho tìm kiếm</li>
+                        <li><strong>Truy vấn phức tạp</strong> - tìm kiếm, lọc, sắp xếp</li>
+                        <li><strong>Đảm bảo tính toàn vẹn dữ liệu</strong> - ràng buộc, khóa ngoại</li>
+                    </ul>
+
+                    <h3>2. So sánh List và Database</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>List (trong RAM)</th>
+                                    <th>Database (MySQL)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lưu trữ</td>
+                                    <td>Tạm thời</td>
+                                    <td>Vĩnh viễn</td>
+                                </tr>
+                                <tr>
+                                    <td>Mất khi restart</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>Tốc độ</td>
+                                    <td>Rất nhanh</td>
+                                    <td>Chậm hơn</td>
+                                </tr>
+                                <tr>
+                                    <td>Truy vấn phức tạp</td>
+                                    <td>Khó (phải tự code)</td>
+                                    <td>Dễ (SQL)</td>
+                                </tr>
+                                <tr>
+                                    <td>Dung lượng</td>
+                                    <td>Ít (phụ thuộc RAM)</td>
+                                    <td>Nhiều (phụ thuộc ổ cứng)</td>
+                                </tr>
+                                <tr>
+                                    <td>Bảo mật</td>
+                                    <td>Không</td>
+                                    <td>Có (phân quyền)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Các loại database phổ biến</h3>
+                    
+                    <h4>3.1. SQL Database (Quan hệ)</h4>
+                    <ul>
+                        <li><strong>MySQL:</strong> Phổ biến, miễn phí</li>
+                        <li><strong>PostgreSQL:</strong> Mạnh mẽ, nhiều tính năng</li>
+                        <li><strong>Oracle:</strong> Thương mại, dùng trong doanh nghiệp lớn</li>
+                        <li><strong>SQL Server:</strong> Của Microsoft</li>
+                    </ul>
+
+                    <h4>3.2. NoSQL Database (Phi quan hệ)</h4>
+                    <ul>
+                        <li><strong>MongoDB:</strong> Lưu dạng JSON</li>
+                        <li><strong>Redis:</strong> Lưu trong bộ nhớ, tốc độ cao</li>
+                        <li><strong>Cassandra:</strong> Dữ liệu phân tán</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <p><i class="fas fa-info-circle"></i> <strong>Trong khóa học này:</strong> Chúng ta sẽ dùng <strong>MySQL</strong>.</p>
+                    </div>
+                </section>
+
+                <!-- PHẦN JPA VÀ HIBERNATE -->
+                <section id="jpa-hibernate" class="section">
+                    <h2><i class="fas fa-layer-group"></i> JPA VÀ HIBERNATE</h2>
+
+                    <h3>1. Vấn đề: Làm việc với database trong Java</h3>
+                    <p><strong>Cách cũ:</strong> JDBC (Java Database Connectivity)</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>JDBC - Phải viết SQL thủ công</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// Phải viết SQL thủ công</span><br>
+                        String sql = "INSERT INTO users(name, email) VALUES(?, ?)";<br>
+                        PreparedStatement stmt = connection.prepareStatement(sql);<br>
+                        stmt.setString(1, "Nguyen Van A");<br>
+                        stmt.setString(2, "a@gmail.com");<br>
+                        stmt.executeUpdate();<br>
+                        <br>
+                        <span class="comment">// Đọc dữ liệu</span><br>
+                        String query = "SELECT * FROM users WHERE id = ?";<br>
+                        ResultSet rs = stmt.executeQuery(query);<br>
+                        String name = rs.getString("name");
+                    </div>
+
+                    <p><strong>Nhược điểm:</strong></p>
+                    <ul>
+                        <li>Phải viết nhiều code lặp lại</li>
+                        <li>Dễ sai chính tả tên cột</li>
+                        <li>Khó bảo trì khi thay đổi cấu trúc bảng</li>
+                        <li>Không an toàn (SQL injection)</li>
+                    </ul>
+
+                    <h3>2. JPA là gì?</h3>
+                    <p><strong>JPA (Java Persistence API)</strong> là một đặc tả (specification) trong Java, định nghĩa cách ánh xạ các đối tượng Java sang các bảng trong database.</p>
+                    
+                    <p><strong>Nói đơn giản:</strong> JPA giúp chúng ta làm việc với database bằng Java object thay vì viết câu lệnh SQL.</p>
+
+                    <h4>2.1. Đặc tả là gì?</h4>
+                    <p>Đặc tả giống như một bản thiết kế, chỉ định nghĩa "làm gì" chứ không định nghĩa "làm thế nào".</p>
+                    <p><strong>Ví dụ:</strong></p>
+                    <ul>
+                        <li>JPA nói: "Phải có cách lưu object xuống database"</li>
+                        <li>Nhưng JPA không cung cấp code cụ thể</li>
+                    </ul>
+
+                    <h4>2.2. Các khái niệm chính trong JPA</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Khái niệm</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Entity</td>
+                                    <td>Class Java ánh xạ với bảng database</td>
+                                </tr>
+                                <tr>
+                                    <td>EntityManager</td>
+                                    <td>Quản lý vòng đời của Entity</td>
+                                </tr>
+                                <tr>
+                                    <td>JPQL</td>
+                                    <td>Câu truy vấn trên Entity (giống SQL nhưng thao tác với object)</td>
+                                </tr>
+                                <tr>
+                                    <td>Persistence Unit</td>
+                                    <td>Cấu hình kết nối database</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Hibernate là gì?</h3>
+                    <p><strong>Hibernate</strong> là một framework (thư viện cụ thể) triển khai (implementation) của JPA.</p>
+                    <p><strong>Nói đơn giản:</strong> Hibernate là hiện thực hóa bản thiết kế JPA thành code thật.</p>
+
+                    <h4>3.1. Mối quan hệ JPA và Hibernate</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Mối quan hệ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        JPA (Đặc tả - Chỉ là lý thuyết)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;implements (triển khai)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+                        Hibernate (Framework cụ thể - Code thật)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Spring Boot tự động tích hợp<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↑<br>
+                        Spring Data JPA (Spring Boot wrapper)
+                    </div>
+
+                    <h4>3.2. Ví dụ minh họa</h4>
+                    <p><strong>JPA (đặc tả):</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>JPA Interface</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// Đây chỉ là interface, không có code cụ thể</span><br>
+                        <span class="keyword">public interface</span> EntityManager {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span> persist(Object entity);  <span class="comment">// Lưu object</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;T&gt; T find(Class&lt;T&gt; entityClass, Object primaryKey);  <span class="comment">// Tìm theo ID</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Hibernate (triển khai):</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Hibernate Implementation</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// Hibernate viết code cụ thể cho các phương thức JPA</span><br>
+                        <span class="keyword">public class</span> HibernateEntityManager <span class="keyword">implements</span> EntityManager {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Override<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> persist(Object entity) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Code cụ thể để lưu object xuống database</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;generateSQLInsert();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executeStatement();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4. Spring Data JPA là gì?</h3>
+                    <p><strong>Spring Data JPA</strong> là module của Spring Boot, cung cấp các lớp và annotation giúp làm việc với JPA dễ dàng hơn.</p>
+
+                    <h4>4.1. Các thành phần chính của Spring Data JPA</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Vai trò</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Entity</td>
+                                    <td>Class Java ánh xạ với bảng database</td>
+                                    <td>@Entity class User</td>
+                                </tr>
+                                <tr>
+                                    <td>Repository</td>
+                                    <td>Interface cung cấp sẵn các phương thức CRUD</td>
+                                    <td>UserRepository extends JpaRepository</td>
+                                </tr>
+                                <tr>
+                                    <td>Derived Query Methods</td>
+                                    <td>Tự động tạo query dựa trên tên phương thức</td>
+                                    <td>findByEmail(String email)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Query</td>
+                                    <td>Viết query tùy chỉnh</td>
+                                    <td>@Query("SELECT u FROM User u WHERE u.age > ?1")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Tóm tắt</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Luồng hoạt động</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        Spring Boot App<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                        Spring Data JPA (Wrapper dễ dùng)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                        JPA (Đặc tả - Quy định chung)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                        Hibernate (Triển khai cụ thể)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                        JDBC (Kết nối database)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;↓<br>
+                        MySQL (Database)
+                    </div>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Lợi ích khi dùng Spring Data JPA:</h4>
+                        <ul>
+                            <li><strong>Không cần viết SQL</strong> - Chỉ cần gọi phương thức</li>
+                            <li><strong>Tự động tạo bảng</strong> - Dựa trên Entity</li>
+                            <li><strong>Chuyển đổi tự động</strong> - Object <-> Database</li>
+                            <li><strong>Tối ưu câu lệnh</strong> - Hibernate tự tối ưu SQL</li>
+                            <li><strong>Hỗ trợ transaction</strong> - Đảm bảo toàn vẹn dữ liệu</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- PHẦN CÀI ĐẶT MYSQL -->
+                <section id="install-mysql" class="section">
+                    <h2><i class="fas fa-download"></i> CÀI ĐẶT MYSQL</h2>
+
+                    <h3>1. Tải MySQL Community Server</h3>
+                    
+                    <p><strong>Bước 1:</strong> Truy cập trang tải</p>
+                    <p>Mở trình duyệt và truy cập: <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">https://dev.mysql.com/downloads/mysql/</a></p>
+
+                    <p><strong>Bước 2:</strong> Chọn phiên bản phù hợp</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Hệ điều hành</th>
+                                    <th>Chọn file</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Windows</td>
+                                    <td>MySQL Installer (.msi)</td>
+                                </tr>
+                                <tr>
+                                    <td>macOS</td>
+                                    <td>DMG Archive (.dmg)</td>
+                                </tr>
+                                <tr>
+                                    <td>Linux (Ubuntu)</td>
+                                    <td>Dùng lệnh sudo apt install mysql-server</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Cài đặt trên Windows (Chi tiết)</h3>
+                    
+                    <p><strong>Bước 1:</strong> Chạy file cài đặt</p>
+                    <ul>
+                        <li>Double-click file mysql-installer-community-8.0.33.msi</li>
+                        <li>Chọn "Developer Default" (cài đầy đủ cho lập trình viên)</li>
+                    </ul>
+
+                    <p><strong>Bước 2:</strong> Chọn các thành phần</p>
+                    <ul>
+                        <li>Mặc định đã chọn: MySQL Server, MySQL Workbench, MySQL Shell</li>
+                        <li>Nhấn Next qua các bước</li>
+                    </ul>
+
+                    <p><strong>Bước 3:</strong> Cấu hình MySQL Server</p>
+                    <ul>
+                        <li>Config Type: Development Computer</li>
+                        <li>Port: 3306 (mặc định)</li>
+                        <li>Authentication Method: Use Strong Password Encryption</li>
+                    </ul>
+
+                    <p><strong>Bước 4:</strong> Đặt mật khẩu cho root</p>
+                    <div class="note">
+                        <ul>
+                            <li>Nhập password: <strong>123456</strong> (nên nhớ để cấu hình sau)</li>
+                            <li>Xác nhận lại password</li>
+                            <li><strong>QUAN TRỌNG:</strong> Ghi nhớ mật khẩu này!</li>
+                        </ul>
+                    </div>
+
+                    <p><strong>Bước 5:</strong> Windows Service</p>
+                    <ul>
+                        <li>Chọn Configure as Windows Service</li>
+                        <li>Service Name: MySQL80</li>
+                        <li>Chọn Start the MySQL Server at System Startup</li>
+                    </ul>
+
+                    <p><strong>Bước 6:</strong> Hoàn tất</p>
+                    <ul>
+                        <li>Nhấn Execute để bắt đầu cài đặt</li>
+                        <li>Đợi quá trình hoàn tất</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h3>3. Kiểm tra cài đặt</h3>
+                    
+                    <p><strong>Cách 1:</strong> Dùng Command Prompt</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Kiểm tra MySQL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        mysql --version
+                    </div>
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        mysql  Ver 8.0.33 for Win64 on x86_64
+                    </div>
+
+                    <p><strong>Cách 2:</strong> Dùng MySQL Command Line Client</p>
+                    <ul>
+                        <li>Mở Start Menu, gõ "MySQL"</li>
+                        <li>Chọn MySQL 8.0 Command Line Client</li>
+                        <li>Nhập password 123456</li>
+                        <li>Nếu vào được prompt mysql> là thành công</li>
+                    </ul>
+                </section>
+
+                <!-- PHẦN CÀI ĐẶT MYSQL WORKBENCH -->
+                <section id="install-workbench" class="section">
+                    <h2><i class="fas fa-tools"></i> CÀI ĐẶT MYSQL WORKBENCH</h2>
+
+                    <h3>1. MySQL Workbench là gì?</h3>
+                    <p><strong>MySQL Workbench</strong> là công cụ đồ họa (GUI) giúp quản lý MySQL dễ dàng, cho phép:</p>
+                    <ul>
+                        <li>Tạo database, bảng</li>
+                        <li>Chạy câu lệnh SQL</li>
+                        <li>Xem dữ liệu trực quan</li>
+                        <li>Thiết kế database bằng hình ảnh</li>
+                    </ul>
+
+                    <h3>2. Cài đặt MySQL Workbench</h3>
+                    
+                    <p><strong>Bước 1:</strong> Tải Workbench</p>
+                    <p>Truy cập: <a href="https://dev.mysql.com/downloads/workbench/" target="_blank">https://dev.mysql.com/downloads/workbench/</a></p>
+
+                    <p><strong>Bước 2:</strong> Chọn phiên bản</p>
+                    <ul>
+                        <li>Chọn hệ điều hành phù hợp</li>
+                        <li>Tải file cài đặt</li>
+                    </ul>
+
+                    <p><strong>Bước 3:</strong> Cài đặt</p>
+                    <ul>
+                        <li>Chạy file cài đặt</li>
+                        <li>Next qua các bước mặc định</li>
+                        <li>Nhấn Install</li>
+                    </ul>
+
+                    <h3>3. Kết nối đến MySQL Server</h3>
+                    
+                    <p><strong>Bước 1:</strong> Mở MySQL Workbench</p>
+                    <p>Mở Workbench từ Start Menu</p>
+
+                    <p><strong>Bước 2:</strong> Tạo kết nối mới</p>
+                    <p>Click vào dấu + bên cạnh "MySQL Connections"</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trường</th>
+                                    <th>Giá trị</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Connection Name</td>
+                                    <td>Local MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td>Connection Method</td>
+                                    <td>Standard (TCP/IP)</td>
+                                </tr>
+                                <tr>
+                                    <td>Hostname</td>
+                                    <td>127.0.0.1 hoặc localhost</td>
+                                </tr>
+                                <tr>
+                                    <td>Port</td>
+                                    <td>3306</td>
+                                </tr>
+                                <tr>
+                                    <td>Username</td>
+                                    <td>root</td>
+                                </tr>
+                                <tr>
+                                    <td>Password</td>
+                                    <td>Click Store in Vault và nhập 123456</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Bước 3:</strong> Test kết nối</p>
+                    <ul>
+                        <li>Click Test Connection</li>
+                        <li>Nếu thấy "Successfully made the MySQL connection" → OK</li>
+                        <li>Click OK để lưu</li>
+                    </ul>
+
+                    <p><strong>Bước 4:</strong> Kết nối</p>
+                    <ul>
+                        <li>Double-click vào connection vừa tạo</li>
+                        <li>Giao diện Workbench hiện ra</li>
+                    </ul>
+
+                    <h3>4. Tạo database cho project</h3>
+                    
+                    <p><strong>Bước 1:</strong> Mở SQL Editor</p>
+                    <p>Trong Workbench, click vào biểu tượng SQL (có dấu *)</p>
+
+                    <p><strong>Bước 2:</strong> Gõ câu lệnh tạo database</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SQL - Tạo database</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        CREATE DATABASE demo_db <br>
+                        CHARACTER SET utf8mb4 <br>
+                        COLLATE utf8mb4_unicode_ci;
+                    </div>
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li><strong>demo_db:</strong> Tên database</li>
+                        <li><strong>utf8mb4:</strong> Hỗ trợ Unicode đầy đủ (kể cả tiếng Việt, emoji)</li>
+                        <li><strong>utf8mb4_unicode_ci:</strong> Cách so sánh và sắp xếp</li>
+                    </ul>
+
+                    <p><strong>Bước 3:</strong> Chạy lệnh</p>
+                    <p>Click vào biểu tượng lightning bolt (Execute) hoặc nhấn Ctrl + Enter</p>
+                    <p>Quan sát Output bên dưới</p>
+
+                    <p><strong>Bước 4:</strong> Kiểm tra</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SQL - Kiểm tra</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        SHOW DATABASES;
+                    </div>
+                    <p>Kết quả sẽ thấy <strong>demo_db</strong> trong danh sách.</p>
+
+                    <p><strong>Bước 5:</strong> Chọn database để sử dụng</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SQL - Chọn database</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        USE demo_db;
+                    </div>
+                    <p>Kết quả: "Database changed"</p>
+                </section>
+
+                <!-- PHẦN TẠO PROJECT SPRING BOOT VỚI JPA -->
+                <section id="create-project" class="section">
+                    <h2><i class="fas fa-plus-circle"></i> TẠO PROJECT SPRING BOOT VỚI JPA</h2>
+
+                    <h3>1. Tạo project trên Spring Initializr</h3>
+                    <p>Truy cập: <a href="https://start.spring.io" target="_blank">https://start.spring.io</a></p>
+
+                    <h4>Cấu hình project:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trường</th>
+                                    <th>Giá trị</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Project</td>
+                                    <td>Maven</td>
+                                    <td>Công cụ build</td>
+                                </tr>
+                                <tr>
+                                    <td>Language</td>
+                                    <td>Java</td>
+                                    <td>Ngôn ngữ lập trình</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Boot</td>
+                                    <td>3.1.x</td>
+                                    <td>Phiên bản mới nhất</td>
+                                </tr>
+                                <tr>
+                                    <td>Group</td>
+                                    <td>com.example</td>
+                                    <td>Tên nhóm</td>
+                                </tr>
+                                <tr>
+                                    <td>Artifact</td>
+                                    <td>jpa-demo</td>
+                                    <td>Tên project</td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>jpa-demo</td>
+                                    <td>Tên hiển thị</td>
+                                </tr>
+                                <tr>
+                                    <td>Package name</td>
+                                    <td>com.example.jpa</td>
+                                    <td>Package gốc</td>
+                                </tr>
+                                <tr>
+                                    <td>Packaging</td>
+                                    <td>Jar</td>
+                                    <td>Đóng gói dạng JAR</td>
+                                </tr>
+                                <tr>
+                                    <td>Java</td>
+                                    <td>17</td>
+                                    <td>Phiên bản Java</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Chọn Dependencies (Thư viện)</h3>
+                    
+                    <h4>Dependency bắt buộc:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dependency</th>
+                                    <th>Mục đích</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Spring Web</td>
+                                    <td>Tạo REST API</td>
+                                    <td>Đã học ở bài trước</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Data JPA</td>
+                                    <td>Làm việc với database</td>
+                                    <td>Quan trọng nhất bài này</td>
+                                </tr>
+                                <tr>
+                                    <td>MySQL Driver</td>
+                                    <td>Kết nối MySQL</td>
+                                    <td>Cần để kết nối với MySQL</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Dependency tùy chọn:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dependency</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lombok</td>
+                                    <td>Giảm code getter/setter</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Boot DevTools</td>
+                                    <td>Tự động restart khi code thay đổi</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Cách chọn:</strong></p>
+                    <ul>
+                        <li>Nhấn ADD DEPENDENCIES (hoặc Ctrl + B)</li>
+                        <li>Gõ tìm kiếm: Spring Data JPA → click chọn</li>
+                        <li>Gõ tìm kiếm: MySQL Driver → click chọn</li>
+                        <li>Gõ tìm kiếm: Lombok → click chọn (tùy chọn)</li>
+                    </ul>
+
+                    <h3>3. Tải và mở project</h3>
+                    
+                    <p><strong>Bước 1:</strong> Generate project</p>
+                    <ul>
+                        <li>Nhấn GENERATE (hoặc Ctrl + Enter)</li>
+                        <li>Tải file jpa-demo.zip về</li>
+                    </ul>
+
+                    <p><strong>Bước 2:</strong> Giải nén</p>
+                    <p>Giải nén vào thư mục làm việc (ví dụ: D:\spring-boot\)</p>
+
+                    <p><strong>Bước 3:</strong> Mở trong IntelliJ</p>
+                    <ul>
+                        <li>File → Open</li>
+                        <li>Chọn thư mục jpa-demo</li>
+                        <li>Click OK</li>
+                    </ul>
+
+                    <h3>4. Cấu trúc file pom.xml</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>pom.xml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                 
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Dependencies --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- 1. Spring Web - Để tạo REST API --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- 2. Spring Data JPA - Để làm việc với database --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- 3. MySQL Driver - Để kết nối MySQL --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.mysql&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;runtime&lt;/scope&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;<br>
+                      
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;<br>
+                      
+                    </div>
+
+                    <h4>Giải thích các dependency:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dependency</th>
+                                    <th>Scope</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>spring-boot-starter-web</td>
+                                    <td>compile</td>
+                                    <td>Dùng để viết REST API</td>
+                                </tr>
+                                <tr>
+                                    <td>spring-boot-starter-data-jpa</td>
+                                    <td>compile</td>
+                                    <td>Chứa JPA, Hibernate, Spring Data</td>
+                                </tr>
+                                <tr>
+                                    <td>mysql-connector-j</td>
+                                    <td>runtime</td>
+                                    <td>Driver MySQL, chỉ cần khi chạy</td>
+                                </tr>
+                              
+                            </tbody>
+                        </table>
+                        <p>Down thư viện : Ấn vào biểu tượng chữ M sau đó bấm vào icon reload chọn reload all maven project </p>
+                    </div>
+                </section>
+
+                <!-- PHẦN CẤU HÌNH KẾT NỐI DATABASE -->
+                <section id="configure-database" class="section">
+                    <h2><i class="fas fa-cog"></i> CẤU HÌNH KẾT NỐI DATABASE</h2>
+
+                    <h3>1. File application.properties</h3>
+                    <p><strong>File:</strong> src/main/resources/application.properties</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>application.properties</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment"># CẤU HÌNH SERVER</span><br>
+                        <br>
+                        server.port=8080<br>
+                        <br>
+                        <!-- <span class="comment"># =============================================</span><br> -->
+                        <span class="comment"># CẤU HÌNH KẾT NỐI DATABASE</span><br>
+                        <!-- <span class="comment"># =============================================</span><br> -->
+                        <br>
+                        <!-- <span class="comment"># URL kết nối MySQL</span><br>
+                        <span class="comment"># jdbc:mysql:// - giao thức kết nối</span><br>
+                        <span class="comment"># localhost - địa chỉ server</span><br>
+                        <span class="comment"># 3306 - port mặc định của MySQL</span><br>
+                        <span class="comment"># demo_db - tên database</span><br> -->
+                        spring.datasource.url=jdbc:mysql://localhost:3306/demo_db?useSSL=false&amp;serverTimezone=UTC<br>
+                        <br>
+                        <span class="comment"># Tên đăng nhập (mặc định là root)</span><br>
+                        spring.datasource.username=root<br>
+                        <br>
+                        <span class="comment"># Mật khẩu (nhập đúng mật khẩu đã đặt khi cài MySQL)</span><br>
+                        spring.datasource.password=123456<br>
+                        <br>
+                        <span class="comment"># Driver class (MySQL 8 dùng driver này)</span><br>
+                        spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver<br>
+                        <br>
+                        <!-- <span class="comment"># =============================================</span><br>
+                        <span class="comment"># CẤU HÌNH JPA (HIBERNATE)</span><br>
+                        <span class="comment"># =============================================</span><br>
+                        <br>
+                        <span class="comment"># Hiển thị câu lệnh SQL trong console (học tập rất hữu ích)</span><br>
+                        spring.jpa.show-sql=true<br>
+                        <br>
+                        <span class="comment"># Định dạng SQL cho dễ đọc</span><br>
+                        spring.jpa.properties.hibernate.format_sql=true<br>
+                        <br>
+                        <span class="comment"># Tự động tạo/cập nhật bảng dựa trên Entity</span><br>
+                        <span class="comment"># none: không tự động</span><br>
+                        <span class="comment"># validate: chỉ kiểm tra, không thay đổi</span><br>
+                        <span class="comment"># update: cập nhật nếu cần (giữ dữ liệu)</span><br>
+                        <span class="comment"># create: xóa bảng cũ, tạo mới</span><br>
+                        <span class="comment"># create-drop: tạo khi chạy, xóa khi dừng</span><br>
+                        spring.jpa.hibernate.ddl-auto=update<br>
+                        <br>
+                        <span class="comment"># Dialect - cho Hibernate biết đang dùng database gì</span><br>
+                        spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect<br> -->
+                        <!-- <br>
+                        <span class="comment"># =============================================</span><br>
+                        <span class="comment"># CẤU HÌNH LOGGING (TÙY CHỌN)</span><br>
+                        <span class="comment"># =============================================</span><br>
+                        <br>
+                        <span class="comment"># Hiển thị log chi tiết hơn</span><br>
+                        logging.level.org.springframework.web=DEBUG<br>
+                        logging.level.org.hibernate=INFO -->
+                    </div>
+
+                    <h3>2. Giải thích chi tiết từng cấu hình</h3>
+                    
+                    <h4>2.1. Cấu hình Database URL</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL kết nối</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        spring.datasource.url=jdbc:mysql://localhost:3306/demo_db?useSSL=false&amp;serverTimezone=UTC
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>jdbc:mysql://</td>
+                                    <td>Giao thức kết nối MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td>localhost</td>
+                                    <td>Địa chỉ server (máy hiện tại)</td>
+                                </tr>
+                                <tr>
+                                    <td>3306</td>
+                                    <td>Port mặc định của MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td>demo_db</td>
+                                    <td>Tên database đã tạo</td>
+                                </tr>
+                                <tr>
+                                    <td>useSSL=false</td>
+                                    <td>Tắt SSL (khi học không cần bảo mật)</td>
+                                </tr>
+                                <tr>
+                                    <td>serverTimezone=UTC</td>
+                                    <td>Múi giờ chuẩn</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>2.2. Cấu hình ddl-auto</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ddl-auto</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        spring.jpa.hibernate.ddl-auto=update
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Giá trị</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Khi nào dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>none</td>
+                                    <td>Không tự động tạo/cập nhật bảng</td>
+                                    <td>Production</td>
+                                </tr>
+                                <tr>
+                                    <td>validate</td>
+                                    <td>Chỉ kiểm tra cấu trúc bảng, không thay đổi</td>
+                                    <td>Production</td>
+                                </tr>
+                                <tr>
+                                    <td>update</td>
+                                    <td>Cập nhật bảng nếu cần (thêm cột mới)</td>
+                                    <td>Development</td>
+                                </tr>
+                                <tr>
+                                    <td>create</td>
+                                    <td>Xóa bảng cũ, tạo bảng mới khi chạy</td>
+                                    <td>Học tập (mất dữ liệu)</td>
+                                </tr>
+                                <tr>
+                                    <td>create-drop</td>
+                                    <td>Tạo khi chạy, xóa khi dừng</td>
+                                    <td>Test</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="note">
+                        <p><strong>Lưu ý quan trọng:</strong></p>
+                        <ul>
+                            <li><strong>Khi học:</strong> dùng <code>update</code> để giữ lại dữ liệu</li>
+                            <li><strong>Khi muốn tạo lại bảng từ đầu:</strong> dùng <code>create</code> (sẽ mất dữ liệu cũ)</li>
+                            <li><strong>Khi deploy thật:</strong> dùng <code>validate</code> hoặc <code>none</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>3. Ví dụ cấu hình cho các môi trường khác nhau</h3>
+                    
+                    <p><strong>Môi trường Development (đang học)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Development</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        spring.jpa.hibernate.ddl-auto=update<br>
+                        spring.jpa.show-sql=true<br>
+                        spring.jpa.properties.hibernate.format_sql=true
+                    </div>
+
+                    <p><strong>Môi trường Production (thật)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Production</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        spring.jpa.hibernate.ddl-auto=validate<br>
+                        spring.jpa.show-sql=false<br>
+                        spring.jpa.properties.hibernate.format_sql=false
+                    </div>
+
+                    <h3>4. Kiểm tra kết nối</h3>
+                    
+                    <p><strong>Bước 1:</strong> Chạy ứng dụng</p>
+                    <ul>
+                        <li>Mở file JpaDemoApplication.java</li>
+                        <li>Click Run (hoặc Shift + F10)</li>
+                    </ul>
+
+                    <p><strong>Bước 2:</strong> Quan sát log</p>
+                    
+                    <p><strong>Nếu kết nối thành công, sẽ thấy:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Log thành công</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        2024-01-01 10:00:00.123  INFO 12345 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...<br>
+                        2024-01-01 10:00:00.456  INFO 12345 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.<br>
+                        <!-- 2024-01-01 10:00:00.789  INFO 12345 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect -->
+                    </div>
+
+                    <p><strong>Nếu lỗi kết nối, sẽ thấy:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Log lỗi</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        2024-01-01 10:00:00.123 ERROR 12345 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.<br>
+                        <br>
+                        java.sql.SQLException: Access denied for user 'root'@'localhost' (using password: YES)<br>
+                        → <strong>Sai mật khẩu</strong><br>
+                        <br>
+                        java.sql.SQLException: Unknown database 'demo_db'<br>
+                        → <strong>Chưa tạo database</strong><br>
+                        <br>
+                        java.sql.SQLException: Communications link failure<br>
+                        → <strong>MySQL chưa chạy</strong>
+                    </div>
+                </section>
+
+                <!-- PHẦN ENTITY - ÁNH XẠ BẢNG -->
+                <section id="entity" class="section">
+                    <h2><i class="fas fa-cube"></i> ENTITY - ÁNH XẠ BẢNG TRONG DATABASE</h2>
+
+                    <h3>1. Entity là gì?</h3>
+                    <p><strong>Entity</strong> là class Java được ánh xạ với một bảng trong database. Mỗi instance (đối tượng) của Entity tương ứng với một dòng (row) trong bảng.</p>
+
+                    <h4>1.1. Ví dụ trực quan</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Bảng USERS trong database:</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        +----+---------------+------------------+----------+<br>
+                        | id | full_name     | email            | password |<br>
+                        +----+---------------+------------------+----------+<br>
+                        | 1  | Nguyen Van A  | a@gmail.com      | 123456   |<br>
+                        | 2  | Tran Thi B    | b@gmail.com      | 789012   |<br>
+                        +----+---------------+------------------+----------+
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Class User trong Java:</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        User{id=1, name="Nguyen Van A", email="a@gmail.com", password="123456"}<br>
+                        User{id=2, name="Tran Thi B", email="b@gmail.com", password="789012"}
+                    </div>
+
+                    <h4>1.2. Ánh xạ (Mapping)</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Database (Bảng users)</th>
+                                    <th>Java (Class User)</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tên bảng: users</td>
+                                    <td>Tên class: User</td>
+                                    <td>@Table(name = "users")</td>
+                                </tr>
+                                <tr>
+                                    <td>Cột: id</td>
+                                    <td>Thuộc tính: id</td>
+                                    <td>@Column(name = "id")</td>
+                                </tr>
+                                <tr>
+                                    <td>Cột: full_name</td>
+                                    <td>Thuộc tính: name</td>
+                                    <td>@Column(name = "full_name")</td>
+                                </tr>
+                                <tr>
+                                    <td>Mỗi dòng dữ liệu</td>
+                                    <td>Một đối tượng User</td>
+                                    <td>Instance của class</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN JPA ANNOTATIONS -->
+                <section id="entity-annotations" class="section">
+                    <h2><i class="fas fa-hashtag"></i> CÁC ANNOTATION JPA CƠ BẢN</h2>
+
+                    <h3>1. Bảng tổng hợp annotation</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Mục đích</th>
+                                    <th>Vị trí dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Entity</td>
+                                    <td>Đánh dấu class là Entity</td>
+                                    <td>Trên class</td>
+                                </tr>
+                                <tr>
+                                    <td>@Table</td>
+                                    <td>Chỉ định tên bảng trong database</td>
+                                    <td>Trên class</td>
+                                </tr>
+                                <tr>
+                                    <td>@Id</td>
+                                    <td>Đánh dấu khóa chính</td>
+                                    <td>Trên thuộc tính</td>
+                                </tr>
+                                <tr>
+                                    <td>@GeneratedValue</td>
+                                    <td>Tự động sinh giá trị cho khóa chính</td>
+                                    <td>Trên thuộc tính</td>
+                                </tr>
+                                <tr>
+                                    <td>@Column</td>
+                                    <td>Cấu hình cột trong bảng</td>
+                                    <td>Trên thuộc tính</td>
+                                </tr>
+                                <tr>
+                                    <td>@Transient</td>
+                                    <td>Không ánh xạ xuống database</td>
+                                    <td>Trên thuộc tính</td>
+                                </tr>
+                                <tr>
+                                    <td>@Temporal</td>
+                                    <td>Định dạng ngày tháng</td>
+                                    <td>Trên thuộc tính Date</td>
+                                </tr>
+                                <tr>
+                                    <td>@Enumerated</td>
+                                    <td>Ánh xạ Enum</td>
+                                    <td>Trên thuộc tính Enum</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. @Entity - Đánh dấu class là Entity</h3>
+                    
+                    <p><strong>Định nghĩa:</strong> @Entity là annotation đánh dấu một class Java sẽ được ánh xạ với một bảng trong database.</p>
+
+                    <p><strong>Cú pháp:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Entity</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> jakarta.persistence.Entity;<br>
+                        <br>
+                        @Entity<br>
+                        <span class="keyword">public class</span> <span class="class-name">TenClass</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Các thuộc tính</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li>Khi có @Entity, JPA sẽ quản lý class này</li>
+                        <li>Mặc định, tên bảng trong database sẽ là tên class (viết thường)</li>
+                        <li>Ví dụ: class User → bảng user</li>
+                    </ul>
+
+                    <h3>3. @Table - Chỉ định tên bảng</h3>
+                    
+                    <p><strong>Định nghĩa:</strong> @Table dùng để chỉ định tên bảng trong database, nếu muốn khác tên class.</p>
+
+                    <p><strong>Cú pháp:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Table</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Entity<br>
+                        @Table(name = "ten_bang_trong_database")<br>
+                        <span class="keyword">public class</span> <span class="class-name">TenClass</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Ví dụ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ @Table</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> jakarta.persistence.Entity;<br>
+                        <span class="keyword">import</span> jakarta.persistence.Table;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "users")  <span class="comment">// Bảng trong database tên là "users"</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {      <span class="comment">// Class tên là "User"</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span><br>
+                        }
+                    </div>
+
+                    <p><strong>So sánh:</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Không dùng @Table</th>
+                                    <th>Có dùng @Table</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Entity class User → bảng user</td>
+                                    <td>@Table(name = "users") → bảng users</td>
+                                </tr>
+                                <tr>
+                                    <td>Không thể đổi tên bảng</td>
+                                    <td>Có thể đặt tên bảng tùy ý</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>4. @Id - Khóa chính</h3>
+                    
+                    <p><strong>Định nghĩa:</strong> @Id đánh dấu thuộc tính là khóa chính (primary key) của bảng.</p>
+
+                    <p><strong>Cú pháp:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Id</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Id<br>
+                        <span class="keyword">private</span> KieuDuLieu tenThuocTinh;
+                    </div>
+
+                    <p><strong>Ví dụ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ @Id</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> jakarta.persistence.Id;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "users")<br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;  <span class="comment">// Đây là khóa chính</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Các thuộc tính khác</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li>Mỗi Entity bắt buộc phải có một thuộc tính đánh dấu @Id</li>
+                        <li>Giá trị của khóa chính là duy nhất trong bảng</li>
+                        <li>Thường dùng kiểu Long hoặc Integer cho khóa chính tự tăng</li>
+                    </ul>
+
+                    <h3>5. @GeneratedValue - Tự động sinh giá trị</h3>
+                    
+                    <p><strong>Định nghĩa:</strong> @GeneratedValue dùng để tự động sinh giá trị cho khóa chính.</p>
+
+                    <p><strong>Cú pháp:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@GeneratedValue</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Id<br>
+                        @GeneratedValue(strategy = GenerationType.CHIEN_LUOC)<br>
+                        <span class="keyword">private</span> Long id;
+                    </div>
+
+                    <p><strong>Các chiến lược (Strategy):</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chiến lược</th>
+                                    <th>Mô tả</th>
+                                    <th>Database hỗ trợ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GenerationType.IDENTITY</td>
+                                    <td>Tự động tăng (AUTO_INCREMENT)</td>
+                                    <td>MySQL, SQL Server, PostgreSQL</td>
+                                </tr>
+                                <tr>
+                                    <td>GenerationType.SEQUENCE</td>
+                                    <td>Dùng sequence</td>
+                                    <td>Oracle, PostgreSQL</td>
+                                </tr>
+                                <tr>
+                                    <td>GenerationType.TABLE</td>
+                                    <td>Dùng bảng riêng để lưu giá trị</td>
+                                    <td>Tất cả (nhưng chậm)</td>
+                                </tr>
+                                <tr>
+                                    <td>GenerationType.AUTO</td>
+                                    <td>Để Hibernate tự chọn</td>
+                                    <td>Mặc định</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Ví dụ với MySQL (IDENTITY):</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@GeneratedValue với IDENTITY</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> jakarta.persistence.*;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "users")<br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)  <span class="comment">// MySQL tự tăng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Các thuộc tính khác</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li>Với strategy = GenerationType.IDENTITY:</li>
+                        <li>MySQL sẽ tự động tạo giá trị id (1, 2, 3, ...)</li>
+                        <li>Không cần gán giá trị cho id khi thêm mới</li>
+                        <li>Tương ứng với AUTO_INCREMENT trong MySQL</li>
+                    </ul>
+
+                    <h3>6. @Column - Cấu hình cột</h3>
+                    
+                    <p><strong>Định nghĩa:</strong> @Column dùng để cấu hình chi tiết cho một cột trong database.</p>
+
+                    <p><strong>Cú pháp:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Column</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Column(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;name = "ten_cot",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;nullable = true/false,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;unique = true/false,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;length = 255,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;columnDefinition = "định_nghĩa_sql"<br>
+                        )<br>
+                        <span class="keyword">private</span> KieuDuLieu tenThuocTinh;
+                    </div>
+
+                    <p><strong>Các thuộc tính của @Column:</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thuộc tính</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>name</td>
+                                    <td>Tên cột trong database</td>
+                                    <td>name = "full_name"</td>
+                                </tr>
+                                <tr>
+                                    <td>nullable</td>
+                                    <td>Có được phép null không?</td>
+                                    <td>nullable = false (không null)</td>
+                                </tr>
+                                <tr>
+                                    <td>unique</td>
+                                    <td>Giá trị có duy nhất không?</td>
+                                    <td>unique = true (không trùng)</td>
+                                </tr>
+                                <tr>
+                                    <td>length</td>
+                                    <td>Độ dài tối đa (với String)</td>
+                                    <td>length = 100</td>
+                                </tr>
+                                <tr>
+                                    <td>columnDefinition</td>
+                                    <td>Định nghĩa SQL trực tiếp</td>
+                                    <td>columnDefinition = "TEXT"</td>
+                                </tr>
+                                <tr>
+                                    <td>insertable</td>
+                                    <td>Có tham gia INSERT không?</td>
+                                    <td>Mặc định true</td>
+                                </tr>
+                                <tr>
+                                    <td>updatable</td>
+                                    <td>Có tham gia UPDATE không?</td>
+                                    <td>Mặc định true</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p><strong>Ví dụ 1:</strong> Cấu hình cơ bản</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Column cơ bản</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Column(name = "full_name", nullable = false, length = 100)<br>
+                        <span class="keyword">private</span> String name;<br>
+                        <span class="comment">// SQL tương ứng: full_name VARCHAR(100) NOT NULL</span>
+                    </div>
+
+                    <p><strong>Ví dụ 2:</strong> Cột unique</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Column unique</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Column(unique = true, nullable = false)<br>
+                        <span class="keyword">private</span> String email;<br>
+                        <span class="comment">// SQL tương ứng: email VARCHAR(255) NOT NULL UNIQUE</span>
+                    </div>
+
+                    <p><strong>Ví dụ 3:</strong> Cột có thể null</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Column nullable</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Column(name = "phone_number", length = 15)<br>
+                        <span class="keyword">private</span> String phoneNumber;  <span class="comment">// nullable = true (mặc định)</span><br>
+                        <span class="comment">// SQL tương ứng: phone_number VARCHAR(15)</span>
+                    </div>
+
+                    <p><strong>Ví dụ 4:</strong> Cột với định nghĩa đặc biệt</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Column với columnDefinition</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Column(columnDefinition = "TEXT")<br>
+                        <span class="keyword">private</span> String description;<br>
+                        <br>
+                        @Column(columnDefinition = "DECIMAL(10,2)")<br>
+                        <span class="keyword">private</span> Double price;<br>
+                        <span class="comment">// SQL tương ứng: description TEXT, price DECIMAL(10,2)</span>
+                    </div>
+
+                    <p><strong>So sánh khi có và không có @Column:</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Không dùng @Column</th>
+                                    <th>Có dùng @Column</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tên cột = tên thuộc tính</td>
+                                    <td>Đặt tên cột tùy ý</td>
+                                </tr>
+                                <tr>
+                                    <td>nullable = true (mặc định)</td>
+                                    <td>Có thể set nullable = false</td>
+                                </tr>
+                                <tr>
+                                    <td>length = 255 (mặc định)</td>
+                                    <td>Có thể set độ dài khác</td>
+                                </tr>
+                                <tr>
+                                    <td>Không thể set unique</td>
+                                    <td>Có thể set unique = true</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN VÍ DỤ ENTITY -->
+                <section id="entity-examples" class="section">
+                    <h2><i class="fas fa-code"></i> VÍ DỤ ENTITY</h2>
+
+                    <h3>1. Entity User hoàn chỉnh (không dùng Lombok)</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>User.java - Không Lombok</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.model;<br>
+                        <br>
+                        <span class="keyword">import</span> jakarta.persistence.*;<br>
+                        <span class="keyword">import</span> java.time.LocalDateTime;<br>
+                        <br>
+                        @Entity  <span class="comment">// 1. Đánh dấu đây là Entity</span><br>
+                        @Table(name = "users")  <span class="comment">// 2. Tên bảng là "users"</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 3. KHÓA CHÍNH =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)  <span class="comment">// MySQL tự tăng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 4. CÁC THUỘC TÍNH =====</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "full_name", nullable = false, length = 100)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;  <span class="comment">// Họ tên - bắt buộc, tối đa 100 ký tự</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(unique = true, nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;  <span class="comment">// Email - duy nhất, bắt buộc</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String password;  <span class="comment">// Mật khẩu - bắt buộc</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "phone_number", length = 15)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String phoneNumber;  <span class="comment">// Số điện thoại - có thể null</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Integer age;  <span class="comment">// Tuổi - bắt buộc</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "created_at")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDateTime createdAt;  <span class="comment">// Thời gian tạo</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "updated_at")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDateTime updatedAt;  <span class="comment">// Thời gian cập nhật</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 5. CONSTRUCTOR =====</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructor không tham số (bắt buộc cho JPA)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">User</span>() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructor có tham số (tiện lợi)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">User</span>(String name, String email, String password, Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.password = password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.age = age;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.createdAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.updatedAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 6. GETTER VÀ SETTER =====</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Long getId() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Không có setId cho id vì nó tự động sinh</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getEmail() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setEmail(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getPassword() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setPassword(String password) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.password = password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getPhoneNumber() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> phoneNumber;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setPhoneNumber(String phoneNumber) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.phoneNumber = phoneNumber;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Integer getAge() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> age;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setAge(Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.age = age;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> LocalDateTime getCreatedAt() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> createdAt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setCreatedAt(LocalDateTime createdAt) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.createdAt = createdAt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> LocalDateTime getUpdatedAt() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> updatedAt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setUpdatedAt(LocalDateTime updatedAt) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.updatedAt = updatedAt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 7. CÁC PHƯƠNG THỨC TỰ ĐỘNG =====</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tự động gọi trước khi lưu lần đầu</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@PrePersist<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">protected void</span> onCreate() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;createdAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updatedAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tự động gọi trước khi cập nhật</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@PreUpdate<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">protected void</span> onUpdate() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updatedAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 8. toString() =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Override<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String toString() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "User{" +<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id=" + id +<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", name='" + name + '\'' +<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", email='" + email + '\'' +<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", age=" + age +<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}';  <span class="comment">// Không in password vì bảo mật</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+<!-- 
+                    <h3>2. Entity User với Lombok (ngắn gọn hơn)</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>User.java - Với Lombok</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.model;<br>
+                        <br>
+                        <span class="keyword">import</span> jakarta.persistence.*;<br>
+                        <span class="keyword">import</span> lombok.*;<br>
+                        <span class="keyword">import</span> java.time.LocalDateTime;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "users")<br>
+                        @Data  <span class="comment">// Gồm: @Getter, @Setter, @ToString, @EqualsAndHashCode</span><br>
+                        @NoArgsConstructor  <span class="comment">// Tạo constructor không tham số</span><br>
+                        @AllArgsConstructor  <span class="comment">// Tạo constructor có tất cả tham số</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "full_name", nullable = false, length = 100)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(unique = true, nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String password;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "phone_number", length = 15)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String phoneNumber;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Integer age;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "created_at")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDateTime createdAt;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "updated_at")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDateTime updatedAt;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@PrePersist<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">protected void</span> onCreate() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;createdAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updatedAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@PreUpdate<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">protected void</span> onUpdate() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updatedAt = LocalDateTime.now();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div> -->
+
+                    <h3>3. Các annotation bổ sung khác</h3>
+                    
+                    <h4>@Transient - Không lưu xuống database</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Transient</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Transient<br>
+                        <span class="keyword">private</span> String confirmPassword;  <span class="comment">// Trường này không được lưu vào database</span>
+                    </div>
+                    <p><strong>Dùng khi:</strong> Cần trường để xử lý logic nhưng không cần lưu (xác nhận mật khẩu, tính toán tạm thời).</p>
+
+                    <h4>@Enumerated - Ánh xạ Enum</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Enumerated</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">public enum</span> UserRole {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ADMIN, USER, MANAGER<br>
+                        }<br>
+                        <br>
+                        @Entity<br>
+                        <span class="keyword">public class</span> User {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ...</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Enumerated(EnumType.STRING)  <span class="comment">// Lưu tên enum: "ADMIN", "USER"</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRole role;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Enumerated(EnumType.ORDINAL)  <span class="comment">// Lưu thứ tự: 0, 1, 2 (không nên dùng)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRole role2;<br>
+                        }
+                    </div>
+
+                    <h4>@Lob - Lưu dữ liệu lớn</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Lob</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Lob<br>
+                        <span class="keyword">private</span> String longText;  <span class="comment">// Lưu văn bản dài (TEXT trong MySQL)</span><br>
+                        <br>
+                        @Lob<br>
+                        <span class="keyword">private byte</span>[] image;  <span class="comment">// Lưu file nhị phân (BLOB)</span>
+                    </div>
+
+                    <h3>4. Quy tắc khi tạo Entity</h3>
+                    
+                    <h4>Quy tắc bắt buộc:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Quy tắc</th>
+                                    <th>Lý do</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Có @Entity</td>
+                                    <td>Đánh dấu là Entity</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Có ít nhất một @Id</td>
+                                    <td>Mỗi bảng phải có khóa chính</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Có constructor không tham số</td>
+                                    <td>JPA cần để tạo object</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Có getter cho mọi thuộc tính</td>
+                                    <td>Để đọc dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Không để final class</td>
+                                    <td>Hibernate cần proxy</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Quy tắc nên làm:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Quy tắc</th>
+                                    <th>Lý do</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Dùng Long cho ID</td>
+                                    <td>Hỗ trợ số lớn, null khi chưa lưu</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Đặt tên bảng số nhiều</td>
+                                    <td>users, products, orders</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Dùng nullable = false cho trường bắt buộc</td>
+                                    <td>Database tự kiểm tra</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Dùng unique = true cho trường duy nhất</td>
+                                    <td>Đảm bảo không trùng</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Có createdAt, updatedAt</td>
+                                    <td>Theo dõi thời gian</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ về các kiểu dữ liệu</h3>
+                    
+                    <h4>Ánh xạ kiểu dữ liệu Java sang SQL</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Java</th>
+                                    <th>SQL (MySQL)</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>String</td>
+                                    <td>VARCHAR(255)</td>
+                                    <td>Độ dài mặc định 255</td>
+                                </tr>
+                                <tr>
+                                    <td>int, Integer</td>
+                                    <td>INT</td>
+                                    <td>Số nguyên</td>
+                                </tr>
+                                <tr>
+                                    <td>long, Long</td>
+                                    <td>BIGINT</td>
+                                    <td>Số nguyên lớn</td>
+                                </tr>
+                                <tr>
+                                    <td>double, Double</td>
+                                    <td>DOUBLE</td>
+                                    <td>Số thực</td>
+                                </tr>
+                                <tr>
+                                    <td>boolean</td>
+                                    <td>BIT(1) hoặc BOOLEAN</td>
+                                    <td>true/false</td>
+                                </tr>
+                                <tr>
+                                    <td>LocalDate</td>
+                                    <td>DATE</td>
+                                    <td>Ngày (yyyy-MM-dd)</td>
+                                </tr>
+                                <tr>
+                                    <td>LocalTime</td>
+                                    <td>TIME</td>
+                                    <td>Giờ (HH:mm:ss)</td>
+                                </tr>
+                                <tr>
+                                    <td>LocalDateTime</td>
+                                    <td>DATETIME</td>
+                                    <td>Ngày và giờ</td>
+                                </tr>
+                                <tr>
+                                    <td>BigDecimal</td>
+                                    <td>DECIMAL</td>
+                                    <td>Số thập phân chính xác</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Ví dụ Entity với nhiều kiểu dữ liệu</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Product.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Entity<br>
+                        @Table(name = "products")<br>
+                        <span class="keyword">public class</span> <span class="class-name">Product</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false, length = 200)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(columnDefinition = "DECIMAL(10,2)")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Integer quantity;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Boolean available;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "release_date")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDate releaseDate;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "created_at")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> LocalDateTime createdAt;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructors, getters, setters...</span><br>
+                        }
+                    </div>
+
+                    <h3>6. Tổng kết về Entity</h3>
+                    
+                    <h4>Các annotation chính:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Entity</td>
+                                    <td>Đánh dấu class là Entity</td>
+                                </tr>
+                                <tr>
+                                    <td>@Table</td>
+                                    <td>Chỉ định tên bảng</td>
+                                </tr>
+                                <tr>
+                                    <td>@Id</td>
+                                    <td>Đánh dấu khóa chính</td>
+                                </tr>
+                                <tr>
+                                    <td>@GeneratedValue</td>
+                                    <td>Tự động sinh khóa chính</td>
+                                </tr>
+                                <tr>
+                                    <td>@Column</td>
+                                    <td>Cấu hình cột</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Quy trình tạo Entity:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Quy trình</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        Bước 1: Thêm @Entity<br>
+                        Bước 2: Thêm @Table (nếu cần đổi tên)<br>
+                        Bước 3: Khai báo các thuộc tính<br>
+                        Bước 4: Đánh dấu @Id cho khóa chính<br>
+                        Bước 5: Thêm @GeneratedValue cho ID tự tăng<br>
+                        Bước 6: Thêm @Column cho các thuộc tính khác<br>
+                        Bước 7: Tạo constructor không tham số<br>
+                        Bước 8: Tạo getter/setter
+                    </div>
+
+                    <h4>Kiểm tra Entity:</h4>
+                    <p>Sau khi tạo Entity và chạy ứng dụng với ddl-auto=update, kiểm tra trong MySQL Workbench:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SQL - Kiểm tra</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        USE demo_db;<br>
+                        SHOW TABLES;<br>
+                        DESCRIBE users;<br>
+                        SELECT * FROM users;
+                    </div>
+                    <p>Sẽ thấy bảng users đã được tạo tự động với cấu trúc khớp với Entity.</p>
+                </section>
+
+                <!-- PHẦN TỔNG KẾT -->
+                <section id="summary" class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> TỔNG KẾT BÀI HỌC</h2>
+
+                    <h3>1. Những gì đã học (Phần 1)</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Kiến thức</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Tổng quan Database</td>
+                                    <td>Hiểu database là gì, so sánh List vs Database</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>JPA và Hibernate</td>
+                                    <td>Hiểu JPA là đặc tả, Hibernate là triển khai</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Cài đặt MySQL</td>
+                                    <td>Cài đặt và cấu hình MySQL thành công</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>MySQL Workbench</td>
+                                    <td>Cài đặt và tạo database demo_db</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Project với JPA</td>
+                                    <td>Tạo project có Spring Data JPA, MySQL Driver</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Cấu hình kết nối</td>
+                                    <td>Cấu hình application.properties để kết nối MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Entity và ánh xạ</td>
+                                    <td>Hiểu @Entity, @Table, @Id, @GeneratedValue, @Column</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Các annotation JPA chính</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Mục đích</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Entity</td>
+                                    <td>Đánh dấu class là Entity</td>
+                                    <td>@Entity public class User</td>
+                                </tr>
+                                <tr>
+                                    <td>@Table</td>
+                                    <td>Chỉ định tên bảng</td>
+                                    <td>@Table(name = "users")</td>
+                                </tr>
+                                <tr>
+                                    <td>@Id</td>
+                                    <td>Đánh dấu khóa chính</td>
+                                    <td>@Id private Long id</td>
+                                </tr>
+                                <tr>
+                                    <td>@GeneratedValue</td>
+                                    <td>Tự động sinh giá trị</td>
+                                    <td>@GeneratedValue(strategy = GenerationType.IDENTITY)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Column</td>
+                                    <td>Cấu hình cột</td>
+                                    <td>@Column(nullable = false, unique = true)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Cấu hình database quan trọng</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cấu hình cơ bản</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment"># Kết nối database</span><br>
+                        spring.datasource.url=jdbc:mysql://localhost:3306/demo_db?useSSL=false<br>
+                        spring.datasource.username=root<br>
+                        spring.datasource.password=123456<br>
+                        spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver<br>
+                        <br>
+                        <span class="comment"># Cấu hình JPA</span><br>
+                        spring.jpa.hibernate.ddl-auto=update<br>
+                        spring.jpa.show-sql=true<br>
+                        spring.jpa.properties.hibernate.format_sql=true<br>
+                        spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+                    </div>
+
+                    <h3>4. Câu hỏi ôn tập</h3>
+                    <ol>
+                        <li>So sánh ưu nhược điểm của việc lưu dữ liệu trong List so với Database?</li>
+                        <li>JPA là gì? Hibernate là gì? Mối quan hệ giữa chúng?</li>
+                        <li>Các bước cài đặt MySQL và tạo database?</li>
+                        <li>Ý nghĩa của các cấu hình: spring.datasource.url, spring.jpa.hibernate.ddl-auto?</li>
+                        <li>Các annotation JPA cơ bản để ánh xạ một class thành bảng?</li>
+                        <li>Sự khác nhau giữa GenerationType.IDENTITY và GenerationType.AUTO?</li>
+                        <li>Khi nào dùng @Column với nullable = false, unique = true?</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Hoàn thành bài học Phần 1!</h4>
+                        <p>Bạn đã hoàn thành Bài 4 (Phần 1): Kết nối Database với Spring Data JPA.</p>
+                        <p><strong>Phần 2</strong> của bài học sẽ học về: Repository, CRUD với database, và các phương thức truy vấn.</p>
+                    </div>
+
+                    <div class="interactive-section">
+                        <h4><i class="fas fa-play-circle"></i> Kiểm tra nhanh kiến thức</h4>
+                        <div class="input-group">
+                            <label for="quizQuestion">Câu hỏi: Annotation nào dùng để đánh dấu khóa chính trong JPA?</label>
+                            <select id="quizQuestion">
+                                <option value="">-- Chọn đáp án --</option>
+                                <option value="entity">@Entity</option>
+                                <option value="table">@Table</option>
+                                <option value="id">@Id</option>
+                                <option value="column">@Column</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="checkQuiz()">
+                            <i class="fas fa-check"></i> Kiểm tra
+                        </button>
+                        <div class="result" id="quizResult">
+                            <strong>Kết quả:</strong>
+                            <div class="result-content" id="quizResultContent"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 4: Kết nối Database với Spring Data JPA (Phần 1) &copy; GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Xóa class active từ tất cả các link và section
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Kiểm tra quiz
+        function checkQuiz() {
+            const answer = document.getElementById('quizQuestion').value;
+            const resultDiv = document.getElementById('quizResult');
+            const output = document.getElementById('quizResultContent');
+
+            resultDiv.classList.add('active');
+
+            if (answer === 'id') {
+                output.textContent = '✅ Chính xác! @Id dùng để đánh dấu khóa chính trong JPA.';
+            } else if (answer === 'entity') {
+                output.textContent = '❌ Chưa chính xác. @Entity dùng để đánh dấu class là Entity. Đáp án đúng là @Id.';
+            } else if (answer === 'table') {
+                output.textContent = '❌ Chưa chính xác. @Table dùng để chỉ định tên bảng. Đáp án đúng là @Id.';
+            } else if (answer === 'column') {
+                output.textContent = '❌ Chưa chính xác. @Column dùng để cấu hình cột. Đáp án đúng là @Id.';
+            } else {
+                output.textContent = '❌ Vui lòng chọn một đáp án.';
+            }
+        }
+    </script>
+</body>
+
+</html>

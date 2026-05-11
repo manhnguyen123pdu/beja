@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REQUEST, RESPONSE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            /* margin-bottom: 10px; */
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            max-height: 80vh;
+            overflow: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+            font-size: 1.4rem;
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+            font-size: 1.2rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        .nav-list ul{
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.5;
+            border: 2px solid #444;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+            font-family: 'Segoe UI', sans-serif;
+            white-space: normal;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #777;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #dcdcaa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        footer {
+            text-align: center;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .ascii-art {
+            background: #2d2d2d;
+            color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.2;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+        }
+
+        .method-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .method-get {
+            background: #61affe;
+            color: white;
+        }
+
+        .method-post {
+            background: #49cc90;
+            color: white;
+        }
+
+        .flow-diagram {
+            background: white;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fab fa-java"></i>REQUEST, RESPONSE</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#gioi-thieu" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu</a></li>
+                    
+                    <!-- NỘI DUNG 1 -->
+                    <li class="nav-item"><a href="#nd1" class="nav-link"><i class="fas fa-exchange-alt"></i> ND1: Phương thức GET và POST</a></li>
+                    <li class="nav-item"><a href="#get" class="nav-link" style="padding-left: 35px;"><i class="fas fa-arrow-down"></i> 1.2 Phương thức GET</a></li>
+                    <li class="nav-item"><a href="#post" class="nav-link" style="padding-left: 35px;"><i class="fas fa-arrow-up"></i> 1.3 Phương thức POST</a></li>
+                    <li class="nav-item"><a href="#put" class="nav-link" style="padding-left: 35px;"><i class="fas fa-arrow-up"></i> 1.4 Phương thức PUT</a></li>
+                    <li class="nav-item"><a href="#delete" class="nav-link" style="padding-left: 35px;"><i class="fas fa-arrow-up"></i> 1.5 Phương thức DELETE</a></li>
+                    <li class="nav-item"><a href="#method-summary" class="nav-link" style="padding-left: 35px;"><i class="fas fa-arrow-up"></i>1.6. Tóm tắt các phương thức HTTP</a></li>
+                    
+                    <!-- NỘI DUNG 2 -->
+                    <li class="nav-item"><a href="#nd2" class="nav-link"><i class="fas fa-input"></i> ND2: Nhận dữ liệu từ form</a></li>
+                    <li class="nav-item"><a href="#getParameter" class="nav-link" style="padding-left: 35px;"><i class="fas fa-tag"></i> 2.1 getParameter()</a></li>
+                    <li class="nav-item"><a href="#getParameterValues" class="nav-link" style="padding-left: 35px;"><i class="fas fa-tags"></i> 2.2 getParameterValues()</a></li>
+                    <li class="nav-item"><a href="#encoding" class="nav-link" style="padding-left: 35px;"><i class="fas fa-language"></i> 2.3 Xử lý encoding</a></li>
+                    
+                    <!-- NỘI DUNG 3 -->
+                    <li class="nav-item"><a href="#nd3" class="nav-link"><i class="fas fa-info-circle"></i> ND3: HttpServletRequest</a></li>
+                    
+                    <!-- NỘI DUNG 4 -->
+                    <li class="nav-item"><a href="#nd4" class="nav-link"><i class="fas fa-reply"></i> ND4: HttpServletResponse</a></li>
+                    
+                    <!-- NỘI DUNG 5 -->
+                    <li class="nav-item"><a href="#nd5" class="nav-link"><i class="fas fa-print"></i> ND5: Gửi dữ liệu về client</a></li>
+                    
+                    <!-- NỘI DUNG 6 -->
+                    <li class="nav-item"><a href="#nd6" class="nav-link"><i class="fas fa-directions"></i> ND6: Redirect và Forward</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- GIỚI THIỆU -->
+                <section id="gioi-thieu" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU</h2>
+                    
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Nội dung bài học</h4>
+                        <ul>
+                            <li><strong>NỘI DUNG 1:</strong> Phương thức GET và POST</li>
+                            <li><strong>NỘI DUNG 2:</strong> Nhận dữ liệu từ form</li>
+                            <li><strong>NỘI DUNG 3:</strong> HttpServletRequest - Chi tiết cú pháp</li>
+                            <li><strong>NỘI DUNG 4:</strong> HttpServletResponse - Chi tiết cú pháp</li>
+                            <li><strong>NỘI DUNG 5:</strong> Gửi dữ liệu về client</li>
+                            <li><strong>NỘI DUNG 6:</strong> Redirect và Forward</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- NỘI DUNG 1: PHƯƠNG THỨC GET VÀ POST -->
+                <section id="nd1" class="section">
+                    <h2><i class="fas fa-exchange-alt"></i> NỘI DUNG 1: PHƯƠNG THỨC GET VÀ POST</h2>
+                   
+                    <h3>1.1. Khái niệm</h3>
+
+<p>
+    HTTP Methods (còn gọi là HTTP verbs) là các phương thức giao tiếp giữa client và server,
+    cho biết hành động mà client muốn server thực hiện trên tài nguyên được chỉ định bởi URL.
+</p>
+
+<p>
+    Mỗi HTTP request đều có một method. Khi Servlet nhận được request,
+    nó sẽ dựa vào method để gọi phương thức tương ứng:
+    <code>doGet()</code>, <code>doPost()</code>,
+    <code>doPut()</code>, <code>doDelete()</code>...
+</p>
+
+<h3>1.2 Các HTTP Methods phổ biến</h3>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Mục đích</th>
+            <th>Idempotent?¹</th>
+            <th>Safe?²</th>
+            <th>Dùng trong Servlet</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>GET</td>
+            <td>Lấy dữ liệu từ server</td>
+            <td>Có</td>
+            <td>Có</td>
+            <td><code>doGet()</code></td>
+        </tr>
+        <tr>
+            <td>POST</td>
+            <td>Gửi dữ liệu để tạo mới</td>
+            <td>Không</td>
+            <td>Không</td>
+            <td><code>doPost()</code></td>
+        </tr>
+        <tr>
+            <td>PUT</td>
+            <td>Cập nhật toàn bộ tài nguyên</td>
+            <td>Có</td>
+            <td>Không</td>
+            <td><code>doPut()</code></td>
+        </tr>
+        <tr>
+            <td>DELETE</td>
+            <td>Xóa tài nguyên</td>
+            <td>Có</td>
+            <td>Không</td>
+            <td><code>doDelete()</code></td>
+        </tr>
+        <tr>
+            <td>PATCH</td>
+            <td>Cập nhật một phần tài nguyên</td>
+            <td>Không</td>
+            <td>Không</td>
+            <td>Không hỗ trợ mặc định</td>
+        </tr>
+        <tr>
+            <td>HEAD</td>
+            <td>Lấy header giống GET nhưng không có body</td>
+            <td>Có</td>
+            <td>Có</td>
+            <td><code>doHead()</code></td>
+        </tr>
+        <tr>
+            <td>OPTIONS</td>
+            <td>Hỏi server hỗ trợ method nào</td>
+            <td>Có</td>
+            <td>Có</td>
+            <td><code>doOptions()</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<p>
+    <sup>1</sup> <strong>Idempotent</strong>: Gọi nhiều lần đều cho kết quả giống như gọi một lần
+    (không gây tác dụng phụ thay đổi dữ liệu nhiều lần).
+</p>
+
+<p>
+    <sup>2</sup> <strong>Safe</strong>: Không làm thay đổi dữ liệu trên server.
+</p>
+                </section>
+
+                <!-- 1.2 Phương thức GET -->
+                <section id="get" class="section">
+                    <h3>1.2. Phương thức GET</h3>
+
+                    <h4>Định nghĩa</h4>
+
+<p>Dùng để lấy dữ liệu (retrieve)</p>
+<p>Dữ liệu gửi kèm qua URL (query string)</p>
+<p>Có giới hạn độ dài (thường 2048-4096 ký tự tùy browser)</p>
+<p>Dữ liệu hiển thị trên thanh địa chỉ → không an toàn cho mật khẩu</p>
+                    <h4>Cú pháp GET request từ trình duyệt</h4>
+                    <div class="ascii-art">
+GET /servlet-path?ten1=gia tri1&ten2=gia tri2 HTTP/1.1
+Host: localhost:8080
+                    </div>
+
+                    <h4>Giải thích cú pháp:</h4>
+                    <table>
+                        <tr><td><strong>GET</strong></td><td>Tên phương thức</td></tr>
+                        <tr><td><strong>/servlet-path</strong></td><td>Đường dẫn đến servlet</td></tr>
+                        <tr><td><strong>?</strong></td><td>Dấu bắt đầu query string (chuỗi tham số)</td></tr>
+                        <tr><td><strong>ten1=gia tri1</strong></td><td>Tham số thứ nhất (tên=giá trị)</td></tr>
+                        <tr><td><strong>&</strong></td><td>Dấu phân cách giữa các tham số</td></tr>
+                        <tr><td><strong>ten2=gia tri2</strong></td><td>Tham số thứ hai</td></tr>
+                        <tr><td><strong>HTTP/1.1</strong></td><td>Phiên bản giao thức</td></tr>
+                        <tr><td><strong>Host:</strong></td><td>Tên miền server</td></tr>
+                    </table>
+
+                    <h4>Cú pháp xử lý GET trong Servlet</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ViDuGetServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/vi-du-get"</span>)
+<span class="keyword">public class</span> <span class="class-name">ViDuGetServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, 
+                        HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        <span class="comment">// Xử lý GET request</span>
+    }
+}
+                    </div>
+
+                    <h4>Giải thích cú pháp:</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Thành phần</th><th>Giải thích</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>@WebServlet("/vi-du-get")</td><td>Annotation đánh dấu đây là servlet, xử lý đường dẫn "/vi-du-get"</td></tr>
+                            <tr><td>public class ViDuGetServlet</td><td>Khai báo class tên ViDuGetServlet</td></tr>
+                            <tr><td>extends HttpServlet</td><td>Kế thừa từ lớp HttpServlet (có sẵn trong thư viện)</td></tr>
+                            <tr><td>@Override</td><td>Đánh dấu ghi đè phương thức của lớp cha</td></tr>
+                            <tr><td>protected</td><td>Phạm vi truy cập (chỉ trong cùng package và lớp con)</td></tr>
+                            <tr><td>void</td><td>Không trả về giá trị</td></tr>
+                            <tr><td>doGet</td><td>Tên phương thức xử lý GET</td></tr>
+                            <tr><td>HttpServletRequest request</td><td>Đối tượng chứa thông tin request từ client</td></tr>
+                            <tr><td>HttpServletResponse response</td><td>Đối tượng để gửi response về client</td></tr>
+                            <tr><td>throws ServletException, IOException</td><td>Khai báo các ngoại lệ có thể ném ra</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- 1.3 Phương thức POST -->
+                <section id="post" class="section">
+                    <h3>1.3. Phương thức POST</h3>
+
+                    <h4>Định nghĩa</h4>
+<p>Dùng để gửi dữ liệu lên server (tạo mới)</p>
+<p>Dữ liệu nằm trong body của request → không hiển thị trên URL</p>
+<p>Không giới hạn độ dài</p>
+<p>An toàn hơn GET cho dữ liệu nhạy cảm</p>
+<p>Không cache được, không bookmark được</p>
+
+                    <h4>Cú pháp POST request</h4>
+                    <div class="ascii-art">
+POST /servlet-path HTTP/1.1
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 27
+
+username=admin&password=123
+                    </div>
+
+                    <h4>Giải thích cú pháp:</h4>
+                    <table>
+                        <tr><td><strong>POST /servlet-path HTTP/1.1</strong></td><td>Dòng request: phương thức POST, đường dẫn, giao thức</td></tr>
+                        <tr><td><strong>Host: localhost:8080</strong></td><td>Header: chỉ định server</td></tr>
+                        <tr><td><strong>Content-Type: application/...</strong></td><td>Header: kiểu dữ liệu gửi lên (form)</td></tr>
+                        <tr><td><strong>Content-Length: 27</strong></td><td>Header: độ dài của body (tính bằng byte)</td></tr>
+                        <tr><td><strong>(dòng trống)</strong></td><td>Phân cách giữa headers và body</td></tr>
+                        <tr><td><strong>username=admin&password=123</strong></td><td>Body: dữ liệu form gửi lên</td></tr>
+                    </table>
+
+                    <h4>Cú pháp xử lý POST trong Servlet</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ViDuPostServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/vi-du-post"</span>)
+<span class="keyword">public class</span> <span class="class-name">ViDuPostServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doPost(HttpServletRequest request, 
+                         HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        <span class="comment">// Xử lý POST request</span>
+    }
+}
+                    </div>
+                    <p><strong>Giải thích:</strong> Tương tự doGet, nhưng phương thức là doPost để xử lý POST request.</p>
+                </section>
+                <section id="put" class="section">
+    <h3>1.4. Phương thức PUT</h3>
+
+    <h4>Định nghĩa</h4>
+    <p>Dùng để cập nhật <strong>toàn bộ</strong> tài nguyên tại URL chỉ định</p>
+    <p>Thay thế hoàn toàn nội dung cũ bằng nội dung mới</p>
+    <p>Idempotent: gọi 10 lần cũng cho kết quả giống như gọi 1 lần</p>
+    <p>Thường dùng trong REST API để cập nhật đối tượng</p>
+
+    <h4>Cú pháp PUT request</h4>
+    <div class="ascii-art">
+PUT /api/users/5 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Content-Length: 45
+
+{
+    "username": "nguyenvana",
+    "email": "ana@example.com"
+}
+    </div>
+
+    <h4>Giải thích cú pháp:</h4>
+    <table>
+        <tr>
+            <td><strong>PUT /api/users/5 HTTP/1.1</strong></td>
+            <td>Dòng request: phương thức PUT, đường dẫn (kèm id=5), giao thức</td>
+        </tr>
+        <tr>
+            <td><strong>Host: localhost:8080</strong></td>
+            <td>Header: chỉ định server</td>
+        </tr>
+        <tr>
+            <td><strong>Content-Type: application/json</strong></td>
+            <td>Header: dữ liệu gửi lên là JSON (thường dùng với PUT)</td>
+        </tr>
+        <tr>
+            <td><strong>Content-Length: 45</strong></td>
+            <td>Header: độ dài của body (tính bằng byte)</td>
+        </tr>
+        <tr>
+            <td><strong>(dòng trống)</strong></td>
+            <td>Phân cách giữa headers và body</td>
+        </tr>
+        <tr>
+            <td><strong>{ "username": "...", "email": "... }</strong></td>
+            <td>Body: dữ liệu JSON dùng để cập nhật toàn bộ user</td>
+        </tr>
+    </table>
+
+    <h4>Lưu ý quan trọng về PUT</h4>
+    <ul>
+        <li>Nếu tài nguyên chưa tồn tại, một số server có thể tạo mới (theo đặc tả HTTP, PUT có thể tạo mới)</li>
+        <li>PUT yêu cầu <strong>gửi toàn bộ</strong> các trường của đối tượng, không chỉ trường thay đổi</li>
+        <li>Để cập nhật một phần, nên dùng <strong>PATCH</strong> thay vì PUT</li>
+    </ul>
+
+    <h4>Cú pháp xử lý PUT trong Servlet</h4>
+    <div class="code-block">
+        <div class="code-header">
+            <span>ViDuPutServlet.java</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/api/users/*"</span>)
+<span class="keyword">public class</span> <span class="class-name">ViDuPutServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doPut(HttpServletRequest request,HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+    }
+}
+    </div>
+    <p><strong>Giải thích:</strong> Phương thức doPut được gọi khi request có method PUT. Cần đọc id từ URL và dữ liệu từ body request để cập nhật.</p>
+
+   
+</section>
+
+<section id="delete" class="section">
+    <h3>1.5. Phương thức DELETE</h3>
+
+    <h4>Định nghĩa</h4>
+    <p>Dùng để <strong>xóa</strong> tài nguyên tại URL chỉ định</p>
+    <p>Idempotent: xóa lần 2 không còn gì để xóa (vẫn trả về thành công)</p>
+    <p>Thường không có body (hoặc body rỗng)</p>
+    <p>Thành công thường trả về mã 204 No Content (không có nội dung)</p>
+
+    <h4>Cú pháp DELETE request</h4>
+    <div class="ascii-art">
+DELETE /api/users/5 HTTP/1.1
+Host: localhost:8080
+Content-Length: 0
+
+    </div>
+
+    <h4>Giải thích cú pháp:</h4>
+    <table>
+        <tr>
+            <td><strong>DELETE /api/users/5 HTTP/1.1</strong></td>
+            <td>Dòng request: phương thức DELETE, đường dẫn (chỉ rõ tài nguyên cần xóa), giao thức</td>
+        </tr>
+        <tr>
+            <td><strong>Host: localhost:8080</strong></td>
+            <td>Header: chỉ định server</td>
+        </tr>
+        <tr>
+            <td><strong>Content-Length: 0</strong></td>
+            <td>Header: không có body dữ liệu</td>
+        </tr>
+        <tr>
+            <td><strong>(dòng trống)</strong></td>
+            <td>Kết thúc request, không có body</td>
+        </tr>
+    </table>
+
+    <h4>Lưu ý quan trọng về DELETE</h4>
+    <ul>
+        <li>DELETE <strong>không nên có body</strong> (theo đặc tả HTTP, nhưng một số API vẫn cho phép)</li>
+        <li>Nếu xóa thành công nhưng không có nội dung trả về, dùng status code <strong>204 (No Content)</strong></li>
+        <li>Nếu xóa thành công và muốn trả về thông báo, dùng status code <strong>200 (OK)</strong></li>
+        <li>Nếu không tìm thấy tài nguyên để xóa, trả về <strong>404 (Not Found)</strong></li>
+    </ul>
+
+    <h4>Cú pháp xử lý DELETE trong Servlet</h4>
+    <div class="code-block">
+        <div class="code-header">
+            <span>ViDuDeleteServlet.java</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/api/users/*"</span>)
+<span class="keyword">public class</span> <span class="class-name">ViDuDeleteServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doDelete(HttpServletRequest request,HtpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+    }
+}
+    </div>
+    <p><strong>Giải thích:</strong> Phương thức doDelete được gọi khi request có method DELETE. Cần lấy id từ URL, thực hiện xóa và trả về status code phù hợp.</p>
+
+</section>
+
+<section id="method-summary" class="section">
+    <h3>1.6. Tóm tắt các phương thức HTTP</h3>
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Mục đích</th>
+            <th>Idempotent</th>
+            <th>Dữ liệu</th>
+            <th>Method trong Servlet</th>
+        </tr>
+        <tr>
+            <td>GET</td>
+            <td>Lấy dữ liệu</td>
+            <td>Có</td>
+            <td>URL (query string)</td>
+            <td>doGet()</td>
+        </tr>
+        <tr>
+            <td>POST</td>
+            <td>Tạo mới</td>
+            <td>Không</td>
+            <td>Body</td>
+            <td>doPost()</td>
+        </tr>
+        <tr>
+            <td>PUT</td>
+            <td>Cập nhật toàn bộ</td>
+            <td>Có</td>
+            <td>Body</td>
+            <td>doPut()</td>
+        </tr>
+        <tr>
+            <td>DELETE</td>
+            <td>Xóa</td>
+            <td>Có</td>
+            <td>Thường không có</td>
+            <td>doDelete()</td>
+        </tr>
+    </table>
+</section>
+                <!-- NỘI DUNG 2: NHẬN DỮ LIỆU TỪ FORM -->
+                <section id="nd2" class="section">
+                    <h2><i class="fas fa-input"></i> NỘI DUNG 2: NHẬN DỮ LIỆU TỪ FORM</h2>
+
+                    <h3>2.1. Các phương thức đọc dữ liệu từ HttpServletRequest</h3>
+                    <h4>Định nghĩa</h4>
+
+<p>
+    <code>HttpServletRequest</code> là đối tượng đại diện cho request từ client gửi lên server.
+</p>
+
+<p>
+    Servlet container tạo đối tượng này và truyền vào các phương thức
+    <code>doGet()</code>, <code>doPost()</code>,
+    <code>doPut()</code>, <code>doDelete()</code> của Servlet.
+</p>
+
+<p>
+    Thông qua đối tượng này, Servlet có thể đọc được mọi thông tin từ client:
+    tham số, header, cookie, session, dữ liệu upload,...
+</p>
+
+<h5>Các nhóm phương thức chính</h5>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Nhóm phương thức</th>
+            <th>Mục đích</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>getParameter...()</code></td>
+            <td>Đọc dữ liệu từ form hoặc query string</td>
+        </tr>
+        <tr>
+            <td><code>getHeader...()</code></td>
+            <td>Đọc thông tin header HTTP</td>
+        </tr>
+        <tr>
+            <td><code>getCookie()</code></td>
+            <td>Đọc cookie từ client</td>
+        </tr>
+        <tr>
+            <td><code>getSession()</code></td>
+            <td>Làm việc với session</td>
+        </tr>
+        <tr>
+            <td><code>get...()</code></td>
+            <td>Lấy thông tin về request (URL, IP, method,...)</td>
+        </tr>
+        <tr>
+            <td><code>getReader()</code> / <code>getInputStream()</code></td>
+            <td>Đọc raw data từ body</td>
+        </tr>
+    </tbody>
+</table>
+                </section>
+
+                <!-- 2.1.1 getParameter -->
+                <section id="getParameter" class="section">
+                    <h4>2.1.1. getParameter(String name)</h4>
+
+                    <h5>Cú pháp:</h5>
+                    <div class="code-block">
+String giaTri = request.getParameter(<span class="string">"tenThamSo"</span>);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>request:</strong> Đối tượng HttpServletRequest</li>
+                        <li><strong>getParameter():</strong> Phương thức đọc tham số</li>
+                        <li><strong>"tenThamSo":</strong> Tên tham số cần đọc (phân biệt hoa-thường)</li>
+                        <li><strong>Trả về:</strong> String - giá trị của tham số, hoặc null nếu không tồn tại</li>
+                    </ul>
+
+                    <h5>Ví dụ:</h5>
+                    <div class="code-block">
+<span class="comment">// Với URL: /servlet?username=nguyenvana&age=20</span>
+String username = request.getParameter(<span class="string">"username"</span>); <span class="comment">// = "nguyenvana"</span>
+String age = request.getParameter(<span class="string">"age"</span>);           <span class="comment">// = "20"</span>
+String email = request.getParameter(<span class="string">"email"</span>);       <span class="comment">// = null (không có)</span>
+                    </div>
+
+                    <h5>Ví dụ với doGet</h5>
+                    <p><strong>File demo.java (Servlet)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>demo.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">package</span> test;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> javax.servlet.ServletException;
+<span class="keyword">import</span> javax.servlet.annotation.WebServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> javax.servlet.http.HttpServletResponse;
+
+<span class="keyword">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">demo</span> <span class="keyword">extends</span> HttpServlet {
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        <span class="comment">// 1. Lấy tham số username từ URL (GET)</span>
+        String username = req.getParameter(<span class="string">"username"</span>);
+        
+        <span class="comment">// 2. Set attribute để chuyển sang JSP</span>
+        req.setAttribute(<span class="string">"username"</span>, username);
+        
+        <span class="comment">// 3. Forward sang login.jsp</span>
+        req.getRequestDispatcher(<span class="string">"/login.jsp"</span>).forward(req, resp);
+    }
+}
+                    </div>
+
+                    <p><strong>File login.jsp</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>login.jsp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span> pageEncoding=<span class="string">"UTF-8"</span>%&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=<span class="string">"UTF-8"</span>&gt;
+&lt;title&gt;Insert title here&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form action=<span class="string">"hello"</span> method=<span class="string">"get"</span>&gt;
+        &lt;input type=<span class="string">"text"</span> name=<span class="string">"username"</span> placeholder=<span class="string">"Tên đăng nhập"</span>&gt;
+        &lt;input type=<span class="string">"password"</span> name=<span class="string">"password"</span> placeholder=<span class="string">"Mật khẩu"</span>&gt;
+        &lt;h1&gt;Hello ${username}&lt;/h1&gt;
+        &lt;button type=<span class="string">"submit"</span>&gt;Đăng nhập&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+
+                    <h5>Cách hoạt động hiện tại:</h5>
+                    <ol>
+                        <li>User nhập username và password</li>
+                        <li>Submit form (method="get") → dữ liệu hiện trên URL</li>
+                        <li>Servlet nhận được username (nhưng không dùng password)</li>
+                        <li>Forward sang JSP và hiển thị "Hello [username]"</li>
+                    </ol>
+
+                    <h5>Ví dụ với doPost</h5>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Demo.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">package</span> test;
+
+<span class="keyword">import</span> java.io.IOException;
+
+<span class="keyword">import</span> javax.servlet.ServletException;
+<span class="keyword">import</span> javax.servlet.annotation.WebServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> javax.servlet.http.HttpServletResponse;
+
+<span class="keyword">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">Demo</span> <span class="keyword">extends</span> HttpServlet {
+
+   <span class="comment">// GET = hiển thị form</span>
+   <span class="keyword">@Override</span>
+   <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp)
+           <span class="keyword">throws</span> ServletException, IOException {
+
+       req.getRequestDispatcher(<span class="string">"/login.jsp"</span>).forward(req, resp);
+   }
+
+   <span class="comment">// POST = xử lý dữ liệu form</span>
+   <span class="keyword">@Override</span>
+   <span class="keyword">protected void</span> doPost(HttpServletRequest req, HttpServletResponse resp)
+           <span class="keyword">throws</span> ServletException, IOException {
+
+       String username = req.getParameter(<span class="string">"username"</span>);
+
+       req.setAttribute(<span class="string">"username"</span>, username);
+
+       req.getRequestDispatcher(<span class="string">"/login.jsp"</span>).forward(req, resp);
+   }
+}
+                    </div>
+
+                    <p><strong>✅ 2️⃣ Code login.jsp</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>login.jsp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span> pageEncoding=<span class="string">"UTF-8"</span>%&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=<span class="string">"UTF-8"</span>&gt;
+&lt;title&gt;Login&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;form action=<span class="string">"hello"</span> method=<span class="string">"post"</span>&gt;
+   &lt;input type=<span class="string">"text"</span> name=<span class="string">"username"</span> placeholder=<span class="string">"Tên đăng nhập"</span>&gt;
+   &lt;input type=<span class="string">"password"</span> name=<span class="string">"password"</span> placeholder=<span class="string">"Mật khẩu"</span>&gt;
+   &lt;button type=<span class="string">"submit"</span>&gt;Đăng nhập&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;h1&gt;Hello ${username}&lt;/h1&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+
+                    <h5>🚀 3️⃣ Flow hoạt động</h5>
+                    <div class="flow-diagram">
+                        <p><strong>Khi bạn mở:</strong> http://localhost:8080/TenProject/hello</p>
+                        <div class="flow-step"><span class="step-number">1</span> Trình duyệt gửi GET</div>
+                        <div class="flow-step"><span class="step-number">2</span> doGet chạy</div>
+                        <div class="flow-step"><span class="step-number">3</span> Forward sang login.jsp</div>
+                        <div class="flow-step"><span class="step-number">4</span> Hiển thị form</div>
+                    </div>
+
+                    <div class="flow-diagram">
+                        <p><strong>Khi bạn bấm Đăng nhập</strong></p>
+                        <div class="flow-step"><span class="step-number">1</span> Form gửi POST tới /hello</div>
+                        <div class="flow-step"><span class="step-number">2</span> doPost chạy</div>
+                        <div class="flow-step"><span class="step-number">3</span> Lấy username</div>
+                        <div class="flow-step"><span class="step-number">4</span> setAttribute</div>
+                        <div class="flow-step"><span class="step-number">5</span> Forward lại login.jsp</div>
+                        <div class="flow-step"><span class="step-number">6</span> ${username} hiển thị</div>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr><th>Hành động</th><th>Method</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Gõ URL</td><td><span class="method-badge method-get">GET</span></td></tr>
+                            <tr><td>Refresh</td><td><span class="method-badge method-get">GET</span></td></tr>
+                            <tr><td>Submit form method="post"</td><td><span class="method-badge method-post">POST</span></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="note">
+                        <strong>Lưu ý:</strong> Bắt buộc phải có doGet để hiển thị form
+                    </div>
+                </section>
+
+                <!-- 2.1.2 getParameterValues -->
+                <section id="getParameterValues" class="section">
+                    <h4>2.1.2. getParameterValues(String name) - Đọc nhiều giá trị (checkbox)</h4>
+
+                    <h5>Cú pháp:</h5>
+                    <div class="code-block">
+String[] cacGiaTri = request.getParameterValues(<span class="string">"tenThamSo"</span>);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li>Dùng cho các tham số có nhiều giá trị (checkbox, select multiple)</li>
+                        <li>Trả về mảng String[] chứa tất cả giá trị</li>
+                        <li>Trả về null nếu tham số không tồn tại</li>
+                    </ul>
+
+                    <h5>Ví dụ:</h5>
+                    <div class="code-block">
+<span class="comment">// HTML: &lt;input type="checkbox" name="hobby" value="reading"&gt; Đọc sách</span>
+<span class="comment">//       &lt;input type="checkbox" name="hobby" value="travel"&gt; Du lịch</span>
+<span class="comment">// Nếu người dùng chọn cả 2:</span>
+String[] hobbies = request.getParameterValues(<span class="string">"hobby"</span>);
+<span class="comment">// hobbies = ["reading", "travel"]</span>
+
+<span class="comment">// Nếu không chọn gì: hobbies = null</span>
+                    </div>
+
+                    <h5>Ví dụ đầy đủ:</h5>
+                    <p><strong>✅ 1️⃣ Demo.java</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Demo.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">package</span> test;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> javax.servlet.ServletException;
+<span class="keyword">import</span> javax.servlet.annotation.WebServlet;
+<span class="keyword">import</span> javax.servlet.http.*;
+
+<span class="keyword">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">Demo</span> <span class="keyword">extends</span> HttpServlet {
+
+   <span class="comment">// Hiển thị form</span>
+   <span class="keyword">@Override</span>
+   <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp)
+           <span class="keyword">throws</span> ServletException, IOException {
+
+       req.getRequestDispatcher(<span class="string">"/login.jsp"</span>).forward(req, resp);
+   }
+
+   <span class="comment">// Xử lý dữ liệu checkbox</span>
+   <span class="keyword">@Override</span>
+   <span class="keyword">protected void</span> doPost(HttpServletRequest req, HttpServletResponse resp)
+           <span class="keyword">throws</span> ServletException, IOException {
+
+       req.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+       resp.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+
+       String[] hobbies = req.getParameterValues(<span class="string">"hobby"</span>);
+
+       <span class="keyword">if</span> (hobbies == <span class="keyword">null</span>) {
+           resp.getWriter().println(<span class="string">"Bạn chưa chọn sở thích nào"</span>);
+       } <span class="keyword">else</span> {
+           resp.getWriter().println(<span class="string">"Sở thích của bạn:&lt;br&gt;"</span>);
+           <span class="keyword">for</span> (String h : hobbies) {
+               resp.getWriter().println(<span class="string">"- "</span> + h + <span class="string">"&lt;br&gt;"</span>);
+           }
+       }
+   }
+}
+                    </div>
+
+                    <p><strong>✅ 2️⃣ login.jsp</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>login.jsp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span> pageEncoding=<span class="string">"UTF-8"</span>%&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset=<span class="string">"UTF-8"</span>&gt;
+&lt;title&gt;Chọn sở thích&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;form action=<span class="string">"hello"</span> method=<span class="string">"post"</span>&gt;
+   &lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"hobby"</span> value=<span class="string">"Đọc sách"</span>&gt; Đọc sách &lt;br&gt;
+   &lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"hobby"</span> value=<span class="string">"Nghe nhạc"</span>&gt; Nghe nhạc &lt;br&gt;
+   &lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"hobby"</span> value=<span class="string">"Thể thao"</span>&gt; Thể thao &lt;br&gt;
+   &lt;button type=<span class="string">"submit"</span>&gt;Gửi&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+
+                    <h5>🚀 3️⃣ Flow hoạt động</h5>
+                    <div class="flow-diagram">
+                        <p><strong>Khi mở:</strong> http://localhost:8080/TenProject/hello</p>
+                        <div class="flow-step"><span class="step-number">→</span> GET → doGet → Forward sang login.jsp → Hiển thị checkbox</div>
+                    </div>
+
+                    <div class="flow-diagram">
+                        <p><strong>Khi submit</strong></p>
+                        <div class="flow-step"><span class="step-number">→</span> POST → doPost → Lấy dữ liệu checkbox → In kết quả ra trình duyệt</div>
+                    </div>
+                </section>
+
+                <!-- 2.2 Xử lý encoding tiếng Việt -->
+                <section id="encoding" class="section">
+                    <h4>2.2. Xử lý encoding tiếng Việt</h4>
+
+                    <h5>Cú pháp set encoding cho request (POST)</h5>
+                    <div class="code-block">
+<span class="comment">// PHẢI đặt TRƯỚC khi đọc bất kỳ parameter nào</span>
+request.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>setCharacterEncoding:</strong> Thiết lập bảng mã cho request</li>
+                        <li><strong>"UTF-8":</strong> Bảng mã Unicode hỗ trợ tiếng Việt</li>
+                        <li>Chỉ có tác dụng với POST request</li>
+                        <li>Phải gọi TRƯỚC khi đọc parameter lần đầu tiên</li>
+                    </ul>
+
+                    <h5>Cú pháp set encoding cho response</h5>
+                    <div class="code-block">
+response.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>setContentType:</strong> Thiết lập kiểu nội dung trả về</li>
+                        <li><strong>"text/html":</strong> Nội dung là HTML</li>
+                        <li><strong>charset=UTF-8:</strong> Sử dụng bảng mã UTF-8</li>
+                        <li>Đảm bảo tiếng Việt hiển thị đúng trên trình duyệt</li>
+                    </ul>
+                </section>
+
+                <!-- NỘI DUNG 3: HTTPSERVLETREQUEST -->
+                <section id="nd3" class="section">
+                    <h2><i class="fas fa-info-circle"></i> NỘI DUNG 3: HTTPSERVLETREQUEST - CHI TIẾT CÚ PHÁP</h2>
+
+                    <h3>3.1. Các phương thức lấy thông tin request</h3>
+
+                    <h4>3.1.1. Lấy thông tin đường dẫn</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Phương thức</th><th>Cú pháp</th><th>Giải thích</th><th>Ví dụ</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>getMethod()</strong></td><td>String method = request.getMethod();</td><td>Lấy phương thức HTTP</td><td>"GET", "POST"</td></tr>
+                            <tr><td><strong>getRequestURI()</strong></td><td>String uri = request.getRequestURI();</td><td>Lấy đường dẫn (không bao gồm domain)</td><td>/project/servlet</td></tr>
+                            <tr><td><strong>getRequestURL()</strong></td><td>StringBuffer url = request.getRequestURL();</td><td>Lấy URL đầy đủ</td><td>http://localhost:8080/project/servlet</td></tr>
+                            <tr><td><strong>getContextPath()</strong></td><td>String context = request.getContextPath();</td><td>Lấy tên ứng dụng</td><td>/FirstServletProject</td></tr>
+                            <tr><td><strong>getServletPath()</strong></td><td>String servletPath = request.getServletPath();</td><td>Lấy đường dẫn servlet</td><td>/hello</td></tr>
+                            <tr><td><strong>getQueryString()</strong></td><td>String query = request.getQueryString();</td><td>Lấy query string</td><td>name=John&age=20</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>3.1.2. Lấy thông tin server/client</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Phương thức</th><th>Cú pháp</th><th>Giải thích</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>getServerName()</strong></td><td>String serverName = request.getServerName();</td><td>Tên server (localhost)</td></tr>
+                            <tr><td><strong>getServerPort()</strong></td><td>int port = request.getServerPort();</td><td>Cổng server (8080)</td></tr>
+                            <tr><td><strong>getRemoteAddr()</strong></td><td>String ip = request.getRemoteAddr();</td><td>Địa chỉ IP của client</td></tr>
+                            <tr><td><strong>getRemoteHost()</strong></td><td>String host = request.getRemoteHost();</td><td>Tên host của client</td></tr>
+                            <tr><td><strong>getRemotePort()</strong></td><td>int remotePort = request.getRemotePort();</td><td>Cổng của client</td></tr>
+                            <tr><td><strong>getProtocol()</strong></td><td>String protocol = request.getProtocol();</td><td>Giao thức (HTTP/1.1)</td></tr>
+                            <tr><td><strong>getScheme()</strong></td><td>String scheme = request.getScheme();</td><td>Scheme (http/https)</td></tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- NỘI DUNG 4: HTTPSERVLETRESPONSE -->
+                <section id="nd4" class="section">
+                    <h2><i class="fas fa-reply"></i> NỘI DUNG 4: HTTPSERVLETRESPONSE - CHI TIẾT CÚ PHÁP</h2>
+
+                    <h3>4.1. Thiết lập response</h3>
+
+                    <h4>4.1.1. setContentType()</h4>
+                    <div class="code-block">
+response.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+                    </div>
+                    <p><strong>Giải thích:</strong> Thiết lập kiểu nội dung (MIME type) của response</p>
+                    <ul>
+                        <li><strong>text/html:</strong> Nội dung là HTML</li>
+                        <li><strong>text/plain:</strong> Văn bản thuần túy</li>
+                        <li><strong>application/json:</strong> Dữ liệu JSON</li>
+                        <li><strong>application/xml:</strong> Dữ liệu XML</li>
+                        <li><strong>image/jpeg:</strong> Ảnh JPEG</li>
+                        <li><strong>charset=UTF-8:</strong> Bảng mã UTF-8 cho tiếng Việt</li>
+                    </ul>
+
+                    <h4>4.1.2. setCharacterEncoding()</h4>
+                    <div class="code-block">
+response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+                    </div>
+                    <p><strong>Giải thích:</strong> Chỉ thiết lập encoding, không thiết lập content type. Nên dùng setContentType("text/html;charset=UTF-8") cho gọn.</p>
+
+                    <h3>4.2. Gửi dữ liệu về client</h3>
+
+                    <h4>4.2.1. getWriter() - Ghi text</h4>
+                    <div class="code-block">
+PrintWriter out = response.getWriter();
+out.println(<span class="string">"Nội dung cần ghi"</span>);
+out.close(); <span class="comment">// Đóng writer (không bắt buộc nhưng nên làm)</span>
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>getWriter():</strong> Lấy đối tượng PrintWriter để ghi text</li>
+                        <li><strong>println():</strong> Ghi một dòng văn bản (tự động xuống dòng)</li>
+                        <li><strong>print():</strong> Ghi văn bản (không xuống dòng)</li>
+                        <li><strong>close():</strong> Đóng writer, giải phóng tài nguyên</li>
+                    </ul>
+
+                    <h5>Ví dụ:</h5>
+                    <div class="code-block">
+PrintWriter out = response.getWriter();
+out.println(<span class="string">"&lt;!DOCTYPE html&gt;"</span>);
+out.println(<span class="string">"&lt;html&gt;"</span>);
+out.println(<span class="string">"&lt;head&gt;&lt;title&gt;Trang web&lt;/title&gt;&lt;/head&gt;"</span>);
+out.println(<span class="string">"&lt;body&gt;"</span>);
+out.println(<span class="string">"&lt;h1&gt;Xin chào&lt;/h1&gt;"</span>);
+out.println(<span class="string">"&lt;/body&gt;"</span>);
+out.println(<span class="string">"&lt;/html&gt;"</span>);
+                    </div>
+                </section>
+
+                <!-- NỘI DUNG 5: GỬI DỮ LIỆU VỀ CLIENT -->
+                <section id="nd5" class="section">
+                    <h2><i class="fas fa-print"></i> NỘI DUNG 5: GỬI DỮ LIỆU VỀ CLIENT</h2>
+
+                    <h3>5.1. Sử dụng PrintWriter</h3>
+
+                    <h4>Cú pháp cơ bản</h4>
+                    <div class="code-block">
+<span class="comment">// 1. Thiết lập content type</span>
+response.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+
+<span class="comment">// 2. Lấy PrintWriter</span>
+PrintWriter out = response.getWriter();
+
+<span class="comment">// 3. Ghi nội dung</span>
+out.println(<span class="string">"Hello World"</span>);
+
+<span class="comment">// 4. Đóng (không bắt buộc nhưng tốt)</span>
+out.close();
+                    </div>
+
+                    <h4>Các phương thức của PrintWriter</h4>
+                    <table>
+                        <thead>
+                            <tr><th>Phương thức</th><th>Cú pháp</th><th>Giải thích</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>print()</strong></td><td>out.print("text");</td><td>Ghi text, không xuống dòng</td></tr>
+                            <tr><td><strong>println()</strong></td><td>out.println("text");</td><td>Ghi text, tự động xuống dòng</td></tr>
+                            <tr><td><strong>printf()</strong></td><td>out.printf("%s %d", "ten", 20);</td><td>Ghi với định dạng</td></tr>
+                            <tr><td><strong>write()</strong></td><td>out.write("text");</td><td>Ghi text (tương tự print)</td></tr>
+                            <tr><td><strong>flush()</strong></td><td>out.flush();</td><td>Đẩy dữ liệu ra client ngay</td></tr>
+                            <tr><td><strong>close()</strong></td><td>out.close();</td><td>Đóng writer, giải phóng tài nguyên</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h4>Ví dụ tạo trang HTML hoàn chỉnh</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>TaoTrangServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/tao-trang"</span>)
+<span class="keyword">public class</span> <span class="class-name">TaoTrangServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        <span class="comment">// Thiết lập content type</span>
+        resp.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+        
+        <span class="comment">// Lấy PrintWriter</span>
+        PrintWriter out = resp.getWriter();
+        
+        <span class="comment">// Ghi toàn bộ trang HTML</span>
+        out.println(<span class="string">"&lt;!DOCTYPE html&gt;"</span>);
+        out.println(<span class="string">"&lt;html lang='vi'&gt;"</span>);
+        out.println(<span class="string">"&lt;head&gt;"</span>);
+        out.println(<span class="string">"    &lt;meta charset='UTF-8'&gt;"</span>);
+        out.println(<span class="string">"    &lt;meta name='viewport' content='width=device-width, initial-scale=1.0'&gt;"</span>);
+        out.println(<span class="string">"    &lt;title&gt;Trang được tạo từ Servlet&lt;/title&gt;"</span>);
+        out.println(<span class="string">"    &lt;style&gt;"</span>);
+        out.println(<span class="string">"        body { font-family: Arial, sans-serif; margin: 50px; }"</span>);
+        out.println(<span class="string">"        h1 { color: blue; }"</span>);
+        out.println(<span class="string">"        p { color: gray; }"</span>);
+        out.println(<span class="string">"    &lt;/style&gt;"</span>);
+        out.println(<span class="string">"&lt;/head&gt;"</span>);
+        out.println(<span class="string">"&lt;body&gt;"</span>);
+        out.println(<span class="string">"    &lt;h1&gt;Chào mừng bạn!&lt;/h1&gt;"</span>);
+        out.println(<span class="string">"    &lt;p&gt;Đây là trang HTML được tạo hoàn toàn từ Servlet.&lt;/p&gt;"</span>);
+        out.println(<span class="string">"    &lt;p&gt;Thời gian hiện tại: " + new java.util.Date() + "&lt;/p&gt;"</span>);
+        out.println(<span class="string">"&lt;/body&gt;"</span>);
+        out.println(<span class="string">"&lt;/html&gt;"</span>);
+        
+        <span class="comment">// Đóng writer</span>
+        out.close();
+    }
+}
+                    </div>
+                </section>
+
+                <!-- NỘI DUNG 6: REDIRECT VÀ FORWARD -->
+                <section id="nd6" class="section">
+                    <h2><i class="fas fa-directions"></i> NỘI DUNG 6: REDIRECT VÀ FORWARD</h2>
+                
+
+                <!-- 6.1 Redirect -->
+                
+                    <h3>6.1. Redirect (Chuyển hướng)</h3>
+
+                    <h4>Định nghĩa</h4>
+                    <p>Redirect là kỹ thuật yêu cầu trình duyệt chuyển sang một URL khác. Server gửi response với mã 302 và header Location.</p>
+
+                    <h4>Cú pháp</h4>
+                    <div class="code-block">
+<span class="comment">// Chuyển hướng đến URL tuyệt đối</span>
+response.sendRedirect(<span class="string">"https://google.com"</span>);
+
+<span class="comment">// Chuyển hướng trong cùng ứng dụng (relative)</span>
+response.sendRedirect(<span class="string">"welcome"</span>);
+
+<span class="comment">// Chuyển hướng với context path</span>
+response.sendRedirect(request.getContextPath() + <span class="string">"/welcome"</span>);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>sendRedirect(String location):</strong> Phương thức chuyển hướng</li>
+                        <li><strong>location:</strong> Đường dẫn đích (có thể tuyệt đối hoặc tương đối)</li>
+                        <li><strong>request.getContextPath():</strong> Lấy tên ứng dụng (ví dụ: /FirstServletProject)</li>
+                    </ul>
+
+                    <h4>Ví dụ</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>DangNhapServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/dang-nhap"</span>)
+<span class="keyword">public class</span> <span class="class-name">DangNhapServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doPost(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        String username = req.getParameter(<span class="string">"username"</span>);
+        String password = req.getParameter(<span class="string">"password"</span>);
+        
+        <span class="keyword">if</span> (<span class="string">"admin"</span>.equals(username) &amp;&amp; <span class="string">"123"</span>.equals(password)) {
+            <span class="comment">// Đăng nhập thành công - chuyển đến trang chào mừng</span>
+            <span class="comment">// CÚ PHÁP: sendRedirect - client sẽ gửi request mới đến /welcome</span>
+            resp.sendRedirect(<span class="string">"welcome"</span>);
+        } <span class="keyword">else</span> {
+            <span class="comment">// Đăng nhập thất bại - quay lại trang login</span>
+            <span class="comment">// CÚ PHÁP: sendRedirect với tham số báo lỗi</span>
+            resp.sendRedirect(<span class="string">"login.html?error=1"</span>);
+        }
+    }
+}
+                    </div>
+              
+
+                <!-- 6.2 Forward -->
+               
+                    <h3>6.2. Forward (Chuyển tiếp)</h3>
+
+                    <h4>Định nghĩa</h4>
+                    <p>Forward là kỹ thuật chuyển tiếp request từ servlet này sang servlet khác trong cùng server. Trình duyệt không biết có sự chuyển tiếp.</p>
+
+                    <h4>Cú pháp</h4>
+                    <div class="code-block">
+<span class="comment">// Lấy RequestDispatcher</span>
+RequestDispatcher dispatcher = request.getRequestDispatcher(<span class="string">"dich"</span>);
+
+<span class="comment">// Forward request và response</span>
+dispatcher.forward(request, response);
+                    </div>
+
+                    <p>Hoặc viết gọn:</p>
+                    <div class="code-block">
+request.getRequestDispatcher(<span class="string">"dich"</span>).forward(request, response);
+                    </div>
+
+                    <h5>Giải thích:</h5>
+                    <ul>
+                        <li><strong>getRequestDispatcher(String path):</strong> Lấy đối tượng chuyển tiếp</li>
+                        <li><strong>path:</strong> Đường dẫn đích (có thể là servlet hoặc JSP)</li>
+                        <li><strong>forward(request, response):</strong> Thực hiện chuyển tiếp</li>
+                    </ul>
+
+                    <h4>Ví dụ</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>XuLyServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/xu-ly"</span>)
+<span class="keyword">public class</span> <span class="class-name">XuLyServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doPost(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        String username = req.getParameter(<span class="string">"username"</span>);
+        
+        <span class="keyword">if</span> (username == <span class="keyword">null</span> || username.isEmpty()) {
+            <span class="comment">// Lỗi - forward về form đăng ký</span>
+            <span class="comment">// CÚ PHÁP: setAttribute để gửi thông báo lỗi</span>
+            req.setAttribute(<span class="string">"error"</span>, <span class="string">"Tên không được để trống"</span>);
+            
+            <span class="comment">// CÚ PHÁP: forward - request được chuyển đến /show-form</span>
+            request.getRequestDispatcher(<span class="string">"/show-form"</span>).forward(req, resp);
+        } <span class="keyword">else</span> {
+            <span class="comment">// Thành công - forward đến servlet hiển thị</span>
+            req.setAttribute(<span class="string">"username"</span>, username);
+            request.getRequestDispatcher(<span class="string">"/hien-thi"</span>).forward(req, resp);
+        }
+    }
+}
+                    </div>
+               
+                    <h3>6.3. So sánh Redirect và Forward</h3>
+
+                    <table class="comparison-table">
+                        <thead>
+                            <tr><th>Tiêu chí</th><th>Redirect</th><th>Forward</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Cú pháp</strong></td><td>response.sendRedirect("url")</td><td>request.getRequestDispatcher("url").forward(req, resp)</td></tr>
+                            <tr><td><strong>Số request</strong></td><td>2 request (client gửi lại)</td><td>1 request duy nhất</td></tr>
+                            <tr><td><strong>URL trên trình duyệt</strong></td><td>Thay đổi thành URL mới</td><td>Giữ nguyên URL ban đầu</td></tr>
+                            <tr><td><strong>Dữ liệu request</strong></td><td>Mất - request cũ và mới khác nhau</td><td>Giữ nguyên - cùng request</td></tr>
+                            <tr><td><strong>Phạm vi</strong></td><td>Có thể chuyển ra ngoài ứng dụng</td><td>Chỉ trong cùng ứng dụng</td></tr>
+                            <tr><td><strong>Tốc độ</strong></td><td>Chậm hơn (2 lần request)</td><td>Nhanh hơn (1 request)</td></tr>
+                            <tr><td><strong>Khi nào dùng</strong></td><td>Sau khi xử lý POST (tránh submit lại)</td><td>Chuyển tiếp nội bộ, lấy dữ liệu</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3>6.4. RequestDispatcher - Các phương thức</h3>
+
+                    <h4>6.4.1. forward()</h4>
+                    <div class="code-block">
+dispatcher.forward(request, response);
+                    </div>
+                    <p><strong>Giải thích:</strong> Chuyển tiếp request và response đến tài nguyên khác. Không được ghi response trước khi forward (sẽ có lỗi).</p>
+
+                    <h4>6.4.2. include()</h4>
+                    <div class="code-block">
+dispatcher.include(request, response);
+                    </div>
+                    <p><strong>Giải thích:</strong> Bao gồm nội dung của tài nguyên khác vào response hiện tại. Giống "include" trong JSP. Có thể include nhiều tài nguyên.</p>
+
+                    <h4>Ví dụ include:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>TrangChuServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/trang-chu"</span>)
+<span class="keyword">public class</span> <span class="class-name">TrangChuServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        resp.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);
+        PrintWriter out = resp.getWriter();
+        
+        out.println(<span class="string">"&lt;html&gt;&lt;body&gt;"</span>);
+        out.println(<span class="string">"&lt;h1&gt;Đầu trang&lt;/h1&gt;"</span>);
+        
+        <span class="comment">// Include header</span>
+        request.getRequestDispatcher(<span class="string">"/header"</span>).include(req, resp);
+        
+        out.println(<span class="string">"&lt;p&gt;Nội dung chính&lt;/p&gt;"</span>);
+        
+        <span class="comment">// Include footer</span>
+        request.getRequestDispatcher(<span class="string">"/footer"</span>).include(req, resp);
+        
+        out.println(<span class="string">"&lt;/body&gt;&lt;/html&gt;"</span>);
+    }
+}
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>REQUEST, RESPONSE &copy;- GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

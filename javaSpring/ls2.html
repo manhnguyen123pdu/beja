@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 2: CÁC PHƯƠNG THỨC HTTP TRONG SPRING BOOT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .nav-link1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-run {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .visual-array {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .array-item {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .array-index {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        .array-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .algorithm-steps {
+            background: #f0f7ff;
+            border-left: 4px solid #4dabf7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .algorithm-steps ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .algorithm-steps li {
+            margin-bottom: 5px;
+        }
+
+        .method-demo {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo .wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .demo .array {
+            display: flex;
+        }
+
+        .demo .item {
+            width: 100px;
+            padding: 15px;
+            margin: 5px;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.4s;
+        }
+
+        .demo .active {
+            background: #ffcc00;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .demo .arrow {
+            position: absolute;
+            top: -35px;
+            font-size: 28px;
+            transition: 0.4s;
+        }
+
+        .demo .index {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-exchange-alt"></i> BÀI 2: CÁC PHƯƠNG THỨC HTTP TRONG SPRING BOOT</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu bài học</a></li>
+                    <li class="nav-item"><a href="#http-methods" class="nav-link"><i class="fas fa-globe"></i> HTTP Methods</a></li>
+                    <li class="nav-item"><a href="#model" class="nav-link"><i class="fas fa-cube"></i> Tạo Model User</a></li>
+                    <li class="nav-item"><a href="#list-storage" class="nav-link"><i class="fas fa-list"></i> List lưu trữ tạm</a></li>
+                    <li class="nav-item"><a href="#getmapping" class="nav-link"><i class="fas fa-download"></i> @GetMapping</a></li>
+                    <li class="nav-item"><a href="#requestparam" class="nav-link"><i class="fas fa-question-circle"></i> @RequestParam</a></li>
+                    <li class="nav-item"><a href="#pathvariable" class="nav-link"><i class="fas fa-link"></i> @PathVariable</a></li>
+                    <li class="nav-item"><a href="#postmapping" class="nav-link"><i class="fas fa-upload"></i> @PostMapping</a></li>
+                    <li class="nav-item"><a href="#deletemapping" class="nav-link"><i class="fas fa-trash"></i> @DeleteMapping</a></li>
+                    <!-- <li class="nav-item"><a href="#cors" class="nav-link"><i class="fas fa-shield-alt"></i> @CrossOrigin</a></li> -->
+                    <li class="nav-item"><a href="#complete-example" class="nav-link"><i class="fas fa-code"></i> Ví dụ tổng hợp</a></li>
+                    <li class="nav-item"><a href="#exercises" class="nav-link"><i class="fas fa-tasks"></i> Bài tập</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link"><i class="fas fa-clipboard-check"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN GIỚI THIỆU BÀI HỌC -->
+                <section id="intro" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU BÀI HỌC</h2>
+
+                    <h3>1. Mở đầu</h3>
+                    <p><strong>Ở Bài 1, chúng ta đã:</strong></p>
+                    <ul>
+                        <li>Tạo được dự án Spring Boot đầu tiên</li>
+                        <li>Hiểu cấu trúc thư mục</li>
+                        <li>Chạy thành công ứng dụng</li>
+                        <li>Tạo Controller đơn giản và trả về chuỗi "All User"</li>
+                    </ul>
+
+                    <h4>Vấn đề của Bài 1:</h4>
+                    <div class="note">
+                        <p>Bài 1 mới chỉ trả về chuỗi văn bản đơn giản. Trong thực tế, API cần xử lý nhiều loại request khác nhau:</p>
+                        <ul>
+                            <li><strong>Lấy danh sách (GET)</strong></li>
+                            <li><strong>Lấy chi tiết theo ID (GET có tham số)</strong></li>
+                            <li><strong>Thêm mới (POST)</strong></li>
+                            <li><strong>Cập nhật (PUT)</strong></li>
+                            <li><strong>Xóa (DELETE)</strong></li>
+                        </ul>
+                    </div>
+
+                    <h3>2. Mục tiêu bài học</h3>
+                    <p>Sau khi hoàn thành bài học này, học viên sẽ:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mục tiêu</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Hiểu về HTTP Methods</td>
+                                    <td>Biết GET, POST, PUT, DELETE dùng để làm gì</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Hiểu về Model</td>
+                                    <td>Biết Model là gì và cách tạo class User</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Thành thạo @GetMapping</td>
+                                    <td>Xử lý GET không tham số và có tham số</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Thành thạo @RequestParam</td>
+                                    <td>Lấy tham số từ query string (?key=value)</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Thành thạo @PathVariable</td>
+                                    <td>Lấy tham số từ URL (/user/{id})</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Thành thạo @PostMapping</td>
+                                    <td>Nhận dữ liệu JSON từ client</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Thành thạo @DeleteMapping</td>
+                                    <td>Xóa dữ liệu theo ID</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Làm việc với List</td>
+                                    <td>Lưu trữ dữ liệu tạm thời để minh họa</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN HTTP METHODS -->
+                <section id="http-methods" class="section">
+                    <h2><i class="fas fa-globe"></i> ÔN TẬP VỀ HTTP METHODS</h2>
+
+                    <h3>1. Các phương thức HTTP chính</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phương thức</th>
+                                    <th>Chức năng</th>
+                                    <th>Ví dụ URL</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>GET</strong></td>
+                                    <td>Lấy dữ liệu</td>
+                                    <td>/users</td>
+                                    <td>Lấy danh sách users</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>GET</strong></td>
+                                    <td>Lấy dữ liệu</td>
+                                    <td>/users/1</td>
+                                    <td>Lấy user có ID = 1</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>POST</strong></td>
+                                    <td>Thêm mới</td>
+                                    <td>/users</td>
+                                    <td>Thêm user mới</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PUT</strong></td>
+                                    <td>Cập nhật</td>
+                                    <td>/users/1</td>
+                                    <td>Cập nhật user có ID = 1</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DELETE</strong></td>
+                                    <td>Xóa</td>
+                                    <td>/users/1</td>
+                                    <td>Xóa user có ID = 1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Các annotation tương ứng trong Spring Boot</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>HTTP Method</th>
+                                    <th>Spring Annotation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GET</td>
+                                    <td><code>@GetMapping</code></td>
+                                </tr>
+                                <tr>
+                                    <td>POST</td>
+                                    <td><code>@PostMapping</code></td>
+                                </tr>
+                                <tr>
+                                    <td>PUT</td>
+                                    <td><code>@PutMapping</code></td>
+                                </tr>
+                                <tr>
+                                    <td>DELETE</td>
+                                    <td><code>@DeleteMapping</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN TẠO MODEL USER -->
+                <section id="model" class="section">
+                    <h2><i class="fas fa-cube"></i> TẠO MODEL USER</h2>
+
+                    <h3>1. Model là gì?</h3>
+                    <p><strong>Model</strong> là class đại diện cho một đối tượng trong thực tế (User, Product, Employee...). Nó định nghĩa cấu trúc dữ liệu mà ứng dụng sẽ sử dụng.</p>
+                    
+                    <p><strong>Ví dụ:</strong></p>
+                    <ul>
+                        <li>Người dùng thực tế: Nguyễn Văn A, 25 tuổi, email a@gmail.com</li>
+                        <li>Trong code: User object có các thuộc tính: id, name, age, email</li>
+                    </ul>
+
+                    <h3>2. Tạo package model</h3>
+                    <ol>
+                        <li><strong>Bước 1:</strong> Trong IntelliJ, mở project đã tạo ở Bài 1</li>
+                        <li><strong>Bước 2:</strong> Tìm đến thư mục src/main/java/com/example/demo/</li>
+                        <li><strong>Bước 3:</strong> Click chuột phải vào package com.example.demo → New → Package</li>
+                        <li><strong>Bước 4:</strong> Nhập tên package: <strong>model</strong> → Enter</li>
+                    </ol>
+
+                    <h3>3. Tạo class User</h3>
+                    <p><strong>File:</strong> src/main/java/com/example/demo/model/User.java</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>User.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.demo.model;<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Lớp User đại diện cho người dùng trong hệ thống</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 1. Thuộc tính (private - tính đóng gói)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String id;          <span class="comment">// Mã người dùng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;        <span class="comment">// Họ tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;       <span class="comment">// Email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String password;    <span class="comment">// Mật khẩu</span><br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Constructor không tham số (BẮT BUỘC - Spring cần để tạo object từ JSON)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">User</span>() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 3. Constructor có tham số (tiện lợi khi tạo object)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">User</span>(String id, String name, String email, String password) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.password = password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 4. Getter và Setter (BẮT BUỘC - để Jackson đọc/ghi dữ liệu)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getId() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setId(String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getEmail() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setEmail(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getPassword() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setPassword(String password) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.password = password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- PHẦN LIST LƯU TRỮ TẠM -->
+                <section id="list-storage" class="section">
+                    <h2><i class="fas fa-list"></i> TẠO LIST LƯU TRỮ DỮ LIỆU TẠM</h2>
+
+                    <h3>1. Vì sao cần List?</h3>
+                    <p>Trong thực tế, dữ liệu được lưu trong database. Nhưng để học, chúng ta dùng List để lưu tạm trong bộ nhớ.</p>
+
+                    <h3>2. Cập nhật UserController</h3>
+                    <p><strong>File:</strong> src/main/java/com/example/demo/controller/UserController.java</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.demo.controller;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.demo.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.*;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.ArrayList;<br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        @RestController<br>
+                        @RequestMapping("/user")<br>
+                        <span class="keyword">public class</span> <span class="class-name">UserController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tạo List để lưu trữ users (thay cho database)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructor: Khởi tạo dữ liệu mẫu</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserController</span>() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Thêm 2 user mẫu khi controller được khởi tạo</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;users.add(<span class="keyword">new</span> User("1", "Nguyen Van A", "a@gmail.com", "123456"));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;users.add(<span class="keyword">new</span> User("2", "Tran Thi B", "b@gmail.com", "789012"));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Đã tạo " + users.size() + " user mẫu");<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>3. Giải thích</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dòng code</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>private List&lt;User&gt; users = new ArrayList&lt;&gt;();</code></td>
+                                    <td>Tạo List để lưu các đối tượng User</td>
+                                </tr>
+                                <tr>
+                                    <td><code>public UserController() { ... }</code></td>
+                                    <td>Constructor chạy khi controller được tạo, thêm dữ liệu mẫu</td>
+                                </tr>
+                                <tr>
+                                    <td><code>users.add(new User(...))</code></td>
+                                    <td>Thêm user mới vào List</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN @GETMAPPING -->
+                <section id="getmapping" class="section">
+                    <h2><i class="fas fa-download"></i> @GETMAPPING - XỬ LÝ GET REQUEST</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@GetMapping</strong> là annotation dùng để xử lý các request HTTP GET.</p>
+                    <p>GET là phương thức dùng để lấy dữ liệu từ server.</p>
+
+                    <h3>2. Mục đích sử dụng</h3>
+                    <ul>
+                        <li>Lấy danh sách tất cả users</li>
+                        <li>Lấy chi tiết một user theo ID</li>
+                        <li>Tìm kiếm users theo điều kiện</li>
+                        <li>Không làm thay đổi dữ liệu trên server</li>
+                    </ul>
+
+                    <h3>3. Cú pháp cơ bản</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/duong-dan")<br>
+                        <span class="keyword">public</span> KieuTraVe tenHam() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xử lý logic</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> duLieu;<br>
+                        }
+                    </div>
+
+                    <h3>4. Giải thích cú pháp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@GetMapping("/duong-dan")</td>
+                                    <td>Định nghĩa URL mà client sẽ gọi</td>
+                                    <td>@GetMapping("/getAll")</td>
+                                </tr>
+                                <tr>
+                                    <td>public</td>
+                                    <td>Phạm vi truy cập - để Spring gọi được</td>
+                                    <td>public</td>
+                                </tr>
+                                <tr>
+                                    <td>KieuTraVe</td>
+                                    <td>Kiểu dữ liệu trả về</td>
+                                    <td>List&lt;User&gt;, String, User</td>
+                                </tr>
+                                <tr>
+                                    <td>tenHam()</td>
+                                    <td>Tên hàm xử lý</td>
+                                    <td>getAllUsers()</td>
+                                </tr>
+                                <tr>
+                                    <td>return duLieu;</td>
+                                    <td>Dữ liệu trả về cho client</td>
+                                    <td>return users;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ 1: GET trả về chuỗi đơn giản</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/hello")<br>
+                        <span class="keyword">public</span> String sayHello() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Hello from Spring Boot!";<br>
+                        }
+                    </div>
+                    <p><strong>Kết quả:</strong> http://localhost:8080/user/hello → "Hello from Spring Boot!"</p>
+
+                    <h3>6. Ví dụ 2: GET không tham số - Lấy danh sách</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/getAll")<br>
+                        <span class="keyword">public</span> List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> users;  <span class="comment">// Trả về danh sách users</span><br>
+                        }
+                    </div>
+
+                    <p><strong>Giải thích ví dụ:</strong></p>
+                    <ul>
+                        <li><code>@GetMapping("/getAll")</code>: Xử lý GET request đến đường dẫn /user/getAll</li>
+                        <li><code>public List&lt;User&gt;</code>: Trả về List các đối tượng User</li>
+                        <li><code>return users;</code>: Trả danh sách users đã khởi tạo</li>
+                    </ul>
+
+                    <p><strong>Kết quả khi gọi http://localhost:8080/user/getAll:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>JSON Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": "1",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Nguyen Van A",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email": "a@gmail.com",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"password": "123456"<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;},<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": "2",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Tran Thi B",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"email": "b@gmail.com",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"password": "789012"<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        ]
+                    </div>
+
+                    <h3>7. Lưu ý quan trọng</h3>
+                    <div class="note">
+                        <p>Khi trả về object (User, List&lt;User&gt;), Spring Boot tự động chuyển thành JSON nhờ thư viện Jackson. Jackson sử dụng getter để đọc dữ liệu.</p>
+                        
+                        <p><strong>Nếu thiếu getter:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Thiếu getter</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            </div>
+                            <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;  <span class="comment">// Không có getName()</span><br>
+                            }<br>
+                            <span class="comment">// Kết quả: {} - JSON rỗng</span>
+                        </div>
+
+                        <p><strong>Nếu có đủ getter:</strong></p>
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>Có getter</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            </div>
+                            <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getName() { <span class="keyword">return</span> name; }  <span class="comment">// Bắt buộc phải có</span><br>
+                            }<br>
+                            <span class="comment">// Kết quả: {"name": "Nguyen Van A"}</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PHẦN @REQUESTPARAM -->
+                <section id="requestparam" class="section">
+                    <h2><i class="fas fa-question-circle"></i> @REQUESTPARAM - LẤY THAM SỐ TỪ QUERY STRING</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@RequestParam</strong> là annotation dùng để lấy tham số từ URL dạng query string (?key=value).</p>
+
+                    <h3>2. Mục đích sử dụng</h3>
+                    <ul>
+                        <li>Lấy tham số tìm kiếm: /user/search?name=Nguyen</li>
+                        <li>Lấy tham số phân trang: /user/list?page=1&limit=10</li>
+                        <li>Lấy tham số lọc: /user/filter?age=25&active=true</li>
+                    </ul>
+
+                    <h3>3. Cú pháp</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/duong-dan")<br>
+                        <span class="keyword">public</span> KieuTraVe tenHam(@RequestParam("ten-tham-so") KieuDuLieu tenBien) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xử lý với tenBien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> duLieu;<br>
+                        }
+                    </div>
+
+                    <h3>4. Giải thích cú pháp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@RequestParam("ten-tham-so")</td>
+                                    <td>Lấy giá trị từ tham số trên URL</td>
+                                    <td>@RequestParam("name")</td>
+                                </tr>
+                                <tr>
+                                    <td>KieuDuLieu</td>
+                                    <td>Kiểu dữ liệu của tham số</td>
+                                    <td>String, int, boolean</td>
+                                </tr>
+                                <tr>
+                                    <td>tenBien</td>
+                                    <td>Biến nhận giá trị</td>
+                                    <td>String userName</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ 1: Một tham số</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/search")<br>
+                        <span class="keyword">public</span> String searchUser(@RequestParam("name") String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đang tìm user có tên: " + name;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/search?name=Nguyen</p>
+                    <p><strong>Kết quả:</strong> "Đang tìm user có tên: Nguyen"</p>
+
+                    <h3>6. Ví dụ 2: Nhiều tham số</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/filter")<br>
+                        <span class="keyword">public</span> String filterUsers(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam("page") <span class="keyword">int</span> page,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam("limit") <span class="keyword">int</span> limit) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Trang " + page + ", mỗi trang " + limit + " bản ghi";<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/filter?page=1&limit=10</p>
+                    <p><strong>Kết quả:</strong> "Trang 1, mỗi trang 10 bản ghi"</p>
+
+                    <h3>7. Ví dụ 3: Tham số không bắt buộc (required = false)</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/search2")<br>
+                        <span class="keyword">public</span> String searchUser2(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam(value = "name", required = <span class="keyword">false</span>) String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (name == <span class="keyword">null</span>) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Vui lòng nhập tên cần tìm";<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đang tìm user có tên: " + name;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong></p>
+                    <ul>
+                        <li>http://localhost:8080/user/search2?name=Nguyen → "Đang tìm user có tên: Nguyen"</li>
+                        <li>http://localhost:8080/user/search2 → "Vui lòng nhập tên cần tìm"</li>
+                    </ul>
+
+                    <h3>8. Ví dụ 4: Giá trị mặc định (defaultValue)</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/list")<br>
+                        <span class="keyword">public</span> String getUserList(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam(value = "page", defaultValue = "1") <span class="keyword">int</span> page,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam(value = "limit", defaultValue = "5") <span class="keyword">int</span> limit) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Trang " + page + ", hiển thị " + limit + " user";<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong></p>
+                    <ul>
+                        <li>http://localhost:8080/user/list → "Trang 1, hiển thị 5 user"</li>
+                        <li>http://localhost:8080/user/list?page=2&limit=10 → "Trang 2, hiển thị 10 user"</li>
+                    </ul>
+                </section>
+
+                <!-- PHẦN @PATHVARIABLE -->
+                <section id="pathvariable" class="section">
+                    <h2><i class="fas fa-link"></i> @PATHVARIABLE - LẤY THAM SỐ TỪ URL</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@PathVariable</strong> là annotation dùng để lấy giá trị từ URL dạng đường dẫn động (/user/{id}).</p>
+
+                    <h3>2. Mục đích sử dụng</h3>
+                    <ul>
+                        <li>Lấy ID từ URL: /user/1 → lấy id = 1</li>
+                        <li>Lấy thông tin chi tiết: /product/iphone-14</li>
+                        <li>URL có cấu trúc: /user/1/order/5</li>
+                    </ul>
+
+                    <h3>3. Cú pháp</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/duong-dan/{ten-bien}")<br>
+                        <span class="keyword">public</span> KieuTraVe tenHam(@PathVariable("ten-bien") KieuDuLieu tenBien) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xử lý với tenBien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> duLieu;<br>
+                        }
+                    </div>
+
+                    <h3>4. Giải thích cú pháp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{ten-bien}</td>
+                                    <td>Định nghĩa biến trong URL</td>
+                                    <td>{id}</td>
+                                </tr>
+                                <tr>
+                                    <td>@PathVariable("ten-bien")</td>
+                                    <td>Lấy giá trị từ URL</td>
+                                    <td>@PathVariable("id")</td>
+                                </tr>
+                                <tr>
+                                    <td>KieuDuLieu</td>
+                                    <td>Kiểu dữ liệu</td>
+                                    <td>int, String</td>
+                                </tr>
+                                <tr>
+                                    <td>tenBien</td>
+                                    <td>Biến nhận giá trị</td>
+                                    <td>int userId</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ 1: Một PathVariable</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/getUser/{id}")<br>
+                        <span class="keyword">public</span> String getUserById(@PathVariable("id") String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Lấy user có ID: " + id;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/getUser/5</p>
+                    <p><strong>Kết quả:</strong> "Lấy user có ID: 5"</p>
+
+                    <h3>6. Ví dụ 2: Bỏ qua tên trong @PathVariable (nếu trùng tên biến)</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/detail/{id}")<br>
+                        <span class="keyword">public</span> String getDetail(@PathVariable String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Chi tiết user ID: " + id;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/detail/3</p>
+                    <p><strong>Kết quả:</strong> "Chi tiết user ID: 3"</p>
+
+                    <h3>7. Ví dụ 3: Nhiều PathVariable</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/{userId}/order/{orderId}")<br>
+                        <span class="keyword">public</span> String getUserOrder(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@PathVariable("userId") String userId,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@PathVariable("orderId") String orderId) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "User " + userId + " có order " + orderId;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/1/order/5</p>
+                    <p><strong>Kết quả:</strong> "User 1 có order 5"</p>
+
+                    <h3>8. Ví dụ 4: Kết hợp PathVariable và RequestParam</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/{id}/products")<br>
+                        <span class="keyword">public</span> String getUserProducts(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@PathVariable("id") String userId,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@RequestParam(value = "page", defaultValue = "1") <span class="keyword">int</span> page) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "User " + userId + " xem sản phẩm trang " + page;<br>
+                        }
+                    </div>
+                    <p><strong>Cách gọi:</strong> http://localhost:8080/user/1/products?page=2</p>
+                    <p><strong>Kết quả:</strong> "User 1 xem sản phẩm trang 2"</p>
+                </section>
+
+                <!-- PHẦN @POSTMAPPING -->
+                <section id="postmapping" class="section">
+                    <h2><i class="fas fa-upload"></i> @POSTMAPPING - THÊM DỮ LIỆU MỚI</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@PostMapping</strong> là annotation dùng để xử lý các request HTTP POST.</p>
+                    <p>POST là phương thức dùng để thêm mới dữ liệu trên server.</p>
+
+                    <h3>2. Mục đích sử dụng</h3>
+                    <ul>
+                        <li>Thêm user mới</li>
+                        <li>Tạo đơn hàng mới</li>
+                        <li>Đăng ký tài khoản</li>
+                        <li>Gửi dữ liệu từ form</li>
+                    </ul>
+
+                    <h3>3. @RequestBody - Nhận dữ liệu JSON</h3>
+                    <p><strong>@RequestBody</strong> là annotation dùng để lấy dữ liệu JSON từ body của request và chuyển thành Java object.</p>
+
+                    <h3>4. Cú pháp</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @PostMapping("/duong-dan")<br>
+                        <span class="keyword">public</span> KieuTraVe tenHam(@RequestBody TenClass tenBien) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xử lý với tenBien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> duLieu;<br>
+                        }
+                    </div>
+
+                    <h3>5. Giải thích cú pháp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@PostMapping("/duong-dan")</td>
+                                    <td>Xử lý POST request</td>
+                                    <td>@PostMapping("/add")</td>
+                                </tr>
+                                <tr>
+                                    <td>@RequestBody</td>
+                                    <td>Nhận JSON từ body, chuyển thành object</td>
+                                    <td>@RequestBody User user</td>
+                                </tr>
+                                <tr>
+                                    <td>TenClass</td>
+                                    <td>Class Model tương ứng</td>
+                                    <td>User</td>
+                                </tr>
+                                <tr>
+                                    <td>tenBien</td>
+                                    <td>Object đã được ánh xạ từ JSON</td>
+                                    <td>User newUser</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>6. Ví dụ 1: Thêm user đơn giản</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @PostMapping("/add")<br>
+                        <span class="keyword">public</span> String addUser(@RequestBody User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã nhận user: " + user.getName() + " - " + user.getEmail();<br>
+                        }
+                    </div>
+
+                    <h3>7. Ví dụ 2: Thêm user vào List</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @PostMapping("/addUser")<br>
+                        <span class="keyword">public</span> String addUser(@RequestBody User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;users.add(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã thêm user: " + user.getName() + ", tổng số user: " + users.size();<br>
+                        }
+                    </div>
+
+                    <h3>8. Hướng dẫn test với Postman</h3>
+                    <ol>
+                        <li><strong>Bước 1:</strong> Mở Postman</li>
+                        <li><strong>Bước 2:</strong> Thiết lập request
+                            <ul>
+                                <li>Method: POST</li>
+                                <li>URL: http://localhost:8080/user/addUser</li>
+                            </ul>
+                        </li>
+                        <li><strong>Bước 3:</strong> Chọn Body
+                            <ul>
+                                <li>Tab: Body</li>
+                                <li>Chọn: raw</li>
+                                <li>Chọn định dạng: JSON (ở dropdown bên phải)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Bước 4:</strong> Nhập JSON
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>JSON Body</span>
+                                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                </div>
+                                {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"id": "3",<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"name": "Le Van C",<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"email": "c@gmail.com",<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"password": "abc123"<br>
+                                }
+                            </div>
+                        </li>
+                        <li><strong>Bước 5:</strong> Nhấn Send</li>
+                    </ol>
+                    <p><strong>Kết quả:</strong> "Đã thêm user: Le Van C, tổng số user: 3"</p>
+
+                    <h3>9. Kiểm tra lại bằng GET</h3>
+                    <p>Gọi API GET: http://localhost:8080/user/getAll</p>
+                    <p>Kết quả sẽ hiển thị cả 3 user:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>JSON Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        [<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{"id":"1","name":"Nguyen Van A","email":"a@gmail.com","password":"123456"},<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{"id":"2","name":"Tran Thi B","email":"b@gmail.com","password":"789012"},<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{"id":"3","name":"Le Van C","email":"c@gmail.com","password":"abc123"}<br>
+                        ]
+                    </div>
+                </section>
+
+                <!-- PHẦN @DELETEMAPPING -->
+                <section id="deletemapping" class="section">
+                    <h2><i class="fas fa-trash"></i> @DELETEMAPPING - XÓA DỮ LIỆU</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@DeleteMapping</strong> là annotation dùng để xử lý các request HTTP DELETE.</p>
+                    <p>DELETE là phương thức dùng để xóa dữ liệu trên server.</p>
+
+                    <h3>2. Mục đích sử dụng</h3>
+                    <ul>
+                        <li>Xóa user theo ID</li>
+                        <li>Xóa sản phẩm</li>
+                        <li>Xóa đơn hàng</li>
+                    </ul>
+
+                    <h3>3. Cú pháp</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @DeleteMapping("/duong-dan/{id}")<br>
+                        <span class="keyword">public</span> KieuTraVe tenHam(@PathVariable("id") KieuDuLieu id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xử lý xóa</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> thongBao;<br>
+                        }
+                    </div>
+
+                    <h3>4. Giải thích cú pháp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@DeleteMapping("/duong-dan/{id}")</td>
+                                    <td>Xử lý DELETE request với tham số id</td>
+                                    <td>@DeleteMapping("/delete/{id}")</td>
+                                </tr>
+                                <tr>
+                                    <td>@PathVariable</td>
+                                    <td>Lấy id từ URL</td>
+                                    <td>@PathVariable String id</td>
+                                </tr>
+                                <tr>
+                                    <td>KieuDuLieu</td>
+                                    <td>Kiểu dữ liệu của id</td>
+                                    <td>String, int</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ 1: Xóa user đơn giản</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @DeleteMapping("/delete/{id}")<br>
+                        <span class="keyword">public</span> String deleteUser(@PathVariable("id") String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã xóa user có ID: " + id;<br>
+                        }
+                    </div>
+
+                    <h3>6. Ví dụ 2: Xóa user khỏi List</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @DeleteMapping("/deleteUser/{id}")<br>
+                        <span class="keyword">public</span> String deleteUser(@PathVariable String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xóa user có id khớp</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> removed = users.removeIf(user -> user.getId().equals(id));<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (removed) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã xóa user ID: " + id + ", còn lại " + users.size() + " user";<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Không tìm thấy user ID: " + id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>7. Giải thích code xóa</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dòng code</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>users.removeIf(user -> user.getId().equals(id))</code></td>
+                                    <td>Duyệt List, xóa user nào có id trùng với tham số</td>
+                                </tr>
+                                <tr>
+                                    <td><code>boolean removed</code></td>
+                                    <td>true nếu xóa được, false nếu không tìm thấy</td>
+                                </tr>
+                                <tr>
+                                    <td><code>if (removed) { ... } else { ... }</code></td>
+                                    <td>Kiểm tra và trả kết quả phù hợp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>8. Test với Postman</h3>
+                    <ol>
+                        <li><strong>Bước 1:</strong> Mở Postman</li>
+                        <li><strong>Bước 2:</strong> Thiết lập request
+                            <ul>
+                                <li>Method: DELETE</li>
+                                <li>URL: http://localhost:8080/user/deleteUser/1</li>
+                            </ul>
+                        </li>
+                        <li><strong>Bước 3:</strong> Nhấn Send</li>
+                    </ol>
+                    <p><strong>Kết quả:</strong> "Đã xóa user ID: 1, còn lại 2 user"</p>
+                    <p><strong>Kiểm tra lại:</strong> GET /user/getAll sẽ thấy chỉ còn user 2 và 3</p>
+                </section>
+
+         
+                <!-- PHẦN VÍ DỤ TỔNG HỢP -->
+                <section id="complete-example" class="section">
+                    <h2><i class="fas fa-code"></i> VÍ DỤ TỔNG HỢP - USER CONTROLLER HOÀN CHỈNH</h2>
+
+                    <h3>1. File UserController.java hoàn chỉnh</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.demo.controller;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.demo.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.*;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.ArrayList;<br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        @RestController<br>
+                        @RequestMapping("/user")<br>
+                        <span class="keyword">public class</span> <span class="class-name">UserController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 1. Tạo List lưu trữ users</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Constructor khởi tạo dữ liệu mẫu</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserController</span>() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;users.add(<span class="keyword">new</span> User("1", "Nguyen Van A", "a@gmail.com", "123456"));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;users.add(<span class="keyword">new</span> User("2", "Tran Thi B", "b@gmail.com", "789012"));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println("Đã khởi tạo " + users.size() + " user mẫu");<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 3. GET - Lấy tất cả users</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/getAll")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> users;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 4. GET - Lấy user theo ID (dùng PathVariable)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/getUser/{id}")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getUserById(@PathVariable String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> (User user : users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getId().equals(id)) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Tìm thấy: " + user.getName();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Không tìm thấy user ID: " + id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 5. GET - Tìm kiếm user theo tên (dùng RequestParam)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/search")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String searchUser(@RequestParam String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;String&gt; foundUsers = <span class="keyword">new</span> ArrayList&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> (User user : users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getName().toLowerCase().contains(name.toLowerCase())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foundUsers.add(user.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (foundUsers.isEmpty()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Không tìm thấy user nào có tên chứa: " + name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Tìm thấy: " + String.join(", ", foundUsers);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 6. POST - Thêm user mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@PostMapping("/addUser")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String addUser(@RequestBody User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;users.add(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã thêm user: " + user.getName() + ", tổng số: " + users.size();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 7. DELETE - Xóa user theo ID</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@DeleteMapping("/deleteUser/{id}")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String deleteUser(@PathVariable String id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> removed = users.removeIf(user -> user.getId().equals(id));<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (removed) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Đã xóa user ID: " + id + ", còn lại: " + users.size() + " user";<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Không tìm thấy user ID: " + id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 8. GET - Lấy tổng số user</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/count")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getCount() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> "Tổng số user: " + users.size();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>2. Tổng kết các API đã tạo</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Method</th>
+                                    <th>URL</th>
+                                    <th>Chức năng</th>
+                                    <th>Tham số</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>GET</td>
+                                    <td>/user/getAll</td>
+                                    <td>Lấy tất cả users</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>GET</td>
+                                    <td>/user/getUser/{id}</td>
+                                    <td>Lấy user theo ID</td>
+                                    <td>PathVariable: id</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>GET</td>
+                                    <td>/user/search?name=</td>
+                                    <td>Tìm user theo tên</td>
+                                    <td>RequestParam: name</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>GET</td>
+                                    <td>/user/count</td>
+                                    <td>Đếm số user</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>POST</td>
+                                    <td>/user/addUser</td>
+                                    <td>Thêm user mới</td>
+                                    <td>RequestBody: JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>DELETE</td>
+                                    <td>/user/deleteUser/{id}</td>
+                                    <td>Xóa user</td>
+                                    <td>PathVariable: id</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Cách test từng API</h3>
+                    
+                    <h4>API 1: Lấy tất cả</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET http://localhost:8080/user/getAll
+                    </div>
+
+                    <h4>API 2: Lấy user theo ID</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET http://localhost:8080/user/getUser/1
+                    </div>
+
+                    <h4>API 3: Tìm kiếm</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET http://localhost:8080/user/search?name=Nguyen
+                    </div>
+
+                    <h4>API 4: Đếm số user</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET http://localhost:8080/user/count
+                    </div>
+
+                    <h4>API 5: Thêm user</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        POST http://localhost:8080/user/addUser<br>
+                        Body (JSON):<br>
+                        {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"id": "3",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"name": "Le Van C",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"email": "c@gmail.com",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"password": "abc123"<br>
+                        }
+                    </div>
+
+                    <h4>API 6: Xóa user</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        DELETE http://localhost:8080/user/deleteUser/1
+                    </div>
+                </section>
+
+                <!-- PHẦN BÀI TẬP -->
+                <section id="exercises" class="section">
+                    <h2><i class="fas fa-tasks"></i> BÀI TẬP THỰC HÀNH</h2>
+
+                    <h3>Bài tập 1: Tạo Model Product</h3>
+                    <p>Tạo class <strong>Product</strong> trong package model với các thuộc tính:</p>
+                    <ul>
+                        <li>id (String)</li>
+                        <li>name (String)</li>
+                        <li>price (double)</li>
+                        <li>quantity (int)</li>
+                    </ul>
+                    <p><strong>Yêu cầu:</strong></p>
+                    <ul>
+                        <li>Có constructor không tham số</li>
+                        <li>Có constructor đầy đủ</li>
+                        <li>Có đủ getter/setter</li>
+                    </ul>
+
+                    <h3>Bài tập 2: Tạo ProductController</h3>
+                    <p>Tạo class <strong>ProductController</strong> với các API:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>API</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GET /product/getAll</td>
+                                    <td>Lấy danh sách sản phẩm</td>
+                                </tr>
+                                <tr>
+                                    <td>GET /product/get/{id}</td>
+                                    <td>Lấy sản phẩm theo ID</td>
+                                </tr>
+                                <tr>
+                                    <td>POST /product/add</td>
+                                    <td>Thêm sản phẩm mới</td>
+                                </tr>
+                                <tr>
+                                    <td>DELETE /product/delete/{id}</td>
+                                    <td>Xóa sản phẩm</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Bài tập 3: Thêm tính năng tìm kiếm</h3>
+                    <p>Thêm API tìm kiếm sản phẩm theo tên:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET /product/search?name=iphone
+                    </div>
+
+                    <h3>Bài tập 4: Thêm tính năng lọc theo giá</h3>
+                    <p>Thêm API lọc sản phẩm theo khoảng giá:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        GET /product/filter?min=1000&max=5000
+                    </div>
+
+                    <div class="interactive-section">
+                        <h4><i class="fas fa-play-circle"></i> Kiểm tra nhanh kiến thức</h4>
+                        <div class="input-group">
+                            <label for="quizQuestion">Câu hỏi: Annotation nào dùng để lấy tham số từ URL dạng /user/{id}?</label>
+                            <select id="quizQuestion">
+                                <option value="">-- Chọn đáp án --</option>
+                                <option value="requestparam">@RequestParam</option>
+                                <option value="pathvariable">@PathVariable</option>
+                                <option value="requestbody">@RequestBody</option>
+                                <option value="getmapping">@GetMapping</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="checkQuiz()">
+                            <i class="fas fa-check"></i> Kiểm tra
+                        </button>
+                        <div class="result" id="quizResult">
+                            <strong>Kết quả:</strong>
+                            <div class="result-content" id="quizResultContent"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PHẦN TỔNG KẾT -->
+                <section id="summary" class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> TỔNG KẾT BÀI HỌC</h2>
+
+                    <h3>1. Những gì đã học</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Kiến thức</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Model</td>
+                                    <td>Class đại diện cho dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>@GetMapping</td>
+                                    <td>Xử lý GET request - lấy dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>@RequestParam</td>
+                                    <td>Lấy tham số từ query string ?key=value</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>@PathVariable</td>
+                                    <td>Lấy tham số từ URL /{id}</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>@PostMapping</td>
+                                    <td>Xử lý POST request - thêm dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>@RequestBody</td>
+                                    <td>Nhận JSON từ client, chuyển thành object</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>@DeleteMapping</td>
+                                    <td>Xử lý DELETE request - xóa dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>List</td>
+                                    <td>Lưu trữ dữ liệu tạm thời</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. So sánh các annotation</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Dùng cho</th>
+                                    <th>Lấy dữ liệu từ</th>
+                                    <th>Ví dụ URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@RequestParam</td>
+                                    <td>GET</td>
+                                    <td>Query string</td>
+                                    <td>/search?name=Nguyen</td>
+                                </tr>
+                                <tr>
+                                    <td>@PathVariable</td>
+                                    <td>GET, DELETE</td>
+                                    <td>URL path</td>
+                                    <td>/user/1</td>
+                                </tr>
+                                <tr>
+                                    <td>@RequestBody</td>
+                                    <td>POST, PUT</td>
+                                    <td>Body JSON</td>
+                                    <td>Gửi JSON trong body</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Hoàn thành bài học!</h4>
+                        <p>Bạn đã hoàn thành Bài 2: Các phương thức HTTP trong Spring Boot. Hãy thực hành các bài tập để ghi nhớ kiến thức tốt hơn.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 2: Các phương thức HTTP trong Spring Boot &copy; GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Xóa class active từ tất cả các link và section
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Kiểm tra quiz
+        function checkQuiz() {
+            const answer = document.getElementById('quizQuestion').value;
+            const resultDiv = document.getElementById('quizResult');
+            const output = document.getElementById('quizResultContent');
+
+            resultDiv.classList.add('active');
+
+            if (answer === 'pathvariable') {
+                output.textContent = '✅ Chính xác! @PathVariable dùng để lấy tham số từ URL dạng /user/{id}.';
+            } else if (answer === 'requestparam') {
+                output.textContent = '❌ Chưa chính xác. @RequestParam dùng để lấy tham số từ query string (?key=value). Đáp án đúng là @PathVariable.';
+            } else if (answer === 'requestbody') {
+                output.textContent = '❌ Chưa chính xác. @RequestBody dùng để nhận JSON từ body request. Đáp án đúng là @PathVariable.';
+            } else if (answer === 'getmapping') {
+                output.textContent = '❌ Chưa chính xác. @GetMapping dùng để xử lý GET request, không phải để lấy tham số. Đáp án đúng là @PathVariable.';
+            } else {
+                output.textContent = '❌ Vui lòng chọn một đáp án.';
+            }
+        }
+    </script>
+</body>
+
+</html>

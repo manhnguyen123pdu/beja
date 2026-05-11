@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPA Quan Hệ - One-to-One, One-to-Many, Many-to-Many</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            height: 85vh;
+            overflow-y: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.5;
+            border: 2px solid #444;
+            font-size: 0.85rem;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note, .info-box, .success-box, .warning-box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+                height: auto;
+                max-height: 300px;
+            }
+        }
+
+        .architecture {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 25px;
+            border-radius: 24px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin: 25px 0;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        .demo-box {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-project-diagram"></i> QUAN HỆ TRONG JPA</h1>
+            <p>One-to-One, One-to-Many, Many-to-Many</p>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#phan1" class="nav-link active"><i class="fas fa-info-circle"></i> PHẦN 1: TỔNG QUAN</a></li>
+                    <li class="nav-item"><a href="#phantich" class="nav-link"><i class="fas fa-lightbulb"></i> PHẦN 1.1: Các loại quan hệ</a></li>
+                    <li class="nav-item"><a href="#phan2" class="nav-link"><i class="fas fa-tag"></i> PHẦN 1.2: Các annotation</a></li>
+                    <li class="nav-item"><a href="#phan3" class="nav-link"><i class="fas fa-exchange-alt"></i> PHẦN 1.3: Owner side vs Inverse side</a></li>
+                    <li class="nav-item"><a href="#onetoone" class="nav-link"><i class="fas fa-link"></i> QUAN HỆ ONE-TO-ONE</a></li>
+                    <li class="nav-item"><a href="#onetoone2" class="nav-link"><i class="fas fa-code"></i> CÔNG THỨC ENTITY 1-1</a></li>
+                    <li class="nav-item"><a href="#onetoone3" class="nav-link"><i class="fas fa-user"></i> Ví dụ User - UserProfile</a></li>
+                    <li class="nav-item"><a href="#baitap11" class="nav-link"><i class="fas fa-pen"></i> Bài tập One-to-One</a></li>
+                    <li class="nav-item"><a href="#onetomany" class="nav-link"><i class="fas fa-layer-group"></i> QUAN HỆ ONE-TO-MANY</a></li>
+                    <li class="nav-item"><a href="#congthuc1n" class="nav-link"><i class="fas fa-calculator"></i> CÔNG THỨC ENTITY 1-N</a></li>
+                    <li class="nav-item"><a href="#vidu1n" class="nav-link"><i class="fas fa-building"></i> Ví dụ Department - Employee</a></li>
+                    <li class="nav-item"><a href="#vidu1n2" class="nav-link"><i class="fas fa-school"></i> Ví dụ Lớp học - Sinh viên</a></li>
+                    <li class="nav-item"><a href="#manytomany" class="nav-link"><i class="fas fa-network-wired"></i> QUAN HỆ MANY-TO-MANY</a></li>
+                    <li class="nav-item"><a href="#congthucnn" class="nav-link"><i class="fas fa-calculator"></i> CÔNG THỨC ENTITY N-N</a></li>
+                    <li class="nav-item"><a href="#baitapnn" class="nav-link"><i class="fas fa-pen"></i> Bài tập Many-to-Many</a></li>
+                    <li class="nav-item"><a href="#loi" class="nav-link"><i class="fas fa-bug"></i> CÁC LỖI THƯỜNG GẶP</a></li>
+                    <li class="nav-item"><a href="#tongket" class="nav-link"><i class="fas fa-star"></i> TỔNG KẾT</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN 1: TỔNG QUAN -->
+                <section id="phan1" class="section active">
+                    <h2><i class="fas fa-info-circle"></i> PHẦN 1: TỔNG QUAN VỀ QUAN HỆ TRONG JPA</h2>
+                    
+                    <h3>1.1. Các loại quan hệ trong cơ sở dữ liệu</h3>
+                    <p>Trong thực tế, các bảng dữ liệu thường có quan hệ với nhau. Có 4 loại quan hệ chính:</p>
+                    <div class="architecture">
+                        <pre style="color: #fff; font-family: monospace;">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        CÁC LOẠI QUAN HỆ TRONG DB                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  1. One-to-One (1-1)          2. One-to-Many (1-N)                          │
+│  ┌──────┐      ┌──────┐       ┌──────┐      ┌──────┐                        │
+│  │User  │      │Profile│      │User  │      │Order │                        │
+│  │ 1    │──────│   1   │       │ 1    │─────▶│ N    │                        │
+│  └──────┘      └──────┘       └──────┘      └──────┘                        │
+│  1 User - 1 Profile           1 User - N Orders                             │
+│                                                                              │
+│  3. Many-to-One (N-1)          4. Many-to-Many (N-N)                        │
+│  ┌──────┐      ┌──────┐       ┌──────┐      ┌──────┐                        │
+│  │Order │      │User  │       │Student│     │Course│                        │
+│  │ N    │─────▶│ 1    │       │  N   │◀───▶│  N   │                        │
+│  └──────┘      └──────┘       └──────┘      └──────┘                        │
+│  N Orders - 1 User             N Students - N Courses                       │
+│  (ngược lại của 1-N)                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.2 -->
+                <section id="phantich" class="section">
+                    <h2><i class="fas fa-lightbulb"></i> PHẦN 1.1: Các loại quan hệ trong cơ sở dữ liệu</h2>
+                    <p>Trong thực tế, các bảng dữ liệu thường có quan hệ với nhau. Có 4 loại quan hệ chính:</p>
+                    <div class="architecture">
+                        <pre style="color: #fff; font-family: monospace;">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        CÁC LOẠI QUAN HỆ TRONG DB                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  1. One-to-One (1-1)          2. One-to-Many (1-N)                          │
+│  ┌──────┐      ┌──────┐       ┌──────┐      ┌──────┐                        │
+│  │User  │      │Profile│      │User  │      │Order │                        │
+│  │ 1    │──────│   1   │       │ 1    │─────▶│ N    │                        │
+│  └──────┘      └──────┘       └──────┘      └──────┘                        │
+│  1 User - 1 Profile           1 User - N Orders                             │
+│                                                                              │
+│  3. Many-to-One (N-1)          4. Many-to-Many (N-N)                        │
+│  ┌──────┐      ┌──────┐       ┌──────┐      ┌──────┐                        │
+│  │Order │      │User  │       │Student│     │Course│                        │
+│  │ N    │─────▶│ 1    │       │  N   │◀───▶│  N   │                        │
+│  └──────┘      └──────┘       └──────┘      └──────┘                        │
+│  N Orders - 1 User             N Students - N Courses                       │
+│  (ngược lại của 1-N)                                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.3 -->
+                <section id="phan2" class="section">
+                    <h2><i class="fas fa-tag"></i> PHẦN 1.2: Các annotation JPA dùng để đánh dấu quan hệ</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Annotation</th><th>Ý nghĩa</th><th>Sử dụng cho</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>@OneToOne</td><td>Quan hệ một-một</td><td>Cả 2 phía</td></tr>
+                                <tr><td>@OneToMany</td><td>Quan hệ một-nhiều</td><td>Phía "một"</td></tr>
+                                <tr><td>@ManyToOne</td><td>Quan hệ nhiều-một</td><td>Phía "nhiều"</td></tr>
+                                <tr><td>@ManyToMany</td><td>Quan hệ nhiều-nhiều</td><td>Cả 2 phía</td></tr>
+                                <tr><td>@JoinColumn</td><td>Chỉ định cột khóa ngoại</td><td>Bên sở hữu quan hệ</td></tr>
+                                <tr><td>@JoinTable</td><td>Bảng trung gian cho N-N</td><td>Cả 2 phía</td></tr>
+                                <tr><td>mappedBy</td><td>Bên không sở hữu quan hệ</td><td>Phía không có khóa ngoại</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.4 -->
+                <section id="phan3" class="section">
+                    <h2><i class="fas fa-exchange-alt"></i> PHẦN 1.3: Khái niệm quan trọng: Owner side vs Inverse side</h2>
+                    <div class="architecture">
+                        <pre style="color: #fff; font-family: monospace;">
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    OWNER SIDE vs INVERSE SIDE                               │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   Ví dụ: User (1) ──────────────────▶ Order (N)                             │
+│           │                                    │                             │
+│           │                                    │                             │
+│           ▼                                    ▼                             │
+│   ┌───────────────┐                   ┌───────────────┐                      │
+│   │  INVERSE SIDE │                   │  OWNER SIDE   │                      │
+│   │  (mappedBy)   │                   │  (@JoinColumn)│                      │
+│   │               │                   │               │                      │
+│   │ Có @OneToMany │                   │ Có @ManyToOne │                      │
+│   │ Có mappedBy   │                   │ Có @JoinColumn│                      │
+│   │ KHÔNG có      │                   │ CÓ khóa ngoại │                      │
+│   │ khóa ngoại    │                   │               │                      │
+│   └───────────────┘                   └───────────────┘                      │
+│                                                                              │
+│   ⚠️ QUAN TRỌNG: Chỉ owner side mới có quyền lưu quan hệ vào database!      │
+│   Nếu chỉ set ở inverse side (mappedBy), dữ liệu sẽ KHÔNG được lưu.          │
+└─────────────────────────────────────────────────────────────────────────────┘
+                        </pre>
+                    </div>
+                    <div class="note">
+                        <p><strong>Nguyên tắc quan trọng:</strong></p>
+                        <ul>
+                            <li>@ManyToOne luôn là bên giữ khóa ngoại (foreign key)</li>
+                            <li>@OneToMany đi kèm với mappedBy trỏ về phía @ManyToOne</li>
+                            <li>@ManyToMany cần bảng trung gian (@JoinTable)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- ONE-TO-ONE -->
+                <section id="onetoone" class="section">
+                    <h2><i class="fas fa-link"></i> 3. QUAN HỆ ONE-TO-ONE (1-1)</h2>
+                    
+                    <h3>Khái niệm và ví dụ thực tế</h3>
+                    <p>Một-một là quan hệ mà mỗi bản ghi ở bảng A liên kết với tối đa một bản ghi ở bảng B, và ngược lại.</p>
+                    <p>Ví dụ thực tế:</p>
+                    <ul>
+                        <li>1 người dùng (User) có 1 hồ sơ (Profile)</li>
+                        <li>1 sản phẩm (Product) có 1 thông tin chi tiết (ProductDetail)</li>
+                        <li>1 căn cước công dân (CitizenID) thuộc về 1 người (Person)</li>
+                    </ul>
+                    <div class="architecture">
+                        <pre style="color: #fff; font-family: monospace;">
+┌─────────────────┐               ┌─────────────────┐
+│      users      │               │    profiles     │
+├─────────────────┤               ├─────────────────┤
+│ id (PK)         │               │ id (PK)         │
+│ username        │               │ user_id (FK)    │◀─── khóa ngoại
+│ password        │               │ address         │
+└─────────────────┘               │ phone           │
+        │                         └─────────────────┘
+        │ 1                            │ 1
+        └──────────────────────────────┘
+         1 user chỉ có 1 profile
+         1 profile chỉ thuộc về 1 user
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- CÔNG THỨC ENTITY 1-1 -->
+                <section id="onetoone2" class="section">
+                    <h2><i class="fas fa-code"></i> CÔNG THỨC ENTITY 1-1 (JPA)</h2>
+                    
+                    <h3>1. Nguyên tắc</h3>
+                    <ul>
+                        <li>Chỉ 1 bên giữ khóa ngoại (FK) → gọi là Owning side</li>
+                        <li>Bên còn lại dùng mappedBy</li>
+                        <li>FK phải có unique = true để đảm bảo đúng 1-1</li>
+                    </ul>
+
+                    <h3>2. Cách 1: One-to-One hai chiều (bidirectional)</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity A (không giữ FK)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class A {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@OneToOne(mappedBy = "a", cascade = CascadeType.ALL)<br>
+                        &nbsp;&nbsp;&nbsp;private B b;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;public void setB(B b) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.b = b;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (b != null && b.getA() != this) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.setA(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity B (giữ FK – Owning side)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class B {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@OneToOne<br>
+                        &nbsp;&nbsp;&nbsp;@JoinColumn(name = "a_id", unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;private A a;<br>
+                        }
+                    </div>
+
+                    <h3>3. Ghi nhớ nhanh</h3>
+                    <ul>
+                        <li>@JoinColumn luôn nằm ở Owning side</li>
+                        <li>mappedBy luôn nằm ở phía còn lại</li>
+                        <li>unique = true là bắt buộc để giữ đúng quan hệ 1-1</li>
+                    </ul>
+
+                    <h3>4. Cách 2: One-to-One một chiều (unidirectional)</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class A {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@OneToOne(cascade = CascadeType.ALL)<br>
+                        &nbsp;&nbsp;&nbsp;@JoinColumn(name = "b_id", unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;private B b;<br>
+                        }
+                    </div>
+                    <p>Entity B không cần khai báo quan hệ ngược lại.</p>
+
+                    <h3>5. Lỗi hay gặp</h3>
+                    <ul>
+                        <li>Đặt mappedBy ở cả 2 bên</li>
+                        <li>Quên unique = true → dẫn đến 1-N</li>
+                        <li>Không đồng bộ dữ liệu 2 chiều trong setter</li>
+                        <li>Đặt @JoinColumn sai phía</li>
+                    </ul>
+
+                    <h3>6. Áp dụng vào bài User – UserProfile</h3>
+                    <p>UserProfile là Owning side (giữ user_id)<br>User dùng mappedBy = "user"</p>
+
+                    <h3>7. Mẹo nhớ</h3>
+                    <p>Bên nào giữ khóa ngoại thì bên đó dùng @JoinColumn.</p>
+                </section>
+
+                <!-- Ví dụ User - UserProfile -->
+                <section id="onetoone3" class="section">
+                    <h2><i class="fas fa-user"></i> Ví dụ Quan hệ One-to-One: User và UserProfile</h2>
+                    
+                    <h3>📌 Mô tả quan hệ</h3>
+                    <p>Mỗi User có một UserProfile.<br>Mỗi UserProfile thuộc về một User.<br>Đây là quan hệ One-to-One, được đảm bảo bằng UNIQUE trên khóa ngoại.</p>
+
+                    <h3>🧩 1. ERD (Mô tả)</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+users (1) -------- (1) user_profiles
+  id  <------ user_id (FK + UNIQUE)
+
+Ràng buộc:
+user_profiles.user_id là Foreign Key tham chiếu users.id
+user_id có ràng buộc UNIQUE → đảm bảo 1 user chỉ có 1 profile
+                        </pre>
+                    </div>
+
+                    <h3>🗄️ 2. Script tạo Database + Bảng</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Tạo database</span><br>
+                        CREATE DATABASE user_management;<br>
+                        USE user_management;<br>
+                        <br>
+                        <span class="comment">-- Bảng users</span><br>
+                        CREATE TABLE users (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;email VARCHAR(255) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;password VARCHAR(255)<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng user_profiles</span><br>
+                        CREATE TABLE user_profiles (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;full_name VARCHAR(255),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;phone VARCHAR(20),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;address VARCHAR(255),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;user_id BIGINT UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_user_profile<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (user_id) REFERENCES users(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE CASCADE<br>
+                        );
+                    </div>
+
+                    <h3>📊 3. Dữ liệu mẫu</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Thêm users</span><br>
+                        INSERT INTO users (email, password) VALUES<br>
+                        ('an@gmail.com', '123456'),<br>
+                        ('binh@gmail.com', 'abcdef');<br>
+                        <br>
+                        <span class="comment">-- Thêm profiles</span><br>
+                        INSERT INTO user_profiles (full_name, phone, address, user_id) VALUES<br>
+                        ('Nguyen Van An', '0123456789', 'Ha Noi', 1),<br>
+                        ('Tran Van Binh', '0987654321', 'Hai Phong', 2);
+                    </div>
+
+                    <h3>☕ 4. Code Java (JPA Entity)</h3>
+                    <p><strong>User.java</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "users")<br>
+                        public class User {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private UserProfile profile;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public User() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public User(String email, String password) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.password = password;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getEmail() { return email; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setEmail(String email) { this.email = email; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getPassword() { return password; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setPassword(String password) { this.password = password; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public UserProfile getProfile() { return profile; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setProfile(UserProfile profile) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.profile = profile;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (profile != null && profile.getUser() != this) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;profile.setUser(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <p><strong>UserProfile.java</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "user_profiles")<br>
+                        public class UserProfile {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String fullName;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String phone;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String address;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@OneToOne<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@JoinColumn(name = "user_id", unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private User user;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public UserProfile() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public UserProfile(String fullName, String phone, String address) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.fullName = fullName;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.phone = phone;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.address = address;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getFullName() { return fullName; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setFullName(String fullName) { this.fullName = fullName; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getPhone() { return phone; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setPhone(String phone) { this.phone = phone; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getAddress() { return address; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setAddress(String address) { this.address = address; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public User getUser() { return user; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setUser(User user) { this.user = user; }<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- Bài tập One-to-One -->
+                <section id="baitap11" class="section">
+                    <h2><i class="fas fa-pen"></i> . Bài tập Thực hành One-to-One</h2>
+                    
+                    <h3>📌 Đề bài</h3>
+                    <p>Tạo hệ thống quản lý Person và IDCard.<br>Mỗi người có một thẻ căn cước<br>Mỗi thẻ căn cước thuộc về một người<br>Yêu cầu: Person: id, name, age; IDCard: id, cardNumber, issueDate; Quan hệ 1-1, Person giữ khóa ngoại</p>
+
+                    <h3>🧩 1. ERD (Mô tả)</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+persons (1) -------- (1) id_cards
+  id  <------ person_id (FK + UNIQUE)
+
+Ràng buộc:
+persons.id_card_id là Foreign Key tham chiếu id_cards.id
+id_card_id có ràng buộc UNIQUE → đảm bảo 1 người chỉ có 1 thẻ và 1 thẻ chỉ thuộc về 1 người
+                        </pre>
+                    </div>
+
+                    <h3>🗄️ 2. Script tạo Database + Bảng</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Tạo database</span><br>
+                        CREATE DATABASE person_management;<br>
+                        USE person_management;<br>
+                        <br>
+                        <span class="comment">-- Bảng id_cards (tạo trước vì persons tham chiếu sang)</span><br>
+                        CREATE TABLE id_cards (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;card_number VARCHAR(50) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;issue_date DATE<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng persons (giữ khóa ngoại)</span><br>
+                        CREATE TABLE persons (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;name VARCHAR(100) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;age INT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id_card_id BIGINT UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_person_id_card<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (id_card_id) REFERENCES id_cards(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE SET NULL<br>
+                        );
+                    </div>
+
+                    <h3>📊 3. Dữ liệu mẫu</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Thêm thẻ căn cước trước</span><br>
+                        INSERT INTO id_cards (card_number, issue_date) VALUES<br>
+                        ('079203001234', '2020-05-15'),<br>
+                        ('079203005678', '2019-11-20');<br>
+                        <br>
+                        <span class="comment">-- Thêm người (liên kết với thẻ)</span><br>
+                        INSERT INTO persons (name, age, id_card_id) VALUES<br>
+                        ('Nguyen Van A', 25, 1),<br>
+                        ('Tran Thi B', 30, 2);
+                    </div>
+
+                    <h3>☕ 4. Code Java (JPA Entity)</h3>
+                    <p><strong>Person.java (bên giữ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "persons")<br>
+                        public class Person {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private int age;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@OneToOne(cascade = CascadeType.ALL)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@JoinColumn(name = "id_card_id", unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private IDCard idCard;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructors</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Person() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Person(String name, int age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.age = age;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getName() { return name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setName(String name) { this.name = name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public int getAge() { return age; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setAge(int age) { this.age = age; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public IDCard getIdCard() { return idCard; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setIdCard(IDCard idCard) { this.idCard = idCard; }<br>
+                        }
+                    </div>
+
+                    <p><strong>IDCard.java (bên không giữ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.time.LocalDate;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "id_cards")<br>
+                        public class IDCard {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String cardNumber;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private LocalDate issueDate;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Constructors</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public IDCard() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public IDCard(String cardNumber, LocalDate issueDate) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.cardNumber = cardNumber;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.issueDate = issueDate;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getCardNumber() { return cardNumber; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setCardNumber(String cardNumber) { this.cardNumber = cardNumber; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public LocalDate getIssueDate() { return issueDate; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setIssueDate(LocalDate issueDate) { this.issueDate = issueDate; }<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- ONE-TO-MANY -->
+                <section id="onetomany" class="section">
+                    <h2><i class="fas fa-layer-group"></i> 4. QUAN HỆ ONE-TO-MANY & MANY-TO-ONE (1-N & N-1)</h2>
+                    
+                    <h3>4.1. Lý thuyết</h3>
+                    <p><strong>Định nghĩa:</strong></p>
+                    <ul>
+                        <li>@ManyToOne: Nhiều entity B thuộc về một entity A (bên nhiều giữ khóa ngoại)</li>
+                        <li>@OneToMany: Một entity A có nhiều entity B (bên một không giữ khóa ngoại)</li>
+                    </ul>
+                    <p><strong>Ví dụ thực tế:</strong></p>
+                    <ul>
+                        <li>Category (1) - Product (N): Một danh mục có nhiều sản phẩm</li>
+                        <li>Department (1) - Employee (N): Một phòng ban có nhiều nhân viên</li>
+                        <li>Class (1) - Student (N): Một lớp có nhiều sinh viên</li>
+                    </ul>
+                </section>
+
+                <!-- CÔNG THỨC ENTITY 1-N -->
+                <section id="congthuc1n" class="section">
+                    <h2><i class="fas fa-calculator"></i> CÔNG THỨC ENTITY 1-N (JPA)</h2>
+                    
+                    <h3>1. Nguyên tắc</h3>
+                    <ul>
+                        <li>Quan hệ: 1 → N (một A có nhiều B)</li>
+                        <li>Khóa ngoại luôn nằm ở bảng "N" (many side)</li>
+                        <li>Owning side là phía "N" (nơi có @JoinColumn)</li>
+                        <li>Phía "1" dùng mappedBy</li>
+                    </ul>
+
+                    <h3>2. Cách chuẩn: Bidirectional (khuyên dùng)</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity A (One side)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class A {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@OneToMany(mappedBy = "a", cascade = CascadeType.ALL)<br>
+                        &nbsp;&nbsp;&nbsp;private List<B> listB;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;<span class="comment">// đồng bộ 2 chiều</span><br>
+                        &nbsp;&nbsp;&nbsp;public void addB(B b) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;listB.add(b);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.setA(this);<br>
+                        &nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity B (Many side – Owning side)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class B {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@ManyToOne<br>
+                        &nbsp;&nbsp;&nbsp;@JoinColumn(name = "a_id")<br>
+                        &nbsp;&nbsp;&nbsp;private A a;<br>
+                        }
+                    </div>
+
+                    <h3>3. Ghi nhớ nhanh</h3>
+                    <ul>
+                        <li>@ManyToOne luôn là Owning side</li>
+                        <li>@JoinColumn nằm ở bảng N</li>
+                        <li>mappedBy nằm ở bảng 1</li>
+                        <li>Không cần unique (vì là 1-N, không phải 1-1)</li>
+                    </ul>
+
+                    <h3>4. Cách 2: One-to-Many một chiều (ít dùng)</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class A {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@OneToMany<br>
+                        &nbsp;&nbsp;&nbsp;@JoinColumn(name = "a_id")<br>
+                        &nbsp;&nbsp;&nbsp;private List<B> listB;<br>
+                        }
+                    </div>
+                    <p>Lưu ý: Không có mappedBy; FK vẫn nằm ở bảng B; JPA sẽ tự quản lý nhưng khó kiểm soát hơn</p>
+
+                    <h3>5. Lỗi hay gặp</h3>
+                    <ul>
+                        <li>Đặt @JoinColumn ở phía One (sai trong bidirectional)</li>
+                        <li>Quên mappedBy → sinh bảng trung gian không mong muốn</li>
+                        <li>Không đồng bộ 2 chiều → dữ liệu lệch</li>
+                        <li>Dùng List nhưng không khởi tạo</li>
+                    </ul>
+
+                    <h3>6. Ví dụ thực tế (rất hay dùng)</h3>
+                    <p>User – Order: 1 User có nhiều Order; Order thuộc về 1 User</p>
+
+                    <h3>7. Mẹo nhớ</h3>
+                    <p>"N giữ khóa ngoại"<br>"ManyToOne luôn là chủ"</p>
+                </section>
+
+                <!-- Ví dụ Department - Employee -->
+                <section id="vidu1n" class="section">
+                    <h2><i class="fas fa-building"></i> Ví dụ Quan hệ One-to-Many: Department và Employee</h2>
+                    
+                    <h3>📌 Mô tả quan hệ</h3>
+                    <p>Mỗi Department có nhiều Employee<br>Mỗi Employee thuộc về một Department<br>Đây là quan hệ One-to-Many, được đảm bảo bằng khóa ngoại department_id ở bảng employees</p>
+
+                    <h3>🧩 1. ERD (Mô tả)</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+departments (1) -------- (N) employees
+     id  <------ department_id (FK)
+
+Ràng buộc:
+employees.department_id là Foreign Key tham chiếu departments.id
+Một department có nhiều employee
+Một employee chỉ thuộc về một department
+                        </pre>
+                    </div>
+
+                    <h3>🗄️ 2. Script tạo Database + Bảng</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Tạo database</span><br>
+                        CREATE DATABASE company_management;<br>
+                        USE company_management;<br>
+                        <br>
+                        <span class="comment">-- Bảng departments (phía 1 - KHÔNG giữ khóa ngoại)</span><br>
+                        CREATE TABLE departments (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;name VARCHAR(255) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;location VARCHAR(255)<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng employees (phía N - GIỮ khóa ngoại)</span><br>
+                        CREATE TABLE employees (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;name VARCHAR(255) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;position VARCHAR(100),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;salary DOUBLE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;department_id BIGINT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_employee_department<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (department_id) REFERENCES departments(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE SET NULL<br>
+                        );
+                    </div>
+
+                    <h3>📊 3. Dữ liệu mẫu</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Thêm departments</span><br>
+                        INSERT INTO departments (name, location) VALUES<br>
+                        ('IT Department', 'Hanoi'),<br>
+                        ('HR Department', 'Ho Chi Minh');<br>
+                        <br>
+                        <span class="comment">-- Thêm employees (có department_id)</span><br>
+                        INSERT INTO employees (name, position, salary, department_id) VALUES<br>
+                        ('Nguyen Van A', 'Java Developer', 1500.0, 1),<br>
+                        ('Tran Thi B', 'Frontend Developer', 1200.0, 1),<br>
+                        ('Le Van C', 'HR Specialist', 1000.0, 2);
+                    </div>
+
+                    <h3>☕ 4. Code Java (JPA Entity)</h3>
+                    <p><strong>Department.java (phía 1 - KHÔNG giữ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.util.ArrayList;<br>
+                        import java.util.List;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "departments")<br>
+                        public class Department {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String location;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @OneToMany đánh dấu quan hệ 1-N</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: mappedBy = "department" → trỏ đến tên field ở Employee</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: cascade = CascadeType.ALL → thao tác trên Department ảnh hưởng đến Employee</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: fetch = FetchType.LAZY → chỉ load employees khi thực sự cần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private List<Employee> employees = new ArrayList<>();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Department() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Department(String name, String location) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.location = location;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: Helper method - đồng bộ cả 2 chiều khi thêm employee</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void addEmployee(Employee employee) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;employees.add(employee);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;employee.setDepartment(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: Helper method - đồng bộ cả 2 chiều khi xóa employee</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void removeEmployee(Employee employee) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;employees.remove(employee);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;employee.setDepartment(null);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getName() { return name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setName(String name) { this.name = name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getLocation() { return location; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setLocation(String location) { this.location = location; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public List<Employee> getEmployees() { return employees; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setEmployees(List<Employee> employees) { this.employees = employees; }<br>
+                        }
+                    </div>
+
+                    <p><strong>Employee.java (phía N - GIỮ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "employees")<br>
+                        public class Employee {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String position;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Double salary;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @ManyToOne đánh dấu quan hệ N-1</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: fetch = FetchType.LAZY → chỉ load department khi cần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @JoinColumn chỉ định tên cột khóa ngoại</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@ManyToOne(fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@JoinColumn(name = "department_id")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Department department;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Employee() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Employee(String name, String position, Double salary) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.position = position;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.salary = salary;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getName() { return name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setName(String name) { this.name = name; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getPosition() { return position; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setPosition(String position) { this.position = position; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Double getSalary() { return salary; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setSalary(Double salary) { this.salary = salary; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Department getDepartment() { return department; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setDepartment(Department department) { this.department = department; }<br>
+                        }
+                    </div>
+
+                    <h3>📝 5. Giải thích chi tiết</h3>
+                    <p><strong>🔹 @OneToMany(mappedBy = "department")</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thành phần</th><th>Giải thích</th></tr></thead>
+                            <tbody>
+                                <tr><td>mappedBy = "department"</th><td>Trỏ đến tên biến department trong class Employee</th></tr>
+                                <tr><td>Ý nghĩa</th><td>"Hãy nhìn vào phía Employee để biết khóa ngoại"</th></tr>
+                                <tr><td>Hậu quả nếu thiếu</th><td>Tạo bảng trung gian (join table) thay vì dùng khóa ngoại</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 @ManyToOne + @JoinColumn</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thành phần</th><th>Giải thích</th></tr></thead>
+                            <tbody>
+                                <tr><td>@ManyToOne</th><td>Đánh dấu quan hệ N-1</th></tr>
+                                <tr><td>@JoinColumn(name = "department_id")</th><td>Tạo cột department_id trong bảng employees</th></tr>
+                                <tr><td>Khóa ngoại</th><td>Tham chiếu đến departments.id</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 FetchType.LAZY</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Vị trí</th><th>Giá trị mặc định</th><th>Lý do</th></tr></thead>
+                            <tbody>
+                                <tr><td>@OneToMany</th><td>LAZY</th><td>Tránh load toàn bộ danh sách employees</th></tr>
+                                <tr><td>@ManyToOne</th><td>EAGER</th><td>Nên set thành LAZY để tối ưu</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 Helper methods (addEmployee, removeEmployee)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        public void addEmployee(Employee employee) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;employees.add(employee);           <span class="comment">// Thêm vào danh sách phía Department</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;employee.setDepartment(this);      <span class="comment">// Set ngược lại phía Employee</span><br>
+                        }
+                    </div>
+                    <p>Tác dụng: Đảm bảo đồng bộ cả 2 chiều, tránh lỗi chỉ set một phía.</p>
+                </section>
+
+                <!-- Ví dụ Lớp học - Sinh viên -->
+                <section id="vidu1n2" class="section">
+                    <h2><i class="fas fa-school"></i> 4.3. Ví dụ thực tế: Quản lý Lớp học và Sinh viên</h2>
+                    
+                    <h3>📌 Mô tả quan hệ</h3>
+                    <p>Mỗi Lớp học có nhiều Sinh viên<br>Mỗi Sinh viên thuộc về một Lớp học<br>Đây là quan hệ One-to-Many, được đảm bảo bằng khóa ngoại lop_hoc_id ở bảng sinh_vien</p>
+
+                    <h3>🧩 1. ERD (Mô tả)</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+lop_hoc (1) -------- (N) sinh_vien
+    id  <------ lop_hoc_id (FK)
+
+Ràng buộc:
+sinh_vien.lop_hoc_id là Foreign Key tham chiếu lop_hoc.id
+Một lớp học có nhiều sinh viên
+Một sinh viên chỉ thuộc về một lớp học
+                        </pre>
+                    </div>
+
+                    <h3>🗄️ 2. Script tạo Database + Bảng</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Tạo database</span><br>
+                        CREATE DATABASE school_management;<br>
+                        USE school_management;<br>
+                        <br>
+                        <span class="comment">-- Bảng lop_hoc (phía 1 - KHÔNG giữ khóa ngoại)</span><br>
+                        CREATE TABLE lop_hoc (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ma_lop VARCHAR(20) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ten_lop VARCHAR(100) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;si_so_toi_da INT DEFAULT 30<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng sinh_vien (phía N - GIỮ khóa ngoại)</span><br>
+                        CREATE TABLE sinh_vien (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ma_sv VARCHAR(20) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ho_ten VARCHAR(100) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ngay_sinh DATE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;lop_hoc_id BIGINT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_sinhvien_lophoc<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (lop_hoc_id) REFERENCES lop_hoc(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE SET NULL<br>
+                        );
+                    </div>
+
+                    <h3>📊 3. Dữ liệu mẫu</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Thêm lớp học</span><br>
+                        INSERT INTO lop_hoc (ma_lop, ten_lop, si_so_toi_da) VALUES<br>
+                        ('IT2024A', 'Lập trình Java', 30),<br>
+                        ('IT2024B', 'Lập trình Python', 25),<br>
+                        ('BIZ2024', 'Quản trị kinh doanh', 40);<br>
+                        <br>
+                        <span class="comment">-- Thêm sinh viên</span><br>
+                        INSERT INTO sinh_vien (ma_sv, ho_ten, ngay_sinh, lop_hoc_id) VALUES<br>
+                        ('SV001', 'Nguyễn Văn An', '2002-05-15', 1),<br>
+                        ('SV002', 'Trần Thị Bình', '2002-08-20', 1),<br>
+                        ('SV003', 'Lê Văn Cường', '2003-01-10', 1),<br>
+                        ('SV004', 'Phạm Thị Dung', '2002-11-30', 2),<br>
+                        ('SV005', 'Hoàng Văn Em', '2003-03-25', 2);
+                    </div>
+
+                    <h3>☕ 4. Code Java (JPA Entity) - Có giải thích chi tiết</h3>
+                    <p><strong>LopHoc.java (phía 1 - KHÔNG giữ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.util.ArrayList;<br>
+                        import java.util.List;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "lop_hoc")<br>
+                        public class LopHoc {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ma_lop", nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String maLop;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ten_lop", nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String tenLop;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "si_so_toi_da")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private int siSoToiDa = 30;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @OneToMany đánh dấu quan hệ 1-N</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: mappedBy = "lopHoc" → trỏ đến tên field ở class SinhVien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: cascade = CascadeType.ALL → thao tác trên LopHoc ảnh hưởng đến SinhVien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: fetch = FetchType.LAZY → chỉ load danh sách sinh viên khi cần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@OneToMany(mappedBy = "lopHoc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private List<SinhVien> sinhViens = new ArrayList<>();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public LopHoc() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public LopHoc(String maLop, String tenLop, int siSoToiDa) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.maLop = maLop;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.tenLop = tenLop;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.siSoToiDa = siSoToiDa;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: Helper method - đồng bộ cả 2 chiều khi thêm sinh viên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void addSinhVien(SinhVien sv) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sinhViens.add(sv);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sv.setLopHoc(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: Helper method - đồng bộ cả 2 chiều khi xóa sinh viên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void removeSinhVien(SinhVien sv) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sinhViens.remove(sv);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sv.setLopHoc(null);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getMaLop() { return maLop; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setMaLop(String maLop) { this.maLop = maLop; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getTenLop() { return tenLop; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setTenLop(String tenLop) { this.tenLop = tenLop; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public int getSiSoToiDa() { return siSoToiDa; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setSiSoToiDa(int siSoToiDa) { this.siSoToiDa = siSoToiDa; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public List<SinhVien> getSinhViens() { return sinhViens; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setSinhViens(List<SinhVien> sinhViens) { this.sinhViens = sinhViens; }<br>
+                        }
+                    </div>
+
+                    <p><strong>SinhVien.java (phía N - GIỮ khóa ngoại)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.time.LocalDate;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "sinh_vien")<br>
+                        public class SinhVien {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ma_sv", nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String maSV;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ho_ten", nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String hoTen;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ngay_sinh")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private LocalDate ngaySinh;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @ManyToOne đánh dấu quan hệ N-1</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: fetch = FetchType.LAZY → chỉ load LopHoc khi thực sự cần (tối ưu hiệu năng)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @JoinColumn(name = "lop_hoc_id") → tạo cột khóa ngoại tên "lop_hoc_id"</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@ManyToOne(fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@JoinColumn(name = "lop_hoc_id")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private LopHoc lopHoc;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public SinhVien() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public SinhVien(String maSV, String hoTen, LocalDate ngaySinh) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.maSV = maSV;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.hoTen = hoTen;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.ngaySinh = ngaySinh;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getMaSV() { return maSV; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setMaSV(String maSV) { this.maSV = maSV; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getHoTen() { return hoTen; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setHoTen(String hoTen) { this.hoTen = hoTen; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public LocalDate getNgaySinh() { return ngaySinh; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setNgaySinh(LocalDate ngaySinh) { this.ngaySinh = ngaySinh; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public LopHoc getLopHoc() { return lopHoc; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setLopHoc(LopHoc lopHoc) { this.lopHoc = lopHoc; }<br>
+                        }
+                    </div>
+
+                    <h3>📝 5. Giải thích chi tiết các thành phần</h3>
+                    <p><strong>🔹 @OneToMany(mappedBy = "lopHoc")</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thành phần</th><th>Giải thích</th></tr></thead>
+                            <tbody>
+                                <tr><td>@OneToMany</th><td>Đánh dấu quan hệ 1-N</th></tr>
+                                <tr><td>mappedBy = "lopHoc"</th><td>Trỏ đến tên biến lopHoc trong class SinhVien</th></tr>
+                                <tr><td>Ý nghĩa</th><td>"Lớp học này có nhiều sinh viên, hãy nhìn vào SinhVien.lopHoc để biết khóa ngoại"</th></tr>
+                                <tr><td>Hậu quả nếu thiếu mappedBy</th><td>Hibernate sẽ tạo bảng trung gian (join table) thay vì dùng khóa ngoại</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 @ManyToOne + @JoinColumn</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thành phần</th><th>Giải thích</th></tr></thead>
+                            <tbody>
+                                <tr><td>@ManyToOne</th><td>Đánh dấu quan hệ N-1</th></tr>
+                                <tr><td>@JoinColumn(name = "lop_hoc_id")</th><td>Tạo cột lop_hoc_id trong bảng sinh_vien</th></tr>
+                                <tr><td>Khóa ngoại</th><td>Tham chiếu đến lop_hoc.id</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 Helper methods (addSinhVien, removeSinhVien)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">// Tại sao cần helper methods?</span><br>
+                        public void addSinhVien(SinhVien sv) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sinhViens.add(sv);        <span class="comment">// Bước 1: Thêm vào List của LopHoc</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sv.setLopHoc(this);       <span class="comment">// Bước 2: Set ngược lại cho SinhVien</span><br>
+                        }
+                    </div>
+                    <div class="warning-box">
+                        <p><strong>Vấn đề nếu không dùng helper method:</strong></p>
+                        <div class="code-block">
+                            <span class="comment">// CÁCH SAI - chỉ set 1 phía</span><br>
+                            lopHoc.getSinhViens().add(sinhVien);<br>
+                            <span class="comment">// → sinhVien.getLopHoc() vẫn là null → mất đồng bộ!</span><br>
+                            <br>
+                            <span class="comment">// CÁCH ĐÚNG - dùng helper</span><br>
+                            lopHoc.addSinhVien(sinhVien);<br>
+                            <span class="comment">// → cả 2 phía đều được cập nhật</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MANY-TO-MANY -->
+                <section id="manytomany" class="section">
+                    <h2><i class="fas fa-network-wired"></i> 5. QUAN HỆ MANY-TO-MANY (N-N)</h2>
+                    
+                    <h3>5.1. Lý thuyết</h3>
+                    <p>Nhiều-nhiều (N-N) là quan hệ mà một bản ghi ở bảng A có thể liên kết với nhiều bản ghi ở bảng B, và ngược lại.</p>
+                    <p><strong>Ví dụ thực tế:</strong></p>
+                    <ul>
+                        <li>Sinh viên (Student) đăng ký nhiều môn học (Course)</li>
+                        <li>Sản phẩm (Product) thuộc nhiều danh mục (Category)</li>
+                        <li>Người dùng (User) tham gia nhiều nhóm (Group)</li>
+                    </ul>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+┌─────────────────┐     ┌─────────────────────┐     ┌─────────────────┐
+│    students     │     │  students_courses   │     │    courses      │
+├─────────────────┤     ├─────────────────────┤     ├─────────────────┤
+│ id (PK)         │     │ student_id (FK)     │     │ id (PK)         │
+│ name            │◀───▶│ course_id (FK)      │────▶│ name            │
+└─────────────────┘     └─────────────────────┘     │ credit          │
+                                                   └─────────────────┘
+                              BẢNG TRUNG GIAN
+                        (chứa khóa ngoại của cả 2 bảng)
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- CÔNG THỨC ENTITY N-N -->
+                <section id="congthucnn" class="section">
+                    <h2><i class="fas fa-calculator"></i> CÔNG THỨC ENTITY N-N (Many-to-Many)</h2>
+                    
+                    <h3>1. Nguyên tắc</h3>
+                    <ul>
+                        <li>Nhiều A liên kết với nhiều B</li>
+                        <li>Luôn cần bảng trung gian (join table)</li>
+                        <li>Chỉ 1 bên là Owning side (quản lý bảng trung gian)</li>
+                        <li>Bên còn lại dùng mappedBy</li>
+                    </ul>
+
+                    <h3>2. Cách chuẩn: Bidirectional (phổ biến)</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity A (Owning side)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class A {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@ManyToMany<br>
+                        &nbsp;&nbsp;&nbsp;@JoinTable(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name = "a_b",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;joinColumns = @JoinColumn(name = "a_id"),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inverseJoinColumns = @JoinColumn(name = "b_id")<br>
+                        &nbsp;&nbsp;&nbsp;)<br>
+                        &nbsp;&nbsp;&nbsp;private List<B> listB;<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Entity B (inverse side)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class B {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;private Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@ManyToMany(mappedBy = "listB")<br>
+                        &nbsp;&nbsp;&nbsp;private List<A> listA;<br>
+                        }
+                    </div>
+
+                    <h3>3. Ghi nhớ nhanh</h3>
+                    <ul>
+                        <li>@JoinTable chỉ nằm ở Owning side</li>
+                        <li>mappedBy nằm ở phía còn lại</li>
+                        <li>Không có FK trực tiếp trong A hoặc B</li>
+                        <li>FK nằm trong bảng trung gian</li>
+                    </ul>
+
+                    <h3>4. Cấu trúc database</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+a
+---
+id
+
+b
+---
+id
+
+a_b (bảng trung gian)
+--------------------
+a_id (FK)
+b_id (FK)
+PRIMARY KEY (a_id, b_id)
+                        </pre>
+                    </div>
+
+                    <h3>5. Ví dụ thực tế</h3>
+                    <p>Student – Course: 1 sinh viên học nhiều môn; 1 môn có nhiều sinh viên</p>
+
+                    <h3>6. Lỗi hay gặp</h3>
+                    <ul>
+                        <li>Đặt @JoinTable ở cả 2 bên</li>
+                        <li>Không dùng mappedBy → tạo 2 bảng trung gian</li>
+                        <li>Không hiểu bảng trung gian nằm ở đâu</li>
+                        <li>Dùng List nhưng không đồng bộ 2 chiều</li>
+                    </ul>
+
+                    <h3>7. Khi nào KHÔNG nên dùng ManyToMany</h3>
+                    <p>Trong thực tế, nên tránh ManyToMany thuần khi:<br>Cần thêm thuộc tính vào quan hệ (ví dụ: ngày đăng ký, điểm số…)<br>→ Lúc này phải tách thành: A ---< AB >--- B</p>
+
+                    <h3>8. Cách nâng cao (chuẩn thực tế)</h3>
+                    <p>Thay vì ManyToMany: Tạo entity trung gian</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Entity<br>
+                        public class AB {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@EmbeddedId<br>
+                        &nbsp;&nbsp;&nbsp;private ABId id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@ManyToOne<br>
+                        &nbsp;&nbsp;&nbsp;@MapsId("aId")<br>
+                        &nbsp;&nbsp;&nbsp;private A a;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;@ManyToOne<br>
+                        &nbsp;&nbsp;&nbsp;@MapsId("bId")<br>
+                        &nbsp;&nbsp;&nbsp;private B b;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;private String extraField; <span class="comment">// ví dụ: ngày đăng ký</span><br>
+                        }
+                    </div>
+
+                    <h3>9. Mẹo nhớ</h3>
+                    <p>"N-N luôn có bảng trung gian"<br>"JoinTable nằm ở 1 bên duy nhất"<br>"Thực tế → tách bảng trung gian thành entity"</p>
+                </section>
+
+                <!-- Bài tập Many-to-Many -->
+                <section id="baitapnn" class="section">
+                    <h2><i class="fas fa-pen"></i> .6. Bài tập Thực hành Many-to-Many</h2>
+                    
+                    <h3>📌 Đề bài</h3>
+                    <p>Tạo hệ thống quản lý Sinh viên và Môn học.<br>Mỗi sinh viên có thể đăng ký nhiều môn học<br>Mỗi môn học có thể có nhiều sinh viên đăng ký<br>Đây là quan hệ Many-to-Many<br>Yêu cầu: SinhVien: id, maSV, hoTen, email; MonHoc: id, maMH, tenMH, soTinChi; Quan hệ N-N, sử dụng bảng trung gian dang_ky</p>
+
+                    <h3>🧩 1. ERD (Mô tả)</h3>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+sinh_vien (N) -------- (N) mon_hoc
+     |                      |
+     |      dang_ky         |
+     |  (bảng trung gian)    |
+     |                      |
+  id  ------------------  id
+  (FK)                   (FK)
+
+Cấu trúc bảng trung gian:
+dang_ky (
+    sinh_vien_id (FK),
+    mon_hoc_id (FK),
+    ngay_dang_ky (DATE),
+    diem (DOUBLE)
+)
+
+Ràng buộc:
+Khóa chính kép: (sinh_vien_id, mon_hoc_id)
+sinh_vien_id tham chiếu sinh_vien.id
+mon_hoc_id tham chiếu mon_hoc.id
+                        </pre>
+                    </div>
+
+                    <h3>🗄️ 2. Script tạo Database + Bảng</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Tạo database</span><br>
+                        CREATE DATABASE university_management;<br>
+                        USE university_management;<br>
+                        <br>
+                        <span class="comment">-- Bảng sinh_vien</span><br>
+                        CREATE TABLE sinh_vien (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ma_sv VARCHAR(20) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ho_ten VARCHAR(100) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;email VARCHAR(100) NOT NULL UNIQUE<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng mon_hoc</span><br>
+                        CREATE TABLE mon_hoc (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;id BIGINT PRIMARY KEY AUTO_INCREMENT,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ma_mh VARCHAR(20) NOT NULL UNIQUE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ten_mh VARCHAR(100) NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;so_tin_chi INT NOT NULL CHECK (so_tin_chi > 0)<br>
+                        );<br>
+                        <br>
+                        <span class="comment">-- Bảng trung gian dang_ky (quan hệ N-N)</span><br>
+                        CREATE TABLE dang_ky (<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;sinh_vien_id BIGINT NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;mon_hoc_id BIGINT NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ngay_dang_ky DATE NOT NULL,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;diem DOUBLE DEFAULT NULL CHECK (diem >= 0 AND diem <= 10),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;PRIMARY KEY (sinh_vien_id, mon_hoc_id),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_dk_sinhvien<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (sinh_vien_id) REFERENCES sinh_vien(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE CASCADE,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;CONSTRAINT fk_dk_monhoc<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;FOREIGN KEY (mon_hoc_id) REFERENCES mon_hoc(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ON DELETE CASCADE<br>
+                        );
+                    </div>
+
+                    <h3>📊 3. Dữ liệu mẫu</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">-- Thêm sinh viên</span><br>
+                        INSERT INTO sinh_vien (ma_sv, ho_ten, email) VALUES<br>
+                        ('SV001', 'Nguyễn Văn An', 'an@gmail.com'),<br>
+                        ('SV002', 'Trần Thị Bình', 'binh@gmail.com'),<br>
+                        ('SV003', 'Lê Văn Cường', 'cuong@gmail.com');<br>
+                        <br>
+                        <span class="comment">-- Thêm môn học</span><br>
+                        INSERT INTO mon_hoc (ma_mh, ten_mh, so_tin_chi) VALUES<br>
+                        ('IT01', 'Lập trình Java', 3),<br>
+                        ('IT02', 'Cơ sở dữ liệu', 2),<br>
+                        ('IT03', 'Lập trình Web', 3),<br>
+                        ('BA01', 'Quản trị kinh doanh', 2);<br>
+                        <br>
+                        <span class="comment">-- Đăng ký môn học (bảng trung gian)</span><br>
+                        INSERT INTO dang_ky (sinh_vien_id, mon_hoc_id, ngay_dang_ky, diem) VALUES<br>
+                        (1, 1, '2024-01-15', 8.5),<br>
+                        (1, 2, '2024-01-15', 7.0),<br>
+                        (2, 1, '2024-01-16', 9.0),<br>
+                        (2, 3, '2024-01-16', 8.0),<br>
+                        (3, 2, '2024-01-17', NULL),<br>
+                        (3, 4, '2024-01-17', 7.5);
+                    </div>
+
+                    <h3>☕ 4. Code Java (JPA Entity)</h3>
+                    <p><strong>SinhVien.java</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.util.ArrayList;<br>
+                        import java.util.List;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "sinh_vien")<br>
+                        public class SinhVien {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ma_sv", nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String maSV;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ho_ten", nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String hoTen;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @ManyToMany đánh dấu quan hệ N-N</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: fetch = FetchType.LAZY → tối ưu hiệu năng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@ManyToMany(fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: @JoinTable chỉ định bảng trung gian</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@JoinTable(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name = "dang_ky",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: joinColumns - khóa ngoại trỏ đến bảng hiện tại (sinh_vien)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;joinColumns = @JoinColumn(name = "sinh_vien_id"),<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: inverseJoinColumns - khóa ngoại trỏ đến bảng đối diện (mon_hoc)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;inverseJoinColumns = @JoinColumn(name = "mon_hoc_id")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private List<MonHoc> monHocs = new ArrayList<>();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public SinhVien() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public SinhVien(String maSV, String hoTen, String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.maSV = maSV;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.hoTen = hoTen;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Helper method - thêm môn học</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void addMonHoc(MonHoc monHoc) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monHocs.add(monHoc);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monHoc.getSinhViens().add(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Helper method - xóa môn học</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void removeMonHoc(MonHoc monHoc) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monHocs.remove(monHoc);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;monHoc.getSinhViens().remove(this);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getMaSV() { return maSV; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setMaSV(String maSV) { this.maSV = maSV; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getHoTen() { return hoTen; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setHoTen(String hoTen) { this.hoTen = hoTen; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getEmail() { return email; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setEmail(String email) { this.email = email; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public List<MonHoc> getMonHocs() { return monHocs; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setMonHocs(List<MonHoc> monHocs) { this.monHocs = monHocs; }<br>
+                        }
+                    </div>
+
+                    <p><strong>MonHoc.java</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        package com.example.demo.entity;<br>
+                        <br>
+                        import javax.persistence.*;<br>
+                        import java.util.ArrayList;<br>
+                        import java.util.List;<br>
+                        <br>
+                        @Entity<br>
+                        @Table(name = "mon_hoc")<br>
+                        public class MonHoc {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Id<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GeneratedValue(strategy = GenerationType.IDENTITY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ma_mh", nullable = false, unique = true)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String maMH;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "ten_mh", nullable = false)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String tenMH;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@Column(name = "so_tin_chi")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private int soTinChi;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: mappedBy = "monHocs" → trỏ đến tên field trong SinhVien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// NOTE: Quan hệ 2 chiều, bên SinhVien giữ thông tin @JoinTable</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@ManyToMany(mappedBy = "monHocs", fetch = FetchType.LAZY)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private List<SinhVien> sinhViens = new ArrayList<>();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public MonHoc() {}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public MonHoc(String maMH, String tenMH, int soTinChi) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.maMH = maMH;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.tenMH = tenMH;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this.soTinChi = soTinChi;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Getters and Setters</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public Long getId() { return id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setId(Long id) { this.id = id; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getMaMH() { return maMH; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setMaMH(String maMH) { this.maMH = maMH; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getTenMH() { return tenMH; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setTenMH(String tenMH) { this.tenMH = tenMH; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public int getSoTinChi() { return soTinChi; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setSoTinChi(int soTinChi) { this.soTinChi = soTinChi; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public List<SinhVien> getSinhViens() { return sinhViens; }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public void setSinhViens(List<SinhVien> sinhViens) { this.sinhViens = sinhViens; }<br>
+                        }
+                    </div>
+
+                    <h3>📝 5. Giải thích chi tiết</h3>
+                    <p><strong>🔹 @ManyToMany + @JoinTable</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thành phần</th><th>Giải thích</th></tr></thead>
+                            <tbody>
+                                <tr><td>@ManyToMany</th><td>Đánh dấu quan hệ N-N</th></tr>
+                                <tr><td>@JoinTable</th><td>Chỉ định bảng trung gian</th></tr>
+                                <tr><td>name = "dang_ky"</th><td>Tên bảng trung gian trong database</th></tr>
+                                <tr><td>joinColumns</th><td>Khóa ngoại trỏ đến bảng hiện tại (SinhVien)</th></tr>
+                                <tr><td>inverseJoinColumns</th><td>Khóa ngoại trỏ đến bảng đối diện (MonHoc)</th></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>🔹 So sánh joinColumns và inverseJoinColumns</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @JoinTable(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;name = "dang_ky",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;joinColumns = @JoinColumn(name = "sinh_vien_id"),      <span class="comment">// ← bảng SinhVien</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;inverseJoinColumns = @JoinColumn(name = "mon_hoc_id")  <span class="comment">// ← bảng MonHoc</span><br>
+                        )<br>
+                        private List<MonHoc> monHocs;
+                    </div>
+                    <p><strong>Cấu trúc bảng trung gian:</strong></p>
+                    <div class="architecture">
+                        <pre style="color: #fff;">
+dang_ky
+├── sinh_vien_id (FK → sinh_vien.id)
+└── mon_hoc_id    (FK → mon_hoc.id)
+                        </pre>
+                    </div>
+                    <p><strong>🔹 mappedBy ở phía đối diện</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @ManyToMany(mappedBy = "monHocs")  <span class="comment">// "monHocs" là tên field trong SinhVien</span><br>
+                        private List<SinhVien> sinhViens;
+                    </div>
+                    <p>Tác dụng: Thông báo cho Hibernate biết bên MonHoc không quản lý quan hệ, hãy nhìn vào SinhVien.monHocs để biết cấu hình bảng trung gian.</p>
+                </section>
+
+                <!-- CÁC LỖI THƯỜNG GẶP -->
+                <section id="loi" class="section">
+                    <h2><i class="fas fa-bug"></i> 8. CÁC LỖI THƯỜNG GẶP VÀ CÁCH KHẮC PHỤC</h2>
+                    
+                    <h3>Lỗi 1: LazyInitializationException</h3>
+                    <p>Lỗi xảy ra khi: Truy cập thuộc tính LAZY ngoài transaction.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ lỗi</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">// Trong Controller</span><br>
+                        @GetMapping("/department/{id}")<br>
+                        public Department getDepartment(@PathVariable Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Department dept = departmentService.findById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lỗi khi serialize vì employees chưa được load</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return dept; <br>
+                        }
+                    </div>
+                    <p><strong>Cách khắc phục:</strong></p>
+                    <p><strong>Cách 1: Dùng @Transactional</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Transactional<br>
+                        public Department getDepartmentWithEmployees(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Department dept = departmentRepository.findById(id).orElse(null);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;dept.getEmployees().size(); <span class="comment">// Force load</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return dept;<br>
+                        }
+                    </div>
+                    <p><strong>Cách 2: Dùng JOIN FETCH trong query</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @Query("SELECT d FROM Department d JOIN FETCH d.employees WHERE d.id = :id")<br>
+                        Optional<Department> findByIdWithEmployees(@Param("id") Long id);
+                    </div>
+                    <p><strong>Cách 3: DTO pattern (khuyến nghị)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        public class DepartmentDTO {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;private List<EmployeeDTO> employees;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Chuyển đổi từ entity sang DTO trong service</span><br>
+                        }
+                    </div>
+
+                    <h3>Lỗi 2: Vòng lặp vô hạn khi serialize (StackOverflowError)</h3>
+                    <p>Nguyên nhân: Jackson serialize cả hai chiều quan hệ, gây vòng lặp.</p>
+                    <p><strong>Cách khắc phục:</strong></p>
+                    <p><strong>Cách 1: Dùng @JsonIgnore</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        @OneToMany(mappedBy = "department")<br>
+                        @JsonIgnore<br>
+                        private List<Employee> employees;
+                    </div>
+                    <p><strong>Cách 2: Dùng @JsonManagedReference và @JsonBackReference</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">// Phía cha</span><br>
+                        @OneToMany(mappedBy = "department")<br>
+                        @JsonManagedReference<br>
+                        private List<Employee> employees;<br>
+                        <br>
+                        <span class="comment">// Phía con</span><br>
+                        @ManyToOne<br>
+                        @JsonBackReference<br>
+                        private Department department;
+                    </div>
+
+                    <h3>Lỗi 3: N+1 Query Problem</h3>
+                    <p>Vấn đề: Khi lấy danh sách N departments, mỗi department lại query thêm 1 lần để lấy employees → N+1 queries.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        List<Department> depts = departmentRepository.findAll();<br>
+                        for (Department dept : depts) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(dept.getEmployees().size()); <span class="comment">// Mỗi lần gọi là 1 query</span><br>
+                        }
+                    </div>
+                    <p><strong>Cách khắc phục:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <span class="comment">// Dùng JOIN FETCH trong @Query</span><br>
+                        @Query("SELECT DISTINCT d FROM Department d LEFT JOIN FETCH d.employees")<br>
+                        List<Department> findAllWithEmployees();<br>
+                        <br>
+                        <span class="comment">// Hoặc dùng Entity Graph</span><br>
+                        @EntityGraph(attributePaths = {"employees"})<br>
+                        List<Department> findAll();
+                    </div>
+
+                    <h3>Lỗi 4: Quên set cả hai phía của quan hệ</h3>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Lỗi</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        Department dept = new Department("IT");<br>
+                        Employee emp = new Employee("John");<br>
+                        emp.setDepartment(dept);  <span class="comment">// Chỉ set một phía</span><br>
+                        dept.getEmployees().add(emp); <span class="comment">// ❌ Quên dòng này</span>
+                    </div>
+                    <p><strong>Cách khắc phục:</strong> Luôn dùng helper method</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        public void addEmployee(Employee employee) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;employees.add(employee);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;employee.setDepartment(this);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- TỔNG KẾT -->
+                <section id="tongket" class="section">
+                    <h2><i class="fas fa-star"></i> 9. TỔNG KẾT VÀ KHUYẾN NGHỊ</h2>
+                    
+                    <h3>Bảng tóm tắt nhanh:</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Quan hệ</th><th>Annotation bên A</th><th>Annotation bên B</th><th>Bên giữ khóa ngoại</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1-1</th><td>@OneToOne</th><td>@OneToOne(mappedBy=...)</th><td>Bên có @JoinColumn</th></tr>
+                                <tr><td>1-N</td><td>@OneToMany(mappedBy=...)</td><td>@ManyToOne</td><td>Bên @ManyToOne</td></tr>
+                                <tr><td>N-N</td><td>@ManyToMany + @JoinTable</td><td>@ManyToMany(mappedBy=...)</td><td>Bên có @JoinTable</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Các nguyên tắc vàng:</h3>
+                    <ul>
+                        <li>Luôn ưu tiên FetchType.LAZY trừ khi có lý do chính đáng</li>
+                        <li>Dùng helper methods để đồng bộ cả hai phía của quan hệ</li>
+                        <li>Tránh @ManyToMany trực tiếp nếu cần lưu thêm thuộc tính (dùng entity trung gian)</li>
+                        <li>Dùng DTO pattern thay vì trả thẳng entity ra API</li>
+                        <li>Kiểm soát cascade cẩn thận – cascade = ALL có thể gây xóa nhầm dữ liệu</li>
+                        <li>Đặt tên rõ ràng cho các bảng trung gian (user_role, student_course)</li>
+                    </ul>
+
+                    <h3>Checklist cho sinh viên tự học:</h3>
+                    <ul>
+                        <li>Hiểu được sự khác nhau giữa 1-1, 1-N, N-N</li>
+                        <li>Biết khi nào dùng mappedBy và khi nào dùng @JoinColumn</li>
+                        <li>Phân biệt được owning side và inverse side</li>
+                        <li>Biết cách xử lý LazyInitializationException</li>
+                        <li>Biết cách tránh vòng lặp khi serialize</li>
+                        <li>Thực hành ít nhất 3 ví dụ cho mỗi loại quan hệ</li>
+                        <li>Làm được bài tập tổng hợp có 3-4 entity liên quan</li>
+                    </ul>
+
+                    <div class="demo-box">
+                        <p><i class="fas fa-check-circle" style="color: #27ae60;"></i> Chúc mừng bạn đã hoàn thành nội dung quan hệ trong JPA!</p>
+                        <p>Hãy thực hành từng ví dụ để nắm vững kiến thức.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p><i class="fas fa-project-diagram"></i> QUAN HỆ TRONG JPA - One-to-One, One-to-Many, Many-to-Many</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    document.querySelector('.main-content').scrollTop = 0;
+                });
+            });
+        });
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            
+            button.innerHTML = '<i class="fas fa-check"></i> Đã copy!';
+            button.style.background = '#27ae60';
+            
+            navigator.clipboard.writeText(text).then(() => {
+                setTimeout(() => {
+                    button.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    button.style.background = '#555';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

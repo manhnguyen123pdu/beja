@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 4: KẾT NỐI DATABASE VỚI SPRING DATA JPA (PHẦN 3) - SERVICE LAYER</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --purple: #9b59b6;
+            --orange: #e67e22;
+            --service-color: #e67e22;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header h2 {
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: var(--light);
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--service-color);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--service-color);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--service-color);
+        }
+
+        .nav-link i {
+            width: 20px;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--service-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #dcdcaa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--service-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .service-box {
+            background: #fde9e0;
+            border-left: 4px solid var(--service-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-service {
+            background: var(--service-color);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-purple {
+            background: var(--purple);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        .flow-chart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Consolas', monospace;
+            margin: 20px 0;
+        }
+
+        .flow-chart .box {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .flow-chart .controller {
+            background: var(--accent);
+            color: white;
+        }
+
+        .flow-chart .service {
+            background: var(--service-color);
+            color: white;
+        }
+
+        .flow-chart .repository {
+            background: var(--success);
+            color: white;
+        }
+
+        .flow-chart .entity {
+            background: var(--info);
+            color: white;
+        }
+
+        .flow-chart .database {
+            background: var(--dark);
+            color: white;
+        }
+
+        .flow-chart .arrow {
+            font-size: 24px;
+            color: var(--dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge-service {
+            background: var(--service-color);
+            color: white;
+        }
+
+        .badge-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--service-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-database"></i> BÀI 6: SERVICE - TẦNG XỬ LÝ LOGIC NGHIỆP VỤ</h1>
+   
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu Service</a></li>
+                    <li class="nav-item"><a href="#service-definition" class="nav-link"><i class="fas fa-question-circle"></i> Service là gì?</a></li>
+                    <li class="nav-item"><a href="#service-annotation" class="nav-link"><i class="fas fa-tag"></i> @Service Annotation</a></li>
+                    <li class="nav-item"><a href="#service-structure" class="nav-link"><i class="fas fa-sitemap"></i> Cấu trúc Service</a></li>
+                    <li class="nav-item"><a href="#create-service" class="nav-link"><i class="fas fa-plus-circle"></i> Tạo UserService</a></li>
+                    <li class="nav-item"><a href="#crud-methods" class="nav-link"><i class="fas fa-list"></i> Các phương thức CRUD</a></li>
+                    <li class="nav-item"><a href="#search-methods" class="nav-link"><i class="fas fa-search"></i> Phương thức tìm kiếm</a></li>
+                    <li class="nav-item"><a href="#validation" class="nav-link"><i class="fas fa-check-double"></i> Validation dữ liệu</a></li>
+                    <li class="nav-item"><a href="#transactional" class="nav-link"><i class="fas fa-exchange-alt"></i> @Transactional</a></li>
+                    <li class="nav-item"><a href="#exception-handling" class="nav-link"><i class="fas fa-exclamation-triangle"></i> Xử lý ngoại lệ</a></li>
+                    <li class="nav-item"><a href="#custom-exceptions" class="nav-link"><i class="fas fa-exclamation-circle"></i> Tạo Exception riêng</a></li>
+                    <li class="nav-item"><a href="#controller-service" class="nav-link"><i class="fas fa-code-branch"></i> Controller gọi Service</a></li>
+                    <li class="nav-item"><a href="#batch-operations" class="nav-link"><i class="fas fa-layer-group"></i> Xử lý hàng loạt</a></li>
+                    <li class="nav-item"><a href="#business-logic" class="nav-link"><i class="fas fa-brain"></i> Logic nghiệp vụ</a></li>
+                    <li class="nav-item"><a href="#complete-controller" class="nav-link"><i class="fas fa-file-code"></i> Controller hoàn chỉnh</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link"><i class="fas fa-clipboard-check"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- GIỚI THIỆU SERVICE -->
+                <section id="intro" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU VỀ SERVICE LAYER</h2>
+
+                    <h3>1. Tổng quan bài học</h3>
+                    <p>Ở <strong>Phần 2</strong>, chúng ta đã học về Repository và các cách thao tác với database.</p>
+                    
+                    <p>Trong <strong>Phần 3</strong> này, chúng ta sẽ học về <span class="badge badge-service">SERVICE</span> - Tầng xử lý logic nghiệp vụ, là cầu nối giữa Controller và Repository.</p>
+
+                    <h3>2. Kiến trúc 3 tầng (3-Tier Architecture)</h3>
+                    
+                    <div class="flow-chart">
+                        <div style="display: inline-block; text-align: center;">
+                            <div class="box controller"><i class="fas fa-code"></i> Controller (API)</div>
+                            <div class="arrow">↓</div>
+                            <div class="box service" style="background: var(--service-color); border: 3px solid var(--warning);"><i class="fas fa-cogs"></i> <strong>Service (Logic nghiệp vụ)</strong> <span class="badge badge-warning">← BẠN ĐANG Ở ĐÂY</span></div>
+                            <div class="arrow">↓</div>
+                            <div class="box repository"><i class="fas fa-database"></i> Repository (Thao tác dữ liệu)</div>
+                            <div class="arrow">↓</div>
+                            <div class="box entity"><i class="fas fa-cube"></i> Entity (Ánh xạ bảng)</div>
+                            <div class="arrow">↓</div>
+                            <div class="box database"><i class="fas fa-server"></i> Database (MySQL)</div>
+                        </div>
+                    </div>
+
+                    <h3>3. Mục tiêu bài học (Phần 3)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mục tiêu</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Hiểu về Service</td>
+                                    <td>Service là gì, vai trò trong ứng dụng</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>@Service Annotation</td>
+                                    <td>Cách đánh dấu và sử dụng Service</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Cấu trúc Service</td>
+                                    <td>Các thành phần trong Service</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Xử lý CRUD</td>
+                                    <td>Tạo, đọc, cập nhật, xóa qua Service</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Validation</td>
+                                    <td>Kiểm tra dữ liệu đầu vào</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>@Transactional</td>
+                                    <td>Quản lý giao dịch</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Xử lý ngoại lệ</td>
+                                    <td>Tạo và ném exception phù hợp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- SERVICE LÀ GÌ -->
+                <section id="service-definition" class="section">
+                    <h2><i class="fas fa-question-circle"></i> SERVICE LÀ GÌ?</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>Service</strong> là tầng chứa logic nghiệp vụ (business logic) của ứng dụng. Nó nằm giữa Controller và Repository, chịu trách nhiệm xử lý các quy tắc nghiệp vụ trước khi tương tác với database.</p>
+
+                    <h3>2. Vai trò của Service</h3>
+                    
+                    <div class="flow-chart">
+                        <div class="box controller"><i class="fas fa-code"></i> Controller (API)</div>
+                        <div class="arrow">← Nhận request, trả response</div>
+                        <div class="box service" style="background: var(--service-color);"><i class="fas fa-cogs"></i> <strong>Service (Xử lý logic)</strong></div>
+                        <div class="arrow">← Gọi các phương thức JPA</div>
+                        <div class="box repository"><i class="fas fa-database"></i> Repository (Thao tác dữ liệu)</div>
+                        <div class="arrow">← Lưu trữ</div>
+                        <div class="box database"><i class="fas fa-server"></i> Database (MySQL)</div>
+                    </div>
+
+                    <h3>3. Tại sao cần Service?</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Vấn đề</th>
+                                    <th>Giải pháp từ Service</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Controller quá nhiều code</td>
+                                    <td>Controller chỉ gọi Service, không xử lý logic phức tạp</td>
+                                </tr>
+                                <tr>
+                                    <td>Logic nghiệp vụ phức tạp</td>
+                                    <td>Service tập trung xử lý các quy tắc nghiệp vụ</td>
+                                </tr>
+                                <tr>
+                                    <td>Tái sử dụng code</td>
+                                    <td>Nhiều Controller có thể dùng chung một Service</td>
+                                </tr>
+                                <tr>
+                                    <td>Kiểm tra dữ liệu</td>
+                                    <td>Service kiểm tra tính hợp lệ trước khi lưu</td>
+                                </tr>
+                                <tr>
+                                    <td>Transaction</td>
+                                    <td>Service quản lý transaction (thành công/có lỗi thì rollback)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="service-box">
+                        <i class="fas fa-lightbulb"></i> <strong>Ví dụ:</strong> Khi đăng ký user mới, Service sẽ:
+                        <ul>
+                            <li>Kiểm tra email đã tồn tại chưa</li>
+                            <li>Kiểm tra mật khẩu có đủ mạnh không</li>
+                            <li>Mã hóa mật khẩu trước khi lưu</li>
+                            <li>Gửi email xác nhận (nếu cần)</li>
+                            <li>Lưu user vào database qua Repository</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- @SERVICE ANNOTATION -->
+                <section id="service-annotation" class="section">
+                    <h2><i class="fas fa-tag"></i> @SERVICE ANNOTATION</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>@Service</strong> là annotation đánh dấu một class là Service trong Spring Boot. Nó là một stereotype annotation (cùng với @Controller, @Repository, @Component).</p>
+
+                    <h3>2. Cú pháp</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Service Syntax</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.service;<br>
+                        <br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Service;<br>
+                        <br>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">TenService</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Các phương thức xử lý logic</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String sayHello() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Hello from Service"</span>;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>3. Ví dụ đơn giản</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Simple Example</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.service;<br>
+                        <br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Service;<br>
+                        <br>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String sayHello() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Hello from UserService"</span>;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4. Giải thích</h3>
+                    
+                    <div class="info-box">
+                        <ul>
+                            <li><strong>@Service</strong> giúp Spring Boot biết đây là Service</li>
+                            <li>Spring sẽ tự động tạo <strong>bean</strong> (đối tượng) của class này</li>
+                            <li>Có thể <strong>@Autowired</strong> Service vào Controller</li>
+                            <li>Service thường chứa các phương thức xử lý logic nghiệp vụ</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- CẤU TRÚC SERVICE -->
+                <section id="service-structure" class="section">
+                    <h2><i class="fas fa-sitemap"></i> CẤU TRÚC SERVICE CHUẨN</h2>
+
+                    <h3>1. Các thành phần của Service</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cấu trúc Service chuẩn</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 1. Inject Repository (bắt buộc)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Các phương thức CRUD</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; getAllUsers() { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User getUserById(Long id) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User createUser(User user) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User updateUser(Long id, User user) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="keyword">void</span> deleteUser(Long id) { ... }<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 3. Các phương thức nghiệp vụ</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; findUsersByAgeRange(<span class="keyword">int</span> min, <span class="keyword">int</span> max) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public boolean</span> checkEmailExists(String email) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="keyword">long</span> countAdultUsers() { ... }<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 4. Các phương thức xử lý đặc biệt</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User changePassword(Long id, String oldPwd, String newPwd) { ... }<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; searchUsers(String keyword) { ... }<br>
+                        }
+                    </div>
+
+                    <h3>2. Giải thích các thành phần</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Repository Injection</strong></td>
+                                    <td>Inject Repository để thao tác database</td>
+                                    <td><code>@Autowired UserRepository</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CRUD Methods</strong></td>
+                                    <td>Các thao tác cơ bản: thêm, sửa, xóa, tìm</td>
+                                    <td><code>createUser(), updateUser()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Business Logic</strong></td>
+                                    <td>Xử lý các quy tắc nghiệp vụ</td>
+                                    <td><code>checkEmailExists()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Special Methods</strong></td>
+                                    <td>Các chức năng đặc thù</td>
+                                    <td><code>changePassword()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TẠO USERSERVICE -->
+                <section id="create-service" class="section">
+                    <h2><i class="fas fa-plus-circle"></i> TẠO USERSERVICE HOÀN CHỈNH</h2>
+
+                    <h3>1. Tạo package service</h3>
+                    
+                    <p><strong>Bước 1:</strong> Trong thư mục <code>src/main/java/com/example/jpa/</code></p>
+                    <p><strong>Bước 2:</strong> Click chuột phải → New → Package</p>
+                    <p><strong>Bước 3:</strong> Nhập tên: <code>service</code></p>
+                    <p><strong>Bước 4:</strong> Enter</p>
+
+                    <h3>2. Tạo UserService</h3>
+                    
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/service/UserService.java</code></p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 1: Khai báo và Inject</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.service;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> com.example.jpa.repository.UserRepository;<br>
+                        <span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Service;<br>
+                        <span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <span class="keyword">import</span> java.util.Optional;<br>
+                        <br>
+                        <span class="annotation">@Service</span>  <span class="comment">// Đánh dấu đây là Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Inject UserRepository để thao tác với database</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 1. CÁC PHƯƠNG THỨC CRUD CƠ BẢN =====</span>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 2: Phương thức lấy dữ liệu</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Lấy tất cả users</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findAll();<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Lấy user theo ID</span><br>
+                        <span class="comment"> * @param id ID của user cần tìm</span><br>
+                        <span class="comment"> * @return Optional&lt;User&gt; (có thể có hoặc không)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> Optional&lt;User&gt; getUserById(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findById(id);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Lấy user theo ID (nếu không tìm thấy thì ném exception)</span><br>
+                        <span class="comment"> * @param id ID của user cần tìm</span><br>
+                        <span class="comment"> * @return User (chắc chắn có)</span><br>
+                        <span class="comment"> * @throws RuntimeException nếu không tìm thấy</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> User findUserById(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findById(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> RuntimeException(<span class="string">"Không tìm thấy user với ID: "</span> + id));<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 3: Thêm mới user</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Thêm user mới</span><br>
+                        <span class="comment"> * @param user Thông tin user cần thêm</span><br>
+                        <span class="comment"> * @return User đã được lưu (có ID)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span>  <span class="comment">// Đảm bảo toàn vẹn dữ liệu</span><br>
+                        <span class="keyword">public</span> User createUser(User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra dữ liệu đầu vào</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;validateUser(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra email đã tồn tại chưa</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (userRepository.existsByEmail(user.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Email "</span> + user.getEmail() + <span class="string">" đã được sử dụng!"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lưu user vào database</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(user);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Kiểm tra dữ liệu user có hợp lệ không</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">private void</span> validateUser(User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getName() == <span class="keyword">null</span> || user.getName().trim().isEmpty()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Tên user không được để trống"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getEmail() == <span class="keyword">null</span> || !user.getEmail().contains(<span class="string">"@"</span>)) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Email không hợp lệ"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getPassword() == <span class="keyword">null</span> || user.getPassword().length() < 6) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Mật khẩu phải có ít nhất 6 ký tự"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getAge() == <span class="keyword">null</span> || user.getAge() < 0 || user.getAge() > 150) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Tuổi không hợp lệ"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 4: Cập nhật user</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Cập nhật user</span><br>
+                        <span class="comment"> * @param id ID của user cần cập nhật</span><br>
+                        <span class="comment"> * @param userDetails Thông tin mới</span><br>
+                        <span class="comment"> * @return User đã được cập nhật</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public</span> User updateUser(Long id, User userDetails) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user cần cập nhật</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User existingUser = findUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra email mới có bị trùng không (nếu thay đổi email)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!existingUser.getEmail().equals(userDetails.getEmail()) <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&& userRepository.existsByEmail(userDetails.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Email "</span> + userDetails.getEmail() + <span class="string">" đã được sử dụng!"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Cập nhật thông tin</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;existingUser.setName(userDetails.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;existingUser.setEmail(userDetails.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;existingUser.setPassword(userDetails.getPassword());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;existingUser.setAge(userDetails.getAge());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;existingUser.setPhoneNumber(userDetails.getPhoneNumber());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lưu thay đổi (JPA tự động update vì đã có ID)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(existingUser);<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 5: Xóa user</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Xóa user theo ID</span><br>
+                        <span class="comment"> * @param id ID của user cần xóa</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public void</span> deleteUser(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra user có tồn tại không</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!userRepository.existsById(id)) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Không tìm thấy user với ID: "</span> + id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;userRepository.deleteById(id);<br>
+                        }
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phần 6: Xóa theo email</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Xóa user theo email</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public void</span> deleteUserByEmail(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;userRepository.deleteByEmail(email);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Xóa tất cả user</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public void</span> deleteAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;userRepository.deleteAll();<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- PHƯƠNG THỨC TÌM KIẾM -->
+                <section id="search-methods" class="section">
+                    <h2><i class="fas fa-search"></i> CÁC PHƯƠNG THỨC TÌM KIẾM</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phương thức tìm kiếm</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// ===== 2. CÁC PHƯƠNG THỨC TÌM KIẾM =====</span><br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user theo email</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> User getUserByEmail(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByEmail(email)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> RuntimeException(<span class="string">"Không tìm thấy user với email: "</span> + email));<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user theo tên (không phân biệt hoa thường)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; searchUsersByName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (name == <span class="keyword">null</span> || name.trim().isEmpty()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Tên tìm kiếm không được để trống"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByNameContainingIgnoreCase(name);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user theo độ tuổi chính xác</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersByAge(Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (age < 0 || age > 150) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Tuổi không hợp lệ"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAge(age);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user có độ tuổi lớn hơn</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersOlderThan(Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAgeGreaterThan(age);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user có độ tuổi nhỏ hơn</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersYoungerThan(Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAgeLessThan(age);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user trong khoảng tuổi</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersByAgeRange(Integer minAge, Integer maxAge) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (minAge > maxAge) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Tuổi tối thiểu không thể lớn hơn tuổi tối đa"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAgeBetween(minAge, maxAge);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Lấy user trưởng thành (age >= 18)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getAdultUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAgeGreaterThanEqual(18);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user có số điện thoại (không null)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersWithPhoneNumber() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByPhoneNumberIsNotNull();<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Tìm user không có số điện thoại</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; getUsersWithoutPhoneNumber() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByPhoneNumberIsNull();<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- PHƯƠNG THỨC KIỂM TRA -->
+                <section id="validation" class="section">
+                    <h2><i class="fas fa-check-double"></i> PHƯƠNG THỨC KIỂM TRA</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Phương thức kiểm tra</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// ===== 3. CÁC PHƯƠNG THỨC KIỂM TRA =====</span><br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Kiểm tra email đã tồn tại chưa</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public boolean</span> isEmailExists(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.existsByEmail(email);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Đếm tổng số user</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> <span class="keyword">long</span> countUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.count();<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Đếm user theo tên</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="keyword">public</span> <span class="keyword">long</span> countUsersByName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.countByName(name);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- LOGIC NGHIỆP VỤ -->
+                <section id="business-logic" class="section">
+                    <h2><i class="fas fa-brain"></i> LOGIC NGHIỆP VỤ ĐẶC BIỆT</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Logic nghiệp vụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// ===== 4. CÁC PHƯƠNG THỨC NGHIỆP VỤ ĐẶC BIỆT =====</span><br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Đổi mật khẩu</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public</span> User changePassword(Long id, String oldPassword, String newPassword) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User user = findUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra mật khẩu cũ</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!user.getPassword().equals(oldPassword)) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Mật khẩu cũ không chính xác"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra mật khẩu mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (newPassword == <span class="keyword">null</span> || newPassword.length() < 6) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Mật khẩu mới phải có ít nhất 6 ký tự"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Cập nhật mật khẩu mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;user.setPassword(newPassword);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(user);<br>
+                        }<br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Kích hoạt / Vô hiệu hóa user (nếu có trường active)</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public</span> User toggleUserStatus(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User user = findUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Giả sử có trường active</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// user.setActive(!user.isActive());</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(user);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- XỬ LÝ HÀNG LOẠT -->
+                <section id="batch-operations" class="section">
+                    <h2><i class="fas fa-layer-group"></i> XỬ LÝ HÀNG LOẠT</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Xử lý hàng loạt</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// ===== 5. CÁC PHƯƠNG THỨC XỬ LÝ HÀNG LOẠT =====</span><br>
+                        <br>
+                        <span class="comment">/**</span><br>
+                        <span class="comment"> * Thêm nhiều user cùng lúc</span><br>
+                        <span class="comment"> */</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public</span> List&lt;User&gt; createUsers(List&lt;User&gt; users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> (User user : users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;validateUser(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (userRepository.existsByEmail(user.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> RuntimeException(<span class="string">"Email "</span> + user.getEmail() + <span class="string">" đã tồn tại"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.saveAll(users);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- @TRANSACTIONAL -->
+                <section id="transactional" class="section">
+                    <h2><i class="fas fa-exchange-alt"></i> @TRANSACTIONAL - QUẢN LÝ GIAO DỊCH</h2>
+
+                    <h3>1. Transaction là gì?</h3>
+                    <p><strong>Transaction</strong> (giao dịch) là một nhóm các thao tác phải được thực hiện hoặc tất cả thành công, hoặc tất cả thất bại.</p>
+
+                    <h3>2. Ví dụ về transaction</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ chuyển tiền</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// Chuyển tiền: A chuyển 100k cho B</span><br>
+                        <span class="comment">// Nếu chỉ trừ tiền A mà không cộng cho B → sai</span><br>
+                        <span class="comment">// Phải đảm bảo cả 2 đều thành công</span><br>
+                        <br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="keyword">public void</span> transferMoney(Long fromId, Long toId, <span class="keyword">double</span> amount) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;accountRepository.withdraw(fromId, amount);  <span class="comment">// Trừ tiền A</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;accountRepository.deposit(toId, amount);     <span class="comment">// Cộng tiền B</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Nếu lệnh thứ 2 lỗi, lệnh 1 tự động rollback</span><br>
+                        }
+                    </div>
+
+                    <h3>3. Các thuộc tính của @Transactional</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thuộc tính</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>readOnly = true</code></td>
+                                    <td>Chỉ đọc, không sửa dữ liệu (tối ưu cho SELECT)</td>
+                                    <td><code>@Transactional(readOnly = true)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>rollbackFor</code></td>
+                                    <td>Chỉ định lỗi nào thì rollback</td>
+                                    <td><code>rollbackFor = Exception.class</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>noRollbackFor</code></td>
+                                    <td>Lỗi nào không rollback</td>
+                                    <td><code>noRollbackFor = BusinessException.class</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>timeout</code></td>
+                                    <td>Thời gian tối đa (giây)</td>
+                                    <td><code>timeout = 30</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>4. Ví dụ sử dụng @Transactional</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Các cách dùng @Transactional</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Chỉ đọc - tối ưu hiệu năng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span>(readOnly = <span class="keyword">true</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findAll();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Ghi dữ liệu - cần transaction</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User createUser(User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Với rollback cụ thể</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span>(rollbackFor = Exception.class, timeout = 10)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> complexOperation() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Nếu mất hơn 10 giây → rollback</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Nếu có Exception → rollback</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong>
+                        <ul>
+                            <li>Nên dùng <code>@Transactional(readOnly = true)</code> cho các phương thức chỉ đọc để tối ưu hiệu năng</li>
+                            <li>Các phương thức thêm/sửa/xóa nên có <code>@Transactional</code></li>
+                            <li>Transaction thường được đặt ở tầng Service, không phải Controller hay Repository</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- XỬ LÝ NGOẠI LỆ -->
+                <section id="exception-handling" class="section">
+                    <h2><i class="fas fa-exclamation-triangle"></i> XỬ LÝ NGOẠI LỆ (EXCEPTION) TRONG SERVICE</h2>
+
+                    <h3>1. Tại sao cần xử lý ngoại lệ?</h3>
+                    <ul>
+                        <li>Thông báo lỗi rõ ràng cho người dùng</li>
+                        <li>Phân biệt các loại lỗi khác nhau</li>
+                        <li>Dễ dàng xử lý ở Controller</li>
+                        <li>Bảo mật thông tin (không để lộ stack trace)</li>
+                    </ul>
+
+                    <h3>2. Tạo class Exception riêng</h3>
+                    
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/exception/UserNotFoundException.java</code></p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserNotFoundException.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.exception;<br>
+                        <br>
+                        <span class="keyword">public class</span> <span class="class-name">UserNotFoundException</span> <span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserNotFoundException</span>(String message) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(message);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserNotFoundException</span>(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(<span class="string">"Không tìm thấy user với ID: "</span> + id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserNotFoundException</span>(String email, String type) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(<span class="string">"Không tìm thấy user với email: "</span> + email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/exception/DuplicateEmailException.java</code></p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>DuplicateEmailException.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.exception;<br>
+                        <br>
+                        <span class="keyword">public class</span> <span class="class-name">DuplicateEmailException</span> <span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">DuplicateEmailException</span>(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(<span class="string">"Email "</span> + email + <span class="string">" đã được sử dụng!"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/exception/InvalidUserDataException.java</code></p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>InvalidUserDataException.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.exception;<br>
+                        <br>
+                        <span class="keyword">public class</span> <span class="class-name">InvalidUserDataException</span> <span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">InvalidUserDataException</span>(String message) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(message);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>3. Cập nhật Service với Exception riêng</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java - Với Custom Exceptions</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.service;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.exception.DuplicateEmailException;<br>
+                        <span class="keyword">import</span> com.example.jpa.exception.InvalidUserDataException;<br>
+                        <span class="keyword">import</span> com.example.jpa.exception.UserNotFoundException;<br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> com.example.jpa.repository.UserRepository;<br>
+                        <span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Service;<br>
+                        <span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User getUserById(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findById(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> UserNotFoundException(id));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User createUser(User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;validateUser(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (userRepository.existsByEmail(user.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> DuplicateEmailException(user.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> User updateUser(Long id, User userDetails) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User existingUser = getUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (!existingUser.getEmail().equals(userDetails.getEmail()) <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&& userRepository.existsByEmail(userDetails.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> DuplicateEmailException(userDetails.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;existingUser.setName(userDetails.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;existingUser.setEmail(userDetails.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;existingUser.setPassword(userDetails.getPassword());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;existingUser.setAge(userDetails.getAge());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;existingUser.setPhoneNumber(userDetails.getPhoneNumber());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.save(existingUser);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> validateUser(User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (user.getName() == <span class="keyword">null</span> || user.getName().trim().isEmpty()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> InvalidUserDataException(<span class="string">"Tên user không được để trống"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ... các kiểm tra khác</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- CONTROLLER GỌI SERVICE -->
+                <section id="controller-service" class="section">
+                    <h2><i class="fas fa-code-branch"></i> CONTROLLER SỬ DỤNG SERVICE</h2>
+
+                    <h3>1. Nguyên tắc</h3>
+                    <p>Controller <strong>KHÔNG</strong> gọi trực tiếp Repository, mà phải gọi Service.</p>
+
+                    <h3>2. Ví dụ Controller đơn giản</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java - Gọi Service</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.controller;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> com.example.jpa.service.UserService;<br>
+                        <span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br>
+                        <span class="keyword">import</span> org.springframework.http.HttpStatus;<br>
+                        <span class="keyword">import</span> org.springframework.http.ResponseEntity;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.*;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping</span>(<span class="string">"/api/users"</span>)<br>
+                        <span class="keyword">public class</span> <span class="class-name">UserController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Inject Service, không inject Repository</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserService userService;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// GET: Lấy tất cả users</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userService.getAllUsers();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// GET: Lấy user theo ID</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/{id}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;User&gt; getUserById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = userService.findUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.notFound().build();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// POST: Thêm user mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PostMapping</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;User&gt; createUser(<span class="annotation">@RequestBody</span> User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User newUser = userService.createUser(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CREATED).body(newUser);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.badRequest().build();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- CONTROLLER HOÀN CHỈNH -->
+                <section id="complete-controller" class="section">
+                    <h2><i class="fas fa-file-code"></i> USERCONTROLLER HOÀN CHỈNH</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java - Đầy đủ các API</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.controller;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.exception.DuplicateEmailException;<br>
+                        <span class="keyword">import</span> com.example.jpa.exception.InvalidUserDataException;<br>
+                        <span class="keyword">import</span> com.example.jpa.exception.UserNotFoundException;<br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> com.example.jpa.service.UserService;<br>
+                        <span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br>
+                        <span class="keyword">import</span> org.springframework.http.HttpStatus;<br>
+                        <span class="keyword">import</span> org.springframework.http.ResponseEntity;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.*;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.HashMap;<br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <span class="keyword">import</span> java.util.Map;<br>
+                        <br>
+                        <span class="annotation">@CrossOrigin</span>(origins = <span class="string">"*"</span>)<br>
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping</span>(<span class="string">"/api/users"</span>)<br>
+                        <span class="keyword">public class</span> <span class="class-name">UserController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserService userService;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 1. GET - Lấy tất cả users =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;List&lt;User&gt;&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userService.getAllUsers();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 2. GET - Lấy user theo ID =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/{id}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; getUserById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = userService.findUserById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (UserNotFoundException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 3. GET - Lấy user theo email =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/email/{email}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; getUserByEmail(<span class="annotation">@PathVariable</span> String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = userService.getUserByEmail(email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 4. GET - Tìm kiếm theo tên =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/search"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; searchUsers(<span class="annotation">@RequestParam</span> String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userService.searchUsersByName(name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 5. GET - Lọc theo độ tuổi =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/age/{age}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;List&lt;User&gt;&gt; getUsersByAge(<span class="annotation">@PathVariable</span> Integer age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userService.getUsersByAge(age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 6. GET - Lọc theo khoảng tuổi =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/age-range"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; getUsersByAgeRange(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@RequestParam</span> Integer min,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@RequestParam</span> Integer max) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userService.getUsersByAgeRange(min, max);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 7. POST - Thêm user mới =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PostMapping</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; createUser(<span class="annotation">@RequestBody</span> User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User newUser = userService.createUser(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CREATED).body(newUser);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (InvalidUserDataException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (DuplicateEmailException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CONFLICT).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 8. PUT - Cập nhật user =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PutMapping</span>(<span class="string">"/{id}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; updateUser(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PathVariable</span> Long id,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@RequestBody</span> User user) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User updatedUser = userService.updateUser(id, user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(updatedUser);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (UserNotFoundException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (DuplicateEmailException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CONFLICT).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (InvalidUserDataException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 9. DELETE - Xóa user =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@DeleteMapping</span>(<span class="string">"/{id}"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; deleteUser(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;userService.deleteUser(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; response = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.put(<span class="string">"message"</span>, <span class="string">"Đã xóa user thành công"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (UserNotFoundException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 10. POST - Đổi mật khẩu =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PostMapping</span>(<span class="string">"/{id}/change-password"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; changePassword(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PathVariable</span> Long id,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@RequestParam</span> String oldPassword,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@RequestParam</span> String newPassword) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = userService.changePassword(id, oldPassword, newPassword);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; response = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.put(<span class="string">"message"</span>, <span class="string">"Đổi mật khẩu thành công"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (UserNotFoundException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 11. GET - Đếm số user =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/count"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, Long&gt;&gt; countUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> count = userService.countUsers();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, Long&gt; response = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.put(<span class="string">"total"</span>, count);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 12. GET - Kiểm tra email tồn tại =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/check-email"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;Map&lt;String, Boolean&gt;&gt; checkEmail(<span class="annotation">@RequestParam</span> String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> exists = userService.isEmailExists(email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, Boolean&gt; response = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.put(<span class="string">"exists"</span>, exists);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 13. GET - Lấy user trưởng thành =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping</span>(<span class="string">"/adults"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;List&lt;User&gt;&gt; getAdultUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userService.getAdultUsers();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 14. POST - Thêm nhiều user =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PostMapping</span>(<span class="string">"/batch"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; createUsers(<span class="annotation">@RequestBody</span> List&lt;User&gt; users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">try</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; savedUsers = userService.createUsers(users);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CREATED).body(savedUsers);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">catch</span> (RuntimeException e) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; error = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;error.put(<span class="string">"message"</span>, e.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 15. DELETE - Xóa tất cả users =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@DeleteMapping</span>(<span class="string">"/all"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;?&gt; deleteAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;userService.deleteAllUsers();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; response = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.put(<span class="string">"message"</span>, <span class="string">"Đã xóa tất cả users"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- TỔNG KẾT -->
+                <section id="summary" class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> TỔNG KẾT VỀ SERVICE</h2>
+
+                    <h3>1. Các annotation chính</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>@Service</code></td>
+                                    <td>Đánh dấu class là Service</td>
+                                </tr>
+                                <tr>
+                                    <td><code>@Autowired</code></td>
+                                    <td>Inject dependency (Repository)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>@Transactional</code></td>
+                                    <td>Quản lý transaction</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Quy tắc khi viết Service</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Quy tắc</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Không để Controller gọi trực tiếp Repository</td>
+                                    <td>Controller chỉ gọi Service, mọi logic phải qua Service</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Xử lý exception trong Service</td>
+                                    <td>Ném exception phù hợp với từng trường hợp lỗi</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Validate dữ liệu</td>
+                                    <td>Kiểm tra đầu vào trước khi lưu vào database</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Dùng @Transactional cho các method ghi</td>
+                                    <td>Đảm bảo toàn vẹn dữ liệu khi có lỗi</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Tách biệt logic</td>
+                                    <td>Mỗi method chỉ làm một việc, dễ bảo trì</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Luồng xử lý hoàn chỉnh</h3>
+                    
+                    <div class="flow-chart" style="text-align: left;">
+                        <ol style="font-family: 'Consolas'; line-height: 2;">
+                            <li><strong>Client</strong> gửi request → <strong>Controller</strong></li>
+                            <li><strong>Controller</strong> nhận request, gọi <strong>Service</strong></li>
+                            <li><strong>Service</strong> xử lý logic:
+                                <ul>
+                                    <li>Validate dữ liệu đầu vào</li>
+                                    <li>Kiểm tra điều kiện nghiệp vụ</li>
+                                    <li>Gọi Repository để thao tác database</li>
+                                </ul>
+                            </li>
+                            <li><strong>Repository</strong> thao tác với database</li>
+                            <li><strong>Service</strong> trả kết quả về Controller</li>
+                            <li><strong>Controller</strong> trả response về client</li>
+                        </ol>
+                    </div>
+
+                    <h3>4. Câu hỏi ôn tập</h3>
+                    
+                    <ol>
+                        <li>Service là gì? Tại sao cần Service?</li>
+                        <li>@Service annotation có tác dụng gì?</li>
+                        <li>Sự khác nhau giữa Controller, Service và Repository?</li>
+                        <li>Tại sao không nên để Controller gọi trực tiếp Repository?</li>
+                        <li>@Transactional dùng để làm gì? Khi nào cần dùng?</li>
+                        <li>Các bước xử lý khi thêm mới một user?</li>
+                        <li>Làm thế nào để xử lý exception trong Service?</li>
+                        <li>Tạo custom exception để làm gì?</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> HOÀN THÀNH BÀI 4 (PHẦN 3)!</h4>
+                        <p>Bạn đã hoàn thành Bài 4 (Phần 3) về Service Layer trong Spring Boot.</p>
+                        <p><strong>Tổng kết Bài 4:</strong></p>
+                        <ul>
+                            <li><strong>Phần 1:</strong> Cài đặt MySQL, JPA, Hibernate, Entity</li>
+                            <li><strong>Phần 2:</strong> Repository, CRUD, Derived Query Methods, @Query</li>
+                            <li><strong>Phần 3:</strong> Service, @Transactional, Exception Handling, Controller gọi Service</li>
+                        </ul>
+                        <p><strong>Bài tiếp theo:</strong> Chúng ta sẽ học về DTO (Data Transfer Object) và cách tối ưu API.</p>
+                    </div>
+
+                    <div class="interactive-section">
+                        <h4><i class="fas fa-play-circle"></i> KIỂM TRA NHANH KIẾN THỨC</h4>
+                        <div class="input-group">
+                            <label for="quizQuestion">Câu hỏi: Annotation nào dùng để quản lý transaction trong Service?</label>
+                            <select id="quizQuestion">
+                                <option value="">-- Chọn đáp án --</option>
+                                <option value="service">@Service</option>
+                                <option value="autowired">@Autowired</option>
+                                <option value="transactional">@Transactional</option>
+                                <option value="repository">@Repository</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-service" onclick="checkQuiz()">
+                            <i class="fas fa-check"></i> Kiểm tra
+                        </button>
+                        <div class="result" id="quizResult">
+                            <strong>Kết quả:</strong>
+                            <div class="result-content" id="quizResultContent"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 6: Kết nối Database với Spring Data JPA - Service Layer &copy; GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Xóa class active từ tất cả các link và section
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Kiểm tra quiz
+        function checkQuiz() {
+            const answer = document.getElementById('quizQuestion').value;
+            const resultDiv = document.getElementById('quizResult');
+            const output = document.getElementById('quizResultContent');
+
+            resultDiv.classList.add('active');
+
+            if (answer === 'transactional') {
+                output.textContent = '✅ Chính xác! @Transactional dùng để quản lý transaction trong Service.';
+            } else if (answer === 'service') {
+                output.textContent = '❌ Chưa chính xác. @Service dùng để đánh dấu class là Service. Đáp án đúng là @Transactional.';
+            } else if (answer === 'autowired') {
+                output.textContent = '❌ Chưa chính xác. @Autowired dùng để inject dependency. Đáp án đúng là @Transactional.';
+            } else if (answer === 'repository') {
+                output.textContent = '❌ Chưa chính xác. @Repository dùng cho tầng Repository. Đáp án đúng là @Transactional.';
+            } else {
+                output.textContent = '❌ Vui lòng chọn một đáp án.';
+            }
+        }
+    </script>
+</body>
+</html>

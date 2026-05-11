@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 1: GIỚI THIỆU VÀ TẠO DỰ ÁN SPRING BOOT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .nav-link1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-run {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .visual-array {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .array-item {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .array-index {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        .array-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .algorithm-steps {
+            background: #f0f7ff;
+            border-left: 4px solid #4dabf7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .algorithm-steps ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .algorithm-steps li {
+            margin-bottom: 5px;
+        }
+
+        .method-demo {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo .wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .demo .array {
+            display: flex;
+        }
+
+        .demo .item {
+            width: 100px;
+            padding: 15px;
+            margin: 5px;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.4s;
+        }
+
+        .demo .active {
+            background: #ffcc00;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .demo .arrow {
+            position: absolute;
+            top: -35px;
+            font-size: 28px;
+            transition: 0.4s;
+        }
+
+        .demo .index {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-leaf"></i> BÀI 1: GIỚI THIỆU VÀ TẠO DỰ ÁN SPRING BOOT</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu tổng quan</a></li>
+                    <li class="nav-item"><a href="#spring-framework" class="nav-link"><i class="fas fa-cube"></i> Spring Framework & Boot</a></li>
+                    <li class="nav-item"><a href="#environment" class="nav-link"><i class="fas fa-tools"></i> Chuẩn bị môi trường</a></li>
+                    <li class="nav-item"><a href="#create-project" class="nav-link"><i class="fas fa-plus-circle"></i> Tạo dự án</a></li>
+                    <li class="nav-item"><a href="#structure" class="nav-link"><i class="fas fa-sitemap"></i> Cấu trúc dự án</a></li>
+                    <li class="nav-item"><a href="#run" class="nav-link"><i class="fas fa-play"></i> Chạy ứng dụng</a></li>
+                    <li class="nav-item"><a href="#annotations" class="nav-link"><i class="fas fa-hashtag"></i> Annotation</a></li>
+                    <li class="nav-item"><a href="#exercises" class="nav-link"><i class="fas fa-tasks"></i> Bài tập</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link"><i class="fas fa-clipboard-check"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN GIỚI THIỆU TỔNG QUAN -->
+                <section id="intro" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU TỔNG QUAN</h2>
+
+                    <h3>1. Mục tiêu bài học</h3>
+                    <p>Sau khi hoàn thành bài học này, học viên sẽ có thể:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mục tiêu</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Hiểu về Spring Boot</td>
+                                    <td>Biết Spring Boot là gì, tại sao nên dùng</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Cài đặt môi trường</td>
+                                    <td>Cài đặt và kiểm tra Java, IDE, Maven</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Tạo dự án đầu tiên</td>
+                                    <td>Tạo project Spring Boot từ Spring Initializr</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Hiểu cấu trúc project</td>
+                                    <td>Nắm được các thành phần trong dự án</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Chạy ứng dụng</td>
+                                    <td>Chạy và test API đầu tiên</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN SPRING FRAMEWORK VÀ BOOT -->
+                <section id="spring-framework" class="section">
+                    <h2><i class="fas fa-cube"></i> SPRING FRAMEWORK VÀ SPRING BOOT</h2>
+
+                    <h3>2.1. Spring Framework là gì?</h3>
+                    <p><strong>Spring Framework</strong> là một framework mạnh mẽ của Java, giúp lập trình viên xây dựng ứng dụng dễ dàng hơn.</p>
+                    
+                    <h4>Các tính năng chính của Spring Framework:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tính năng</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dependency Injection</td>
+                                    <td>Tự động tạo và quản lý các đối tượng</td>
+                                    <td>Không cần new đối tượng</td>
+                                </tr>
+                                <tr>
+                                    <td>AOP</td>
+                                    <td>Lập trình hướng khía cạnh</td>
+                                    <td>Logging, bảo mật</td>
+                                </tr>
+                                <tr>
+                                    <td>Transaction Management</td>
+                                    <td>Quản lý giao dịch</td>
+                                    <td>Rollback khi lỗi</td>
+                                </tr>
+                                <tr>
+                                    <td>Web MVC</td>
+                                    <td>Xây dựng ứng dụng web</td>
+                                    <td>Controller, View</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>Ví dụ trước và sau khi dùng Spring:</h4>
+                    
+                    <p><strong>❌ Không dùng Spring:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Java - Không Spring</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> <span class="class-name">UserService</span>() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Phải tự tạo đối tượng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;userRepository = <span class="keyword">new</span> <span class="class-name">UserRepository</span>();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <p><strong>✅ Dùng Spring:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Java - Với Spring</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;  <span class="comment">// Spring tự tạo và inject</span><br>
+                        }
+                    </div>
+
+                    <h3>2.2. Spring Boot là gì?</h3>
+                    <p><strong>Spring Boot</strong> là một dự án con của Spring Framework, được phát triển để đơn giản hóa việc tạo ứng dụng Spring.</p>
+
+                    <h4>Vấn đề trước khi có Spring Boot:</h4>
+                    <ul>
+                        <li>Phải cấu hình rất nhiều file XML</li>
+                        <li>Phải tự cài đặt và cấu hình server</li>
+                        <li>Phải tự quản lý phiên bản thư viện</li>
+                        <li>Mất nhiều thời gian cho cấu hình</li>
+                    </ul>
+
+                    <h4>Spring Boot giải quyết:</h4>
+                    <div class="success-box">
+                        <ul>
+                            <li>✅ <strong>Tự động cấu hình</strong> - Không cần file XML</li>
+                            <li>✅ <strong>Server nhúng</strong> - Có sẵn Tomcat, không cần cài đặt</li>
+                            <li>✅ <strong>Starter dependencies</strong> - Quản lý phiên bản tự động</li>
+                            <li>✅ <strong>Cấu hình đơn giản</strong> - Chỉ cần file application.properties</li>
+                        </ul>
+                    </div>
+
+                    <h3>2.3. So sánh Spring và Spring Boot</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>Spring Framework</th>
+                                    <th>Spring Boot</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cấu hình</td>
+                                    <td>Phức tạp, nhiều XML</td>
+                                    <td>Đơn giản, tự động</td>
+                                </tr>
+                                <tr>
+                                    <td>Server</td>
+                                    <td>Phải cài Tomcat riêng</td>
+                                    <td>Có Tomcat nhúng sẵn</td>
+                                </tr>
+                                <tr>
+                                    <td>Khởi tạo</td>
+                                    <td>Mất nhiều thời gian</td>
+                                    <td>Spring Initializr</td>
+                                </tr>
+                                <tr>
+                                    <td>Dependencies</td>
+                                    <td>Tự quản lý phiên bản</td>
+                                    <td>Starter quản lý sẵn</td>
+                                </tr>
+                                <tr>
+                                    <td>Thời gian học</td>
+                                    <td>Lâu</td>
+                                    <td>Nhanh hơn</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2.4. Lợi ích của Spring Boot</h3>
+                    <ul>
+                        <li><strong>Giảm thiểu cấu hình phức tạp</strong> - Không cần file XML, tự động cấu hình dựa trên dependencies</li>
+                        <li><strong>Tích hợp server sẵn</strong> - Có Tomcat, Jetty nhúng, chạy ứng dụng bằng 1 lệnh</li>
+                        <li><strong>Phát triển REST API nhanh chóng</strong> - Chỉ cần vài annotation, tự động chuyển Object <-> JSON</li>
+                        <li><strong>Cộng đồng lớn</strong> - Nhiều tài liệu, video hướng dẫn, dễ tìm giải pháp khi gặp lỗi</li>
+                        <li><strong>Sẵn sàng cho production</strong> - Có sẵn tính năng monitoring, dễ dàng cấu hình cho môi trường thật</li>
+                    </ul>
+                </section>
+
+                <!-- PHẦN CHUẨN BỊ MÔI TRƯỜNG -->
+                <section id="environment" class="section">
+                    <h2><i class="fas fa-tools"></i> CHUẨN BỊ MÔI TRƯỜNG PHÁT TRIỂN</h2>
+
+                    <h3>1. Các công cụ cần cài đặt</h3>
+
+                    <h4>1.1. Java JDK 17</h4>
+                    <p><strong>Java JDK (Java Development Kit)</strong> là bộ công cụ để phát triển ứng dụng Java.</p>
+                    
+                    <h5>Các bước cài đặt:</h5>
+                    <ol>
+                        <li><strong>Bước 1: Tải JDK</strong><br>
+                            Truy cập: <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank">https://www.oracle.com/java/technologies/downloads/</a><br>
+                            Chọn Java 17 (LTS)<br>
+                            Tải bản phù hợp với hệ điều hành (Windows x64, macOS, Linux)
+                        </li>
+                        <li><strong>Bước 2: Cài đặt</strong><br>
+                            Chạy file cài đặt<br>
+                            Chọn đường dẫn cài đặt (mặc định: C:\Program Files\Java\jdk-17\)
+                        </li>
+                        <li><strong>Bước 3: Kiểm tra cài đặt</strong><br>
+                            Mở Command Prompt (Windows) hoặc Terminal (macOS/Linux) và gõ:
+                        </li>
+                    </ol>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Kiểm tra Java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        java -version
+                    </div>
+
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        java version "17.0.7" 2023-04-18 LTS<br>
+                        Java(TM) SE Runtime Environment (build 17.0.7+8-LTS-224)<br>
+                        Java HotSpot(TM) 64-Bit Server VM (build 17.0.7+8-LTS-224, mixed mode)
+                    </div>
+
+                    <h4>1.2. IntelliJ IDEA</h4>
+                    <p><strong>IntelliJ IDEA</strong> là IDE (Integrated Development Environment) phổ biến nhất cho Java.</p>
+                    
+                    <h5>Các bước cài đặt:</h5>
+                    <ol>
+                        <li><strong>Bước 1: Tải IntelliJ</strong><br>
+                            Truy cập: <a href="https://www.jetbrains.com/idea/download/" target="_blank">https://www.jetbrains.com/idea/download/</a><br>
+                            Chọn Community Edition (miễn phí)
+                        </li>
+                        <li><strong>Bước 2: Cài đặt</strong><br>
+                            Chạy file cài đặt<br>
+                            Chọn các tùy chọn mặc định
+                        </li>
+                        <li><strong>Bước 3: Cấu hình lần đầu</strong><br>
+                            Chọn theme (Dark/Light)<br>
+                            Cài đặt các plugin cần thiết
+                        </li>
+                    </ol>
+
+                    <h4>1.3. Maven</h4>
+                    <p><strong>Maven</strong> là công cụ quản lý dependencies (thư viện) và build project.</p>
+                    
+                    <p><strong>Kiểm tra Maven:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Kiểm tra Maven</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        mvn -version
+                    </div>
+
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        Apache Maven 3.8.6 <br>
+                        Maven home: C:\Program Files\Apache\maven<br>
+                        Java version: 17.0.7
+                    </div>
+                    
+                    <div class="note">
+                        <p><i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Khi cài IntelliJ, Maven thường được tích hợp sẵn, không cần cài riêng.</p>
+                    </div>
+
+                    <h4>1.4. Postman (Tùy chọn)</h4>
+                    <p><strong>Postman</strong> là công cụ test API, gửi các loại request (GET, POST, PUT, DELETE).</p>
+                    <p>Tải Postman: <a href="https://www.postman.com/downloads/" target="_blank">https://www.postman.com/downloads/</a></p>
+
+                    <h3>2. Kiểm tra tổng thể môi trường</h3>
+                    
+                    <p>Tạo file <strong>check-environment.bat</strong> (Windows) hoặc <strong>check-environment.sh</strong> (macOS/Linux):</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>check-environment.bat</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @echo off<br>
+                        echo ===== KIỂM TRA MÔI TRƯỜNG JAVA SPRING BOOT =====<br>
+                        echo.<br>
+                        <br>
+                        echo 1. Kiểm tra Java:<br>
+                        java -version<br>
+                        echo.<br>
+                        <br>
+                        echo 2. Kiểm tra Maven:<br>
+                        mvn -version<br>
+                        echo.<br>
+                        <br>
+                        echo 3. Kiểm tra IntelliJ:<br>
+                        echo Nếu đã cài IntelliJ, có thể mở từ Start Menu<br>
+                        echo.<br>
+                        <br>
+                        echo Hoàn tất kiểm tra!<br>
+                        pause
+                    </div>
+                </section>
+
+                <!-- PHẦN TẠO DỰ ÁN -->
+                <section id="create-project" class="section">
+                    <h2><i class="fas fa-plus-circle"></i> TẠO DỰ ÁN SPRING BOOT ĐẦU TIÊN</h2>
+
+                    <h3>1. Tạo project với Spring Initializr</h3>
+
+                    <h4>1.1. Truy cập Spring Initializr</h4>
+                    <p>Mở trình duyệt và truy cập: <a href="https://start.spring.io" target="_blank">https://start.spring.io</a></p>
+                    <p>Đây là công cụ tạo project Spring Boot trực tuyến chính thức từ Spring.</p>
+
+                    <h4>1.2. Điền thông tin dự án</h4>
+                    <p>Giao diện Spring Initializr chia làm 2 phần: Project Metadata và Dependencies.</p>
+
+                    <h5>Project Metadata:</h5>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trường</th>
+                                    <th>Giá trị</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Project</td>
+                                    <td>Maven</td>
+                                    <td>Công cụ build project. Maven phổ biến, dễ học</td>
+                                </tr>
+                                <tr>
+                                    <td>Language</td>
+                                    <td>Java</td>
+                                    <td>Ngôn ngữ lập trình</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Boot</td>
+                                    <td>3.1.x</td>
+                                    <td>Phiên bản Spring Boot, chọn bản mới nhất ổn định</td>
+                                </tr>
+                                <tr>
+                                    <td>Group</td>
+                                    <td>com.example</td>
+                                    <td>Tên nhóm/tổ chức, thường theo dạng domain ngược</td>
+                                </tr>
+                                <tr>
+                                    <td>Artifact</td>
+                                    <td>demo</td>
+                                    <td>Tên dự án, sẽ là tên file JAR khi build</td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>demo</td>
+                                    <td>Tên hiển thị của dự án</td>
+                                </tr>
+                                <tr>
+                                    <td>Description</td>
+                                    <td>Demo project for Spring Boot</td>
+                                    <td>Mô tả ngắn về dự án</td>
+                                </tr>
+                                <tr>
+                                    <td>Package name</td>
+                                    <td>com.example.demo</td>
+                                    <td>Package gốc của Java code</td>
+                                </tr>
+                                <tr>
+                                    <td>Packaging</td>
+                                    <td>Jar</td>
+                                    <td>Đóng gói thành file JAR (chạy độc lập)</td>
+                                </tr>
+                                <tr>
+                                    <td>Java</td>
+                                    <td>17</td>
+                                    <td>Phiên bản Java sử dụng</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h4>1.3. Chọn Dependencies</h4>
+                    <p><strong>Dependencies</strong> là các thư viện mà project sẽ sử dụng.</p>
+                    
+                    <p><strong>Cách thêm dependency:</strong></p>
+                    <ol>
+                        <li>Nhấn nút ADD DEPENDENCIES (hoặc Ctrl + B)</li>
+                        <li>Gõ tìm kiếm: Spring Web</li>
+                        <li>Click chọn</li>
+                    </ol>
+
+                    <p><strong>Spring Web</strong> là dependency cần thiết để tạo REST API. Nó bao gồm:</p>
+                    <ul>
+                        <li>Spring MVC (Model-View-Controller)</li>
+                        <li>Embedded Tomcat server</li>
+                        <li>Các annotation cho REST API</li>
+                    </ul>
+
+                    <h4>1.4. Tạo và tải project</h4>
+                    <ol>
+                        <li>Kiểm tra lại các thông tin đã nhập</li>
+                        <li>Nhấn nút GENERATE (hoặc Ctrl + Enter)</li>
+                        <li>Tải file demo.zip về máy</li>
+                        <li>Giải nén file zip vào thư mục làm việc (ví dụ: D:\spring-boot\)</li>
+                    </ol>
+
+                    <h3>2. Mở project trong IntelliJ IDEA</h3>
+
+                    <h4>2.1. Mở project</h4>
+                    <p><strong>Cách 1: Mở trực tiếp</strong></p>
+                    <ol>
+                        <li>Mở IntelliJ IDEA</li>
+                        <li>Chọn Open</li>
+                        <li>Dẫn đến thư mục vừa giải nén</li>
+                        <li>Chọn thư mục demo</li>
+                        <li>Nhấn OK</li>
+                    </ol>
+
+                    <p><strong>Cách 2: Kéo thả</strong> - Kéo thư mục demo vào cửa sổ IntelliJ</p>
+
+                    <h4>2.2. Cấu hình JDK cho project</h4>
+                    <p>Khi mở project lần đầu, IntelliJ sẽ yêu cầu chọn JDK:</p>
+                    <ol>
+                        <li>Chọn File → Project Structure (Ctrl + Alt + Shift + S)</li>
+                        <li>Trong Project SDK, chọn Java 17</li>
+                        <li>Nhấn Apply → OK</li>
+                    </ol>
+
+                    <h4>2.3. Đợi Maven tải dependencies</h4>
+                    <p>IntelliJ sẽ tự động chạy Maven để tải các thư viện cần thiết. Quan sát thanh trạng thái ở góc dưới bên phải:</p>
+                    <ul>
+                        <li>"Loading Maven dependencies" - Đang tải</li>
+                        <li>"Maven projects have been loaded" - Hoàn tất</li>
+                    </ul>
+                    
+                    <div class="note">
+                        <p><i class="fas fa-info-circle"></i> <strong>Lưu ý:</strong> Lần đầu có thể mất vài phút tùy tốc độ mạng.</p>
+                    </div>
+                </section>
+
+                <!-- PHẦN CẤU TRÚC DỰ ÁN -->
+                <section id="structure" class="section">
+                    <h2><i class="fas fa-sitemap"></i> CẤU TRÚC DỰ ÁN SPRING BOOT</h2>
+
+                    <h3>1. Cây thư mục chi tiết</h3>
+                    <p>Sau khi tạo project thành công, cấu trúc thư mục như sau:</p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cấu trúc thư mục</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        demo/<br>
+                        ├── src/<br>
+                        │   ├── main/<br>
+                        │   │   ├── java/<br>
+                        │   │   │   └── com/example/demo/<br>
+                        │   │   │       └── DemoApplication.java          (1) File chạy chính<br>
+                        │   │   └── resources/<br>
+                        │   │       ├── application.properties            (2) File cấu hình<br>
+                        │   │       ├── static/                            (3) File tĩnh (HTML, CSS, JS)<br>
+                        │   │       └── templates/                         (4) Template (Thymeleaf, v.v.)<br>
+                        │   └── test/<br>
+                        │       └── java/com/example/demo/<br>
+                        │           └── DemoApplicationTests.java         (5) Kiểm thử<br>
+                        ├── target/                                        (6) Thư mục chứa file biên dịch<br>
+                        ├── pom.xml                                        (7) File cấu hình Maven<br>
+                        └── mvnw, mvnw.cmd                                 (8) Script chạy Maven
+                    </div>
+
+                    <h3>2. Giải thích chi tiết từng thành phần</h3>
+
+                    <h4>2.1. File pom.xml - Quản lý dependencies</h4>
+                    <p><strong>Vị trí:</strong> Thư mục gốc của dự án</p>
+                    <p><strong>Vai trò:</strong></p>
+                    <ul>
+                        <li>Khai báo các thư viện (dependencies) project sử dụng</li>
+                        <li>Quản lý phiên bản của các thư viện</li>
+                        <li>Cấu hình build (tạo file JAR/WAR)</li>
+                    </ul>
+
+                    <p><strong>Nội dung chi tiết:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>pom.xml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        &lt;?xml version="1.0" encoding="UTF-8"?&gt;<br>
+                        &lt;project xmlns="http://maven.apache.org/POM/4.0.0"&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Thông tin cơ bản của project --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;parent&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;3.1.0&lt;/version&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/parent&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Metadata của project --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;com.example&lt;/groupId&gt;        &lt;!-- Tên nhóm --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;demo&lt;/artifactId&gt;         &lt;!-- Tên project --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;     &lt;!-- Phiên bản --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;name&gt;demo&lt;/name&gt;                      &lt;!-- Tên hiển thị --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;description&gt;Demo project for Spring Boot&lt;/description&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Cấu hình Java --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;properties&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;java.version&gt;17&lt;/java.version&gt;    &lt;!-- Dùng Java 17 --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/properties&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Danh sách dependencies (thư viện) --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;dependencies&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Spring Web: để tạo REST API --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Spring Boot Test: để viết test --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;scope&gt;test&lt;/scope&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/dependencies&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;!-- Plugin để build --&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;build&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;plugins&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;plugin&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugin&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/plugins&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/build&gt;<br>
+                        &lt;/project&gt;
+                    </div>
+
+                    <h4>2.2. File DemoApplication.java - File chạy chính</h4>
+                    <p><strong>Vị trí:</strong> src/main/java/com/example/demo/DemoApplication.java</p>
+                    <p><strong>Vai trò:</strong></p>
+                    <ul>
+                        <li>Là entry point (điểm vào) của ứng dụng</li>
+                        <li>Chứa hàm main() để chạy Spring Boot</li>
+                        <li>Đánh dấu package gốc để Spring quét các component</li>
+                    </ul>
+
+                    <p><strong>Nội dung:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>DemoApplication.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.demo;<br>
+                        <br>
+                        <span class="keyword">import</span> org.springframework.boot.SpringApplication;<br>
+                        <span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;<br>
+                        <br>
+                        <span class="keyword">@SpringBootApplication</span>  <span class="comment">// Đánh dấu đây là ứng dụng Spring Boot</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">DemoApplication</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public static void</span> main(String[] args) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Dòng lệnh này khởi động ứng dụng Spring Boot</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpringApplication.run(DemoApplication.<span class="keyword">class</span>, args);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        }
+                    </div>
+
+                    <h4>2.3. File application.properties - File cấu hình</h4>
+                    <p><strong>Vị trí:</strong> src/main/resources/application.properties</p>
+                    <p><strong>Vai trò:</strong> Cấu hình các thông số cho ứng dụng</p>
+
+                    <p><strong>Nội dung mặc định:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>application.properties</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment"># File này hiện tại đang trống</span><br>
+                        <span class="comment"># Chúng ta sẽ thêm cấu hình sau</span>
+                    </div>
+
+                    <p><strong>Ví dụ các cấu hình thường dùng:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>application.properties</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment"># Cấu hình server</span><br>
+                        server.port=8080                    <span class="comment"># Cổng chạy ứng dụng</span><br>
+                        server.servlet.context-path=/api    <span class="comment"># Đường dẫn gốc</span><br>
+                        <br>
+                        <span class="comment"># Cấu hình logging</span><br>
+                        logging.level.org.springframework=INFO<br>
+                        logging.level.com.example.demo=DEBUG<br>
+                        <br>
+                        <span class="comment"># Cấu hình database (sẽ học sau)</span><br>
+                        spring.datasource.url=jdbc:mysql://localhost:3306/mydb<br>
+                        spring.datasource.username=root<br>
+                        spring.datasource.password=123456
+                    </div>
+
+                    <h3>3. Tạo Controller đầu tiên</h3>
+
+                    <h4>3.1. Tạo package controller</h4>
+                    <p>Trong thư mục src/main/java/com/example/demo/</p>
+                    <ol>
+                        <li>Click chuột phải → New → Package</li>
+                        <li>Nhập tên: <strong>controller</strong></li>
+                        <li>Nhấn Enter</li>
+                    </ol>
+
+                    <h4>3.2. Tạo class UserController</h4>
+                    <ol>
+                        <li>Click chuột phải vào package controller</li>
+                        <li>New → Java Class</li>
+                        <li>Nhập tên: <strong>UserController</strong></li>
+                        <li>Nhấn Enter</li>
+                    </ol>
+
+                    <h4>3.3. Viết code cho UserController</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.demo.controller;<br>
+                        <br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;<br>
+                        <span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;<br>
+                        <br>
+                        <span class="keyword">@RestController</span>          <span class="comment">// Đánh dấu đây là REST Controller</span><br>
+                        <span class="keyword">@RequestMapping</span>("/user") <span class="comment">// Đường dẫn gốc: http://localhost:8080/user</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// API 1: GET /user/getAllUser</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">@GetMapping</span>("/getAllUser")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getAllUser() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"All User"</span>;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// API 2: GET /user/addUser</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">@GetMapping</span>("/addUser")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String addUser() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"Add User"</span>;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h4>3.4. Giải thích chi tiết từng dòng code</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dòng code</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@RestController</td>
+                                    <td>Đánh dấu class này là REST Controller, mọi method trả về dữ liệu trực tiếp (không phải view)</td>
+                                </tr>
+                                <tr>
+                                    <td>@RequestMapping("/user")</td>
+                                    <td>Định nghĩa đường dẫn gốc cho tất cả API trong class này</td>
+                                </tr>
+                                <tr>
+                                    <td>@GetMapping("/getAllUser")</td>
+                                    <td>Xử lý request GET đến đường dẫn /user/getAllUser</td>
+                                </tr>
+                                <tr>
+                                    <td>public String getAllUser()</td>
+                                    <td>Method trả về kiểu String</td>
+                                </tr>
+                                <tr>
+                                    <td>return "All User";</td>
+                                    <td>Nội dung trả về cho client</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN CHẠY ỨNG DỤNG -->
+                <section id="run" class="section">
+                    <h2><i class="fas fa-play"></i> CHẠY ỨNG DỤNG VÀ KIỂM TRA API</h2>
+
+                    <h3>1. Chạy ứng dụng</h3>
+
+                    <h4>Cách 1: Chạy trong IntelliJ</h4>
+                    <ol>
+                        <li>Mở file DemoApplication.java</li>
+                        <li>Click vào dấu Play (màu xanh) bên cạnh dòng public static void main</li>
+                        <li>Chọn Run 'DemoApplication'</li>
+                    </ol>
+
+                    <h4>Cách 2: Chạy bằng Terminal</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment"># Di chuyển đến thư mục dự án</span><br>
+                        cd đường-dẫn-đến-dự-án<br>
+                        <br>
+                        <span class="comment"># Chạy bằng Maven</span><br>
+                        ./mvnw spring-boot:run    <span class="comment"># Trên macOS/Linux</span><br>
+                        mvnw spring-boot:run       <span class="comment"># Trên Windows</span>
+                    </div>
+
+                    <h3>2. Xem log khởi động</h3>
+                    <p>Khi chạy thành công, bạn sẽ thấy log:</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Log khởi động</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                          .   ____          _            __ _ _<br>
+                         /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \<br>
+                        ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+                         \\/  ___)| |_)| | | | | || (_| |  ) ) ) )<br>
+                          '  |____| .__|_| |_|_| |_\__, | / / / /<br>
+                         =========|_|==============|___/=/_/_/_/<br>
+                        <br>
+                        :: Spring Boot ::                (v3.1.0)<br>
+                        <br>
+                        2024-01-01 10:00:00.123  INFO 12345 --- [main] com.example.demo.DemoApplication         : Starting DemoApplication <br>
+                        2024-01-01 10:00:02.456  INFO 12345 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http)<br>
+                        2024-01-01 10:00:02.460  INFO 12345 --- [main] com.example.demo.DemoApplication         : Started DemoApplication in 2.5 seconds
+                    </div>
+
+                    <p><strong>Quan sát dòng quan trọng:</strong></p>
+                    <div class="note">
+                        <code>Tomcat started on port(s): 8080 (http)</code><br>
+                        → Ứng dụng đang chạy tại: <strong>http://localhost:8080</strong>
+                    </div>
+
+                    <h3>3. Kiểm tra API</h3>
+
+                    <h4>Cách 1: Kiểm tra bằng trình duyệt</h4>
+                    <p>Mở trình duyệt và truy cập các URL:</p>
+                    
+                    <p><strong>API 1: Lấy tất cả user</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        http://localhost:8080/user/getAllUser
+                    </div>
+                    <p><strong>Kết quả:</strong> Trang hiển thị "All User"</p>
+
+                    <p><strong>API 2: Thêm user</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>URL</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        http://localhost:8080/user/addUser
+                    </div>
+                    <p><strong>Kết quả:</strong> Trang hiển thị "Add User"</p>
+
+                    <h4>Cách 2: Kiểm tra bằng Postman</h4>
+                    <ol>
+                        <li>Mở Postman</li>
+                        <li>Tạo request mới (New → HTTP Request)</li>
+                        <li>Nhập URL: http://localhost:8080/user/getAllUser</li>
+                        <li>Chọn method: GET</li>
+                        <li>Nhấn Send</li>
+                        <li>Kết quả: Hiển thị "All User" trong phần Response</li>
+                    </ol>
+
+                    <h3>4. Xử lý lỗi thường gặp</h3>
+
+                    <h4>Lỗi 1: 404 Whitelabel Error Page</h4>
+                    <p><strong>Hiện tượng:</strong> Truy cập URL nhưng hiện trang lỗi trắng với "Whitelabel Error Page"</p>
+                    <p><strong>Nguyên nhân:</strong></p>
+                    <ul>
+                        <li>URL không đúng</li>
+                        <li>Controller chưa được tạo hoặc sai package</li>
+                    </ul>
+                    <p><strong>Cách fix:</strong></p>
+                    <ul>
+                        <li>Kiểm tra lại URL: phải đúng /user/getAllUser</li>
+                        <li>Đảm bảo Controller nằm trong package com.example.demo.controller</li>
+                    </ul>
+
+                    <h4>Lỗi 2: Port 8080 đã được sử dụng</h4>
+                    <p><strong>Hiện tượng:</strong> Log báo lỗi "Port 8080 already in use"</p>
+                    <p><strong>Nguyên nhân:</strong> Có ứng dụng khác đang dùng port 8080</p>
+                    <p><strong>Cách fix 1:</strong> Đổi port trong application.properties</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>application.properties</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        server.port=9090
+                    </div>
+                    <p><strong>Cách fix 2:</strong> Tắt ứng dụng đang dùng port 8080</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Windows</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        netstat -ano | findstr :8080<br>
+                        taskkill /PID &lt;PID&gt; /F
+                    </div>
+                </section>
+
+                <!-- PHẦN ANNOTATION -->
+                <section id="annotations" class="section">
+                    <h2><i class="fas fa-hashtag"></i> GIẢI THÍCH CHI TIẾT CÁC ANNOTATION</h2>
+
+                    <h3>1. @SpringBootApplication</h3>
+                    <p><strong>Vị trí:</strong> Trên class DemoApplication</p>
+                    <p><strong>Thành phần:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Công thức</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan
+                    </div>
+
+                    <h4>1.1. @Configuration</h4>
+                    <p>Đánh dấu class có thể chứa các bean (đối tượng do Spring quản lý). Tương đương với file XML cấu hình ngày xưa.</p>
+
+                    <h4>1.2. @EnableAutoConfiguration</h4>
+                    <p>Spring Boot tự động cấu hình dựa trên các dependencies. Ví dụ: có spring-boot-starter-web → tự động cấu hình Tomcat, DispatcherServlet.</p>
+
+                    <h4>1.3. @ComponentScan</h4>
+                    <p>Tự động quét các component trong package com.example.demo và các package con. Tìm các annotation: @Controller, @Service, @Repository, @Component.</p>
+
+                    <h3>2. @RestController là gì?</h3>
+                    <p><strong>@RestController</strong> là annotation dùng trong Spring Boot để tạo REST API.</p>
+                    <p>Nó thực chất là:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Công thức</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RestController = @Controller + @ResponseBody
+                    </div>
+
+                    <h4>2.1. @Controller là gì?</h4>
+                    <p><strong>Vai trò:</strong> Đánh dấu class là Controller trong mô hình MVC.</p>
+                    <p><strong>MVC gồm:</strong></p>
+                    <ul>
+                        <li><strong>Model:</strong> xử lý dữ liệu</li>
+                        <li><strong>View:</strong> giao diện (HTML)</li>
+                        <li><strong>Controller:</strong> nhận request và trả về view</li>
+                    </ul>
+                    <p>Thường dùng khi bạn muốn trả về trang HTML.</p>
+
+                    <p><strong>Ví dụ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Controller</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Controller<br>
+                        public class UserController {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/home")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String home() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "home"; // trả về file home.html<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Khi truy cập /home, Spring sẽ tìm file home.html và hiển thị giao diện. Mặc định @Controller trả về View.</p>
+
+                    <h4>2.2. @ResponseBody là gì?</h4>
+                    <p><strong>Vai trò:</strong> Bắt Spring không trả về View, mà trả về dữ liệu trực tiếp.</p>
+
+                    <p><strong>Ví dụ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@ResponseBody</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/hello")<br>
+                        @ResponseBody<br>
+                        public String hello() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return "Xin chào";<br>
+                        }
+                    </div>
+                    <p>Khi gọi /hello, trình duyệt sẽ hiển thị: <strong>Xin chào</strong>. Không có file HTML nào được render.</p>
+
+                    <p><strong>Nếu trả về object:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@ResponseBody với Object</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/user")<br>
+                        @ResponseBody<br>
+                        public User getUser() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return new User(1, "Manh");<br>
+                        }
+                    </div>
+                    <p>Spring sẽ tự động chuyển object thành JSON:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>JSON Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        {<br>
+                        &nbsp;&nbsp;"id": 1,<br>
+                        &nbsp;&nbsp;"name": "Manh"<br>
+                        }
+                    </div>
+
+                    <h4>2.3. @RestController làm gì?</h4>
+                    <p>Thay vì viết:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Controller + @ResponseBody</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @Controller<br>
+                        @ResponseBody
+                    </div>
+                    <p>Ta chỉ cần viết:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@RestController</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RestController
+                    </div>
+
+                    <p><strong>Ví dụ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@RestController</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RestController<br>
+                        @RequestMapping("/users")<br>
+                        public class UserController {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public List&lt;User&gt; getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return userService.findAll();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Tất cả method trong class này:</p>
+                    <ul>
+                        <li>Đều trả về JSON</li>
+                        <li>Không trả về HTML</li>
+                        <li>Không cần viết @ResponseBody cho từng method</li>
+                    </ul>
+
+                    <h4>So sánh nhanh:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Đặc điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@Controller</td>
+                                    <td>Trả về HTML. Nếu muốn trả về JSON phải thêm @ResponseBody</td>
+                                </tr>
+                                <tr>
+                                    <td>@ResponseBody</td>
+                                    <td>Trả về dữ liệu (JSON, text...), không trả về View</td>
+                                </tr>
+                                <tr>
+                                    <td>@RestController</td>
+                                    <td>Chuyên dùng để làm REST API, tự động trả về JSON</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. @RequestMapping</h3>
+
+                    <h4>3.1. Mục đích</h4>
+                    <p>Dùng để ánh xạ (map) URL với class hoặc method trong Controller.</p>
+                    <ul>
+                        <li>Có thể dùng cho tất cả các HTTP method: GET, POST, PUT, DELETE…</li>
+                        <li>Có thể đặt ở:
+                            <ul>
+                                <li>Trên class → định nghĩa URL gốc</li>
+                                <li>Trên method → định nghĩa URL cụ thể</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>3.2. Cú pháp</h4>
+                    <p><strong>Dùng cơ bản:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RequestMapping("/duong-dan")
+                    </div>
+
+                    <p><strong>Dùng đầy đủ:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RequestMapping(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;value = "/duong-dan",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;method = RequestMethod.GET<br>
+                        )
+                    </div>
+
+                    <h4>3.3. Giải thích cú pháp</h4>
+                    <ul>
+                        <li><strong>value:</strong> đường dẫn URL.</li>
+                        <li><strong>method:</strong> loại HTTP method (GET, POST, PUT, DELETE…).</li>
+                        <li><strong>RequestMethod.GET:</strong> chỉ định request phải là GET.</li>
+                        <li>Nếu không ghi method, mặc định chấp nhận tất cả HTTP method.</li>
+                    </ul>
+
+                    <h4>3.4. Ví dụ ngắn</h4>
+                    <p><strong>Ví dụ đặt ở class:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RestController<br>
+                        @RequestMapping("/users")<br>
+                        public class UserController {<br>
+                        }
+                    </div>
+                    <p><strong>Giải thích:</strong> Tất cả API trong class này sẽ bắt đầu bằng /users.</p>
+
+                    <p><strong>Ví dụ đặt ở method:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping<br>
+                        public String getAll() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return "Danh sách user";<br>
+                        }
+                    </div>
+
+                    <p><strong>Nếu viết bằng @RequestMapping:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RequestMapping(value = "/users", method = RequestMethod.GET)<br>
+                        public String getAll() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return "Danh sách user";<br>
+                        }
+                    </div>
+
+                    <h3>4. @GetMapping</h3>
+
+                    <h4>4.1. Mục đích</h4>
+                    <p>Chuyên dùng để xử lý HTTP GET.</p>
+                    <p>Là phiên bản rút gọn của: @RequestMapping(method = RequestMethod.GET)</p>
+                    <p>Là cách viết hiện đại, gọn hơn, dễ đọc hơn.</p>
+
+                    <h4>4.2. Cú pháp</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/duong-dan")
+                    </div>
+                    <p>Hoặc:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping
+                    </div>
+
+                    <h4>4.3. Giải thích cú pháp</h4>
+                    <ul>
+                        <li><strong>"/duong-dan":</strong> URL của API.</li>
+                        <li>Chỉ xử lý request GET.</li>
+                        <li>Không cần ghi method = RequestMethod.GET vì đã mặc định.</li>
+                    </ul>
+
+                    <h4>4.4. Ví dụ ngắn</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Ví dụ</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @RestController<br>
+                        @RequestMapping("/users")<br>
+                        public class UserController {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getAllUsers() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "Danh sách user";<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;@GetMapping("/1")<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;public String getUserById() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return "User có id = 1";<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <p><strong>Kết quả:</strong></p>
+                    <ul>
+                        <li>GET /users → gọi getAllUsers()</li>
+                        <li>GET /users/1 → gọi getUserById()</li>
+                    </ul>
+
+                    <h4>So sánh nhanh @RequestMapping và @GetMapping</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Đặc điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>@RequestMapping</td>
+                                    <td>Dùng cho mọi HTTP method. Cần chỉ rõ method = RequestMethod.GET nếu muốn giới hạn. Linh hoạt hơn.</td>
+                                </tr>
+                                <tr>
+                                    <td>@GetMapping</td>
+                                    <td>Chỉ dùng cho GET. Viết ngắn gọn. Dễ đọc, khuyến khích dùng trong Spring Boot hiện đại.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN BÀI TẬP -->
+                <section id="exercises" class="section">
+                    <h2><i class="fas fa-tasks"></i> BÀI TẬP THỰC HÀNH</h2>
+
+                    <h3>Bài tập 1: Tạo API chào mừng</h3>
+                    <p><strong>Yêu cầu:</strong> Tạo API GET / trả về "Welcome to Spring Boot!"</p>
+                    
+                    <h4>Hướng dẫn:</h4>
+                    <ol>
+                        <li>Trong UserController.java, thêm method mới</li>
+                        <li>Dùng @GetMapping("/")</li>
+                        <li>Return chuỗi "Welcome to Spring Boot!"</li>
+                    </ol>
+
+                    <h4>Đáp án:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/")<br>
+                        public String welcome() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return "Welcome to Spring Boot!";<br>
+                        }
+                    </div>
+                    <p><strong>Kiểm tra:</strong> http://localhost:8080/</p>
+
+                    <h3>Bài tập 2: API có tham số</h3>
+                    <p><strong>Yêu cầu:</strong> Tạo API /user/greet nhận tham số name từ URL, trả về "Hello, {name}!"</p>
+                    <p><strong>Ví dụ:</strong> /user/greet?name=Nguyen → "Hello, Nguyen!"</p>
+
+                    <h4>Hướng dẫn:</h4>
+                    <p>Dùng @RequestParam để lấy tham số từ URL</p>
+
+                    <h4>Đáp án:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserController.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        @GetMapping("/greet")<br>
+                        public String greet(@RequestParam String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;return "Hello, " + name + "!";<br>
+                        }
+                    </div>
+                    <p><strong>Kiểm tra:</strong> http://localhost:8080/user/greet?name=Nguyen</p>
+
+                    <h3>Bài tập 3: Đổi port server</h3>
+                    <p><strong>Yêu cầu:</strong> Thay đổi port server sang 9090</p>
+
+                    <h4>Hướng dẫn:</h4>
+                    <ol>
+                        <li>Mở file application.properties</li>
+                        <li>Thêm dòng: server.port=9090</li>
+                        <li>Chạy lại ứng dụng</li>
+                    </ol>
+                    <p><strong>Kiểm tra:</strong> http://localhost:9090/user/getAllUser</p>
+
+                    <h3>Bài tập 4: Tạo thêm API</h3>
+                    <p><strong>Yêu cầu:</strong> Tạo các API sau:</p>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>API</th>
+                                    <th>Method</th>
+                                    <th>Kết quả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/user/hello</td>
+                                    <td>GET</td>
+                                    <td>"Hello World"</td>
+                                </tr>
+                                <tr>
+                                    <td>/user/info</td>
+                                    <td>GET</td>
+                                    <td>"This is User Info"</td>
+                                </tr>
+                                <tr>
+                                    <td>/user/about</td>
+                                    <td>GET</td>
+                                    <td>"About User Page"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Kiểm tra tất cả các API vừa tạo</p>
+
+                    <div class="interactive-section">
+                        <h4><i class="fas fa-play-circle"></i> Kiểm tra nhanh kiến thức</h4>
+                        <div class="input-group">
+                            <label for="quizQuestion">Câu hỏi: Annotation nào dùng để tạo REST API trong Spring Boot?</label>
+                            <select id="quizQuestion">
+                                <option value="">-- Chọn đáp án --</option>
+                                <option value="controller">@Controller</option>
+                                <option value="restcontroller">@RestController</option>
+                                <option value="service">@Service</option>
+                                <option value="component">@Component</option>
+                            </select>
+                        </div>
+                        <button class="btn" onclick="checkQuiz()">
+                            <i class="fas fa-check"></i> Kiểm tra
+                        </button>
+                        <div class="result" id="quizResult">
+                            <strong>Kết quả:</strong>
+                            <div class="result-content" id="quizResultContent"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PHẦN TỔNG KẾT -->
+                <section id="summary" class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> TỔNG KẾT BÀI HỌC</h2>
+
+                    <h3>1. Những gì đã học được</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Kiến thức</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Spring Boot là gì</td>
+                                    <td>Framework giúp tạo ứng dụng Java nhanh chóng</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Cài đặt môi trường</td>
+                                    <td>Java 17, IntelliJ, Maven</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Tạo project</td>
+                                    <td>Dùng Spring Initializr với Spring Web</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Cấu trúc project</td>
+                                    <td>Hiểu về pom.xml, DemoApplication, application.properties</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Tạo Controller</td>
+                                    <td>@RestController, @RequestMapping, @GetMapping</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Chạy ứng dụng</td>
+                                    <td>Chạy và test API với trình duyệt/Postman</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Từ khóa quan trọng</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Từ khóa</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Spring Boot</td>
+                                    <td>Framework tạo ứng dụng Java</td>
+                                </tr>
+                                <tr>
+                                    <td>Maven</td>
+                                    <td>Công cụ quản lý dependencies</td>
+                                </tr>
+                                <tr>
+                                    <td>Dependency</td>
+                                    <td>Thư viện bên ngoài project sử dụng</td>
+                                </tr>
+                                <tr>
+                                    <td>Annotation</td>
+                                    <td>Metadata bắt đầu bằng @, cung cấp thông tin cho Spring</td>
+                                </tr>
+                                <tr>
+                                    <td>Controller</td>
+                                    <td>Lớp xử lý request từ client</td>
+                                </tr>
+                                <tr>
+                                    <td>API</td>
+                                    <td>Đầu mối giao tiếp giữa client và server</td>
+                                </tr>
+                                <tr>
+                                    <td>Port</td>
+                                    <td>Cổng kết nối (mặc định 8080)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Câu hỏi ôn tập</h3>
+                    <ol>
+                        <li>Spring Boot khác gì với Spring Framework?</li>
+                        <li>Tại sao nên dùng Spring Boot?</li>
+                        <li>Annotation @SpringBootApplication có tác dụng gì?</li>
+                        <li>Sự khác nhau giữa @Controller và @RestController?</li>
+                        <li>Làm thế nào để đổi port mặc định của ứng dụng?</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Hoàn thành bài học!</h4>
+                        <p>Bạn đã hoàn thành Bài 1: Giới thiệu và tạo dự án Spring Boot. Hãy thực hành các bài tập để ghi nhớ kiến thức tốt hơn.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 1: Giới thiệu và tạo dự án Spring Boot &copy; GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Xóa class active từ tất cả các link và section
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Kiểm tra quiz
+        function checkQuiz() {
+            const answer = document.getElementById('quizQuestion').value;
+            const resultDiv = document.getElementById('quizResult');
+            const output = document.getElementById('quizResultContent');
+
+            resultDiv.classList.add('active');
+
+            if (answer === 'restcontroller') {
+                output.textContent = '✅ Chính xác! @RestController được dùng để tạo REST API trong Spring Boot.';
+            } else if (answer === 'controller') {
+                output.textContent = '❌ Chưa chính xác. @Controller dùng để trả về View (HTML), cần kết hợp với @ResponseBody để trả về JSON. Đáp án đúng là @RestController.';
+            } else if (answer === 'service') {
+                output.textContent = '❌ Chưa chính xác. @Service dùng cho tầng business logic, không phải để tạo API. Đáp án đúng là @RestController.';
+            } else if (answer === 'component') {
+                output.textContent = '❌ Chưa chính xác. @Component là annotation chung cho Spring bean. Đáp án đúng là @RestController.';
+            } else {
+                output.textContent = '❌ Vui lòng chọn một đáp án.';
+            }
+        }
+    </script>
+</body>
+
+</html>

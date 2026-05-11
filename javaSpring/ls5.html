@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 4: KẾT NỐI DATABASE VỚI SPRING DATA JPA (PHẦN 2) - REPOSITORY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --purple: #9b59b6;
+            --orange: #e67e22;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header h2 {
+            font-size: 1.3rem;
+            font-weight: 300;
+            color: var(--light);
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .nav-link i {
+            width: 20px;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #dcdcaa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .btn-purple {
+            background: var(--purple);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        .flow-chart {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Consolas', monospace;
+            margin: 20px 0;
+        }
+
+        .flow-chart .box {
+            display: inline-block;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .flow-chart .controller {
+            background: var(--accent);
+            color: white;
+        }
+
+        .flow-chart .service {
+            background: var(--purple);
+            color: white;
+        }
+
+        .flow-chart .repository {
+            background: var(--success);
+            color: white;
+        }
+
+        .flow-chart .entity {
+            background: var(--info);
+            color: white;
+        }
+
+        .flow-chart .database {
+            background: var(--dark);
+            color: white;
+        }
+
+        .flow-chart .arrow {
+            font-size: 24px;
+            color: var(--dark);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .badge-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-database"></i> BÀI 5:  REPOSITORY - THAO TÁC DỮ LIỆU</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#intro" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu Repository</a></li>
+                    <li class="nav-item"><a href="#repository-overview" class="nav-link"><i class="fas fa-cubes"></i> Repository là gì?</a></li>
+                    <li class="nav-item"><a href="#hierarchy" class="nav-link"><i class="fas fa-sitemap"></i> Hệ thống Repository</a></li>
+                    <li class="nav-item"><a href="#create-repository" class="nav-link"><i class="fas fa-plus-circle"></i> Tạo UserRepository</a></li>
+                    <li class="nav-item"><a href="#crud-methods" class="nav-link"><i class="fas fa-list"></i> Các phương thức CRUD</a></li>
+                    <li class="nav-item"><a href="#test-repository" class="nav-link"><i class="fas fa-vial"></i> Test Repository</a></li>
+                    <li class="nav-item"><a href="#derived-methods" class="nav-link"><i class="fas fa-magic"></i> Derived Query Methods</a></li>
+                    <li class="nav-item"><a href="#query-annotation" class="nav-link"><i class="fas fa-code"></i> @Query Annotation</a></li>
+                    <li class="nav-item"><a href="#jpqL-vs-sql" class="nav-link"><i class="fas fa-exchange-alt"></i> JPQL vs SQL</a></li>
+                    <li class="nav-item"><a href="#modifying-queries" class="nav-link"><i class="fas fa-pen"></i> @Modifying & @Transactional</a></li>
+                    <li class="nav-item"><a href="#pagination" class="nav-link"><i class="fas fa-pagelines"></i> Phân trang & sắp xếp</a></li>
+                    <li class="nav-item"><a href="#complete-example" class="nav-link"><i class="fas fa-file-code"></i> Ví dụ hoàn chỉnh</a></li>
+                    <li class="nav-item"><a href="#summary" class="nav-link"><i class="fas fa-clipboard-check"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- GIỚI THIỆU REPOSITORY -->
+                <section id="intro" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU VỀ REPOSITORY</h2>
+
+                    <h3>1. Tổng quan bài học</h3>
+                    <p>Ở <strong>Phần 1</strong>, chúng ta đã học:</p>
+                    <ul>
+                        <li>Cài đặt MySQL và MySQL Workbench</li>
+                        <li>Tạo project với Spring Data JPA</li>
+                        <li>Cấu hình kết nối database</li>
+                        <li>Tạo Entity và các annotation JPA</li>
+                    </ul>
+
+                    <p>Trong <strong>Phần 2</strong> này, chúng ta sẽ học về <span class="badge badge-primary">REPOSITORY</span> - Thành phần quan trọng để thao tác với database.</p>
+
+                    <h3>2. Mục tiêu bài học (Phần 2)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mục tiêu</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Hiểu về Repository</td>
+                                    <td>Repository là gì, vai trò trong ứng dụng</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Hệ thống Repository</td>
+                                    <td>Repository, CrudRepository, JpaRepository</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Các phương thức CRUD</td>
+                                    <td>save(), findById(), findAll(), delete()</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Derived Query Methods</td>
+                                    <td>Tự động tạo query từ tên phương thức</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>@Query Annotation</td>
+                                    <td>Viết JPQL và Native Query</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Phân trang & sắp xếp</td>
+                                    <td>Pageable, Sort, Page</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- REPOSITORY LÀ GÌ -->
+                <section id="repository-overview" class="section">
+                    <h2><i class="fas fa-cubes"></i> REPOSITORY LÀ GÌ?</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>Repository</strong> là interface cung cấp các phương thức thao tác với database (CRUD) mà không cần viết SQL. Nó là cầu nối giữa Entity và database.</p>
+
+                    <h3>2. Vai trò của Repository</h3>
+                    
+                    <div class="flow-chart">
+                        <div class="box controller"><i class="fas fa-code"></i> Controller (API)</div>
+                        <div class="arrow">↓</div>
+                        <div class="box service"><i class="fas fa-cogs"></i> Service (Xử lý logic)</div>
+                        <div class="arrow">↓</div>
+                        <div class="box repository" style="background: var(--success); border: 3px solid var(--warning);"><i class="fas fa-database"></i> <strong>Repository (Thao tác dữ liệu)</strong> <span class="badge badge-warning">← BẠN ĐANG Ở ĐÂY</span></div>
+                        <div class="arrow">↓</div>
+                        <div class="box entity"><i class="fas fa-cube"></i> Entity (Ánh xạ bảng)</div>
+                        <div class="arrow">↓</div>
+                        <div class="box database"><i class="fas fa-server"></i> Database (MySQL)</div>
+                    </div>
+
+                    <h3>3. Repository làm được những gì?</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chức năng</th>
+                                    <th>Không dùng Repository</th>
+                                    <th>Dùng Repository</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Thêm mới</td>
+                                    <td>Viết INSERT INTO...</td>
+                                    <td><code>save(user)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Tìm theo ID</td>
+                                    <td>Viết SELECT * FROM... WHERE id = ?</td>
+                                    <td><code>findById(id)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Lấy tất cả</td>
+                                    <td>Viết SELECT * FROM...</td>
+                                    <td><code>findAll()</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Cập nhật</td>
+                                    <td>Viết UPDATE... SET...</td>
+                                    <td><code>save(user)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Xóa</td>
+                                    <td>Viết DELETE FROM...</td>
+                                    <td><code>deleteById(id)</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Đếm</td>
+                                    <td>Viết SELECT COUNT(*)</td>
+                                    <td><code>count()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i> <strong>Lợi ích:</strong>
+                        <ul>
+                            <li>Giảm code lặp lại</li>
+                            <li>Tránh lỗi SQL</li>
+                            <li>Tự động tối ưu query</li>
+                            <li>Dễ bảo trì và kiểm thử</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- HỆ THỐNG REPOSITORY -->
+                <section id="hierarchy" class="section">
+                    <h2><i class="fas fa-sitemap"></i> HỆ THỐNG REPOSITORY TRONG SPRING DATA JPA</h2>
+
+                    <h3>1. Các interface Repository</h3>
+                    
+                    <div class="flow-chart" style="background: #f8f9fa;">
+                        <div style="display: inline-block; text-align: left;">
+                            <div style="background: #95a5a6; color: white; padding: 10px 20px; border-radius: 8px; margin: 5px;">
+                                <i class="fas fa-database"></i> Repository (Interface gốc)
+                            </div>
+                            <div style="margin-left: 30px;">↑</div>
+                            <div style="background: #3498db; color: white; padding: 10px 20px; border-radius: 8px; margin: 5px;">
+                                <i class="fas fa-layer-group"></i> CrudRepository (Thêm CRUD cơ bản)
+                            </div>
+                            <div style="margin-left: 30px;">↑</div>
+                            <div style="background: #e67e22; color: white; padding: 10px 20px; border-radius: 8px; margin: 5px;">
+                                <i class="fas fa-sort"></i> PagingAndSortingRepository (Thêm phân trang, sắp xếp)
+                            </div>
+                            <div style="margin-left: 30px;">↑</div>
+                            <div style="background: #27ae60; color: white; padding: 10px 20px; border-radius: 8px; margin: 5px; border: 3px solid #f1c40f;">
+                                <i class="fas fa-star"></i> JpaRepository (Thêm các phương thức JPA đặc thù) 
+                                <span class="badge badge-warning">Nên dùng</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3>2. So sánh các interface</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Interface</th>
+                                    <th>Phương thức</th>
+                                    <th>Khi nào dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Repository</strong></td>
+                                    <td>Không có phương thức nào</td>
+                                    <td>Đánh dấu, ít dùng trực tiếp</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CrudRepository</strong></td>
+                                    <td>save(), findById(), findAll(), deleteById(), count()</td>
+                                    <td>Chỉ cần CRUD cơ bản</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PagingAndSortingRepository</strong></td>
+                                    <td>Thêm findAll(Pageable), findAll(Sort)</td>
+                                    <td>Cần phân trang, sắp xếp</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>JpaRepository</strong></td>
+                                    <td>Thêm flush(), saveAndFlush(), deleteInBatch()</td>
+                                    <td><strong>Đầy đủ tính năng nhất</strong> (khuyến nghị)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="success-box">
+                        <i class="fas fa-check-circle"></i> <strong>Khuyến nghị:</strong> Nên dùng <strong>JpaRepository</strong> vì nó có đầy đủ phương thức nhất.
+                    </div>
+                </section>
+
+                <!-- TẠO USERREPOSITORY -->
+                <section id="create-repository" class="section">
+                    <h2><i class="fas fa-plus-circle"></i> TẠO REPOSITORY CHO USER</h2>
+
+                    <h3>1. Tạo package repository</h3>
+                    
+                    <p><strong>Bước 1:</strong> Trong thư mục <code>src/main/java/com/example/jpa/</code></p>
+                    <p><strong>Bước 2:</strong> Click chuột phải → New → Package</p>
+                    <p><strong>Bước 3:</strong> Nhập tên: <code>repository</code></p>
+                    <p><strong>Bước 4:</strong> Enter</p>
+
+                    <h3>2. Tạo interface UserRepository</h3>
+                    
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/repository/UserRepository.java</code></p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.repository;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Repository;<br>
+                        <br>
+                        <span class="annotation">@Repository</span>  <span class="comment">// Đánh dấu đây là Repository (có thể bỏ qua vì JpaRepository đã có)</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">UserRepository</span> <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt; {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Chưa cần viết phương thức nào, đã có sẵn các CRUD cơ bản</span><br>
+                        }
+                    </div>
+
+                    <h3>3. Giải thích cú pháp</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Giải thích</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">public interface</span> UserRepository <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt;
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>JpaRepository&lt;User, Long&gt;</code></td>
+                                    <td>Interface JpaRepository với 2 tham số kiểu</td>
+                                </tr>
+                                <tr>
+                                    <td><code>User</code></td>
+                                    <td>Loại Entity mà repository quản lý</td>
+                                </tr>
+                                <tr>
+                                    <td><code>Long</code></td>
+                                    <td>Kiểu dữ liệu của khóa chính (ID)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- CÁC PHƯƠNG THỨC CRUD -->
+                <section id="crud-methods" class="section">
+                    <h2><i class="fas fa-list"></i> CÁC PHƯƠNG THỨC CÓ SẴN TRONG JPAREPOSITORY</h2>
+
+                    <h3>1. Nhóm phương thức lưu (Save / Update)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phương thức</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>save(S entity)</code></td>
+                                    <td>Lưu entity mới hoặc cập nhật entity đã có</td>
+                                    <td><code>userRepository.save(user)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>saveAll(Iterable&lt;S&gt; entities)</code></td>
+                                    <td>Lưu nhiều entity cùng lúc</td>
+                                    <td><code>userRepository.saveAll(listUsers)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>saveAndFlush(S entity)</code></td>
+                                    <td>Lưu và ngay lập tức đồng bộ xuống database</td>
+                                    <td><code>userRepository.saveAndFlush(user)</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Nhóm phương thức tìm kiếm (Find)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phương thức</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>findById(ID id)</code></td>
+                                    <td>Tìm entity theo ID, trả về Optional</td>
+                                    <td><code>Optional&lt;User&gt; user = userRepository.findById(1L)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findAll()</code></td>
+                                    <td>Lấy tất cả entities</td>
+                                    <td><code>List&lt;User&gt; users = userRepository.findAll()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findAllById(Iterable&lt;ID&gt; ids)</code></td>
+                                    <td>Tìm nhiều entity theo danh sách ID</td>
+                                    <td><code>userRepository.findAllById(List.of(1L, 2L, 3L))</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>getOne(ID id)</code></td>
+                                    <td>Lấy tham chiếu (lazy loading)</td>
+                                    <td><code>User user = userRepository.getOne(1L)</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Nhóm phương thức kiểm tra (Check)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phương thức</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>existsById(ID id)</code></td>
+                                    <td>Kiểm tra entity có tồn tại không</td>
+                                    <td><code>boolean exists = userRepository.existsById(1L)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>count()</code></td>
+                                    <td>Đếm số lượng entities</td>
+                                    <td><code>long count = userRepository.count()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>4. Nhóm phương thức xóa (Delete)</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phương thức</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>deleteById(ID id)</code></td>
+                                    <td>Xóa entity theo ID</td>
+                                    <td><code>userRepository.deleteById(1L)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>delete(T entity)</code></td>
+                                    <td>Xóa entity cụ thể</td>
+                                    <td><code>userRepository.delete(user)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>deleteAll()</code></td>
+                                    <td>Xóa tất cả entities</td>
+                                    <td><code>userRepository.deleteAll()</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>deleteAll(Iterable&lt;? extends T&gt; entities)</code></td>
+                                    <td>Xóa nhiều entity</td>
+                                    <td><code>userRepository.deleteAll(listUsers)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>deleteAllInBatch()</code></td>
+                                    <td>Xóa tất cả bằng 1 câu lệnh (nhanh hơn)</td>
+                                    <td><code>userRepository.deleteAllInBatch()</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- TEST REPOSITORY -->
+                <section id="test-repository" class="section">
+                    <h2><i class="fas fa-vial"></i> VÍ DỤ SỬ DỤNG CÁC PHƯƠNG THỨC CƠ BẢN</h2>
+
+                    <h3>1. Tạo class để test repository</h3>
+                    
+                    <p><strong>File:</strong> <code>src/main/java/com/example/jpa/TestRepository.java</code></p>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>TestRepository.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> com.example.jpa.repository.UserRepository;<br>
+                        <span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;<br>
+                        <span class="keyword">import</span> org.springframework.boot.CommandLineRunner;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Component;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <span class="keyword">import</span> java.util.Optional;<br>
+                        <br>
+                        <span class="annotation">@Component</span>  <span class="comment">// Spring tự động chạy khi khởi động</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">TestRepository</span> <span class="keyword">implements</span> CommandLineRunner {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Override</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> run(String... args) <span class="keyword">throws</span> Exception {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"===== BẮT ĐẦU TEST REPOSITORY ====="</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 1. Thêm user mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testSave();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Tìm tất cả users</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testFindAll();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 3. Tìm user theo ID</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testFindById();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 4. Cập nhật user</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testUpdate();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 5. Đếm số user</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testCount();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 6. Xóa user</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;testDelete();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"===== KẾT THÚC TEST REPOSITORY ====="</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testSave() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 1: SAVE ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tạo user mới</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user1 = <span class="keyword">new</span> User(<span class="string">"Nguyen Van A"</span>, <span class="string">"a@gmail.com"</span>, <span class="string">"123456"</span>, 25);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user2 = <span class="keyword">new</span> User(<span class="string">"Tran Thi B"</span>, <span class="string">"b@gmail.com"</span>, <span class="string">"789012"</span>, 30);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lưu vào database</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User savedUser1 = userRepository.save(user1);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User savedUser2 = userRepository.save(user2);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Đã lưu user1: ID = "</span> + savedUser1.getId());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Đã lưu user2: ID = "</span> + savedUser2.getId());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testFindAll() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 2: FIND ALL ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userRepository.findAll();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Tổng số users: "</span> + users.size());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">for</span> (User user : users) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">" - "</span> + user.getId() + <span class="string">": "</span> + user.getName() + <span class="string">" - "</span> + user.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testFindById() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 3: FIND BY ID ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có ID = 1</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optional&lt;User&gt; optional = userRepository.findById(1L);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (optional.isPresent()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = optional.get();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Tìm thấy: "</span> + user.getName() + <span class="string">" - "</span> + user.getEmail());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Không tìm thấy user ID = 1"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra tồn tại</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> exists = userRepository.existsById(1L);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"User ID=1 tồn tại? "</span> + exists);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testUpdate() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 4: UPDATE ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user cần cập nhật</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optional&lt;User&gt; optional = userRepository.findById(1L);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (optional.isPresent()) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User user = optional.get();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Trước khi cập nhật: "</span> + user.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Cập nhật thông tin</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user.setName(<span class="string">"Nguyen Van A (Updated)"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;user.setAge(26);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Lưu lại (save với ID đã có sẽ tự động update)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;User updatedUser = userRepository.save(user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Sau khi cập nhật: "</span> + updatedUser.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testCount() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 5: COUNT ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> count = userRepository.count();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Tổng số users hiện tại: "</span> + count);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private void</span> testDelete() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST 6: DELETE ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm trước khi xóa</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> beforeCount = userRepository.count();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Số user trước khi xóa: "</span> + beforeCount);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xóa user ID = 2</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;userRepository.deleteById(2L);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Đã xóa user ID = 2"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm sau khi xóa</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> afterCount = userRepository.count();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Số user sau khi xóa: "</span> + afterCount);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>2. Kết quả khi chạy</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Console Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        ===== BẮT ĐẦU TEST REPOSITORY =====<br>
+                        <br>
+                        --- TEST 1: SAVE ---<br>
+                        Hibernate: insert into users (age, created_at, email, full_name, password, phone_number, updated_at) values (?, ?, ?, ?, ?, ?, ?)<br>
+                        Hibernate: insert into users (age, created_at, email, full_name, password, phone_number, updated_at) values (?, ?, ?, ?, ?, ?, ?)<br>
+                        Đã lưu user1: ID = 1<br>
+                        Đã lưu user2: ID = 2<br>
+                        <br>
+                        --- TEST 2: FIND ALL ---<br>
+                        Hibernate: select user0_.id as id1_0_, user0_.age as age2_0_, user0_.created_at as created_3_0_, user0_.email as email4_0_, user0_.full_name as full_nam5_0_, user0_.password as password6_0_, user0_.phone_number as phone_nu7_0_, user0_.updated_at as updated_8_0_ from users user0_<br>
+                        Tổng số users: 2<br>
+                        - 1: Nguyen Van A - a@gmail.com<br>
+                        - 2: Tran Thi B - b@gmail.com<br>
+                        <br>
+                        --- TEST 3: FIND BY ID ---<br>
+                        Hibernate: select user0_.id as id1_0_0_, user0_.age as age2_0_0_, user0_.created_at as created_3_0_0_, user0_.email as email4_0_0_, user0_.full_name as full_nam5_0_0_, user0_.password as password6_0_0_, user0_.phone_number as phone_nu7_0_0_, user0_.updated_at as updated_8_0_0_ from users user0_ where user0_.id=?<br>
+                        Tìm thấy: Nguyen Van A - a@gmail.com<br>
+                        User ID=1 tồn tại? true<br>
+                        <br>
+                        ... (tiếp theo)
+                    </div>
+                </section>
+
+                <!-- DERIVED QUERY METHODS -->
+                <section id="derived-methods" class="section">
+                    <h2><i class="fas fa-magic"></i> DERIVED QUERY METHODS</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p><strong>Derived Query Methods</strong> là các phương thức trong Repository mà Spring Data JPA tự động tạo câu truy vấn dựa trên tên phương thức.</p>
+
+                    <h3>2. Cú pháp đặt tên</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Cú pháp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        findBy + [Thuộc tính] + [Điều kiện] + [Kết hợp]
+                    </div>
+
+                    <h3>3. Các từ khóa trong Derived Query Methods</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Từ khóa</th>
+                                    <th>Ví dụ</th>
+                                    <th>JPQL tương ứng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>findBy...</code></td>
+                                    <td><code>findByName</code></td>
+                                    <td><code>WHERE name = ?1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...And...</code></td>
+                                    <td><code>findByNameAndEmail</code></td>
+                                    <td><code>WHERE name = ?1 AND email = ?2</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...Or...</code></td>
+                                    <td><code>findByNameOrEmail</code></td>
+                                    <td><code>WHERE name = ?1 OR email = ?2</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...Containing</code></td>
+                                    <td><code>findByNameContaining</code></td>
+                                    <td><code>WHERE name LIKE %?1%</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...StartingWith</code></td>
+                                    <td><code>findByNameStartingWith</code></td>
+                                    <td><code>WHERE name LIKE ?1%</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...EndingWith</code></td>
+                                    <td><code>findByNameEndingWith</code></td>
+                                    <td><code>WHERE name LIKE %?1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...IgnoreCase</code></td>
+                                    <td><code>findByNameIgnoreCase</code></td>
+                                    <td><code>WHERE UPPER(name) = UPPER(?1)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...GreaterThan</code></td>
+                                    <td><code>findByAgeGreaterThan</code></td>
+                                    <td><code>WHERE age > ?1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...LessThan</code></td>
+                                    <td><code>findByAgeLessThan</code></td>
+                                    <td><code>WHERE age < ?1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...Between</code></td>
+                                    <td><code>findByAgeBetween</code></td>
+                                    <td><code>WHERE age BETWEEN ?1 AND ?2</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...IsNull</code></td>
+                                    <td><code>findByPhoneNumberIsNull</code></td>
+                                    <td><code>WHERE phone_number IS NULL</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...IsNotNull</code></td>
+                                    <td><code>findByPhoneNumberIsNotNull</code></td>
+                                    <td><code>WHERE phone_number IS NOT NULL</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...In</code></td>
+                                    <td><code>findByAgeIn</code></td>
+                                    <td><code>WHERE age IN (?1)</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>findBy...OrderBy...</code></td>
+                                    <td><code>findByNameOrderByAgeDesc</code></td>
+                                    <td><code>WHERE ... ORDER BY age DESC</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>4. Ví dụ thêm các phương thức vào UserRepository</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java - Derived Query Methods</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.repository;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Repository;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        <span class="annotation">@Repository</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">UserRepository</span> <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 1. TÌM KIẾM CƠ BẢN =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user theo email chính xác</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User findByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user theo tên chính xác</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByName(String name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 2. TÌM KIẾM VỚI NHIỀU ĐIỀU KIỆN =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo tên VÀ email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User findByNameAndEmail(String name, String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo tên HOẶC email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameOrEmail(String name, String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo tên VÀ độ tuổi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameAndAge(String name, Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 3. TÌM KIẾM VỚI ĐIỀU KIỆN SO SÁNH =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có độ tuổi lớn hơn</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeGreaterThan(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có độ tuổi nhỏ hơn</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeLessThan(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có độ tuổi trong khoảng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeBetween(Integer startAge, Integer endAge);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có độ tuổi lớn hơn hoặc bằng</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeGreaterThanEqual(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 4. TÌM KIẾM VỚI CHUỖI (LIKE) =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có tên chứa keyword (không phân biệt hoa thường)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameContainingIgnoreCase(String keyword);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có tên bắt đầu bằng...</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameStartingWith(String prefix);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có tên kết thúc bằng...</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameEndingWith(String suffix);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 5. TÌM KIẾM VỚI NULL =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có số điện thoại null</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByPhoneNumberIsNull();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có số điện thoại không null</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByPhoneNumberIsNotNull();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 6. SẮP XẾP =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm tất cả sắp xếp theo tên tăng dần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findAllByOrderByNameAsc();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm tất cả sắp xếp theo tên giảm dần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findAllByOrderByNameDesc();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo độ tuổi và sắp xếp theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeOrderByNameAsc(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 7. KIỂM TRA TỒN TẠI =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra email đã tồn tại chưa</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> existsByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra có user nào theo độ tuổi không</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> existsByAge(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 8. ĐẾM =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm số user theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> countByName(String name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm số user theo độ tuổi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> countByAge(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 9. XÓA =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xóa user theo email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span> deleteByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Xóa user theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span> deleteByName(String name);<br>
+                        }
+                    </div>
+
+                    <h3>5. Ví dụ sử dụng Derived Query Methods</h3>
+                    
+                    <p>Thêm phương thức test vào TestRepository.java:</p>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>TestRepository.java - Derived Query Methods</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">private void</span> testDerivedQueryMethods() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"\n--- TEST DERIVED QUERY METHODS ---"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 1. Tìm theo email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User user = userRepository.findByEmail(<span class="string">"a@gmail.com"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Find by email: "</span> + user);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 2. Tìm theo tên chứa keyword</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; users = userRepository.findByNameContainingIgnoreCase(<span class="string">"nguyen"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Find by name containing 'nguyen': "</span> + users.size() + <span class="string">" users"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 3. Tìm theo độ tuổi lớn hơn</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;users = userRepository.findByAgeGreaterThan(25);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Users age > 25: "</span> + users.size());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 4. Tìm trong khoảng tuổi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;users = userRepository.findByAgeBetween(20, 30);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Users age between 20-30: "</span> + users.size());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 5. Kiểm tra email tồn tại</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> exists = userRepository.existsByEmail(<span class="string">"a@gmail.com"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Email a@gmail.com exists? "</span> + exists);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// 6. Đếm theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> count = userRepository.countByName(<span class="string">"Nguyen Van A"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;System.out.println(<span class="string">"Count users named 'Nguyen Van A': "</span> + count);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- @QUERY ANNOTATION -->
+                <section id="query-annotation" class="section">
+                    <h2><i class="fas fa-code"></i> @QUERY - TỰ VIẾT CÂU TRUY VẤN</h2>
+
+                    <h3>1. Định nghĩa</h3>
+                    <p>Khi Derived Query Methods không đáp ứng được, chúng ta có thể tự viết câu truy vấn bằng <strong>@Query</strong>.</p>
+
+                    <h3>2. Cú pháp</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Query Syntax</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Query</span>(<span class="string">"JPQL statement"</span>)<br>
+                        List&lt;Entity&gt; methodName(<span class="annotation">@Param</span>(<span class="string">"param"</span>) Type param);
+                    </div>
+
+                    <h3>3. JPQL là gì?</h3>
+                    <p><strong>JPQL</strong> (Java Persistence Query Language) là ngôn ngữ truy vấn tương tự SQL nhưng thao tác trên <strong>Entity (object)</strong> thay vì bảng.</p>
+
+                    <h3>4. So sánh SQL và JPQL</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>SQL</th>
+                                    <th>JPQL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>SELECT * FROM users</code></td>
+                                    <td><code>SELECT u FROM User u</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>WHERE name = 'A'</code></td>
+                                    <td><code>WHERE u.name = ?1</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>SELECT name, email FROM users</code></td>
+                                    <td><code>SELECT u.name, u.email FROM User u</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Thao tác trên bảng</td>
+                                    <td>Thao tác trên Entity</td>
+                                </tr>
+                                <tr>
+                                    <td>Phụ thuộc database</td>
+                                    <td>Độc lập database</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>5. Ví dụ thêm các phương thức với @Query</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java - @Query Examples</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.repository;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.Query;<br>
+                        <span class="keyword">import</span> org.springframework.data.repository.query.Param;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Repository;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <br>
+                        <span class="annotation">@Repository</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">UserRepository</span> <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 1. JPQL - TRUY VẤN CƠ BẢN =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user theo email (dùng tham số vị trí ?1)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.email = ?1"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User findUserByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user theo tên (dùng tham số vị trí)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name = ?1"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findUsersByName(String name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 2. JPQL - NHIỀU THAM SỐ =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo tên và email (thứ tự tham số)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name = ?1 AND u.email = ?2"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;User findByNameAndEmail(String name, String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 3. JPQL - NAMED PARAMETER (dùng @Param) =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Dùng tên tham số cho dễ đọc</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name = :name AND u.age > :age"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameAndAgeGreaterThan(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"name"</span>) String name, <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 4. JPQL - LIKE =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm tên chứa keyword</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name LIKE %:keyword%"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; searchByNameLike(<span class="annotation">@Param</span>(<span class="string">"keyword"</span>) String keyword);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 5. JPQL - SẮP XẾP =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Sắp xếp theo tên giảm dần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.age > :age ORDER BY u.name DESC"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findUsersOlderThanOrderByNameDesc(<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 6. JPQL - CHỌN MỘT PHẦN DỮ LIỆU =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Chỉ lấy tên và email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u.name, u.email FROM User u WHERE u.age > :age"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;Object[]&gt; findNameAndEmailByAgeGreaterThan(<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 7. JPQL - HÀM TỔNG HỢP =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tính tuổi trung bình</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT AVG(u.age) FROM User u"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Double getAverageAge();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm số user theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u.name, COUNT(u) FROM User u GROUP BY u.name"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;Object[]&gt; countUsersByName();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 8. NATIVE QUERY - SQL THUẦN =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Dùng SQL thuần (nativeQuery = true)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(value = <span class="string">"SELECT * FROM users WHERE age > :age"</span>, nativeQuery = <span class="keyword">true</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findUsersByAgeNative(<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Native query với tên cột thật</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(value = <span class="string">"SELECT full_name, email FROM users WHERE age BETWEEN :min AND :max"</span>, <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nativeQuery = <span class="keyword">true</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;Object[]&gt; findNameAndEmailByAgeRangeNative(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"min"</span>) Integer minAge, <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"max"</span>) Integer maxAge);<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- JPQL VS SQL -->
+                <section id="jpqL-vs-sql" class="section">
+                    <h2><i class="fas fa-exchange-alt"></i> GIẢI THÍCH CHI TIẾT VỀ @QUERY</h2>
+
+                    <h3>1. Tham số vị trí (?1, ?2)</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Positional Parameters</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name = ?1 AND u.email = ?2"</span>)<br>
+                        User findByNameAndEmail(String name, String email);<br>
+                        <span class="comment">// ?1 = tham số thứ nhất (name)</span><br>
+                        <span class="comment">// ?2 = tham số thứ hai (email)</span>
+                    </div>
+
+                    <h3>2. Named Parameter (@Param)</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Named Parameters</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name = :name AND u.age > :age"</span>)<br>
+                        List&lt;User&gt; findByNameAndAgeGreaterThan(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"name"</span>) String name, <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        <span class="comment">// :name = tham số có tên "name"</span><br>
+                        <span class="comment">// :age = tham số có tên "age"</span>
+                    </div>
+
+                    <h3>3. Native Query</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Native Query</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Query</span>(value = <span class="string">"SELECT * FROM users WHERE age > ?1"</span>, nativeQuery = <span class="keyword">true</span>)<br>
+                        List&lt;User&gt; findUsersByAgeNative(Integer age);<br>
+                        <span class="comment">// nativeQuery = true: dùng SQL thuần, không phải JPQL</span><br>
+                        <span class="comment">// "users" là tên bảng thật trong database</span>
+                    </div>
+
+                    <div class="warning-box">
+                        <i class="fas fa-exclamation-triangle"></i> <strong>Lưu ý:</strong> Native Query phụ thuộc vào database cụ thể. Nếu đổi database (ví dụ từ MySQL sang PostgreSQL), có thể phải sửa query.
+                    </div>
+                </section>
+
+                <!-- @MODIFYING VÀ @TRANSACTIONAL -->
+                <section id="modifying-queries" class="section">
+                    <h2><i class="fas fa-pen"></i> @MODIFYING VÀ @TRANSACTIONAL</h2>
+
+                    <h3>1. Vấn đề với UPDATE/DELETE</h3>
+                    <p>Khi dùng @Query cho các câu lệnh UPDATE hoặc DELETE, cần thêm <strong>@Modifying</strong> và <strong>@Transactional</strong>.</p>
+
+                    <h3>2. Cú pháp</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>@Modifying & @Transactional</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Transactional</span>  <span class="comment">// Phải có để thực hiện transaction</span><br>
+                        <span class="annotation">@Modifying</span>      <span class="comment">// Báo đây là câu lệnh UPDATE/DELETE</span><br>
+                        <span class="annotation">@Query</span>(<span class="string">"UPDATE User u SET u.email = :email WHERE u.id = :id"</span>)<br>
+                        <span class="keyword">int</span> updateEmail(<span class="annotation">@Param</span>(<span class="string">"id"</span>) Long id, <span class="annotation">@Param</span>(<span class="string">"email"</span>) String email);
+                    </div>
+
+                    <h3>3. Ví dụ</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java - Modifying Queries</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.Modifying;<br>
+                        <br>
+                        <span class="comment">// ===== 9. UPDATE VỚI @QUERY =====</span><br>
+                        <br>
+                        <span class="comment">// Cập nhật email (cần thêm @Modifying và @Transactional)</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="annotation">@Modifying</span><br>
+                        <span class="annotation">@Query</span>(<span class="string">"UPDATE User u SET u.email = :newEmail WHERE u.id = :userId"</span>)<br>
+                        <span class="keyword">int</span> updateUserEmail(<span class="annotation">@Param</span>(<span class="string">"userId"</span>) Long userId, <span class="annotation">@Param</span>(<span class="string">"newEmail"</span>) String newEmail);<br>
+                        <br>
+                        <span class="comment">// ===== 10. DELETE VỚI @QUERY =====</span><br>
+                        <br>
+                        <span class="comment">// Xóa user theo email (cần @Modifying)</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="annotation">@Modifying</span><br>
+                        <span class="annotation">@Query</span>(<span class="string">"DELETE FROM User u WHERE u.email = :email"</span>)<br>
+                        <span class="keyword">int</span> deleteUserByEmail(<span class="annotation">@Param</span>(<span class="string">"email"</span>) String email);<br>
+                        <br>
+                        <span class="comment">// Cập nhật tuổi theo tên</span><br>
+                        <span class="annotation">@Transactional</span><br>
+                        <span class="annotation">@Modifying</span><br>
+                        <span class="annotation">@Query</span>(<span class="string">"UPDATE User u SET u.age = :age WHERE u.name = :name"</span>)<br>
+                        <span class="keyword">int</span> updateAgeByName(<span class="annotation">@Param</span>(<span class="string">"name"</span>) String name, <span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fas fa-info-circle"></i> <strong>Giải thích:</strong>
+                        <ul>
+                            <li><strong>@Transactional:</strong> Đảm bảo các thao tác được thực hiện trong một transaction (hoặc tất cả thành công, hoặc tất cả rollback)</li>
+                            <li><strong>@Modifying:</strong> Báo cho Hibernate biết đây là câu lệnh UPDATE/DELETE, không phải SELECT</li>
+                            <li><strong>int:</strong> Giá trị trả về là số bản ghi bị ảnh hưởng</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- PHÂN TRANG VÀ SẮP XẾP -->
+                <section id="pagination" class="section">
+                    <h2><i class="fas fa-pagelines"></i> PHÂN TRANG VÀ SẮP XẾP VỚI PAGEABLE</h2>
+
+                    <h3>1. Vấn đề</h3>
+                    <p>Khi có nhiều dữ liệu, không thể trả về tất cả trong một lần. Cần phân trang.</p>
+
+                    <h3>2. Sử dụng Pageable</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java - Pagination</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> org.springframework.data.domain.Page;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.Pageable;<br>
+                        <br>
+                        <span class="keyword">public interface</span> <span class="class-name">UserRepository</span> <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Phân trang cho findAll</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Page&lt;User&gt; findAll(Pageable pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Phân trang cho truy vấn có điều kiện</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Page&lt;User&gt; findByAgeGreaterThan(Integer age, Pageable pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Phân trang với @Query</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name LIKE %:keyword%"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Page&lt;User&gt; searchByName(<span class="annotation">@Param</span>(<span class="string">"keyword"</span>) String keyword, Pageable pageable);<br>
+                        }
+                    </div>
+
+                    <h3>3. Ví dụ sử dụng trong Service</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserService.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">import</span> org.springframework.data.domain.Page;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.PageRequest;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.Pageable;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.Sort;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Service;<br>
+                        <br>
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Autowired</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Page&lt;User&gt; getUsersPage(<span class="keyword">int</span> page, <span class="keyword">int</span> size) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tạo Pageable: trang bắt đầu từ 0, mỗi trang 'size' bản ghi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pageable pageable = PageRequest.of(page, size);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findAll(pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Page&lt;User&gt; getUsersByAgeSorted(<span class="keyword">int</span> age, <span class="keyword">int</span> page, <span class="keyword">int</span> size, String sortBy) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Sắp xếp theo trường 'sortBy' tăng dần</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sort sort = Sort.by(sortBy).ascending();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pageable pageable = PageRequest.of(page, size, sort);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> userRepository.findByAgeGreaterThan(age, pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4. Sử dụng Sort riêng</h3>
+                    
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Sort Examples</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="comment">// Sắp xếp không phân trang</span><br>
+                        List&lt;User&gt; findAll(Sort sort);<br>
+                        <br>
+                        <span class="comment">// Ví dụ</span><br>
+                        List&lt;User&gt; users = userRepository.findAll(Sort.by(<span class="string">"name"</span>).ascending());<br>
+                        List&lt;User&gt; users = userRepository.findAll(Sort.by(<span class="string">"age"</span>).descending());<br>
+                        List&lt;User&gt; users = userRepository.findAll(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Sort.by(<span class="string">"name"</span>).ascending().and(Sort.by(<span class="string">"age"</span>).descending())<br>
+                        );
+                    </div>
+                </section>
+
+                <!-- VÍ DỤ HOÀN CHỈNH -->
+                <section id="complete-example" class="section">
+                    <h2><i class="fas fa-file-code"></i> VÍ DỤ REPOSITORY HOÀN CHỈNH</h2>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>UserRepository.java - Complete Example</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">package</span> com.example.jpa.repository;<br>
+                        <br>
+                        <span class="keyword">import</span> com.example.jpa.model.User;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.Page;<br>
+                        <span class="keyword">import</span> org.springframework.data.domain.Pageable;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.Modifying;<br>
+                        <span class="keyword">import</span> org.springframework.data.jpa.repository.Query;<br>
+                        <span class="keyword">import</span> org.springframework.data.repository.query.Param;<br>
+                        <span class="keyword">import</span> org.springframework.stereotype.Repository;<br>
+                        <span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;<br>
+                        <br>
+                        <span class="keyword">import</span> java.util.List;<br>
+                        <span class="keyword">import</span> java.util.Optional;<br>
+                        <br>
+                        <span class="annotation">@Repository</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">UserRepository</span> <span class="keyword">extends</span> JpaRepository&lt;User, Long&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 1. DERIVED QUERY METHODS =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo email</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Optional&lt;User&gt; findByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo tên chứa keyword</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByNameContainingIgnoreCase(String name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo độ tuổi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAge(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm theo khoảng tuổi</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeBetween(Integer startAge, Integer endAge);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Kiểm tra email tồn tại</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">boolean</span> existsByEmail(String email);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Đếm theo tên</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">long</span> countByName(String name);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 2. JPQL QUERIES =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có tuổi lớn hơn</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.age > :age"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findUsersOlderThan(<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user có email kết thúc bằng domain</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.email LIKE %:domain"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByEmailDomain(<span class="annotation">@Param</span>(<span class="string">"domain"</span>) String domain);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// Tìm user và sắp xếp</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.age BETWEEN :min AND :max ORDER BY u.name ASC"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findByAgeRangeOrderByName(<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"min"</span>) Integer minAge, <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Param</span>(<span class="string">"max"</span>) Integer maxAge);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 3. NATIVE QUERIES =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(value = <span class="string">"SELECT * FROM users WHERE age > ?1"</span>, nativeQuery = <span class="keyword">true</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;User&gt; findAdultUsers(Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(value = <span class="string">"SELECT COUNT(*) FROM users WHERE email LIKE ?1"</span>, nativeQuery = <span class="keyword">true</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span> countUsersByEmailDomain(String domain);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 4. PAGINATION =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Page&lt;User&gt; findByAgeGreaterThan(Integer age, Pageable pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT u FROM User u WHERE u.name LIKE %:keyword%"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Page&lt;User&gt; searchUsers(<span class="annotation">@Param</span>(<span class="string">"keyword"</span>) String keyword, Pageable pageable);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 5. MODIFYING QUERIES =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Modifying</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"UPDATE User u SET u.age = :age WHERE u.email = :email"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span> updateAgeByEmail(<span class="annotation">@Param</span>(<span class="string">"email"</span>) String email, <span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Transactional</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Modifying</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"DELETE FROM User u WHERE u.age < :age"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span> deleteUsersYoungerThan(<span class="annotation">@Param</span>(<span class="string">"age"</span>) Integer age);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">// ===== 6. AGGREGATION =====</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT AVG(u.age) FROM User u"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Double getAverageAge();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT MAX(u.age) FROM User u"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Integer getMaxAge();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Query</span>(<span class="string">"SELECT MIN(u.age) FROM User u"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Integer getMinAge();<br>
+                        }
+                    </div>
+                </section>
+
+                <!-- TỔNG KẾT -->
+                <section id="summary" class="section">
+                    <h2><i class="fas fa-clipboard-check"></i> TỔNG KẾT VỀ REPOSITORY</h2>
+
+                    <h3>1. Ba cách để tạo truy vấn</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cách</th>
+                                    <th>Ví dụ</th>
+                                    <th>Khi nào dùng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Phương thức có sẵn</strong></td>
+                                    <td><code>findById(), save()</code></td>
+                                    <td>CRUD cơ bản</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Derived Query Methods</strong></td>
+                                    <td><code>findByNameAndEmail()</code></td>
+                                    <td>Truy vấn đơn giản</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>@Query</strong></td>
+                                    <td><code>@Query("SELECT u FROM User u...")</code></td>
+                                    <td>Truy vấn phức tạp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2. Các bước sử dụng Repository</h3>
+                    
+                    <ol>
+                        <li>Tạo interface extends <code>JpaRepository&lt;T, ID&gt;</code></li>
+                        <li>Khai báo các phương thức cần thiết</li>
+                        <li><code>@Autowired</code> Repository vào Service</li>
+                        <li>Gọi các phương thức của Repository</li>
+                    </ol>
+
+                    <h3>3. Lưu ý quan trọng</h3>
+                    
+                    <div class="warning-box">
+                        <ul>
+                            <li><strong>Repository là interface, không phải class</strong> - Spring Data JPA tự động tạo implementation</li>
+                            <li><strong>Tên phương thức phải tuân theo quy tắc</strong> - Để Derived Query Methods hoạt động</li>
+                            <li><strong>@Transactional cho các thao tác sửa/xóa</strong> - Khi dùng @Modifying</li>
+                            <li><strong>Optional cho findById</strong> - Tránh NullPointerException</li>
+                        </ul>
+                    </div>
+
+                    <h3>4. Câu hỏi ôn tập</h3>
+                    
+                    <ol>
+                        <li>Repository là gì? Nó khác gì với DAO truyền thống?</li>
+                        <li>So sánh CrudRepository, PagingAndSortingRepository và JpaRepository?</li>
+                        <li>Các phương thức CRUD cơ bản trong JpaRepository là gì?</li>
+                        <li>Derived Query Methods hoạt động như thế nào? Cho ví dụ?</li>
+                        <li>Khi nào cần dùng @Query thay vì Derived Query Methods?</li>
+                        <li>JPQL khác SQL như thế nào?</li>
+                        <li>Tại sao cần @Modifying và @Transactional khi UPDATE/DELETE?</li>
+                        <li>Làm thế nào để phân trang và sắp xếp dữ liệu?</li>
+                    </ol>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> HOÀN THÀNH BÀI 4 (PHẦN 2)!</h4>
+                        <p>Bạn đã hoàn thành Bài 4 (Phần 2) về Repository trong Spring Data JPA.</p>
+                        <p><strong>Phần tiếp theo:</strong> Chúng ta sẽ học về Service Layer và xây dựng REST API hoàn chỉnh với database.</p>
+                    </div>
+
+                    <div class="interactive-section">
+                        <h4><i class="fas fa-play-circle"></i> KIỂM TRA NHANH KIẾN THỨC</h4>
+                        <div class="input-group">
+                            <label for="quizQuestion">Câu hỏi: Interface nào nên dùng để có đầy đủ phương thức CRUD nhất?</label>
+                            <select id="quizQuestion">
+                                <option value="">-- Chọn đáp án --</option>
+                                <option value="repository">Repository</option>
+                                <option value="crud">CrudRepository</option>
+                                <option value="paging">PagingAndSortingRepository</option>
+                                <option value="jpa">JpaRepository</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-success" onclick="checkQuiz()">
+                            <i class="fas fa-check"></i> Kiểm tra
+                        </button>
+                        <div class="result" id="quizResult">
+                            <strong>Kết quả:</strong>
+                            <div class="result-content" id="quizResultContent"></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 4: Kết nối Database với Spring Data JPA (Phần 2) - Repository &copy; 2024</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Xóa class active từ tất cả các link và section
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Kiểm tra quiz
+        function checkQuiz() {
+            const answer = document.getElementById('quizQuestion').value;
+            const resultDiv = document.getElementById('quizResult');
+            const output = document.getElementById('quizResultContent');
+
+            resultDiv.classList.add('active');
+
+            if (answer === 'jpa') {
+                output.textContent = '✅ Chính xác! JpaRepository là interface đầy đủ nhất, kế thừa từ CrudRepository và PagingAndSortingRepository.';
+            } else if (answer === 'repository') {
+                output.textContent = '❌ Chưa chính xác. Repository là interface gốc, không có phương thức nào. Đáp án đúng là JpaRepository.';
+            } else if (answer === 'crud') {
+                output.textContent = '❌ Chưa chính xác. CrudRepository chỉ có các phương thức CRUD cơ bản. Đáp án đúng là JpaRepository.';
+            } else if (answer === 'paging') {
+                output.textContent = '❌ Chưa chính xác. PagingAndSortingRepository thêm phân trang nhưng vẫn thiếu một số phương thức. Đáp án đúng là JpaRepository.';
+            } else {
+                output.textContent = '❌ Vui lòng chọn một đáp án.';
+            }
+        }
+    </script>
+</body>
+</html>

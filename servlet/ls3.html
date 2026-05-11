@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHƯƠNG 3: JSP (JAVASERVER PAGES) - Giáo trình chi tiết từ A-Z</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --jsp: #e76f00;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--jsp);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--jsp);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--jsp);
+        }
+
+        .nav-link i {
+            width: 20px;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--jsp);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--jsp);
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #dcdcaa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--jsp);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .flow-text {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', monospace;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--jsp);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, var(--jsp), transparent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--jsp);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1><i class="fab fa-java"></i> JSP</h1>
+    </header>
+
+    <div class="content-wrapper">
+        <nav class="sidebar">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#part1" class="nav-link active"><i class="fas fa-code-branch"></i> Phần 1: Từ Servlet đến JSP</a></li>
+                <li class="nav-item"><a href="#part2" class="nav-link"><i class="fas fa-code"></i> Phần 2: Cú pháp JSP</a></li>
+                <li class="nav-item"><a href="#part3" class="nav-link"><i class="fas fa-cube"></i> Phần 3: Implicit Objects</a></li>
+                <li class="nav-item"><a href="#part4" class="nav-link"><i class="fas fa-tags"></i> Phần 4: JSP Action Tags</a></li>
+                <li class="nav-item"><a href="#part5" class="nav-link"><i class="fas fa-folder-open"></i> Phần 5: Ví dụ tổng hợp</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- PHẦN 1: TỪ SERVLET ĐẾN JSP -->
+            <section id="part1" class="section active">
+                <h2><i class="fas fa-code-branch"></i> PHẦN 1: TỪ SERVLET ĐẾN JSP</h2>
+
+                <h3>1.1 Tổng quan về JSP</h3>
+                <p><span class="badge">Định nghĩa</span> <strong>JSP (JavaServer Pages)</strong> là công nghệ cho phép nhúng mã Java vào trong trang HTML để tạo ra các trang web động. JSP được biên dịch thành Servlet trước khi thực thi.</p>
+
+                <h4>Tại sao cần JSP?</h4>
+                <p>Hãy xem vấn đề khi chỉ dùng Servlet:</p>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Ví dụ Servlet thuần - Rất khó đọc và bảo trì</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response) 
+        <span class="keyword">throws</span> ServletException, IOException {
+    response.setContentType(<span class="string">"text/html"</span>);
+    PrintWriter out = response.getWriter();
+    
+    out.println(<span class="string">"&lt;html&gt;"</span>);
+    out.println(<span class="string">"&lt;head&gt;&lt;title&gt;Danh sách người dùng&lt;/title&gt;&lt;/head&gt;"</span>);
+    out.println(<span class="string">"&lt;body&gt;"</span>);
+    out.println(<span class="string">"&lt;h1&gt;Danh sách người dùng&lt;/h1&gt;"</span>);
+    out.println(<span class="string">"&lt;table border='1'&gt;"</span>);
+    out.println(<span class="string">"&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Họ tên&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;/tr&gt;"</span>);
+    
+    <span class="keyword">for</span> (User user : userList) {
+        out.println(<span class="string">"&lt;tr&gt;"</span>);
+        out.println(<span class="string">"&lt;td&gt;"</span> + user.getId() + <span class="string">"&lt;/td&gt;"</span>);
+        out.println(<span class="string">"&lt;td&gt;"</span> + user.getName() + <span class="string">"&lt;/td&gt;"</span>);
+        out.println(<span class="string">"&lt;td&gt;"</span> + user.getEmail() + <span class="string">"&lt;/td&gt;"</span>);
+        out.println(<span class="string">"&lt;/tr&gt;"</span>);
+    }
+    
+    out.println(<span class="string">"&lt;/table&gt;"</span>);
+    out.println(<span class="string">"&lt;/body&gt;"</span>);
+    out.println(<span class="string">"&lt;/html&gt;"</span>);
+}</pre>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Vấn đề:</strong>
+                    <ul style="margin: 10px 0 0 20px;">
+                        <li>Phải viết out.println() cho từng dòng HTML</li>
+                        <li>Khó phát hiện lỗi HTML</li>
+                        <li>Khó tách biệt logic và giao diện</li>
+                        <li>Bảo trì rất khó khăn</li>
+                    </ul>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Giải pháp với JSP - Code dễ đọc hơn nhiều</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page import="java.util.List" %&gt;</span>
+<span class="annotation">&lt;%@ page import="com.example.model.User" %&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;&lt;title&gt;</span>Danh sách người dùng<span class="keyword">&lt;/title&gt;&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>Danh sách người dùng<span class="keyword">&lt;/h1&gt;</span>
+    <span class="keyword">&lt;table border="1"&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;th&gt;</span>ID<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Họ tên<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Email<span class="keyword">&lt;/th&gt;&lt;/tr&gt;</span>
+        <span class="comment">&lt;% for (User user : userList) { %&gt;</span>
+        <span class="keyword">&lt;tr&gt;</span>
+            <span class="keyword">&lt;td&gt;</span><span class="comment">&lt;%= user.getId() %&gt;</span><span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span><span class="comment">&lt;%= user.getName() %&gt;</span><span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span><span class="comment">&lt;%= user.getEmail() %&gt;</span><span class="keyword">&lt;/td&gt;</span>
+        <span class="keyword">&lt;/tr&gt;</span>
+        <span class="comment">&lt;% } %&gt;</span>
+    <span class="keyword">&lt;/table&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <h3>1.2 So sánh Servlet và JSP</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Tiêu chí</th><th>Servlet</th><th>JSP</th></tr></thead>
+                        <tbody>
+                            <tr><td>Bản chất</td><td>Class Java thuần</td><td>Được biên dịch thành Servlet</td></tr>
+                            <tr><td>Viết HTML</td><td>Khó (out.println từng dòng)</td><td>Dễ (HTML thuần + nhúng Java)</td></tr>
+                            <tr><td>Xử lý logic</td><td>Tốt</td><td>Hạn chế</td></tr>
+                            <tr><td>Hiển thị dữ liệu</td><td>Khó khăn</td><td>Rất tốt</td></tr>
+                            <tr><td>Nên dùng khi</td><td>Xử lý request, business logic</td><td>Hiển thị giao diện</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <img src="./img/mvc-jsp.png" width="70%" alt="">
+                <h3>1.3 Cài đặt project my_jsp</h3>
+                <h4>Bước 1: Tạo Dynamic Web Project trong Eclipse</h4>
+                <div class="code-block">
+                    <div class="code-header"><span>New Dynamic Web Project</span></div>
+                    <pre>File → New → Dynamic Web Project
+Điền thông tin:
+
+Project name: my_jsp
+Target runtime: Apache Tomcat 10.x
+Configuration: Default Configuration for Apache Tomcat 10.x</pre>
+                </div>
+
+                <h4>Bước 2: Cấu trúc thư mục</h4>
+                <div class="code-block">
+                    <div class="code-header"><span>Project Structure</span></div>
+                    <pre>my_jsp/
+├── src/main/java/              → Chứa Servlet, Model, Tag Handler
+├── src/main/webapp/            → Chứa JSP, CSS, JS, HTML
+│   ├── WEB-INF/
+│   │   ├── web.xml             → Cấu hình ứng dụng
+│   │   ├── views/              → JSP files (bảo vệ, không truy cập trực tiếp)
+│   │   └── tags/               → TLD files cho custom tag
+│   ├── css/                    → Stylesheet
+│   ├── js/                     → JavaScript
+│   └── index.jsp               → Trang chủ
+└── pom.xml                     → (nếu dùng Maven)</pre>
+                </div>
+
+                <h4>Bước 3: Tạo file web.xml</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/web.xml</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="keyword">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="keyword">&lt;web-app</span> <span class="annotation">xmlns</span>=<span class="string">"https://jakarta.ee/xml/ns/jakartaee"</span>
+         <span class="annotation">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="annotation">xsi:schemaLocation</span>=<span class="string">"https://jakarta.ee/xml/ns/jakartaee 
+         https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"</span>
+         <span class="annotation">version</span>=<span class="string">"6.0"</span><span class="keyword">&gt;</span>
+    
+    <span class="keyword">&lt;display-name&gt;</span>my_jsp<span class="keyword">&lt;/display-name&gt;</span>
+    
+    <span class="comment">&lt;!-- Trang chào mừng --&gt;</span>
+    <span class="keyword">&lt;welcome-file-list&gt;</span>
+        <span class="keyword">&lt;welcome-file&gt;</span>index.jsp<span class="keyword">&lt;/welcome-file&gt;</span>
+        <span class="keyword">&lt;welcome-file&gt;</span>index.html<span class="keyword">&lt;/welcome-file&gt;</span>
+    <span class="keyword">&lt;/welcome-file-list&gt;</span>
+    
+<span class="keyword">&lt;/web-app&gt;</span></pre>
+                </div>
+
+                <h3>1.4 Servlet Hello_JSP</h3>
+                <p><span class="badge">Định nghĩa</span> <strong>Servlet</strong> là class Java xử lý request từ client. Trong mô hình MVC, Servlet đóng vai trò Controller - nhận request, xử lý logic, lấy dữ liệu, rồi chuyển tiếp (forward) sang JSP để hiển thị.</p>
+
+                <h4>Cú pháp Servlet cơ bản</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>Cú pháp Servlet</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">@WebServlet</span>(<span class="string">"/duong-dan"</span>)
+<span class="keyword">public class</span> <span class="class-name">TenServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        <span class="comment">// Xử lý GET request</span>
+    }
+    
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doPost(HttpServletRequest request, HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        <span class="comment">// Xử lý POST request</span>
+    }
+}</pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích cú pháp:</strong><br>
+                    - <code>@WebServlet("/duong-dan")</code>: Ánh xạ URL đến Servlet này<br>
+                    - <code>extends HttpServlet</code>: Kế thừa lớp HttpServlet<br>
+                    - <code>doGet()</code>: Xử lý HTTP GET method<br>
+                    - <code>doPost()</code>: Xử lý HTTP POST method<br>
+                    - <code>request</code>: Chứa thông tin request từ client<br>
+                    - <code>response</code>: Dùng để gửi response về client
+                </div>
+
+                <h4>Ví dụ nhỏ: HelloServlet</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/java/com/example/servlet/HelloServlet.java</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="keyword">package</span> com.example.servlet;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> jakarta.servlet.ServletException;
+<span class="keyword">import</span> jakarta.servlet.annotation.WebServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletResponse;
+
+<span class="annotation">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">HelloServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        <span class="comment">// 1. Tạo dữ liệu (giả sử lấy từ database)</span>
+        String message = <span class="string">"Xin chào từ Servlet!"</span>;
+        String currentTime = java.time.LocalDateTime.now().toString();
+        
+        <span class="comment">// 2. Đặt dữ liệu vào request attribute để gửi sang JSP</span>
+        request.setAttribute(<span class="string">"servletMessage"</span>, message);
+        request.setAttribute(<span class="string">"servletTime"</span>, currentTime);
+        
+        <span class="comment">// 3. Chuyển tiếp (forward) sang JSP</span>
+        request.getRequestDispatcher(<span class="string">"/WEB-INF/views/hello.jsp"</span>)
+               .forward(request, response);
+    }
+}</pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích ví dụ:</strong><br>
+                    - <code>@WebServlet("/hello")</code>: Khi người dùng truy cập http://localhost:8080/my_jsp/hello thì Servlet này được gọi<br>
+                    - <code>request.setAttribute("servletMessage", message)</code>: Lưu dữ liệu vào request với tên "servletMessage" để JSP lấy ra<br>
+                    - <code>request.getRequestDispatcher("/WEB-INF/views/hello.jsp")</code>: Lấy đối tượng Dispatcher để chuyển tiếp đến JSP<br>
+                    - <code>.forward(request, response)</code>: Thực hiện chuyển tiếp (forward) - dữ liệu trong request được giữ nguyên
+                </div>
+
+                <h4>Ví dụ nhỏ: JSP nhận dữ liệu</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/views/hello.jsp</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;meta</span> <span class="annotation">charset</span>=<span class="string">"UTF-8"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Hello JSP<span class="keyword">&lt;/title&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>JSP nhận dữ liệu từ Servlet<span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="comment">&lt;%--
+        // Lấy dữ liệu từ Servlet (request attribute)
+        String message = (String) request.getAttribute("servletMessage");
+        String currentTime = (String) request.getAttribute("servletTime");
+    --%&gt;</span>
+    
+    <span class="comment">&lt;%
+        String message = (String) request.getAttribute("servletMessage");
+        String currentTime = (String) request.getAttribute("servletTime");
+    %&gt;</span>
+    
+    <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Thông điệp:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= message %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Thời gian:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= currentTime %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích JSP nhận dữ liệu:</strong><br>
+                    - <code>&lt;%@ page ... %&gt;</code>: Directive - cấu hình cho trang JSP<br>
+                    - <code>&lt;% ... %&gt;</code>: Scriptlet - code Java thực thi<br>
+                    - <code>request.getAttribute("servletMessage")</code>: Lấy dữ liệu từ request do Servlet gửi sang<br>
+                    - <code>&lt;%= message %&gt;</code>: Expression - in giá trị ra HTML
+                </div>
+
+                <h4>Luồng hoạt động</h4>
+                <div class="flow-text">
+<pre>
+1. Browser gọi: http://localhost:8080/my_jsp/hello
+                    ↓
+2. Tomcat nhận request, tìm Servlet mapping "/hello"
+                    ↓
+3. Gọi HelloServlet.doGet()
+                    ↓
+4. Servlet tạo dữ liệu, set vào request attribute
+                    ↓
+5. Servlet forward sang /WEB-INF/views/hello.jsp
+                    ↓
+6. JSP nhận request, lấy dữ liệu từ attribute
+                    ↓
+7. JSP sinh HTML
+                    ↓
+8. Trả về browser</pre>
+                </div>
+
+                <h3>1.5 Vòng đời hoạt động của JSP</h3>
+                <p><span class="badge">Định nghĩa</span> Vòng đời JSP là các giai đoạn mà một trang JSP trải qua từ khi được tạo đến khi bị hủy bỏ.</p>
+
+                <h4>Sơ đồ vòng đời</h4>
+                <img src="./img/vongdoi.png" width="70%" alt="">
+
+                <h4>Các phương thức trong vòng đời</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Thời điểm gọi</th><th>Số lần gọi</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td>jspInit()</td><td>Sau khi JSP được tải</td><td>1 lần</td><td>Khởi tạo tài nguyên</td></tr>
+                            <tr><td>_jspService()</td><td>Mỗi khi có request</td><td>Nhiều lần</td><td>Xử lý request, sinh HTML</td></tr>
+                            <tr><td>jspDestroy()</td><td>Trước khi JSP bị hủy</td><td>1 lần</td><td>Giải phóng tài nguyên</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ minh họa vòng đời</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/views/lifecycle_demo.jsp</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+    
+<span class="comment">&lt;%!
+    // ===== DECLARATION: Code trong này là thành viên của class =====
+    private int initCount = 0;
+    private int destroyCount = 0;
+    private int serviceCount = 0;
+    
+    // jspInit() - Gọi 1 lần khi JSP được khởi tạo
+    public void jspInit() {
+        initCount++;
+        System.out.println("=== jspInit() được gọi lần thứ " + initCount + " ===");
+        System.out.println("Thời gian: " + new java.util.Date());
+    }
+    
+    // jspDestroy() - Gọi 1 lần khi JSP bị hủy
+    public void jspDestroy() {
+        destroyCount++;
+        System.out.println("=== jspDestroy() được gọi lần thứ " + destroyCount + " ===");
+        System.out.println("Thời gian: " + new java.util.Date());
+    }
+%&gt;</span>
+
+<span class="comment">&lt;%
+    // ===== SCRIPTLET: Code trong này nằm trong _jspService() =====
+    serviceCount++;
+    
+    // Lấy Servlet config và context
+    String servletName = config.getServletName();
+    String contextPath = application.getContextPath();
+%&gt;</span>
+
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;meta</span> <span class="annotation">charset</span>=<span class="string">"UTF-8"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Vòng đời JSP<span class="keyword">&lt;/title&gt;</span>
+    <span class="keyword">&lt;style&gt;</span>
+        <span class="keyword">body</span> { font-family: Arial, sans-serif; margin: 20px; }
+        <span class="keyword">.info</span> { background-color: #e7f3fe; padding: 10px; border-left: 4px solid #2196F3; }
+        <span class="keyword">table</span> { border-collapse: collapse; width: 100%; }
+        <span class="keyword">td, th</span> { border: 1px solid #ddd; padding: 8px; }
+        <span class="keyword">th</span> { background-color: #4CAF50; color: white; }
+    <span class="keyword">&lt;/style&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>Vòng đời của JSP<span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"info"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Servlet Name:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= servletName %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Context Path:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= contextPath %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Session ID:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= session.getId() %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+    
+    <span class="keyword">&lt;h2&gt;</span>Thống kê<span class="keyword">&lt;/h2&gt;</span>
+    <span class="keyword">&lt;table&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;th&gt;</span>Phương thức<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Số lần gọi<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Giải thích<span class="keyword">&lt;/th&gt;&lt;/tr&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;td&gt;</span>jspInit()<span class="keyword">&lt;/td&gt;&lt;td&gt;</span><span class="comment">&lt;%= initCount %&gt;</span><span class="keyword">&lt;/td&gt;&lt;td&gt;</span>Gọi 1 lần khi JSP được khởi tạo<span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;td&gt;</span>_jspService()<span class="keyword">&lt;/td&gt;&lt;td&gt;</span><span class="comment">&lt;%= serviceCount %&gt;</span><span class="keyword">&lt;/td&gt;&lt;td&gt;</span>Gọi mỗi khi có request (tải lại trang)<span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;td&gt;</span>jspDestroy()<span class="keyword">&lt;/td&gt;&lt;td&gt;</span><span class="comment">&lt;%= destroyCount %&gt;</span><span class="keyword">&lt;/td&gt;&lt;td&gt;</span>Gọi 1 lần khi ứng dụng dừng<span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+    <span class="keyword">&lt;/table&gt;</span>
+    
+    <span class="keyword">&lt;p&gt;&lt;em&gt;</span>F5 (refresh) để tăng _jspService() count<span class="keyword">&lt;/em&gt;&lt;/p&gt;</span>
+    
+    <span class="keyword">&lt;h2&gt;</span>Thông tin chi tiết<span class="keyword">&lt;/h2&gt;</span>
+    <span class="keyword">&lt;table&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;th&gt;</span>JSP đã được biên dịch thành<span class="keyword">&lt;/th&gt;&lt;td&gt;</span><span class="comment">&lt;%= this.getClass().getName() %&gt;</span><span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;th&gt;</span>Class Loader<span class="keyword">&lt;/th&gt;&lt;td&gt;</span><span class="comment">&lt;%= this.getClass().getClassLoader().getClass().getName() %&gt;</span><span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+    <span class="keyword">&lt;/table&gt;</span>
+    
+    <span class="keyword">&lt;hr&gt;</span>
+    <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Lưu ý:<span class="keyword">&lt;/strong&gt;</span> Để thấy jspInit() và jspDestroy() trong console log, 
+       hãy xem cửa sổ Console của Eclipse/Server.<span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích vòng đời:</strong><br>
+                    - <strong>Translation</strong>: JSP container đọc file .jsp, chuyển đổi thành code Java Servlet. Ví dụ: hello.jsp → hello_jsp.java<br>
+                    - <strong>Compilation</strong>: Java compiler biên dịch file .java thành .class<br>
+                    - <strong>Loading</strong>: Class loader tải file .class vào bộ nhớ<br>
+                    - <strong>Instantiation</strong>: Tạo instance của Servlet (gọi constructor)<br>
+                    - <strong>Initialization</strong>: Gọi jspInit() - thường dùng để kết nối database, đọc file cấu hình<br>
+                    - <strong>Request Handling</strong>: Gọi _jspService() - xử lý request, sinh HTML<br>
+                    - <strong>Destroy</strong>: Gọi jspDestroy() - đóng kết nối, giải phóng tài nguyên
+                </div>
+
+                <hr>
+            </section>
+                <!-- PHẦN 2: CÚ PHÁP JSP -->
+                <section id="part2" class="section ">
+                <h2><i class="fas fa-code"></i> PHẦN 2: CÚ PHÁP JSP</h2>
+
+                <h3>2.1 JSP = HTML + Java</h3>
+                <p><span class="badge">Định nghĩa</span> JSP cho phép kết hợp HTML và Java để tạo trang web động. Java code được nhúng vào trong HTML thông qua các tag đặc biệt.</p>
+
+                <h4>Các thành phần cú pháp JSP</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Thành phần</th><th>Cú pháp</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td>Directive</td><td><code>&lt;%@ ... %&gt;</code></td><td>Chỉ dẫn cho JSP container</td></tr>
+                            <tr><td>Declaration</td><td><code>&lt;%! ... %&gt;</code></td><td>Khai báo biến, phương thức (thành viên class)</td></tr>
+                            <tr><td>Scriptlet</td><td><code>&lt;% ... %&gt;</code></td><td>Mã Java thực thi (nằm trong _jspService)</td></tr>
+                            <tr><td>Expression</td><td><code>&lt;%= ... %&gt;</code></td><td>In giá trị ra HTML</td></tr>
+                            <tr><td>Comment JSP</td><td><code>&lt;%-- ... --%&gt;</code></td><td>Comment chỉ thấy trong code JSP</td></tr>
+                            <tr><td>Comment HTML</td><td><code>&lt;!-- ... --&gt;</code></td><td>Comment gửi đến client</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>2.2 Directive - Chỉ dẫn JSP</h3>
+                <p><span class="badge">Định nghĩa</span> Directive cung cấp thông tin chỉ dẫn cho JSP container về cách xử lý trang JSP. Directive không tạo ra output trực tiếp.</p>
+
+                <h4>Cú pháp</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="annotation">&lt;%@ directive_name attribute1="value1" attribute2="value2" %&gt;</span></pre>
+                </div>
+
+                <h4>Các loại Directive</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Directive</th><th>Mô tả</th><th>Ví dụ</th></tr></thead>
+                        <tbody>
+                            <tr><td>page</td><td>Cấu hình cho trang JSP</td><td><code>&lt;%@ page import="java.util.List" %&gt;</code></td></tr>
+                            <tr><td>include</td><td>Nhúng file khác vào JSP</td><td><code>&lt;%@ include file="header.jsp" %&gt;</code></td></tr>
+                            <tr><td>taglib</td><td>Khai báo thẻ tùy chỉnh</td><td><code>&lt;%@ taglib uri="..." prefix="c" %&gt;</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: page directive</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" import="java.util.List, java.util.ArrayList"
+    errorPage="error.jsp" isErrorPage="false" session="true"
+    buffer="8kb" autoFlush="true" isThreadSafe="true"
+    info="Trang JSP demo" isELIgnored="false"%&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích các thuộc tính page directive:</strong><br>
+                    - <code>language</code>: Ngôn ngữ script (mặc định: java)<br>
+                    - <code>contentType</code>: Kiểu nội dung trả về (mặc định: text/html)<br>
+                    - <code>pageEncoding</code>: Mã hóa trang JSP (mặc định: ISO-8859-1)<br>
+                    - <code>import</code>: Import package/class<br>
+                    - <code>errorPage</code>: Trang xử lý lỗi<br>
+                    - <code>isErrorPage</code>: Có phải trang lỗi không? (mặc định: false)<br>
+                    - <code>session</code>: Có tạo session không? (mặc định: true)<br>
+                    - <code>buffer</code>: Kích thước buffer (mặc định: 8kb)<br>
+                    - <code>autoFlush</code>: Tự động flush buffer (mặc định: true)<br>
+                    - <code>isThreadSafe</code>: Có an toàn luồng không? (mặc định: true)<br>
+                    - <code>info</code>: Thông tin về JSP<br>
+                    - <code>isELIgnored</code>: Có bỏ qua EL không? (mặc định: false)
+                </div>
+
+                <h4>Ví dụ nhỏ: include directive</h4>
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/views/header.jsp</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"background-color: #333; color: white; padding: 10px;"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;h2&gt;</span>Header của trang web<span class="keyword">&lt;/h2&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Đây là header được include từ file riêng<span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/div&gt;</span></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/views/footer.jsp</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"background-color: #333; color: white; padding: 10px; margin-top: 20px;"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Footer - Bản quyền © 2024<span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/div&gt;</span></pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>File: src/main/webapp/WEB-INF/views/include_demo.jsp</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;&lt;title&gt;</span>Include Directive Demo<span class="keyword">&lt;/title&gt;&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="annotation">&lt;%@ include file="header.jsp" %&gt;</span>
+    
+    <span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"padding: 20px;"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h1&gt;</span>Nội dung chính của trang<span class="keyword">&lt;/h1&gt;</span>
+        <span class="keyword">&lt;p&gt;</span>Đây là nội dung được viết trong trang chính.<span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+    
+    <span class="annotation">&lt;%@ include file="footer.jsp" %&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Lưu ý: include directive (&lt;%@ include %&gt;) vs jsp:include action (&lt;jsp:include page="..." /&gt;)</strong>
+                    <table style="margin-top: 10px;">
+                        <thead><tr><th>Đặc điểm</th><th>&lt;%@ include %&gt; (static)</th><th>&lt;jsp:include&gt; (dynamic)</th></tr></thead>
+                        <tbody>
+                            <tr><td>Thời điểm</td><td>Khi biên dịch JSP</td><td>Khi request (runtime)</td></tr>
+                            <tr><td>Kết quả</td><td>File được nhúng vào trước khi biên dịch</td><td>File được gọi riêng khi request</td></tr>
+                            <tr><td>Biến</td><td>Có thể dùng chung biến</td><td>Không dùng chung biến</td></tr>
+                            <tr><td>Thay đổi</td><td>Phải biên dịch lại JSP chính</td><td>Chỉ cần thay đổi file được include</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>2.3 Declaration - Khai báo</h3>
+                <p><span class="badge">Định nghĩa</span> Declaration dùng để khai báo các biến instance và phương thức cho class Servlet được sinh ra từ JSP. Code trong declaration trở thành thành viên (member) của class.</p>
+
+                <h4>Cú pháp</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%!
+    // Khai báo biến instance
+    private int counter = 0;
+    private String appName = "My App";
+    
+    // Khai báo phương thức
+    public String formatDate(java.util.Date date) {
+        return new java.text.SimpleDateFormat("dd/MM/yyyy").format(date);
+    }
+    
+    public int add(int a, int b) {
+        return a + b;
+    }
+%&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích</strong><br>
+                    - <strong>Đặc điểm</strong>: Chuyển thành code bên ngoài method _jspService()<br>
+                    - <strong>Phạm vi</strong>: Toàn bộ class, dùng chung cho mọi request<br>
+                    - <strong>Thời điểm khởi tạo</strong>: Khi JSP được tải (1 lần)<br>
+                    - <strong>Dùng chung</strong>: Giữa các request, giữa các user
+                </div>
+
+                <h4>Ví dụ nhỏ: declaration cơ bản</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%!
+    // Biến instance - dùng chung cho mọi request
+    private int totalVisits = 0;
+    private String siteName = "Trang web JSP Demo";
+    private java.util.Date startTime = new java.util.Date();
+    
+    // Phương thức instance
+    public String getGreeting() {
+        int hour = java.time.LocalTime.now().getHour();
+        if (hour < 12) return "Chào buổi sáng";
+        if (hour < 18) return "Chào buổi chiều";
+        return "Chào buổi tối";
+    }
+    
+    public String formatNumber(int number) {
+        return String.format("%,d", number);
+    }
+%&gt;</span>
+
+<span class="comment">&lt;%
+    // Scriptlet: tăng biến mỗi request
+    totalVisits++;
+%&gt;</span>
+
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;&lt;%=</span> siteName <span class="keyword">%&gt;&lt;/h1&gt;</span>
+    <span class="keyword">&lt;p&gt;&lt;%=</span> getGreeting() <span class="keyword">%&gt;</span>, bạn đã truy cập trang web này!<span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Số lần truy cập: <span class="comment">&lt;%= formatNumber(totalVisits) %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Thời gian khởi tạo: <span class="comment">&lt;%= startTime %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <h3>2.4 Scriptlet - Mã Java thực thi</h3>
+                <p><span class="badge">Định nghĩa</span> Scriptlet là đoạn mã Java được thực thi mỗi khi có request. Code trong scriptlet được đặt bên trong method _jspService().</p>
+
+                <h4>Cú pháp</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Mã Java bất kỳ
+    String name = request.getParameter("name");
+    if (name != null) {
+        out.println("Xin chào " + name);
+    }
+    
+    for (int i = 0; i < 5; i++) {
+        // Code lặp
+    }
+    
+    try {
+        // Code có thể gây lỗi
+    } catch (Exception e) {
+        // Xử lý lỗi
+    }
+%&gt;</span></pre>
+                </div>
+
+                <div class="info-box">
+                    <strong> Giải thích</strong><br>
+                    - <strong>Đặc điểm</strong>: Chuyển thành code bên trong method _jspService()<br>
+                    - <strong>Phạm vi</strong>: Chạy mỗi request<br>
+                    - <strong>Có thể dùng</strong>: Các implicit objects (request, response, out, session...)<br>
+                    - <strong>Có thể dùng</strong>: Biến và phương thức từ declaration
+                </div>
+
+                <h4>Ví dụ nhỏ: scriptlet với điều kiện</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Lấy tham số từ URL (ví dụ: ?role=admin)
+    String role = request.getParameter("role");
+    String message = "";
+    
+    if ("admin".equals(role)) {
+        message = "Chào mừng Admin! Bạn có quyền quản trị.";
+    } else if ("user".equals(role)) {
+        message = "Chào mừng User! Bạn có quyền xem thông tin.";
+    } else {
+        message = "Vui lòng đăng nhập.";
+    }
+%&gt;</span>
+
+<span class="keyword">&lt;h2&gt;&lt;%=</span> message <span class="keyword">%&gt;&lt;/h2&gt;</span>
+
+<span class="comment">&lt;% if ("admin".equals(role)) { %&gt;</span>
+    <span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"background-color: #f0f0f0; padding: 10px;"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h3&gt;</span>Admin Panel<span class="keyword">&lt;/h3&gt;</span>
+        <span class="keyword">&lt;ul&gt;</span>
+            <span class="keyword">&lt;li&gt;&lt;a</span> <span class="annotation">href</span>=<span class="string">"users.jsp"</span><span class="keyword">&gt;</span>Quản lý người dùng<span class="keyword">&lt;/a&gt;&lt;/li&gt;</span>
+            <span class="keyword">&lt;li&gt;&lt;a</span> <span class="annotation">href</span>=<span class="string">"settings.jsp"</span><span class="keyword">&gt;</span>Cài đặt hệ thống<span class="keyword">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="keyword">&lt;/ul&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="comment">&lt;% } else if ("user".equals(role)) { %&gt;</span>
+    <span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"background-color: #e7f3fe; padding: 10px;"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h3&gt;</span>User Panel<span class="keyword">&lt;/h3&gt;</span>
+        <span class="keyword">&lt;ul&gt;</span>
+            <span class="keyword">&lt;li&gt;&lt;a</span> <span class="annotation">href</span>=<span class="string">"profile.jsp"</span><span class="keyword">&gt;</span>Hồ sơ cá nhân<span class="keyword">&lt;/a&gt;&lt;/li&gt;</span>
+            <span class="keyword">&lt;li&gt;&lt;a</span> <span class="annotation">href</span>=<span class="string">"orders.jsp"</span><span class="keyword">&gt;</span>Đơn hàng của tôi<span class="keyword">&lt;/a&gt;&lt;/li&gt;</span>
+        <span class="keyword">&lt;/ul&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="comment">&lt;% } %&gt;</span></pre>
+                </div>
+
+                <h4>Ví dụ nhỏ: scriptlet với vòng lặp</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Tạo mảng dữ liệu
+    String[] colors = {"Đỏ", "Xanh", "Vàng", "Tím", "Cam"};
+    int[][] multiplicationTable = new int[10][10];
+    
+    // Tính bảng cửu chương
+    for (int i = 1; i <= 9; i++) {
+        for (int j = 1; j <= 9; j++) {
+            multiplicationTable[i][j] = i * j;
+        }
+    }
+%&gt;</span>
+
+<span class="keyword">&lt;h2&gt;</span>Danh sách màu sắc:<span class="keyword">&lt;/h2&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+<span class="comment">&lt;% for (String color : colors) { %&gt;</span>
+    <span class="keyword">&lt;li</span> <span class="annotation">style</span>=<span class="string">"color: &lt;%= color.toLowerCase() %&gt;;"</span><span class="keyword">&gt;&lt;%=</span> color <span class="keyword">%&gt;&lt;/li&gt;</span>
+<span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="keyword">&lt;h2&gt;</span>Bảng cửu chương<span class="keyword">&lt;/h2&gt;</span>
+<span class="keyword">&lt;table</span> <span class="annotation">border</span>=<span class="string">"1"</span><span class="keyword">&gt;</span>
+    <span class="comment">&lt;% for (int i = 1; i <= 9; i++) { %&gt;</span>
+        <span class="keyword">&lt;tr&gt;</span>
+            <span class="comment">&lt;% for (int j = 1; j <= 9; j++) { %&gt;</span>
+                <span class="keyword">&lt;td</span> <span class="annotation">style</span>=<span class="string">"text-align: center; width: 40px;"</span><span class="keyword">&gt;</span>
+                    <span class="comment">&lt;%= multiplicationTable[i][j] %&gt;</span>
+                <span class="keyword">&lt;/td&gt;</span>
+            <span class="comment">&lt;% } %&gt;</span>
+        <span class="keyword">&lt;/tr&gt;</span>
+    <span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/table&gt;</span></pre>
+                </div>
+
+                <h3>2.5 Expression - In giá trị</h3>
+                <p><span class="badge">Định nghĩa</span> Expression dùng để in giá trị của biến hoặc kết quả của biểu thức ra HTML. Không cần dấu ; ở cuối.</p>
+
+                <h4>Cú pháp</h4>
+                <div class="code-block"><pre><span class="comment">&lt;%= biểu_thức %&gt;</span></pre></div>
+
+                <div class="info-box">
+                    <strong> Giải thích</strong><br>
+                    - <strong>Tương đương</strong>: out.print(biểu_thức)<br>
+                    - <strong>Không cần</strong>: Dấu ; ở cuối<br>
+                    - <strong>Có thể dùng</strong>: Biến, literal, method call, biểu thức
+                </div>
+
+                <h4>Ví dụ nhỏ: expression cơ bản</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    String username = "Nguyễn Văn A";
+    int age = 25;
+    double price = 199.99;
+    java.util.Date now = new java.util.Date();
+%&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>Tên: <span class="keyword">&lt;strong&gt;&lt;%=</span> username <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Tuổi: <span class="keyword">&lt;strong&gt;&lt;%=</span> age <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Giá: <span class="keyword">&lt;strong&gt;&lt;%=</span> String.format(<span class="string">"%,.2f"</span>, price) <span class="keyword">%&gt;</span> VNĐ<span class="keyword">&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Thời gian: <span class="keyword">&lt;strong&gt;&lt;%=</span> now <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Ngày mai: <span class="keyword">&lt;strong&gt;&lt;%=</span> new java.util.Date(now.getTime() + 86400000) <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Tổng: <span class="keyword">&lt;strong&gt;&lt;%=</span> 100 + 200 + 300 <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Kiểm tra: <span class="keyword">&lt;strong&gt;&lt;%=</span> age >= 18 ? <span class="string">"Đã trưởng thành"</span> : <span class="string">"Chưa trưởng thành"</span> <span class="keyword">%&gt;&lt;/strong&gt;&lt;/p&gt;</span></pre>
+                </div>
+
+                <h4>Ví dụ nhỏ: expression kết hợp với method</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%!
+    // Declaration: phương thức xử lý
+    public String formatCurrency(double amount) {
+        return String.format("%,.0f", amount) + " VNĐ";
+    }
+    
+    public String getStatus(int age) {
+        if (age < 18) return "Trẻ em";
+        if (age < 60) return "Người lớn";
+        return "Người cao tuổi";
+    }
+    
+    public String truncate(String text, int maxLength) {
+        if (text == null) return "";
+        if (text.length() <= maxLength) return text;
+        return text.substring(0, maxLength) + "...";
+    }
+%&gt;</span>
+
+<span class="comment">&lt;%
+    double[] prices = {99.99, 199.99, 299.99, 399.99};
+    String longText = "Đây là một đoạn văn bản rất dài cần được cắt ngắn để hiển thị trong giao diện.";
+%&gt;</span>
+
+<span class="keyword">&lt;h2&gt;</span>Danh sách giá<span class="keyword">&lt;/h2&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+<span class="comment">&lt;% for (double p : prices) { %&gt;</span>
+    <span class="keyword">&lt;li&gt;&lt;%=</span> formatCurrency(p) <span class="keyword">%&gt;&lt;/li&gt;</span>
+<span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>Văn bản đã cắt: <span class="comment">&lt;%= truncate(longText, 30) %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Trạng thái theo tuổi: <span class="comment">&lt;%= getStatus(25) %&gt;</span><span class="keyword">&lt;/p&gt;</span></pre>
+                </div>
+
+                <h3>2.6 Comments trong JSP</h3>
+                <p><span class="badge">Định nghĩa</span> JSP có 2 loại comment:</p>
+                <ul>
+                    <li><strong>JSP comment</strong>: Chỉ hiển thị trong code JSP, không gửi đến client</li>
+                    <li><strong>HTML comment</strong>: Gửi đến client nhưng không hiển thị trên browser</li>
+                </ul>
+
+                <h4>Cú pháp</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%-- Đây là JSP comment - chỉ thấy trong file JSP, không gửi client --%&gt;</span>
+
+<span class="comment">&lt;!-- Đây là HTML comment - gửi đến client, có thể xem source --&gt;</span></pre>
+                </div>
+
+                <h4>Ví dụ nhỏ</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>JSP Comments<span class="keyword">&lt;/title&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="comment">&lt;%-- JSP comment này sẽ không xuất hiện trong HTML source --%&gt;</span>
+    
+    <span class="comment">&lt;!-- HTML comment này sẽ xuất hiện trong HTML source --&gt;</span>
+    
+    <span class="comment">&lt;%
+        // Java single-line comment - nằm trong scriptlet
+        /* Java multi-line comment - nằm trong scriptlet */
+        
+        String name = "John"; // comment cuối dòng
+    %&gt;</span>
+    
+    <span class="keyword">&lt;h1&gt;</span>Xin chào <span class="comment">&lt;%= name %&gt;</span><span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="comment">&lt;%-- 
+        JSP block comment
+        Có thể viết nhiều dòng
+        Rất hữu ích để comment code tạm thời
+    --%&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+                </div>
+
+                <h4>So sánh các loại comment</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Loại comment</th><th>Cú pháp</th><th>Gửi client?</th><th>Hiện trên browser?</th></tr></thead>
+                        <tbody>
+                            <tr><td>JSP comment</td><td><code>&lt;%-- ... --%&gt;</code></td><td>❌</td><td>❌</td></tr>
+                            <tr><td>HTML comment</td><td><code>&lt;!-- ... --&gt;</code></td><td>✅</td><td>❌ (trong source)</td></tr>
+                            <tr><td>Java comment (//)</td><td><code>// ...</code></td><td>❌</td><td>❌</td></tr>
+                            <tr><td>Java comment (/* */)</td><td><code>/* ... */</code></td><td>❌</td><td>❌</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                </section>
+                <section id="part3" class="section ">
+                <!-- PHẦN 3: IMPLICIT OBJECTS -->
+                <h2><i class="fas fa-cube"></i> PHẦN 3: IMPLICIT OBJECTS (ĐỐI TƯỢNG CÓ SẴN)</h2>
+
+                <h3>3.1 Định nghĩa</h3>
+                <p>Implicit objects là 9 đối tượng được JSP container tự động tạo sẵn, có thể sử dụng trực tiếp trong scriptlet và expression mà không cần khai báo.</p>
+
+                <h3>3.2 Bảng 9 implicit objects</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>STT</th><th>Object</th><th>Kiểu</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>request</td><td>HttpServletRequest</td><td>Thông tin request từ client</td></tr>
+                            <tr><td>2</td><td>response</td><td>HttpServletResponse</td><td>Phản hồi cho client</td></tr>
+                            <tr><td>3</td><td>out</td><td>JspWriter</td><td>Ghi dữ liệu ra response</td></tr>
+                            <tr><td>4</td><td>session</td><td>HttpSession</td><td>Quản lý phiên làm việc</td></tr>
+                            <tr><td>5</td><td>application</td><td>ServletContext</td><td>Dùng chung toàn ứng dụng</td></tr>
+                            <tr><td>6</td><td>config</td><td>ServletConfig</td><td>Cấu hình của JSP/Servlet</td></tr>
+                            <tr><td>7</td><td>pageContext</td><td>PageContext</td><td>Context của trang</td></tr>
+                            <tr><td>8</td><td>page</td><td>Object (this)</td><td>Tham chiếu đến chính JSP</td></tr>
+                            <tr><td>9</td><td>exception</td><td>Throwable</td><td>Chỉ dùng trong error page</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3.3 request object - HttpServletRequest</h3>
+                <p><span class="badge">Định nghĩa</span> request là đối tượng chứa thông tin về request từ client, bao gồm: tham số, header, attribute, phương thức HTTP, v.v.</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <tr>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th><th>Ví dụ</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>getParameter(String name)</code></td><td>Lấy tham số từ URL/form</td><td><code>request.getParameter("username")</code></td></tr>
+                            <tr><td><code>getParameterValues(String name)</code></td><td>Lấy mảng giá trị tham số (checkbox)</td><td><code>request.getParameterValues("hobby")</code></td></tr>
+                            <tr><td><code>getParameterNames()</code></td><td>Lấy tên tất cả tham số</td><td><code>request.getParameterNames()</code></td></tr>
+                            <tr><td><code>getAttribute(String name)</code></td><td>Lấy attribute đã set</td><td><code>request.getAttribute("user")</code></td></tr>
+                            <tr><td><code>setAttribute(String name, Object value)</code></td><td>Set attribute</td><td><code>request.setAttribute("msg", "OK")</code></td></tr>
+                            <tr><td><code>getMethod()</code></td><td>Lấy phương thức HTTP</td><td>GET, POST, PUT</td></tr>
+                            <tr><td><code>getRequestURI()</code></td><td>Lấy URI của request</td><td><code>/my_jsp/hello.jsp</code></td></tr>
+                            <tr><td><code>getQueryString()</code></td><td>Lấy query string</td><td><code>?name=John&age=25</code></td></tr>
+                            <tr><td><code>getHeader(String name)</code></td><td>Lấy header</td><td><code>request.getHeader("User-Agent")</code></td></tr>
+                            <tr><td><code>getRemoteAddr()</code></td><td>Lấy IP client</td><td>127.0.0.1</td></tr>
+                            <tr><td><code>getSession()</code></td><td>Lấy session</td><td><code>request.getSession()</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: request basic</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Lấy tham số từ URL (GET) hoặc form (POST)
+    String username = request.getParameter("username");
+    String ageStr = request.getParameter("age");
+    String[] hobbies = request.getParameterValues("hobby");
+    
+    // Lấy thông tin request
+    String method = request.getMethod();
+    String uri = request.getRequestURI();
+    String ip = request.getRemoteAddr();
+    String userAgent = request.getHeader("User-Agent");
+%&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Thông tin request<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Phương thức: <span class="comment">&lt;%= method %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>URI: <span class="comment">&lt;%= uri %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>IP: <span class="comment">&lt;%= ip %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>User-Agent: <span class="comment">&lt;%= userAgent %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Tham số nhận được<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Username: <span class="comment">&lt;%= username != null ? username : "Không có" %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Tuổi: <span class="comment">&lt;%= ageStr != null ? ageStr : "Không có" %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Sở thích: 
+        <span class="comment">&lt;% if (hobbies != null) {
+            for (String h : hobbies) { %&gt;</span>
+                <span class="comment">&lt;%= h %&gt;</span> &nbsp;
+        <span class="comment">&lt;%  }
+        } else { %&gt;</span>
+            Không có
+        <span class="comment">&lt;% } %&gt;</span>
+    <span class="keyword">&lt;/li&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span></pre>
+                </div>
+
+                <h4>Ví dụ nhỏ: set và get attribute</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Set attribute vào request (thường dùng để chuyển dữ liệu giữa Servlet và JSP)
+    request.setAttribute("message", "Xin chào từ JSP!");
+    request.setAttribute("user", "Nguyễn Văn A");
+    request.setAttribute("scores", new int[]{85, 90, 78});
+    
+    // Lấy attribute ra
+    String msg = (String) request.getAttribute("message");
+    String user = (String) request.getAttribute("user");
+    int[] scores = (int[]) request.getAttribute("scores");
+%&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>Message: <span class="comment">&lt;%= msg %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>User: <span class="comment">&lt;%= user %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Điểm: 
+    <span class="comment">&lt;% for (int s : scores) { %&gt;</span>
+        <span class="comment">&lt;%= s %&gt;</span> 
+    <span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/p&gt;</span></pre>
+                </div>
+
+                <h3>3.4 response object - HttpServletResponse</h3>
+                <p><span class="badge">Định nghĩa</span> response là đối tượng đại diện cho phản hồi sẽ gửi về client. Dùng để set header, redirect, hoặc ghi dữ liệu trực tiếp.</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th><th>Ví dụ</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>setContentType(String type)</code></td><td>Set kiểu nội dung</td><td><code>response.setContentType("text/html")</code></td></tr>
+                            <tr><td><code>setHeader(String name, String value)</code></td><td>Set header</td><td><code>response.setHeader("X-Custom", "value")</code></td></tr>
+                            <tr><td><code>addCookie(Cookie cookie)</code></td><td>Thêm cookie</td><td><code>response.addCookie(new Cookie("name","value"))</code></td></tr>
+                            <tr><td><code>sendRedirect(String location)</code></td><td>Chuyển hướng client</td><td><code>response.sendRedirect("login.jsp")</code></td></tr>
+                            <tr><td><code>setStatus(int sc)</code></td><td>Set HTTP status</td><td><code>response.setStatus(404)</code></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: response basic</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Set content type (quan trọng cho tiếng Việt)
+    response.setContentType("text/html; charset=UTF-8");
+    
+    // Set custom header
+    response.setHeader("X-Powered-By", "JSP Demo");
+    response.setIntHeader("X-Random", (int)(Math.random() * 100));
+    
+    // Set cookie
+    Cookie userCookie = new Cookie("lastVisit", new java.util.Date().toString());
+    userCookie.setMaxAge(3600); // 1 hour
+    response.addCookie(userCookie);
+%&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>Headers đã được set. Kiểm tra Network tab của browser.<span class="keyword">&lt;/p&gt;</span></pre>
+                </div>
+
+                <h4>Ví dụ nhỏ: redirect</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    String role = request.getParameter("role");
+    
+    if ("admin".equals(role)) {
+        // Chuyển hướng client đến trang admin
+        response.sendRedirect("admin.jsp");
+    } else if ("user".equals(role)) {
+        response.sendRedirect("user.jsp");
+    } else {
+        // Chuyển hướng đến trang login
+        response.sendRedirect("login.jsp?error=1");
+    }
+    
+    // LƯU Ý: Sau sendRedirect, KHÔNG code tiếp vì response đã được commit
+%&gt;</span></pre>
+                </div>
+
+                <h3>3.5 out object - JspWriter</h3>
+                <p><span class="badge">Định nghĩa</span> out là đối tượng dùng để ghi dữ liệu trực tiếp ra response. Expression ( &lt;%= ... %&gt; ) thực chất là viết tắt của out.print().</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <tr>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>print(String s)</code></td><td>In String</td></tr>
+                            <tr><td><code>println(String s)</code></td><td>In String + xuống dòng</td></tr>
+                            <tr><td><code>write(String s)</code></td><td>Ghi String</td></tr>
+                            <tr><td><code>print(int i)</code></td><td>In số nguyên</td></tr>
+                            <tr><td><code>print(boolean b)</code></td><td>In boolean</td></tr>
+                            <tr><td><code>flush()</code></td><td>Đẩy buffer ra client</td></tr>
+                            <tr><td><code>clear()</code></td><td>Xóa buffer</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: out basic</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Expression: &lt;%= "Hello" %&gt; tương đương out.print("Hello")
+    
+    out.print("&lt;div style='border:1px solid blue; padding:10px;'&gt;");
+    out.println("&lt;h3&gt;Đây là thẻ div được tạo bằng out&lt;/h3&gt;");
+    out.print("&lt;p&gt;out.print() và out.println() khác nhau ở chỗ&lt;br/&gt;");
+    out.println("println thêm ký tự xuống dòng trong source HTML&lt;/p&gt;");
+    out.print("&lt;/div&gt;");
+    
+    // In trong vòng lặp
+    out.print("&lt;ul&gt;");
+    for (int i = 1; i <= 5; i++) {
+        out.print("&lt;li&gt;Item " + i + "&lt;/li&gt;");
+    }
+    out.print("&lt;/ul&gt;");
+%&gt;</span>
+
+<span class="comment">&lt;%-- Tương đương với --%&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">'border:1px solid green; padding:10px;'</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;h3&gt;</span>Đây là thẻ div được tạo bằng HTML + Expression<span class="keyword">&lt;/h3&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Expression là cách viết ngắn gọn hơn<span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+<span class="comment">&lt;% for (int i = 1; i <= 5; i++) { %&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Item <span class="comment">&lt;%= i %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span></pre>
+                </div>
+
+                <h3>3.6 session object - HttpSession</h3>
+                <p><span class="badge">Định nghĩa</span> session là đối tượng dùng để lưu trữ dữ liệu cho một phiên làm việc của người dùng. Dữ liệu trong session được giữa các request khác nhau của cùng một client.</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>setAttribute(String name, Object value)</code></td><td>Lưu dữ liệu vào session</td></tr>
+                            <tr><td><code>getAttribute(String name)</code></td><td>Lấy dữ liệu từ session</td></tr>
+                            <tr><td><code>removeAttribute(String name)</code></td><td>Xóa dữ liệu khỏi session</td></tr>
+                            <tr><td><code>getId()</code></td><td>Lấy ID của session</td></tr>
+                            <tr><td><code>isNew()</code></td><td>Kiểm tra session có mới không</td></tr>
+                            <tr><td><code>invalidate()</code></td><td>Hủy session</td></tr>
+                            <tr><td><code>getCreationTime()</code></td><td>Thời gian tạo session</td></tr>
+                            <tr><td><code>getLastAccessedTime()</code></td><td>Thời gian truy cập cuối</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: session basic</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Lấy session (mặc định đã có sẵn)
+    String sessionId = session.getId();
+    boolean isNew = session.isNew();
+    
+    // Lấy hoặc tạo attribute trong session
+    Integer visitCount = (Integer) session.getAttribute("visitCount");
+    if (visitCount == null) {
+        visitCount = 1;
+    } else {
+        visitCount++;
+    }
+    session.setAttribute("visitCount", visitCount);
+    
+    // Lưu thông tin user nếu có submit form
+    String username = request.getParameter("username");
+    if (username != null && !username.trim().isEmpty()) {
+        session.setAttribute("username", username);
+    }
+    
+    // Lấy username từ session
+    String loggedUser = (String) session.getAttribute("username");
+%&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Thông tin session<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Session ID: <span class="comment">&lt;%= sessionId %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Session mới? <span class="comment">&lt;%= isNew %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Thời gian tạo: <span class="comment">&lt;%= new java.util.Date(session.getCreationTime()) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Thời gian truy cập cuối: <span class="comment">&lt;%= new java.util.Date(session.getLastAccessedTime()) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Số lần truy cập trang: <span class="comment">&lt;%= visitCount %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>User đăng nhập: <span class="comment">&lt;%= loggedUser != null ? loggedUser : "Chưa đăng nhập" %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="keyword">&lt;form</span> <span class="annotation">method</span>=<span class="string">"post"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;label&gt;</span>Đăng nhập:<span class="keyword">&lt;/label&gt;</span>
+    <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"text"</span> <span class="annotation">name</span>=<span class="string">"username"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= loggedUser != null ? loggedUser : "" %&gt;"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;button</span> <span class="annotation">type</span>=<span class="string">"submit"</span><span class="keyword">&gt;</span>Lưu<span class="keyword">&lt;/button&gt;</span>
+<span class="keyword">&lt;/form&gt;</span>
+
+<span class="keyword">&lt;form</span> <span class="annotation">method</span>=<span class="string">"post"</span> <span class="annotation">action</span>=<span class="string">""</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;button</span> <span class="annotation">type</span>=<span class="string">"submit"</span> <span class="annotation">name</span>=<span class="string">"logout"</span> <span class="annotation">value</span>=<span class="string">"true"</span><span class="keyword">&gt;</span>Đăng xuất<span class="keyword">&lt;/button&gt;</span>
+<span class="keyword">&lt;/form&gt;</span>
+
+<span class="comment">&lt;%
+    if (request.getParameter("logout") != null) {
+        session.invalidate();  // Hủy session
+        response.sendRedirect(request.getRequestURI());
+    }
+%&gt;</span></pre>
+                </div>
+
+                <h3>3.7 application object - ServletContext</h3>
+                <p><span class="badge">Định nghĩa</span> application là đối tượng dùng chung cho toàn bộ ứng dụng web, giữa tất cả các session và request. Dữ liệu trong application tồn tại đến khi ứng dụng dừng.</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>setAttribute(String name, Object value)</code></td><td>Lưu dữ liệu toàn cục</td></tr>
+                            <tr><td><code>getAttribute(String name)</code></td><td>Lấy dữ liệu toàn cục</td></tr>
+                            <tr><td><code>getInitParameter(String name)</code></td><td>Lấy tham số khởi tạo</td></tr>
+                            <tr><td><code>getRealPath(String path)</code></td><td>Đường dẫn thực tế trong server</td></tr>
+                            <tr><td><code>getServerInfo()</code></td><td>Thông tin server</td></tr>
+                            <tr><td><code>getContextPath()</code></td><td>Context path của ứng dụng</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h4>Ví dụ nhỏ: application basic</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    // Đếm tổng số lượt truy cập (toàn bộ ứng dụng)
+    Integer totalVisits = (Integer) application.getAttribute("totalVisits");
+    if (totalVisits == null) {
+        totalVisits = 1;
+    } else {
+        totalVisits++;
+    }
+    application.setAttribute("totalVisits", totalVisits);
+    
+    // Các thông tin ứng dụng
+    String serverInfo = application.getServerInfo();
+    String contextPath = application.getContextPath();
+    String realPath = application.getRealPath("/");
+%&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Thông tin ứng dụng<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Server: <span class="comment">&lt;%= serverInfo %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Context Path: <span class="comment">&lt;%= contextPath %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Real Path: <span class="comment">&lt;%= realPath %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>Tổng số truy cập (toàn ứng dụng): <span class="comment">&lt;%= totalVisits %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;%
+    // Hiển thị tất cả application attributes
+    java.util.Enumeration&lt;String&gt; attrNames = application.getAttributeNames();
+%&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Application Attributes<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+<span class="comment">&lt;% while (attrNames.hasMoreElements()) {
+    String name = attrNames.nextElement();
+%&gt;</span>
+    <span class="keyword">&lt;li&gt;&lt;%=</span> name <span class="keyword">%&gt;</span> = <span class="comment">&lt;%= application.getAttribute(name) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="comment">&lt;% } %&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span></pre>
+                </div>
+
+                <h3>3.8 config object - ServletConfig</h3>
+                <p><span class="badge">Định nghĩa</span> config là đối tượng chứa thông tin cấu hình ban đầu cho JSP/Servlet, được định nghĩa trong web.xml.</p>
+
+                <h4>Ví dụ nhỏ</h4>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="comment">&lt;%
+    String servletName = config.getServletName();
+    String appName = config.getInitParameter("appName");
+    String adminEmail = config.getInitParameter("adminEmail");
+%&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>Servlet Name: <span class="comment">&lt;%= servletName %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>App Name: <span class="comment">&lt;%= appName %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Admin Email: <span class="comment">&lt;%= adminEmail %&gt;</span><span class="keyword">&lt;/p&gt;</span></pre>
+                </div>
+
+                <p>Trong web.xml cần khai báo:</p>
+                <div class="code-block">
+                    <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                    <pre><span class="keyword">&lt;servlet&gt;</span>
+    <span class="keyword">&lt;servlet-name&gt;</span>demoJsp<span class="keyword">&lt;/servlet-name&gt;</span>
+    <span class="keyword">&lt;jsp-file&gt;</span>/WEB-INF/views/config_demo.jsp<span class="keyword">&lt;/jsp-file&gt;</span>
+    <span class="keyword">&lt;init-param&gt;</span>
+        <span class="keyword">&lt;param-name&gt;</span>appName<span class="keyword">&lt;/param-name&gt;</span>
+        <span class="keyword">&lt;param-value&gt;</span>JSP Demo Application<span class="keyword">&lt;/param-value&gt;</span>
+    <span class="keyword">&lt;/init-param&gt;</span>
+    <span class="keyword">&lt;init-param&gt;</span>
+        <span class="keyword">&lt;param-name&gt;</span>adminEmail<span class="keyword">&lt;/param-name&gt;</span>
+        <span class="keyword">&lt;param-value&gt;</span>admin@example.com<span class="keyword">&lt;/param-value&gt;</span>
+    <span class="keyword">&lt;/init-param&gt;</span>
+<span class="keyword">&lt;/servlet&gt;</span></pre>
+                </div>
+
+                <h3>3.9 pageContext object</h3>
+                <p><span class="badge">Định nghĩa</span> pageContext cung cấp truy cập đến tất cả các implicit objects khác và các tiện ích quản lý namespace.</p>
+
+                <h4>Các phương thức thường dùng</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Mô tả</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>getRequest()</code></td><td>Lấy request object</div></td>
+                            <tr>
+<td><code>getResponse()</code></td>
+<td>Lấy response object</td>
+</tr>
+<tr>
+<td><code>getSession()</code></td>
+<td>Lấy session object</td>
+</tr>
+<tr>
+<td><code>getServletContext()</code></td>
+<td>Lấy application object</td>
+</tr>
+<tr>
+<td><code>getOut()</code></td>
+<td>Lấy out object</td>
+</tr>
+<tr>
+<td><code>forward(String url)</code></td>
+<td>Chuyển tiếp request</td>
+</tr>
+<tr>
+<td><code>include(String url)</code></td>
+<td>Include trang khác</td>
+</tr>
+<tr>
+<td><code>setAttribute(String name, Object value, int scope)</code></td>
+<td>Set attribute với scope</td>
+</tr>
+</tbody>
+</table>
+
+<h4>Các hằng số scope trong pageContext</h4>
+<div class="table-container">
+<table>
+<thead>
+<th>Hằng số</th><th>Giá trị</th><th>Mô tả</th>
+</thead>
+<tbody>
+<td><code>PAGE_SCOPE</code></td><td>1</td><td>Chỉ trong trang hiện tại</td>
+</tr>
+<td><code>REQUEST_SCOPE</code></td><td>2</td><td>Trong request</td>
+</tr>
+<td><code>SESSION_SCOPE</code></td><td>3</td><td>Trong session</td>
+</tr>
+<td><code>APPLICATION_SCOPE</code></td><td>4</td><td>Trong application (toàn ứng dụng)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h4>Ví dụ nhỏ</h4>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="comment">&lt;%
+    // Lấy các implicit objects từ pageContext
+    HttpServletRequest req = (HttpServletRequest) pageContext.getRequest();
+    HttpServletResponse resp = (HttpServletResponse) pageContext.getResponse();
+    HttpSession sess = pageContext.getSession();
+    ServletContext app = pageContext.getServletContext();
+    JspWriter outObj = pageContext.getOut();
+    
+    // Set attribute với scope khác nhau
+    pageContext.setAttribute("pageVar", "Chỉ trong trang", PageContext.PAGE_SCOPE);
+    pageContext.setAttribute("requestVar", "Trong request", PageContext.REQUEST_SCOPE);
+    pageContext.setAttribute("sessionVar", "Trong session", PageContext.SESSION_SCOPE);
+    pageContext.setAttribute("appVar", "Toàn ứng dụng", PageContext.APPLICATION_SCOPE);
+%&gt;</span>
+
+<span class="keyword">&lt;h3&gt;</span>Dữ liệu từ pageContext<span class="keyword">&lt;/h3&gt;</span>
+<span class="keyword">&lt;ul&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>PAGE_SCOPE: <span class="comment">&lt;%= pageContext.getAttribute("pageVar", PageContext.PAGE_SCOPE) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>REQUEST_SCOPE: <span class="comment">&lt;%= pageContext.getAttribute("requestVar", PageContext.REQUEST_SCOPE) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>SESSION_SCOPE: <span class="comment">&lt;%= pageContext.getAttribute("sessionVar", PageContext.SESSION_SCOPE) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;li&gt;</span>APPLICATION_SCOPE: <span class="comment">&lt;%= pageContext.getAttribute("appVar", PageContext.APPLICATION_SCOPE) %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+<span class="keyword">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;%
+    // forward đến trang khác (nếu cần)
+    // pageContext.forward("other.jsp");
+    
+    // include trang khác
+    // pageContext.include("header.jsp");
+%&gt;</span></pre>
+</div>
+
+<h3>3.10 page object</h3>
+<p><span class="badge">Định nghĩa</span> page là tham chiếu đến chính servlet của trang JSP, tương đương với từ khóa this trong Java.</p>
+
+<h4>Ví dụ nhỏ</h4>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="comment">&lt;%
+    // page tương đương this
+    Class&lt;?&gt; pageClass = page.getClass();
+    Class&lt;?&gt; thisClass = this.getClass();
+    
+    String pageClassName = pageClass.getName();
+    String pageSuperClass = pageClass.getSuperclass().getName();
+%&gt;</span>
+
+<span class="keyword">&lt;p&gt;</span>page.getClass(): <span class="comment">&lt;%= pageClassName %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>this.getClass(): <span class="comment">&lt;%= thisClass %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>Super class: <span class="comment">&lt;%= pageSuperClass %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;p&gt;</span>page == this? <span class="comment">&lt;%= (page == this) %&gt;</span><span class="keyword">&lt;/p&gt;</span></pre>
+</div>
+
+<h3>3.11 exception object</h3>
+<p><span class="badge">Định nghĩa</span> exception chỉ khả dụng trong trang JSP được đánh dấu là isErrorPage="true". Nó chứa đối tượng Throwable được ném ra từ trang gây lỗi.</p>
+
+<h4>Ví dụ nhỏ: error page</h4>
+<p><strong>Trang gây lỗi: error_demo.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" errorPage="error_handler.jsp"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Error Demo<span class="keyword">&lt;/title&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="comment">&lt;%
+        // Cố tình tạo lỗi chia cho 0
+        int x = 10;
+        int y = 0;
+        int result = x / y;
+    %&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Kết quả: <span class="comment">&lt;%= result %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<p><strong>Trang xử lý lỗi: error_handler.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" isErrorPage="true"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Error Handler<span class="keyword">&lt;/title&gt;</span>
+    <span class="keyword">&lt;style&gt;</span>
+        <span class="keyword">.error</span> { color: red; background-color: #ffeeee; padding: 20px; border: 1px solid red; }
+    <span class="keyword">&lt;/style&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"error"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;h2&gt;</span>⚠️ Đã xảy ra lỗi!<span class="keyword">&lt;/h2&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Loại lỗi:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= exception.getClass().getName() %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Thông báo:<span class="keyword">&lt;/strong&gt;</span> <span class="comment">&lt;%= exception.getMessage() %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+        <span class="keyword">&lt;p&gt;&lt;strong&gt;</span>Stack Trace:<span class="keyword">&lt;/strong&gt;&lt;/p&gt;</span>
+        <span class="keyword">&lt;pre&gt;</span>
+<span class="comment">&lt;%
+    java.io.StringWriter sw = new java.io.StringWriter();
+    java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+    exception.printStackTrace(pw);
+    out.print(sw.toString());
+%&gt;</span>
+        <span class="keyword">&lt;/pre&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<hr>
+                </section> 
+<!-- PHẦN 4: JSP ACTION TAGS -->
+ <section id="part4" class="section ">
+<h2><i class="fas fa-tags"></i> PHẦN 4: JSP ACTION TAGS</h2>
+
+<h3>4.1 Định nghĩa</h3>
+<p>JSP Action Tags là các thẻ XML đặc biệt dùng để điều khiển hành vi của JSP container.</p>
+
+<h3>4.2 Bảng các Action Tags</h3>
+<div class="table-container">
+<table>
+<thead>
+<th>Action</th><th>Cú pháp</th><th>Mô tả</th>
+</thead>
+<tbody>
+<td>jsp:include</td><td><code>&lt;jsp:include page="url" /&gt;</code></td><td>Nhúng trang vào runtime</td>
+</tr>
+<td>jsp:forward</td><td><code>&lt;jsp:forward page="url" /&gt;</code></td><td>Chuyển tiếp request</td>
+</tr>
+<td>jsp:param</td><td><code>&lt;jsp:param name="key" value="val"/&gt;</code></td><td>Truyền tham số</td>
+</tr>
+<td>jsp:useBean</td><td><code>&lt;jsp:useBean id="name" class="..." /&gt;</code></td><td>Tạo/tìm bean</td>
+</tr>
+<td>jsp:setProperty</td><td><code>&lt;jsp:setProperty name="bean" property="*"/&gt;</code></td><td>Set property</td>
+</tr>
+<td>jsp:getProperty</td><td><code>&lt;jsp:getProperty name="bean" property="name"/&gt;</code></td><td>Get property</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h3>4.3 jsp:include và jsp:param</h3>
+<p><span class="badge">Định nghĩa</span> &lt;jsp:include&gt; dùng để nhúng một trang JSP khác vào trang hiện tại tại thời điểm request (dynamic include). &lt;jsp:param&gt; dùng để truyền tham số đến trang được include.</p>
+
+<h4>Cú pháp</h4>
+<div class="code-block"><pre><span class="keyword">&lt;jsp:include page="path/to/page.jsp"&gt;</span>
+    <span class="keyword">&lt;jsp:param name="paramName" value="paramValue" /&gt;</span>
+<span class="keyword">&lt;/jsp:include&gt;</span></pre></div>
+
+<h4>Ví dụ nhỏ</h4>
+<p><strong>File: src/main/webapp/WEB-INF/views/header.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="comment">&lt;%
+    String title = request.getParameter("title");
+    String user = request.getParameter("user");
+%&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"background-color: #333; color: white; padding: 10px;"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;h2&gt;&lt;%=</span> title != null ? title : "Trang Web" <span class="keyword">%&gt;&lt;/h2&gt;</span>
+    <span class="keyword">&lt;p&gt;</span>Xin chào, <span class="comment">&lt;%= user != null ? user : "Khách" %&gt;</span><span class="keyword">&lt;/p&gt;</span>
+<span class="keyword">&lt;/div&gt;</span></pre>
+</div>
+
+<p><strong>File: src/main/webapp/WEB-INF/views/include_action.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>jsp:include Demo<span class="keyword">&lt;/title&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>jsp:include với jsp:param<span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="keyword">&lt;jsp:include page="header.jsp"&gt;</span>
+        <span class="keyword">&lt;jsp:param name="title" value="Trang Chủ" /&gt;</span>
+        <span class="keyword">&lt;jsp:param name="user" value="Nguyễn Văn A" /&gt;</span>
+    <span class="keyword">&lt;/jsp:include&gt;</span>
+    
+    <span class="keyword">&lt;div</span> <span class="annotation">style</span>=<span class="string">"padding: 20px;"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;p&gt;</span>Nội dung chính của trang.<span class="keyword">&lt;/p&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<h3>4.4 jsp:forward và jsp:param</h3>
+<p><span class="badge">Định nghĩa</span> &lt;jsp:forward&gt; dùng để chuyển tiếp request từ trang hiện tại sang một trang khác. Địa chỉ trên browser không thay đổi.</p>
+
+<h4>Cú pháp</h4>
+<div class="code-block"><pre><span class="keyword">&lt;jsp:forward page="path/to/page.jsp"&gt;</span>
+    <span class="keyword">&lt;jsp:param name="paramName" value="paramValue" /&gt;</span>
+<span class="keyword">&lt;/jsp:forward&gt;</span></pre></div>
+
+<h4>Ví dụ nhỏ</h4>
+<p><strong>File: src/main/webapp/WEB-INF/views/forward_action.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="comment">&lt;%
+    String role = request.getParameter("role");
+%&gt;</span>
+
+<span class="comment">&lt;%
+    if ("admin".equals(role)) {
+%&gt;</span>
+    <span class="keyword">&lt;jsp:forward page="admin_welcome.jsp"&gt;</span>
+        <span class="keyword">&lt;jsp:param name="message" value="Welcome Admin!" /&gt;</span>
+    <span class="keyword">&lt;/jsp:forward&gt;</span>
+<span class="comment">&lt;%
+    } else if ("user".equals(role)) {
+%&gt;</span>
+    <span class="keyword">&lt;jsp:forward page="user_welcome.jsp"&gt;</span>
+        <span class="keyword">&lt;jsp:param name="message" value="Welcome User!" /&gt;</span>
+    <span class="keyword">&lt;/jsp:forward&gt;</span>
+<span class="comment">&lt;%
+    } else {
+%&gt;</span>
+    <span class="keyword">&lt;jsp:forward page="guest_welcome.jsp"&gt;</span>
+        <span class="keyword">&lt;jsp:param name="message" value="Welcome Guest!" /&gt;</span>
+    <span class="keyword">&lt;/jsp:forward&gt;</span>
+<span class="comment">&lt;%
+    }
+%&gt;</span></pre>
+</div>
+
+<h3>4.5 jsp:useBean, jsp:setProperty, jsp:getProperty</h3>
+<p><span class="badge">Định nghĩa</span></p>
+<ul>
+<li><strong>jsp:useBean</strong>: Tạo hoặc tìm kiếm một bean (POJO) trong scope (page, request, session, application)</li>
+<li><strong>jsp:setProperty</strong>: Set giá trị cho thuộc tính của bean</li>
+<li><strong>jsp:getProperty</strong>: Lấy giá trị thuộc tính của bean để in ra (thường dùng trong HTML)</li>
+</ul>
+
+<h4>Ví dụ nhỏ: Bean model</h4>
+<p><strong>File: src/main/java/com/example/model/UserBean.java</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="keyword">package</span> com.example.model;
+
+<span class="keyword">import</span> java.io.Serializable;
+
+<span class="keyword">public class</span> <span class="class-name">UserBean</span> <span class="keyword">implements</span> Serializable {
+    <span class="keyword">private static final long</span> serialVersionUID = 1L;
+    
+    <span class="keyword">private</span> String username;
+    <span class="keyword">private</span> String password;
+    <span class="keyword">private</span> String email;
+    <span class="keyword">private int</span> age;
+    <span class="keyword">private boolean</span> active;
+    
+    <span class="keyword">public</span> <span class="class-name">UserBean</span>() {
+        <span class="comment">// Constructor rỗng - bắt buộc</span>
+        <span class="keyword">this</span>.active = <span class="keyword">true</span>;
+    }
+    
+    <span class="comment">// Getters and Setters</span>
+    <span class="keyword">public</span> String getUsername() { <span class="keyword">return</span> username; }
+    <span class="keyword">public void</span> setUsername(String username) { <span class="keyword">this</span>.username = username; }
+    
+    <span class="keyword">public</span> String getPassword() { <span class="keyword">return</span> password; }
+    <span class="keyword">public void</span> setPassword(String password) { <span class="keyword">this</span>.password = password; }
+    
+    <span class="keyword">public</span> String getEmail() { <span class="keyword">return</span> email; }
+    <span class="keyword">public void</span> setEmail(String email) { <span class="keyword">this</span>.email = email; }
+    
+    <span class="keyword">public int</span> getAge() { <span class="keyword">return</span> age; }
+    <span class="keyword">public void</span> setAge(<span class="keyword">int</span> age) { <span class="keyword">this</span>.age = age; }
+    
+    <span class="keyword">public boolean</span> isActive() { <span class="keyword">return</span> active; }
+    <span class="keyword">public void</span> setActive(<span class="keyword">boolean</span> active) { <span class="keyword">this</span>.active = active; }
+}</pre>
+</div>
+
+<p><strong>File: src/main/webapp/WEB-INF/views/usebean_demo.jsp</strong></p>
+<div class="code-block"><div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+<pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>useBean Demo<span class="keyword">&lt;/title&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>JSP useBean, setProperty, getProperty Demo<span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="comment">&lt;!-- Tạo hoặc tìm bean user trong session scope --&gt;</span>
+    <span class="keyword">&lt;jsp:useBean</span> <span class="annotation">id</span>=<span class="string">"user"</span> <span class="annotation">class</span>=<span class="string">"com.example.model.UserBean"</span> <span class="annotation">scope</span>=<span class="string">"session"</span> <span class="keyword">/&gt;</span>
+    
+    <span class="comment">&lt;!-- Form nhập liệu --&gt;</span>
+    <span class="keyword">&lt;form</span> <span class="annotation">method</span>=<span class="string">"post"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;fieldset&gt;</span>
+            <span class="keyword">&lt;legend&gt;</span>Thông tin người dùng<span class="keyword">&lt;/legend&gt;</span>
+            
+            <span class="keyword">&lt;label&gt;</span>Username:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"text"</span> <span class="annotation">name</span>=<span class="string">"username"</span> 
+                   <span class="annotation">value</span>=<span class="string">"&lt;jsp:getProperty name="user" property="username"/&gt;"</span> <span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;br/&gt;</span>
+            
+            <span class="keyword">&lt;label&gt;</span>Password:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"password"</span> <span class="annotation">name</span>=<span class="string">"password"</span> 
+                   <span class="annotation">value</span>=<span class="string">"&lt;jsp:getProperty name="user" property="password"/&gt;"</span> <span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;br/&gt;</span>
+            
+            <span class="keyword">&lt;label&gt;</span>Email:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"email"</span> <span class="annotation">name</span>=<span class="string">"email"</span> 
+                   <span class="annotation">value</span>=<span class="string">"&lt;jsp:getProperty name="user" property="email"/&gt;"</span> <span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;br/&gt;</span>
+            
+            <span class="keyword">&lt;label&gt;</span>Age:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"number"</span> <span class="annotation">name</span>=<span class="string">"age"</span> 
+                   <span class="annotation">value</span>=<span class="string">'&lt;jsp:getProperty name="user" property="age"/&gt;'</span> <span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;br/&gt;</span>
+            
+            <span class="keyword">&lt;label&gt;</span>Active:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"checkbox"</span> <span class="annotation">name</span>=<span class="string">"active"</span> <span class="annotation">value</span>=<span class="string">"true"</span> 
+                   <span class="comment">&lt;%= user.isActive() ? "checked" : "" %&gt;</span> <span class="keyword">/&gt;</span>
+            <span class="keyword">&lt;br/&gt;</span>
+            
+            <span class="keyword">&lt;button</span> <span class="annotation">type</span>=<span class="string">"submit"</span><span class="keyword">&gt;</span>Lưu thông tin<span class="keyword">&lt;/button&gt;</span>
+        <span class="keyword">&lt;/fieldset&gt;</span>
+    <span class="keyword">&lt;/form&gt;</span>
+    
+    <span class="comment">&lt;!-- Set property từ các tham số form (property="*" = tự động mapping) --&gt;</span>
+    <span class="keyword">&lt;jsp:setProperty</span> <span class="annotation">name</span>=<span class="string">"user"</span> <span class="annotation">property</span>=<span class="string">"*"</span> <span class="keyword">/&gt;</span>
+    
+    <span class="keyword">&lt;hr/&gt;</span>
+    
+    <span class="keyword">&lt;h2&gt;</span>Thông tin đã lưu:<span class="keyword">&lt;/h2&gt;</span>
+    <span class="keyword">&lt;ul&gt;</span>
+        <span class="keyword">&lt;li&gt;</span>Username: <span class="keyword">&lt;jsp:getProperty</span> <span class="annotation">name</span>=<span class="string">"user"</span> <span class="annotation">property</span>=<span class="string">"username"</span> <span class="keyword">/&gt;</span><span class="keyword">&lt;/li&gt;</span>
+        <span class="keyword">&lt;li&gt;</span>Email: <span class="keyword">&lt;jsp:getProperty</span> <span class="annotation">name</span>=<span class="string">"user"</span> <span class="annotation">property</span>=<span class="string">"email"</span> <span class="keyword">/&gt;</span><span class="keyword">&lt;/li&gt;</span>
+        <span class="keyword">&lt;li&gt;</span>Age: <span class="keyword">&lt;jsp:getProperty</span> <span class="annotation">name</span>=<span class="string">"user"</span> <span class="annotation">property</span>=<span class="string">"age"</span> <span class="keyword">/&gt;</span><span class="keyword">&lt;/li&gt;</span>
+        <span class="keyword">&lt;li&gt;</span>Active: <span class="comment">&lt;%= user.isActive() %&gt;</span><span class="keyword">&lt;/li&gt;</span>
+    <span class="keyword">&lt;/ul&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<hr>
+</section>
+<!-- PHẦN 5:-->
+ <section id="part5" class="section ">
+<h2><i class="fas fa-folder-open"></i> PHẦN 5: VÍ DỤ TỔNG HỢP</h2>
+
+<h3>5.1 Ứng dụng quản lý người dùng</h3>
+
+<p><strong>File: src/main/java/com/example/model/User.java</strong></p>
+<div class="code-block">
+    <div class="code-header">
+        <span>User.java</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="keyword">package</span> com.example.model;
+
+<span class="keyword">import</span> java.io.Serializable;
+<span class="keyword">import</span> java.time.LocalDateTime;
+
+<span class="keyword">public class</span> <span class="class-name">User</span> <span class="keyword">implements</span> Serializable {
+    <span class="keyword">private static final long</span> serialVersionUID = 1L;
+    
+    <span class="keyword">private</span> Long id;
+    <span class="keyword">private</span> String username;
+    <span class="keyword">private</span> String password;
+    <span class="keyword">private</span> String fullName;
+    <span class="keyword">private</span> String email;
+    <span class="keyword">private int</span> age;
+    <span class="keyword">private</span> String role;
+    <span class="keyword">private</span> LocalDateTime createdAt;
+    
+    <span class="keyword">public</span> <span class="class-name">User</span>() {
+        <span class="keyword">this</span>.createdAt = LocalDateTime.now();
+        <span class="keyword">this</span>.role = <span class="string">"USER"</span>;
+    }
+    
+    <span class="keyword">public</span> <span class="class-name">User</span>(String username, String fullName, String email, <span class="keyword">int</span> age) {
+        <span class="keyword">this</span>();
+        <span class="keyword">this</span>.username = username;
+        <span class="keyword">this</span>.fullName = fullName;
+        <span class="keyword">this</span>.email = email;
+        <span class="keyword">this</span>.age = age;
+    }
+    
+    <span class="comment">// Getters and Setters</span>
+    <span class="keyword">public</span> Long getId() { <span class="keyword">return</span> id; }
+    <span class="keyword">public void</span> setId(Long id) { <span class="keyword">this</span>.id = id; }
+    
+    <span class="keyword">public</span> String getUsername() { <span class="keyword">return</span> username; }
+    <span class="keyword">public void</span> setUsername(String username) { <span class="keyword">this</span>.username = username; }
+    
+    <span class="keyword">public</span> String getPassword() { <span class="keyword">return</span> password; }
+    <span class="keyword">public void</span> setPassword(String password) { <span class="keyword">this</span>.password = password; }
+    
+    <span class="keyword">public</span> String getFullName() { <span class="keyword">return</span> fullName; }
+    <span class="keyword">public void</span> setFullName(String fullName) { <span class="keyword">this</span>.fullName = fullName; }
+    
+    <span class="keyword">public</span> String getEmail() { <span class="keyword">return</span> email; }
+    <span class="keyword">public void</span> setEmail(String email) { <span class="keyword">this</span>.email = email; }
+    
+    <span class="keyword">public int</span> getAge() { <span class="keyword">return</span> age; }
+    <span class="keyword">public void</span> setAge(<span class="keyword">int</span> age) { <span class="keyword">this</span>.age = age; }
+    
+    <span class="keyword">public</span> String getRole() { <span class="keyword">return</span> role; }
+    <span class="keyword">public void</span> setRole(String role) { <span class="keyword">this</span>.role = role; }
+    
+    <span class="keyword">public</span> LocalDateTime getCreatedAt() { <span class="keyword">return</span> createdAt; }
+    <span class="keyword">public void</span> setCreatedAt(LocalDateTime createdAt) { <span class="keyword">this</span>.createdAt = createdAt; }
+}</pre>
+</div>
+
+<p><strong>File: src/main/java/com/example/servlet/UserServlet.java</strong></p>
+<div class="code-block">
+    <div class="code-header">
+        <span>UserServlet.java</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="keyword">package</span> com.example.servlet;
+
+<span class="keyword">import</span> com.example.model.User;
+<span class="keyword">import</span> jakarta.servlet.ServletException;
+<span class="keyword">import</span> jakarta.servlet.annotation.WebServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletResponse;
+<span class="keyword">import</span> jakarta.servlet.http.HttpSession;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> java.util.ArrayList;
+<span class="keyword">import</span> java.util.List;
+
+<span class="annotation">@WebServlet</span>(<span class="string">"/users/*"</span>)
+<span class="keyword">public class</span> <span class="class-name">UserServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="comment">// Dữ liệu giả lập (thực tế nên dùng database)</span>
+    <span class="keyword">private static</span> List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();
+    
+    <span class="keyword">static</span> {
+        users.add(<span class="keyword">new</span> User(<span class="string">"admin"</span>, <span class="string">"Administrator"</span>, <span class="string">"admin@system.com"</span>, 30));
+        users.add(<span class="keyword">new</span> User(<span class="string">"john"</span>, <span class="string">"John Doe"</span>, <span class="string">"john@example.com"</span>, 25));
+        users.add(<span class="keyword">new</span> User(<span class="string">"jane"</span>, <span class="string">"Jane Smith"</span>, <span class="string">"jane@example.com"</span>, 28));
+    }
+    
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        String pathInfo = request.getPathInfo();
+        
+        <span class="keyword">if</span> (<span class="string">"/list"</span>.equals(pathInfo)) {
+            <span class="comment">// Hiển thị danh sách user</span>
+            request.setAttribute(<span class="string">"users"</span>, users);
+            request.getRequestDispatcher(<span class="string">"/WEB-INF/views/user_list.jsp"</span>)
+                   .forward(request, response);
+                   
+        } <span class="keyword">else if</span> (pathInfo != <span class="keyword">null</span> && pathInfo.startsWith(<span class="string">"/edit/"</span>)) {
+            <span class="comment">// Sửa user</span>
+            Long id = Long.parseLong(pathInfo.substring(6));
+            User user = users.stream()
+                    .filter(u -> u.getId() != <span class="keyword">null</span> && u.getId().equals(id))
+                    .findFirst()
+                    .orElse(<span class="keyword">null</span>);
+            request.setAttribute(<span class="string">"user"</span>, user);
+            request.getRequestDispatcher(<span class="string">"/WEB-INF/views/user_form.jsp"</span>)
+                   .forward(request, response);
+                   
+        } <span class="keyword">else if</span> (<span class="string">"/add"</span>.equals(pathInfo)) {
+            <span class="comment">// Thêm mới user</span>
+            request.setAttribute(<span class="string">"user"</span>, <span class="keyword">new</span> User());
+            request.getRequestDispatcher(<span class="string">"/WEB-INF/views/user_form.jsp"</span>)
+                   .forward(request, response);
+        }
+    }
+    
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doPost(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        String action = request.getParameter(<span class="string">"action"</span>);
+        
+        <span class="keyword">if</span> (<span class="string">"create"</span>.equals(action)) {
+            <span class="comment">// Thêm user mới</span>
+            User user = <span class="keyword">new</span> User();
+            user.setUsername(request.getParameter(<span class="string">"username"</span>));
+            user.setPassword(request.getParameter(<span class="string">"password"</span>));
+            user.setFullName(request.getParameter(<span class="string">"fullName"</span>));
+            user.setEmail(request.getParameter(<span class="string">"email"</span>));
+            user.setAge(Integer.parseInt(request.getParameter(<span class="string">"age"</span>)));
+            user.setRole(request.getParameter(<span class="string">"role"</span>));
+            user.setId((<span class="keyword">long</span>) (users.size() + 1));
+            
+            users.add(user);
+            
+            request.getSession().setAttribute(<span class="string">"message"</span>, <span class="string">"Thêm user thành công!"</span>);
+            response.sendRedirect(request.getContextPath() + <span class="string">"/users/list"</span>);
+            
+        } <span class="keyword">else if</span> (<span class="string">"update"</span>.equals(action)) {
+            <span class="comment">// Cập nhật user</span>
+            Long id = Long.parseLong(request.getParameter(<span class="string">"id"</span>));
+            User existingUser = users.stream()
+                    .filter(u -> u.getId().equals(id))
+                    .findFirst()
+                    .orElse(<span class="keyword">null</span>);
+            
+            <span class="keyword">if</span> (existingUser != <span class="keyword">null</span>) {
+                existingUser.setFullName(request.getParameter(<span class="string">"fullName"</span>));
+                existingUser.setEmail(request.getParameter(<span class="string">"email"</span>));
+                existingUser.setAge(Integer.parseInt(request.getParameter(<span class="string">"age"</span>)));
+                existingUser.setRole(request.getParameter(<span class="string">"role"</span>));
+                
+                <span class="keyword">if</span> (request.getParameter(<span class="string">"password"</span>) != <span class="keyword">null</span> && 
+                    !request.getParameter(<span class="string">"password"</span>).trim().isEmpty()) {
+                    existingUser.setPassword(request.getParameter(<span class="string">"password"</span>));
+                }
+            }
+            
+            request.getSession().setAttribute(<span class="string">"message"</span>, <span class="string">"Cập nhật user thành công!"</span>);
+            response.sendRedirect(request.getContextPath() + <span class="string">"/users/list"</span>);
+            
+        } <span class="keyword">else if</span> (<span class="string">"delete"</span>.equals(action)) {
+            <span class="comment">// Xóa user</span>
+            Long id = Long.parseLong(request.getParameter(<span class="string">"id"</span>));
+            users.removeIf(u -> u.getId().equals(id));
+            
+            request.getSession().setAttribute(<span class="string">"message"</span>, <span class="string">"Xóa user thành công!"</span>);
+            response.sendRedirect(request.getContextPath() + <span class="string">"/users/list"</span>);
+        }
+    }
+}</pre>
+</div>
+
+<p><strong>File: src/main/webapp/WEB-INF/views/user_list.jsp</strong></p>
+<div class="code-block">
+    <div class="code-header">
+        <span>user_list.jsp</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" import="java.util.List, com.example.model.User"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;meta</span> <span class="annotation">charset</span>=<span class="string">"UTF-8"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Danh sách người dùng<span class="keyword">&lt;/title&gt;</span>
+    <span class="keyword">&lt;style&gt;</span>
+        <span class="keyword">*</span> { <span class="keyword">margin</span>: 0; <span class="keyword">padding</span>: 0; <span class="keyword">box-sizing</span>: border-box; }
+        <span class="keyword">body</span> { <span class="keyword">font-family</span>: Arial, sans-serif; <span class="keyword">margin</span>: 20px; <span class="keyword">background-color</span>: #f5f5f5; }
+        <span class="keyword">.container</span> { <span class="keyword">max-width</span>: 1200px; <span class="keyword">margin</span>: 0 auto; <span class="keyword">background</span>: white; <span class="keyword">padding</span>: 20px; <span class="keyword">border-radius</span>: 5px; }
+        <span class="keyword">h1</span> { <span class="keyword">color</span>: #333; <span class="keyword">margin-bottom</span>: 20px; }
+        <span class="keyword">.message</span> { <span class="keyword">padding</span>: 10px; <span class="keyword">background-color</span>: #d4edda; <span class="keyword">color</span>: #155724; <span class="keyword">border</span>: 1px solid #c3e6cb; <span class="keyword">margin-bottom</span>: 20px; <span class="keyword">border-radius</span>: 3px; }
+        <span class="keyword">.btn-add</span> { <span class="keyword">display</span>: inline-block; <span class="keyword">padding</span>: 8px 15px; <span class="keyword">background-color</span>: #4CAF50; <span class="keyword">color</span>: white; <span class="keyword">text-decoration</span>: none; <span class="keyword">border-radius</span>: 3px; <span class="keyword">margin-bottom</span>: 20px; }
+        <span class="keyword">.btn-add:hover</span> { <span class="keyword">background-color</span>: #45a049; }
+        <span class="keyword">table</span> { <span class="keyword">width</span>: 100%; <span class="keyword">border-collapse</span>: collapse; }
+        <span class="keyword">th</span> { <span class="keyword">background-color</span>: #4CAF50; <span class="keyword">color</span>: white; <span class="keyword">padding</span>: 12px; <span class="keyword">text-align</span>: left; }
+        <span class="keyword">td</span> { <span class="keyword">padding</span>: 10px; <span class="keyword">border-bottom</span>: 1px solid #ddd; }
+        <span class="keyword">tr:hover</span> { <span class="keyword">background-color</span>: #f5f5f5; }
+        <span class="keyword">.btn-edit</span> { <span class="keyword">background-color</span>: #2196F3; <span class="keyword">color</span>: white; <span class="keyword">padding</span>: 5px 10px; <span class="keyword">text-decoration</span>: none; <span class="keyword">border-radius</span>: 3px; <span class="keyword">margin-right</span>: 5px; }
+        <span class="keyword">.btn-delete</span> { <span class="keyword">background-color</span>: #f44336; <span class="keyword">color</span>: white; <span class="keyword">padding</span>: 5px 10px; <span class="keyword">text-decoration</span>: none; <span class="keyword">border-radius</span>: 3px; }
+        <span class="keyword">.btn-edit:hover</span> { <span class="keyword">background-color</span>: #0b7dda; }
+        <span class="keyword">.btn-delete:hover</span> { <span class="keyword">background-color</span>: #da190b; }
+    <span class="keyword">&lt;/style&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"container"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;h1&gt;</span>📋 Danh sách người dùng<span class="keyword">&lt;/h1&gt;</span>
+    
+    <span class="comment">&lt;%-- Hiển thị thông báo --%&gt;</span>
+    <span class="comment">&lt;%
+        String message = (String) session.getAttribute("message");
+        if (message != null) {
+    %&gt;</span>
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"message"</span><span class="keyword">&gt;&lt;%=</span> message <span class="keyword">%&gt;&lt;/div&gt;</span>
+    <span class="comment">&lt;%
+            session.removeAttribute("message");
+        }
+    %&gt;</span>
+    
+    <span class="keyword">&lt;a</span> <span class="annotation">href</span>=<span class="string">"&lt;%= request.getContextPath() %&gt;/users/add"</span> <span class="annotation">class</span>=<span class="string">"btn-add"</span><span class="keyword">&gt;</span>+ Thêm người dùng<span class="keyword">&lt;/a&gt;</span>
+    
+    <span class="keyword">&lt;table&gt;</span>
+        <span class="keyword">&lt;thead&gt;</span>
+            <span class="keyword">&lt;tr&gt;&lt;th&gt;</span>ID<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Username<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Họ tên<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Email<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Tuổi<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Vai trò<span class="keyword">&lt;/th&gt;&lt;th&gt;</span>Thao tác<span class="keyword">&lt;/th&gt;&lt;/tr&gt;</span>
+        <span class="keyword">&lt;/thead&gt;</span>
+        <span class="keyword">&lt;tbody&gt;</span>
+        <span class="comment">&lt;%
+            List&lt;User&gt; userList = (List&lt;User&gt;) request.getAttribute("users");
+            if (userList != null) {
+                for (User user : userList) {
+        %&gt;</span>
+        <span class="keyword">&lt;tr&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getId() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getUsername() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getFullName() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getEmail() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getAge() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;&lt;%=</span> user.getRole() <span class="keyword">%&gt;&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>
+                <span class="keyword">&lt;a</span> <span class="annotation">href</span>=<span class="string">"&lt;%= request.getContextPath() %&gt;/users/edit/&lt;%= user.getId() %&gt;"</span> <span class="annotation">class</span>=<span class="string">"btn-edit"</span><span class="keyword">&gt;</span>Sửa<span class="keyword">&lt;/a&gt;</span>
+                <span class="keyword">&lt;form</span> <span class="annotation">method</span>=<span class="string">"post"</span> <span class="annotation">style</span>=<span class="string">"display:inline;"</span> 
+                      <span class="annotation">onsubmit</span>=<span class="string">"return confirm('Bạn có chắc muốn xóa user &lt;%= user.getUsername() %&gt;?')"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"hidden"</span> <span class="annotation">name</span>=<span class="string">"action"</span> <span class="annotation">value</span>=<span class="string">"delete"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"hidden"</span> <span class="annotation">name</span>=<span class="string">"id"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= user.getId() %&gt;"</span><span class="keyword">&gt;</span>
+                    <span class="keyword">&lt;button</span> <span class="annotation">type</span>=<span class="string">"submit"</span> <span class="annotation">class</span>=<span class="string">"btn-delete"</span><span class="keyword">&gt;</span>Xóa<span class="keyword">&lt;/button&gt;</span>
+                <span class="keyword">&lt;/form&gt;</span>
+            <span class="keyword">&lt;/td&gt;</span>
+        <span class="keyword">&lt;/tr&gt;</span>
+        <span class="comment">&lt;%
+                }
+            } else {
+        %&gt;</span>
+        <span class="keyword">&lt;tr&gt;&lt;td</span> <span class="annotation">colspan</span>=<span class="string">"7"</span> <span class="annotation">style</span>=<span class="string">"text-align:center;"</span><span class="keyword">&gt;</span>Chưa có dữ liệu<span class="keyword">&lt;/td&gt;&lt;/tr&gt;</span>
+        <span class="comment">&lt;% } %&gt;</span>
+        <span class="keyword">&lt;/tbody&gt;</span>
+    <span class="keyword">&lt;/table&gt;</span>
+<span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<p><strong>File: src/main/webapp/WEB-INF/views/user_form.jsp</strong></p>
+<div class="code-block">
+    <div class="code-header">
+        <span>user_form.jsp</span>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+    <pre><span class="annotation">&lt;%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" import="com.example.model.User"%&gt;</span>
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
+<span class="keyword">&lt;html&gt;</span>
+<span class="keyword">&lt;head&gt;</span>
+    <span class="keyword">&lt;meta</span> <span class="annotation">charset</span>=<span class="string">"UTF-8"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;title&gt;</span>Form người dùng<span class="keyword">&lt;/title&gt;</span>
+    <span class="keyword">&lt;style&gt;</span>
+        <span class="keyword">*</span> { <span class="keyword">margin</span>: 0; <span class="keyword">padding</span>: 0; <span class="keyword">box-sizing</span>: border-box; }
+        <span class="keyword">body</span> { <span class="keyword">font-family</span>: Arial, sans-serif; <span class="keyword">margin</span>: 20px; <span class="keyword">background-color</span>: #f5f5f5; }
+        <span class="keyword">.container</span> { <span class="keyword">max-width</span>: 600px; <span class="keyword">margin</span>: 0 auto; <span class="keyword">background</span>: white; <span class="keyword">padding</span>: 20px; <span class="keyword">border-radius</span>: 5px; }
+        <span class="keyword">h1</span> { <span class="keyword">color</span>: #333; <span class="keyword">margin-bottom</span>: 20px; }
+        <span class="keyword">.form-group</span> { <span class="keyword">margin-bottom</span>: 15px; }
+        <span class="keyword">label</span> { <span class="keyword">display</span>: block; <span class="keyword">margin-bottom</span>: 5px; <span class="keyword">font-weight</span>: bold; }
+        <span class="keyword">input, select</span> { <span class="keyword">width</span>: 100%; <span class="keyword">padding</span>: 8px; <span class="keyword">border</span>: 1px solid #ddd; <span class="keyword">border-radius</span>: 3px; }
+        <span class="keyword">button</span> { <span class="keyword">background-color</span>: #4CAF50; <span class="keyword">color</span>: white; <span class="keyword">padding</span>: 10px 20px; <span class="keyword">border</span>: none; <span class="keyword">border-radius</span>: 3px; <span class="keyword">cursor</span>: pointer; <span class="keyword">margin-right</span>: 10px; }
+        <span class="keyword">button:hover</span> { <span class="keyword">background-color</span>: #45a049; }
+        <span class="keyword">.btn-cancel</span> { <span class="keyword">background-color</span>: #f44336; }
+        <span class="keyword">.btn-cancel:hover</span> { <span class="keyword">background-color</span>: #da190b; }
+    <span class="keyword">&lt;/style&gt;</span>
+<span class="keyword">&lt;/head&gt;</span>
+<span class="keyword">&lt;body&gt;</span>
+<span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"container"</span><span class="keyword">&gt;</span>
+    <span class="comment">&lt;%
+        User user = (User) request.getAttribute("user");
+        boolean isEdit = (user != null && user.getId() != null);
+    %&gt;</span>
+    
+    <span class="keyword">&lt;h1&gt;&lt;%=</span> isEdit ? "✏️ Cập nhật người dùng" : "➕ Thêm người dùng mới" <span class="keyword">%&gt;&lt;/h1&gt;</span>
+    
+    <span class="keyword">&lt;form</span> <span class="annotation">method</span>=<span class="string">"post"</span><span class="keyword">&gt;</span>
+        <span class="comment">&lt;% if (isEdit) { %&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"hidden"</span> <span class="annotation">name</span>=<span class="string">"action"</span> <span class="annotation">value</span>=<span class="string">"update"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"hidden"</span> <span class="annotation">name</span>=<span class="string">"id"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= user.getId() %&gt;"</span><span class="keyword">&gt;</span>
+        <span class="comment">&lt;% } else { %&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"hidden"</span> <span class="annotation">name</span>=<span class="string">"action"</span> <span class="annotation">value</span>=<span class="string">"create"</span><span class="keyword">&gt;</span>
+        <span class="comment">&lt;% } %&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Username:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"text"</span> <span class="annotation">name</span>=<span class="string">"username"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= !isEdit ? "" : user.getUsername() %&gt;"</span> <span class="annotation">required</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Password:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"password"</span> <span class="annotation">name</span>=<span class="string">"password"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= !isEdit ? "" : user.getPassword() %&gt;"</span> <span class="annotation">required</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Họ tên:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"text"</span> <span class="annotation">name</span>=<span class="string">"fullName"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= !isEdit ? "" : user.getFullName() %&gt;"</span> <span class="annotation">required</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Email:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"email"</span> <span class="annotation">name</span>=<span class="string">"email"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= !isEdit ? "" : user.getEmail() %&gt;"</span> <span class="annotation">required</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Tuổi:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;input</span> <span class="annotation">type</span>=<span class="string">"number"</span> <span class="annotation">name</span>=<span class="string">"age"</span> <span class="annotation">value</span>=<span class="string">"&lt;%= !isEdit ? "" : user.getAge() %&gt;"</span> <span class="annotation">required</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div</span> <span class="annotation">class</span>=<span class="string">"form-group"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;label&gt;</span>Vai trò:<span class="keyword">&lt;/label&gt;</span>
+            <span class="keyword">&lt;select</span> <span class="annotation">name</span>=<span class="string">"role"</span><span class="keyword">&gt;</span>
+                <span class="keyword">&lt;option</span> <span class="annotation">value</span>=<span class="string">"USER"</span> <span class="comment">&lt;%= !isEdit || "USER".equals(user.getRole()) ? "selected" : "" %&gt;</span><span class="keyword">&gt;</span>USER<span class="keyword">&lt;/option&gt;</span>
+                <span class="keyword">&lt;option</span> <span class="annotation">value</span>=<span class="string">"ADMIN"</span> <span class="comment">&lt;%= isEdit && "ADMIN".equals(user.getRole()) ? "selected" : "" %&gt;</span><span class="keyword">&gt;</span>ADMIN<span class="keyword">&lt;/option&gt;</span>
+            <span class="keyword">&lt;/select&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+        
+        <span class="keyword">&lt;div&gt;</span>
+            <span class="keyword">&lt;button</span> <span class="annotation">type</span>=<span class="string">"submit"</span><span class="keyword">&gt;</span>💾 Lưu<span class="keyword">&lt;/button&gt;</span>
+            <span class="keyword">&lt;a</span> <span class="annotation">href</span>=<span class="string">"&lt;%= request.getContextPath() %&gt;/users/list"</span> <span class="annotation">class</span>=<span class="string">"btn-cancel"</span> <span class="annotation">style</span>=<span class="string">"display: inline-block; padding: 10px 20px; text-decoration: none; border-radius: 3px;"</span><span class="keyword">&gt;</span>❌ Hủy<span class="keyword">&lt;/a&gt;</span>
+        <span class="keyword">&lt;/div&gt;</span>
+    <span class="keyword">&lt;/form&gt;</span>
+<span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/body&gt;</span>
+<span class="keyword">&lt;/html&gt;</span></pre>
+</div>
+
+<div class="success-box">
+    <strong>🎯 Tổng kết Chương 3 (Phần 1 + 2 + 3 + 4 + 5):</strong>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>JSP là công nghệ nhúng Java vào HTML, giúp tạo trang web động dễ dàng hơn Servlet thuần</li>
+        <li>JSP được biên dịch thành Servlet, có vòng đời gồm 6 giai đoạn</li>
+        <li>Các thành phần cú pháp JSP: Directive, Declaration, Scriptlet, Expression, Comment</li>
+        <li>9 implicit objects: request, response, out, session, application, config, pageContext, page, exception</li>
+        <li>JSP Action Tags: jsp:include, jsp:forward, jsp:param, jsp:useBean, jsp:setProperty, jsp:getProperty</li>
+        <li>Mô hình MVC với JSP: Servlet (Controller) xử lý logic → JSP (View) hiển thị</li>
+    </ul>
+</div>
+
+<div class="note">
+    <strong> Lưu ý quan trọng:</strong>
+    <ul style="margin-left: 20px; margin-top: 10px;">
+        <li>Nên để JSP trong thư mục <code>/WEB-INF/views/</code> để ngăn người dùng truy cập trực tiếp</li>
+        <li>Sử dụng <code>pageEncoding="UTF-8"</code> để hỗ trợ tiếng Việt</li>
+        <li>Hạn chế sử dụng Scriptlet trong JSP hiện đại, nên dùng JSTL và EL thay thế</li>
+        <li>Luôn kiểm tra dữ liệu đầu vào và xử lý exception trong Servlet trước khi forward sang JSP</li>
+        <li>JSP chỉ nên dùng để hiển thị, không chứa logic nghiệp vụ phức tạp</li>
+    </ul>
+</div>
+</section>
+
+</main>
+</div>
+
+<footer>
+<p> JSP  - GV: Nguyễn Đình Mạnh</p>
+</footer>
+</div>
+
+<script>
+// Xử lý điều hướng
+document.addEventListener('DOMContentLoaded', function () {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section');
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            navLinks.forEach(item => item.classList.remove('active'));
+            sections.forEach(section => section.classList.remove('active'));
+
+            this.classList.add('active');
+
+            const targetId = this.getAttribute('href').substring(1);
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+});
+
+// Hàm copy code
+function copyCode(button) {
+    const codeBlock = button.parentElement.parentElement;
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = 'Đã copy!';
+        setTimeout(() => {
+            button.textContent = originalText;
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

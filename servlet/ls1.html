@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BÀI 1: GIỚI THIỆU JAVA SERVLET</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+        height: 80vh;
+        overflow: scroll;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+        }
+        .sidebar ul{
+            padding: 0;
+        }
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.6;
+            border: 2px solid #444;
+            white-space: pre;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+            font-family: 'Segoe UI', sans-serif;
+            white-space: normal;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #dcdcaa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding:10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .ascii-art {
+            background: #2d2d2d;
+            color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.2;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+        }
+
+        .objective-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .objective-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .objective-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+        }
+
+        .objective-item i {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .objective-item h4 {
+            margin: 0;
+            color: var(--primary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fab fa-java"></i> BÀI 1: GIỚI THIỆU JAVA SERVLET</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#muc-tieu" class="nav-link active"><i class="fas fa-bullseye"></i> Mục tiêu bài học</a></li>
+                    <li class="nav-item"><a href="#tong-quan" class="nav-link"><i class="fas fa-globe"></i> Phần 1: Tổng quan về Web và Servlet</a></li>
+                    <li class="nav-item"><a href="#chuan-bi" class="nav-link"><i class="fas fa-tools"></i> Phần 2: Chuẩn bị môi trường</a></li>
+                    <li class="nav-item"><a href="#tich-hop" class="nav-link"><i class="fas fa-plug"></i> Phần 3: Tích hợp Tomcat vào Eclipse</a></li>
+                    <li class="nav-item"><a href="#tao-project" class="nav-link"><i class="fas fa-folder-open"></i> Phần 4: Tạo Project Servlet đầu tiên</a></li>
+                    <li class="nav-item"><a href="#cau-hinh-maven" class="nav-link"><i class="fas fa-cog"></i> Phần 5: Cấu hình Maven</a></li>
+                    <li class="nav-item"><a href="#tao-servlet" class="nav-link"><i class="fas fa-code"></i> Phần 6: Tạo Servlet đầu tiên</a></li>
+                    <li class="nav-item"><a href="#chay-ung-dung" class="nav-link"><i class="fas fa-play"></i> Phần 7: Chạy ứng dụng</a></li>
+                    <li class="nav-item"><a href="#phan-tich" class="nav-link"><i class="fas fa-search"></i> Phần 8: Phân tích chi tiết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN MỤC TIÊU BÀI HỌC -->
+                <section id="muc-tieu" class="section active">
+                    <h2><i class="fas fa-bullseye"></i> MỤC TIÊU BÀI HỌC</h2>
+                    
+                    <div class="objective-box">
+                        <div class="objective-item">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Hiểu khái niệm cơ bản về Servlet</h4>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-download"></i>
+                            <h4>Cài đặt thành công môi trường phát triển</h4>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-rocket"></i>
+                            <h4>Tạo và chạy được ứng dụng Web đầu tiên với Servlet</h4>
+                        </div>
+                        <div class="objective-item">
+                            <i class="fas fa-code"></i>
+                            <h4>Nắm được cấu trúc cơ bản của một Servlet</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1: TỔNG QUAN VỀ WEB VÀ SERVLET -->
+                <section id="tong-quan" class="section">
+                <!-- PHẦN 1: TỔNG QUAN VỀ WEB VÀ SERVLET -->
+
+    <h2><i class="fas fa-globe"></i> PHẦN 1: TỔNG QUAN VỀ WEB VÀ SERVLET</h2>
+
+    <h3>1.1 MÔ HÌNH CLIENT-SERVER LÀ GÌ?</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p>Mô hình Client-Server là kiến trúc mạng trong đó:</p>
+    <ul>
+        <li><strong>Client (máy khách)</strong> gửi yêu cầu</li>
+        <li><strong>Server (máy chủ)</strong> nhận yêu cầu, xử lý và gửi phản hồi</li>
+    </ul>
+
+    <h4>Sơ đồ hoạt động:</h4>
+    <div class="ascii-art">
+┌─────────┐     Gửi yêu cầu     ┌─────────┐
+│ Client  │ ──────────────────→ │ Server  │
+│(Browser)│ ←─────────────────  │ (Web)   │
+└─────────┘     Nhận phản hồi   └─────────┘
+    </div>
+
+    <h4>Ví dụ thực tế:</h4>
+    <ul>
+        <li>Bạn mở trình duyệt, gõ https://google.com</li>
+        <li>Trình duyệt (client) gửi yêu cầu đến máy chủ Google</li>
+        <li>Máy chủ Google xử lý và gửi trang web về</li>
+        <li>Trình duyệt hiển thị trang web cho bạn</li>
+    </ul>
+
+    <h3>1.2 CÁC THÀNH PHẦN TRONG WEB</h3>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Client</strong></td>
+                    <td>Trình duyệt, ứng dụng di động</td>
+                    <td>Chrome, Firefox, Postman</td>
+                </tr>
+                <tr>
+                    <td><strong>Server</strong></td>
+                    <td>Máy chủ chứa ứng dụng web</td>
+                    <td>Tomcat, Jetty, Nginx</td>
+                </tr>
+                <tr>
+                    <td><strong>HTTP</strong></td>
+                    <td>Giao thức giao tiếp</td>
+                    <td>Gửi request, nhận response</td>
+                </tr>
+                <tr>
+                    <td><strong>HTML/CSS/JS</strong></td>
+                    <td>Nội dung hiển thị</td>
+                    <td>Giao diện website</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>1.3 CÁC LOẠI ỨNG DỤNG WEB</h3>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Loại</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Static Web</strong></td>
+                    <td>Nội dung cố định, ai xem cũng giống nhau</td>
+                    <td>Trang giới thiệu công ty</td>
+                </tr>
+                <tr>
+                    <td><strong>Dynamic Web</strong></td>
+                    <td>Nội dung thay đổi theo người dùng, dữ liệu</td>
+                    <td>Facebook, Shopee, Google</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="note">
+        <strong>Ứng dụng Web động</strong> là mục tiêu của chúng ta trong khóa học này.
+    </div>
+
+<!-- PHẦN 2: HTTP REQUEST & HTTP RESPONSE -->
+
+    <h2><i class="fas fa-exchange-alt"></i> 2: HTTP REQUEST & HTTP RESPONSE</h2>
+
+    <h3>2.1 HTTP LÀ GÌ?</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p><strong>HTTP (HyperText Transfer Protocol)</strong> là giao thức truyền tải siêu văn bản, được dùng để giao tiếp giữa Client và Server.</p>
+
+    <h4>Đặc điểm:</h4>
+    <ul>
+        <li>Hoạt động theo mô hình request-response</li>
+        <li>Stateless (không lưu trạng thái)</li>
+        <li>Cổng mặc định: 80 (HTTP), 443 (HTTPS)</li>
+    </ul>
+
+    <h3>2.2 HTTP REQUEST (YÊU CẦU)</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p>HTTP Request là thông tin mà Client gửi lên Server.</p>
+
+    <h4>Cấu trúc một HTTP Request:</h4>
+    <div class="ascii-art">
+METHOD /path HTTP/version
+Header1: value1
+Header2: value2
+
+Body (nếu có)
+    </div>
+
+    <h4>Ví dụ thực tế:</h4>
+    <div class="ascii-art">
+POST /login HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 27
+
+username=john&password=123
+    </div>
+
+    <h4>Các thành phần chính:</h4>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Method</strong></td>
+                    <td>Phương thức HTTP</td>
+                    <td>GET, POST, PUT, DELETE</td>
+                </tr>
+                <tr>
+                    <td><strong>Path</strong></td>
+                    <td>Đường dẫn tài nguyên</td>
+                    <td>/login, /products</td>
+                </tr>
+                <tr>
+                    <td><strong>Version</strong></td>
+                    <td>Phiên bản HTTP</td>
+                    <td>HTTP/1.1, HTTP/2</td>
+                </tr>
+                <tr>
+                    <td><strong>Headers</strong></td>
+                    <td>Thông tin bổ sung</td>
+                    <td>Host, User-Agent</td>
+                </tr>
+                <tr>
+                    <td><strong>Body</strong></td>
+                    <td>Dữ liệu gửi lên</td>
+                    <td>Form data, JSON</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4>Các phương thức HTTP phổ biến:</h4>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GET</strong></td>
+                    <td>Lấy dữ liệu</td>
+                    <td>Xem danh sách sản phẩm</td>
+                </tr>
+                <tr>
+                    <td><strong>POST</strong></td>
+                    <td>Thêm dữ liệu mới</td>
+                    <td>Đăng ký tài khoản</td>
+                </tr>
+                <tr>
+                    <td><strong>PUT</strong></td>
+                    <td>Cập nhật toàn bộ</td>
+                    <td>Sửa thông tin</td>
+                </tr>
+                <tr>
+                    <td><strong>PATCH</strong></td>
+                    <td>Cập nhật một phần</td>
+                    <td>Sửa mật khẩu</td>
+                </tr>
+                <tr>
+                    <td><strong>DELETE</strong></td>
+                    <td>Xóa dữ liệu</td>
+                    <td>Xóa sản phẩm</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>2.3 HTTP RESPONSE (PHẢN HỒI)</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p>HTTP Response là thông tin Server gửi lại Client sau khi xử lý request.</p>
+
+    <h4>Cấu trúc một HTTP Response:</h4>
+    <div class="ascii-art">
+HTTP/version status_code status_text
+Header1: value1
+Header2: value2
+
+Body (nếu có)
+    </div>
+
+    <h4>Ví dụ thực tế:</h4>
+    <div class="ascii-art">
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 128
+
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;h1&gt;Chào mừng bạn!&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+    </div>
+
+    <h4>Các thành phần chính:</h4>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Mô tả</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Status Code</strong></td>
+                    <td>Mã trạng thái</td>
+                    <td>200, 404, 500</td>
+                </tr>
+                <tr>
+                    <td><strong>Status Text</strong></td>
+                    <td>Mô tả trạng thái</td>
+                    <td>OK, Not Found</td>
+                </tr>
+                <tr>
+                    <td><strong>Headers</strong></td>
+                    <td>Thông tin bổ sung</td>
+                    <td>Content-Type</td>
+                </tr>
+                <tr>
+                    <td><strong>Body</strong></td>
+                    <td>Nội dung trả về</td>
+                    <td>HTML, JSON</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h4>Các mã trạng thái HTTP thường gặp:</h4>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Ý nghĩa</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>200</td><td>OK</td><td>Thành công</td></tr>
+                <tr><td>201</td><td>Created</td><td>Tạo thành công</td></tr>
+                <tr><td>301</td><td>Moved Permanently</td><td>Chuyển hướng vĩnh viễn</td></tr>
+                <tr><td>302</td><td>Found</td><td>Chuyển hướng tạm thời</td></tr>
+                <tr><td>400</td><td>Bad Request</td><td>Yêu cầu sai</td></tr>
+                <tr><td>401</td><td>Unauthorized</td><td>Chưa đăng nhập</td></tr>
+                <tr><td>403</td><td>Forbidden</td><td>Không có quyền</td></tr>
+                <tr><td>404</td><td>Not Found</td><td>Không tìm thấy</td></tr>
+                <tr><td>500</td><td>Internal Server Error</td><td>Lỗi server</td></tr>
+                <tr><td>503</td><td>Service Unavailable</td><td>Dịch vụ tạm dừng</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <h2><i class="fab fa-java"></i> 3: GIỚI THIỆU SERVLET</h2>
+
+    <h3>3.1 SERVLET LÀ GÌ?</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p><strong>Servlet</strong> là một chương trình Java chạy trên server, nhận request từ client và trả về response.</p>
+
+    <h4>Nói dễ hiểu:</h4>
+    <ul>
+        <li>Servlet là class Java đặc biệt</li>
+        <li>Nó xử lý các request HTTP (GET, POST, ...)</li>
+        <li>Nó tạo ra nội dung động (HTML, JSON, ...)</li>
+    </ul>
+
+    <h4>Lịch sử:</h4>
+    <ul>
+        <li>Trước Servlet: viết CGI (Common Gateway Interface) bằng C/Perl → phức tạp</li>
+        <li>Servlet ra đời (1997) → dùng Java, dễ hơn</li>
+        <li>JSP (1999) → viết HTML dễ hơn</li>
+    </ul>
+
+    <h3>3.2 TẠI SAO CẦN SERVLET?</h3>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Vấn đề</th>
+                    <th>Giải pháp từ Servlet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Cần xử lý request từ client</td>
+                    <td>Servlet cung cấp API để đọc request</td>
+                </tr>
+                <tr>
+                    <td>Cần tạo nội dung động</td>
+                    <td>Servlet có thể viết HTML trong code</td>
+                </tr>
+                <tr>
+                    <td>Cần kết nối database</td>
+                    <td>Servlet có thể gọi JDBC</td>
+                </tr>
+                <tr>
+                    <td>Cần quản lý session</td>
+                    <td>Servlet cung cấp API session</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>3.3 VÍ DỤ VỀ SERVLET</h3>
+    
+    <div class="code-block">
+        <div class="code-header">
+            <span>HelloServlet.java</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class HelloServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        // Set kiểu nội dung trả về
+        resp.setContentType("text/html");
+        
+        // Lấy PrintWriter để ghi response
+        PrintWriter out = resp.getWriter();
+        
+        // Ghi HTML
+        out.println("&lt;html&gt;");
+        out.println("&lt;body&gt;");
+        out.println("&lt;h1&gt;Hello, World!&lt;/h1&gt;");
+        out.println("&lt;/body&gt;");
+        out.println("&lt;/html&gt;");
+    }
+}
+    </div>
+
+    <h4>Giải thích:</h4>
+    <ul>
+        <li><strong>extends HttpServlet:</strong> class này là Servlet</li>
+        <li><strong>doGet():</strong> xử lý request GET</li>
+        <li><strong>HttpServletRequest:</strong> chứa thông tin request</li>
+        <li><strong>HttpServletResponse:</strong> để ghi response</li>
+    </ul>
+    <h2><i class="fas fa-server"></i> 4: SERVLET CONTAINER & TOMCAT</h2>
+
+    <h3>4.1 SERVLET CONTAINER LÀ GÌ?</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p><strong>Servlet Container</strong> (còn gọi là Web Container) là môi trường chạy các Servlet.</p>
+
+    <h4>Vai trò:</h4>
+    <ul>
+        <li>Quản lý vòng đời Servlet (khởi tạo, gọi, hủy)</li>
+        <li>Nhận request từ client và chuyển cho Servlet phù hợp</li>
+        <li>Quản lý đa luồng (mỗi request là một thread)</li>
+        <li>Cung cấp các dịch vụ: session, security, JSP</li>
+    </ul>
+
+    <h4>Sơ đồ hoạt động:</h4>
+    <div class="ascii-art">
+┌──────────────┐
+│   Browser    │
+└──────┬───────┘
+       │ HTTP Request
+┌──────▼───────┐
+│   Tomcat     │
+│ (Container)  │
+│  ┌─────────┐ │
+│  │Servlet1 │ │
+│  ├─────────┤ │
+│  │Servlet2 │ │
+│  └─────────┘ │
+└──────┬───────┘
+       │ HTTP Response
+┌──────▼───────┐
+│   Browser    │
+└──────────────┘
+    </div>
+
+    <h3>4.2 CÁC SERVLET CONTAINER PHỔ BIẾN</h3>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên</th>
+                    <th>Mô tả</th>
+                    <th>Phù hợp</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Apache Tomcat</strong></td>
+                    <td>Mã nguồn mở, phổ biến</td>
+                    <td>Học tập, doanh nghiệp nhỏ</td>
+                </tr>
+                <tr>
+                    <td><strong>Jetty</strong></td>
+                    <td>Nhẹ, nhúng được</td>
+                    <td>Microservices</td>
+                </tr>
+                <tr>
+                    <td><strong>GlassFish</strong></td>
+                    <td>Hỗ trợ đầy đủ Java EE</td>
+                    <td>Doanh nghiệp lớn</td>
+                </tr>
+                <tr>
+                    <td><strong>WildFly (JBoss)</strong></td>
+                    <td>Mạnh mẽ</td>
+                    <td>Doanh nghiệp lớn</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="info-box">
+        <p><strong>Trong khóa học này, chúng ta dùng Apache Tomcat.</strong></p>
+    </div>
+
+    <h3>4.3 APACHE TOMCAT</h3>
+    
+    <h4>Định nghĩa:</h4>
+    <p>Tomcat là một servlet container mã nguồn mở do Apache phát triển.</p>
+
+    <h4>Đặc điểm:</h4>
+    <ul>
+        <li>Miễn phí, dễ cài đặt</li>
+        <li>Hỗ trợ Servlet, JSP, EL, WebSocket</li>
+        <li>Được dùng rộng rãi trong học tập và doanh nghiệp</li>
+    </ul>
+
+    <h4>Cấu trúc thư mục Tomcat:</h4>
+    <div class="ascii-art">
+tomcat/
+├── bin/          # Script khởi động
+├── conf/         # Cấu hình (server.xml, context.xml)
+├── lib/          # Các thư viện chung
+├── logs/         # File log
+├── temp/         # File tạm
+├── webapps/      # Nơi deploy ứng dụng
+└── work/         # File biên dịch tạm
+    </div>
+</section>
+                    </section>
+
+                <!-- PHẦN 2: CHUẨN BỊ MÔI TRƯỜNG PHÁT TRIỂN -->
+                <section id="chuan-bi" class="section">
+                    <h2><i class="fas fa-tools"></i> PHẦN 2: CHUẨN BỊ MÔI TRƯỜNG PHÁT TRIỂN</h2>
+
+                    <h3>2.1 Cài đặt JDK (Java Development Kit)</h3>
+                    
+                    <h4>Bước 1: Tải JDK</h4>
+                    <ul>
+                        <li>Truy cập: https://www.oracle.com/java/technologies/downloads/</li>
+                        <li>Chọn JDK 11 hoặc JDK 17 (LTS - Long Term Support)</li>
+                        <li>Tải bản phù hợp với hệ điều hành:
+                            <ul>
+                                <li>Windows: jdk-11_windows-x64_bin.exe</li>
+                                <li>macOS: jdk-11_osx-x64_bin.dmg</li>
+                                <li>Linux: jdk-11_linux-x64_bin.tar.gz</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>Bước 2: Cài đặt</h4>
+                    <ul>
+                        <li>Windows: Chạy file .exe và nhấn Next đến khi hoàn tất</li>
+                        <li>macOS: Mở file .dmg và kéo vào thư mục Applications</li>
+                        <li>Linux: Giải nén và di chuyển vào /usr/lib/jvm/</li>
+                    </ul>
+
+                    <h4>Bước 3: Kiểm tra cài đặt</h4>
+                    <p>Mở Terminal (macOS/Linux) hoặc Command Prompt (Windows):</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Terminal</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+java -version
+                    </div>
+
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+java version "11.0.20" 2023-07-18 LTS
+Java(TM) SE Runtime Environment 18.9 (build 11.0.20+8-LTS-102)
+Java HotSpot(TM) 64-Bit Server VM 18.9 (build 11.0.20+8-LTS-102, mixed mode)
+                    </div>
+
+                    <h3>2.2 Cài đặt Eclipse IDE</h3>
+                    
+                    <h4>Bước 1: Tải Eclipse</h4>
+                    <ul>
+                        <li>Truy cập: https://www.eclipse.org/downloads/</li>
+                        <li>Chọn "Eclipse IDE for Enterprise Java and Web Developers"</li>
+                        <li>Tải file cài đặt phù hợp với hệ điều hành</li>
+                    </ul>
+
+                    <h4>Bước 2: Cài đặt</h4>
+                    <ul>
+                        <li>Windows: Chạy file .exe, chọn "Eclipse IDE for Enterprise Java"</li>
+                        <li>macOS: Mở file .dmg, kéo Eclipse vào Applications</li>
+                        <li>Linux: Giải nén và chạy eclipse</li>
+                    </ul>
+
+                    <h4>Bước 3: Chọn Workspace</h4>
+                    <ul>
+                        <li>Khởi động Eclipse</li>
+                        <li>Chọn thư mục làm việc (workspace), ví dụ: D:\workspace hoặc ~/workspace</li>
+                        <li>Tích "Use this as the default" nếu muốn dùng mặc định</li>
+                        <li>Nhấn Launch</li>
+                    </ul>
+
+                    <h3>2.3 Cài đặt Apache Tomcat</h3>
+                    
+                    <h4>Bước 1: Tải Tomcat</h4>
+                    <ul>
+                        <li>Truy cập: https://tomcat.apache.org/download-90.cgi</li>
+                        <li>Chọn phiên bản Tomcat 9 (tương thích Servlet 4.0)</li>
+                        <li>Tải file zip: apache-tomcat-9.0.89.zip</li>
+                    </ul>
+
+                    <h4>Bước 2: Giải nén</h4>
+                    <ul>
+                        <li>Windows: Giải nén vào D:\apache-tomcat-9.0.89</li>
+                        <li>macOS/Linux: Giải nén vào /usr/local/apache-tomcat-9.0.89</li>
+                    </ul>
+
+                    <h4>Cấu trúc thư mục Tomcat:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Directory Structure</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+apache-tomcat-9.0.89/
+├── bin/              # Chứa các script khởi động/tắt Tomcat
+│   ├── startup.bat   # Khởi động (Windows)
+│   ├── shutdown.bat  # Tắt (Windows)
+│   ├── startup.sh    # Khởi động (Linux/macOS)
+│   └── shutdown.sh   # Tắt (Linux/macOS)
+├── conf/             # File cấu hình
+│   ├── server.xml    # Cấu hình chính
+│   └── web.xml       # Cấu hình toàn cục cho web apps
+├── lib/              # Thư viện chung
+├── logs/             # File log
+├── temp/             # File tạm
+├── webapps/          # Thư mục chứa ứng dụng web
+└── work/             # File biên dịch tạm
+                    </div>
+                </section>
+
+                <!-- PHẦN 3: TÍCH HỢP TOMCAT VÀO ECLIPSE -->
+                <section id="tich-hop" class="section">
+                    <h2><i class="fas fa-plug"></i> PHẦN 3: TÍCH HỢP TOMCAT VÀO ECLIPSE</h2>
+
+                    <h3>3.1 Thêm Tomcat vào Eclipse</h3>
+                    
+                    <h4>Bước 1: Mở Preferences</h4>
+                    <ul>
+                        <li>Vào menu Window > Preferences (Windows/Linux)</li>
+                        <li>Hoặc Eclipse > Preferences (macOS)</li>
+                    </ul>
+
+                    <h4>Bước 2: Thêm Server Runtime</h4>
+                    <ul>
+                        <li>Trong cửa sổ Preferences, chọn Server > Runtime Environments</li>
+                        <li>Nhấn nút Add... ở bên phải</li>
+                    </ul>
+
+                    <h4>Bước 3: Chọn phiên bản Tomcat</h4>
+                    <ul>
+                        <li>Mở rộng mục Apache</li>
+                        <li>Chọn Apache Tomcat v9.0</li>
+                        <li>Nhấn Next ></li>
+                    </ul>
+
+                    <h4>Bước 4: Cấu hình Tomcat</h4>
+                    <ul>
+                        <li>Nhấn Browse... và chọn thư mục đã giải nén Tomcat</li>
+                        <li>Ví dụ: D:\apache-tomcat-9.0.89 hoặc /usr/local/apache-tomcat-9.0.89</li>
+                        <li>JRE: Chọn jdk-11 hoặc phiên bản Java đã cài</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h4>Bước 5: Kiểm tra</h4>
+                    <ul>
+                        <li>Tomcat v9.0 xuất hiện trong danh sách Runtime Environments</li>
+                        <li>Nhấn Apply and Close</li>
+                    </ul>
+                </section>
+
+                <!-- PHẦN 4: TẠO PROJECT SERVLET ĐẦU TIÊN -->
+                <section id="tao-project" class="section">
+                    <h2><i class="fas fa-folder-open"></i> PHẦN 4: TẠO PROJECT SERVLET ĐẦU TIÊN</h2>
+
+                    <h3>4.1 Tạo Dynamic Web Project (Không dùng Maven)</h3>
+                    
+                    <h4>Bước 1: Tạo Project mới</h4>
+                    <ul>
+                        <li>Vào menu File > New > Dynamic Web Project</li>
+                        <li>Nếu không thấy, chọn File > New > Other... > Tìm "Dynamic Web Project"</li>
+                    </ul>
+
+                    <h4>Bước 2: Cấu hình Project</h4>
+                    <ul>
+                        <li>Project name: ServletDemo</li>
+                        <li>Target runtime: Chọn Apache Tomcat v9.0 (đã thêm ở trên)</li>
+                        <li>Configuration: Chọn Default Configuration for Apache Tomcat v9.0</li>
+                        <li>Context root: ServletDemo (mặc định)</li>
+                        <li>Content directory: src/main/webapp (nên đặt theo chuẩn Maven)</li>
+                    </ul>
+
+                    <h4>Bước 3: Cấu hình thêm</h4>
+                    <ul>
+                        <li>Nhấn Next 2 lần</li>
+                        <li>Tích chọn Generate web.xml deployment descriptor</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h3>4.2 Tạo Project với Maven (Khuyến nghị)</h3>
+                    
+                    <h4>Bước 1: Tạo Maven Project</h4>
+                    <ul>
+                        <li>Vào menu File > New > Maven Project</li>
+                        <li>Cửa sổ New Maven Project hiện ra</li>
+                        <li>Không tích "Create a simple project" (bỏ chọn nếu đang tích)</li>
+                        <li>Nhấn Next ></li>
+                    </ul>
+
+                    <h4>Bước 2: Chọn Archetype</h4>
+                    <ul>
+                        <li>Trong ô Filter, gõ: webapp</li>
+                        <li>Chọn maven-archetype-webapp (Group Id: org.apache.maven.archetypes)</li>
+                        <li>Nhấn Next ></li>
+                    </ul>
+
+                    <h4>Bước 3: Nhập thông tin Project</h4>
+                    <ul>
+                        <li>Group Id: com.example (thường là tên công ty/domain ngược)</li>
+                        <li>Artifact Id: servlet-demo (tên project)</li>
+                        <li>Version: 1.0-SNAPSHOT (mặc định)</li>
+                        <li>Package: com.example.controller (package chứa code)</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h4>Cấu trúc project sau khi tạo:</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Project Structure</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+servlet-demo/
+├── pom.xml                    # File cấu hình Maven
+├── src/
+│   ├── main/
+│   │   ├── java/              # Chứa code Java
+│   │   │   └── (sẽ tạo package ở đây)
+│   │   └── webapp/            # Chứa tài nguyên web
+│   │       ├── WEB-INF/
+│   │       │   └── web.xml    # Deployment Descriptor
+│   │       └── index.jsp      # Trang mặc định
+│   └── test/                   # Chứa code test
+│       └── java/
+└── target/                     # Thư mục biên dịch (tự động tạo)
+                    </div>
+                </section>
+
+                <!-- PHẦN 5: CẤU HÌNH MAVEN VÀ THÊM SERVLET API -->
+                <section id="cau-hinh-maven" class="section">
+                    <h2><i class="fas fa-cog"></i> PHẦN 5: CẤU HÌNH MAVEN VÀ THÊM SERVLET API</h2>
+
+                    <h3>5.1 Tìm Servlet API trên Maven Repository</h3>
+                    
+                    <h4>Bước 1: Truy cập Maven Repository</h4>
+                    <ul>
+                        <li>Mở trình duyệt: https://mvnrepository.com</li>
+                    </ul>
+
+                    <h4>Bước 2: Tìm Servlet API</h4>
+                    <ul>
+                        <li>Gõ "Java Servlet API" vào ô tìm kiếm</li>
+                        <li>Chọn kết quả đầu tiên: Java Servlet API</li>
+                    </ul>
+
+                    <h4>Bước 3: Chọn phiên bản</h4>
+                    <ul>
+                        <li>Chọn phiên bản 4.0.1 (tương thích với Tomcat 9)</li>
+                        <li>Copy đoạn mã Maven</li>
+                    </ul>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Servlet API Dependency</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;!-- Servlet API --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+    &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+    &lt;version&gt;4.0.1&lt;/version&gt;
+    &lt;scope&gt;provided&lt;/scope&gt;
+&lt;/dependency&gt;
+                    </div>
+
+                    <h3>5.2 Cấu hình pom.xml</h3>
+                    
+                    <h4>Bước 1: Mở file pom.xml</h4>
+                    <ul>
+                        <li>Trong Eclipse, tìm file pom.xml trong thư mục gốc project</li>
+                        <li>Double-click để mở</li>
+                    </ul>
+
+                    <h4>Bước 2: Chỉnh sửa nội dung</h4>
+                    <p>Thay thế toàn bộ nội dung bằng:</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>pom.xml</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+    
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    
+    &lt;!-- Thông tin project --&gt;
+    &lt;groupId&gt;com.example&lt;/groupId&gt;
+    &lt;artifactId&gt;servlet-demo&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;packaging&gt;war&lt;/packaging&gt;
+    
+    &lt;name&gt;servlet-demo&lt;/name&gt;
+    &lt;url&gt;http://maven.apache.org&lt;/url&gt;
+    
+    &lt;!-- Thuộc tính --&gt;
+    &lt;properties&gt;
+        &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+        &lt;maven.compiler.source&gt;11&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;11&lt;/maven.compiler.target&gt;
+    &lt;/properties&gt;
+    
+    &lt;!-- Danh sách dependencies --&gt;
+    &lt;dependencies&gt;
+        &lt;!-- Servlet API --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+            &lt;artifactId&gt;javax.servlet-api&lt;/artifactId&gt;
+            &lt;version&gt;4.0.1&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+        
+        &lt;!-- JSP API (nếu cần) --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet.jsp&lt;/groupId&gt;
+            &lt;artifactId&gt;javax.servlet.jsp-api&lt;/artifactId&gt;
+            &lt;version&gt;2.3.3&lt;/version&gt;
+            &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;/dependency&gt;
+        
+        &lt;!-- JSTL (nếu cần) --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;javax.servlet&lt;/groupId&gt;
+            &lt;artifactId&gt;jstl&lt;/artifactId&gt;
+            &lt;version&gt;1.2&lt;/version&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+    
+    &lt;!-- Cấu hình build --&gt;
+    &lt;build&gt;
+        &lt;finalName&gt;servlet-demo&lt;/finalName&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+                &lt;version&gt;3.8.1&lt;/version&gt;
+                &lt;configuration&gt;
+                    &lt;source&gt;11&lt;/source&gt;
+                    &lt;target&gt;11&lt;/target&gt;
+                &lt;/configuration&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;
+                    </div>
+
+                    <h4>Bước 3: Lưu file</h4>
+                    <ul>
+                        <li>Nhấn Ctrl + S (Windows/Linux) hoặc Cmd + S (macOS)</li>
+                        <li>Maven tự động tải dependencies</li>
+                    </ul>
+
+                    <h3>5.3 Kiểm tra Build Path</h3>
+                    
+                    <h4>Bước 1: Mở Properties</h4>
+                    <ul>
+                        <li>Chuột phải vào project</li>
+                        <li>Chọn Build Path > Configure Build Path</li>
+                    </ul>
+
+                    <h4>Bước 2: Kiểm tra Libraries</h4>
+                    <ul>
+                        <li>Tab Libraries phải có:
+                            <ul>
+                                <li>JRE System Library (Java 11)</li>
+                                <li>Maven Dependencies (chứa servlet-api)</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h4>Bước 3: Apply</h4>
+                    <ul>
+                        <li>Nhấn Apply and Close</li>
+                    </ul>
+
+                    <h3>5.4 Cấu hình Project Facets</h3>
+                    <ul>
+                        <li>Chuột phải vào project > Properties</li>
+                        <li>Chọn Project Facets</li>
+                        <li>Đảm bảo chọn:
+                            <ul>
+                                <li>Dynamic Web Module (phiên bản 4.0)</li>
+                                <li>Java (phiên bản phù hợp)</li>
+                                <li>JavaScript (tùy chọn)</li>
+                            </ul>
+                        </li>
+                        <li>Nhấn Apply</li>
+                        <li>Nếu có thông báo, chọn Further configuration available và chỉ định thư mục Content directory là src/main/webapp</li>
+                    </ul>
+                </section>
+
+                <!-- PHẦN 6: TẠO SERVLET ĐẦU TIÊN -->
+                <section id="tao-servlet" class="section">
+                    <h2><i class="fas fa-code"></i> PHẦN 6: TẠO SERVLET ĐẦU TIÊN</h2>
+
+                    <h3>6.1 Tạo Package</h3>
+                    
+                    <h4>Bước 1: Tạo thư mục nguồn</h4>
+                    <p>Nếu chưa có thư mục src/main/java, tạo bằng cách:</p>
+                    <ul>
+                        <li>Chuột phải vào project</li>
+                        <li>Chọn Build Path > Configure Build Path</li>
+                        <li>Tab Source, nhấn Add Folder</li>
+                        <li>Tích chọn src/main/java</li>
+                        <li>Nhấn Apply and Close</li>
+                    </ul>
+
+                    <h4>Bước 2: Tạo Package</h4>
+                    <ul>
+                        <li>Chuột phải vào src/main/java</li>
+                        <li>Chọn New > Package</li>
+                        <li>Nhập tên package: com.example.controller</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h3>6.2 Tạo Servlet Class</h3>
+                    
+                    <h4>Bước 1: Tạo Class mới</h4>
+                    <ul>
+                        <li>Chuột phải vào package com.example.controller</li>
+                        <li>Chọn New > Class</li>
+                        <li>Nhập Name: HelloServlet</li>
+                        <li>Superclass: Nhấn Browse và tìm javax.servlet.http.HttpServlet</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h4>Bước 2: Viết code cho Servlet</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Hello.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">package</span> demo1.controller;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> javax.servlet.ServletException;
+<span class="keyword">import</span> javax.servlet.annotation.WebServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> javax.servlet.http.HttpServletResponse;
+
+<span class="keyword">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">Hello</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp) 
+            <span class="keyword">throws</span> ServletException, IOException {
+        resp.getWriter().append(<span class="string">"demo"</span>);
+    }
+}
+                    </div>
+
+                    <h3>6.3 Giải thích code chi tiết</h3>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Giải thích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>@WebServlet("/hello")</strong></td>
+                                    <td>Annotation đánh dấu class là Servlet và mapping với URL /hello</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>extends HttpServlet</strong></td>
+                                    <td>Kế thừa từ HttpServlet để có các phương thức xử lý HTTP</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>doGet()</strong></td>
+                                    <td>Phương thức xử lý request GET</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HttpServletRequest req</strong></td>
+                                    <td>Đối tượng chứa thông tin request từ client</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HttpServletResponse resp</strong></td>
+                                    <td>Đối tượng để gửi response về client</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>resp.getWriter()</strong></td>
+                                    <td>Lấy đối tượng để ghi nội dung response</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN 7: CHẠY ỨNG DỤNG -->
+                <section id="chay-ung-dung" class="section">
+                    <h2><i class="fas fa-play"></i> PHẦN 7: CHẠY ỨNG DỤNG</h2>
+
+                    <h3>7.1 Tạo Server trong Eclipse</h3>
+                    
+                    <h4>Bước 1: Mở Servers View</h4>
+                    <ul>
+                        <li>Vào menu Window > Show View > Other...</li>
+                        <li>Gõ "servers" vào ô tìm kiếm</li>
+                        <li>Chọn Servers và nhấn Open</li>
+                    </ul>
+
+                    <h4>Bước 2: Tạo Server mới</h4>
+                    <ul>
+                        <li>Trong cửa sổ Servers, nhấn chuột phải vào vùng trống</li>
+                        <li>Chọn New > Server</li>
+                    </ul>
+
+                    <h4>Bước 3: Chọn Server Type</h4>
+                    <ul>
+                        <li>Mở rộng mục Apache</li>
+                        <li>Chọn Tomcat v9.0 Server</li>
+                        <li>Server's host name: localhost</li>
+                        <li>Server name: Tomcat v9.0 at localhost</li>
+                        <li>Nhấn Next ></li>
+                    </ul>
+
+                    <h4>Bước 4: Thêm project</h4>
+                    <ul>
+                        <li>Trong phần Available, chọn project servlet-demo</li>
+                        <li>Nhấn Add > để chuyển sang Configured</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h3>7.2 Chạy ứng dụng</h3>
+                    
+                    <h4>Cách 1: Start server và chạy</h4>
+                    <ul>
+                        <li>Trong Servers view, chuột phải vào server</li>
+                        <li>Chọn Start</li>
+                        <li>Đợi server khởi động</li>
+                    </ul>
+
+                    <h4>Cách 2: Run on Server</h4>
+                    <ul>
+                        <li>Chuột phải vào project</li>
+                        <li>Chọn Run As > Run on Server</li>
+                        <li>Chọn server đã tạo</li>
+                        <li>Nhấn Finish</li>
+                    </ul>
+
+                    <h3>7.3 Kiểm tra kết quả</h3>
+                    
+                    <p>Mở trình duyệt và truy cập:</p>
+                    <ul>
+                        <li>http://localhost:8080/servlet-demo/hello</li>
+                    </ul>
+
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Output</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+demo
+                    </div>
+                </section>
+
+                <!-- PHẦN 8: PHÂN TÍCH CHI TIẾT -->
+                <section id="phan-tich" class="section">
+                    <h2><i class="fas fa-search"></i> PHẦN 8: PHÂN TÍCH CHI TIẾT CÁC THÀNH PHẦN</h2>
+
+                    <h3>1. Khai báo Package</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Package declaration</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">package</span> demo1.controller;
+                    </div>
+                    <p><strong>Chức năng:</strong> Xác định package (gói) chứa class này.</p>
+                    <p><strong>Ý nghĩa:</strong> Class Hello nằm trong thư mục demo1/controller. Điều này giúp quản lý mã nguồn theo mô hình phân lớp.</p>
+
+                    <h3>2. Các lệnh Import</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Import statements</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> javax.servlet.ServletException;
+<span class="keyword">import</span> javax.servlet.annotation.WebServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServlet;
+<span class="keyword">import</span> javax.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> javax.servlet.http.HttpServletResponse;
+                    </div>
+                    <p><strong>Chức năng:</strong> Import các thư viện cần thiết để Servlet có thể hoạt động.</p>
+                    <p><strong>Chi tiết:</strong></p>
+                    <ul>
+                        <li>java.io.IOException: Hỗ trợ xử lý lỗi vào/ra</li>
+                        <li>javax.servlet.*: Các thư viện cốt lõi của Servlet</li>
+                        <li>javax.servlet.http.*: Các thư viện xử lý HTTP</li>
+                    </ul>
+
+                    <h3>3. Annotation</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Servlet annotation</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@WebServlet</span>(<span class="string">"/hello"</span>)
+                    </div>
+                    <p>Đây là điểm đặc biệt quan trọng trong Servlet 3.0+ (thay thế cho cách cũ là khai báo trong file web.xml).</p>
+                    <p><strong>Chức năng:</strong> Khai báo URL pattern để ánh xạ request từ trình duyệt vào Servlet này.</p>
+                    <p><strong>Ý nghĩa:</strong> Khi người dùng truy cập vào địa chỉ: http://localhost:8080/[context-path]/hello, thì Servlet này sẽ được kích hoạt.</p>
+
+                    <h3>4. Khai báo Class</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Class declaration</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">public class</span> <span class="class-name">Hello</span> <span class="keyword">extends</span> HttpServlet
+                    </div>
+                    <ul>
+                        <li><strong>public class Hello:</strong> Tên class trùng với tên file (Hello.java)</li>
+                        <li><strong>extends HttpServlet:</strong> Kế thừa từ class cha HttpServlet</li>
+                    </ul>
+
+                    <h3>5. Phương thức doGet</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>doGet method</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+<span class="keyword">@Override</span>
+<span class="keyword">protected void</span> doGet(HttpServletRequest req, HttpServletResponse resp) 
+        <span class="keyword">throws</span> ServletException, IOException
+                    </div>
+                    <ul>
+                        <li><strong>@Override:</strong> Ghi đè phương thức của class cha</li>
+                        <li><strong>protected void doGet:</strong> Xử lý request GET</li>
+                        <li><strong>HttpServletRequest req:</strong> Đối tượng request</li>
+                        <li><strong>HttpServletResponse resp:</strong> Đối tượng response</li>
+                    </ul>
+
+                    <h3>6. Xử lý logic và Phản hồi</h3>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Response handling</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+resp.getWriter().append(<span class="string">"demo"</span>);
+                    </div>
+                    <p>Phân tích:</p>
+                    <ul>
+                        <li><strong>resp.getWriter():</strong> Lấy đối tượng PrintWriter để ghi dữ liệu</li>
+                        <li><strong>.append("demo"):</strong> Ghi chuỗi "demo" vào response</li>
+                    </ul>
+
+                    <div class="success-box">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết Luồng hoạt động:</h4>
+                        <ol>
+                            <li>Client gửi request tới URL: /hello</li>
+                            <li>Server thấy annotation @WebServlet("/hello") → gọi class Hello</li>
+                            <li>Server tạo đối tượng HttpServletRequest và HttpServletResponse</li>
+                            <li>Server gọi phương thức doGet (vì request là GET)</li>
+                            <li>Code trong doGet chạy: ghi chữ "demo" vào response</li>
+                            <li>Server gửi response về client</li>
+                        </ol>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Bài 1: Giới thiệu Java Servlet - GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

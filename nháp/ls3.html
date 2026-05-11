@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUỔI 3: VÒNG ĐỜI SERVLET, SESSION & COOKIE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+                       text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            height: 80vh;
+            overflow-y: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+        }
+
+        .nav-list {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.6;
+            border: 2px solid #444;
+            white-space: pre;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+            font-family: 'Segoe UI', sans-serif;
+            white-space: normal;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .ascii-art {
+            background: #2d2d2d;
+            color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.2;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fab fa-java"></i> BUỔI 3: VÒNG ĐỜI SERVLET, SESSION & COOKIE</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#gioi-thieu" class="nav-link active"><i class="fas fa-home"></i> Giới thiệu</a></li>
+                    <li class="nav-item"><a href="#lifecycle" class="nav-link"><i class="fas fa-life-ring"></i> Phần 1: Vòng đời Servlet</a></li>
+                    <li class="nav-item"><a href="#container" class="nav-link"><i class="fas fa-server"></i> Phần 2: Container quản lý Servlet</a></li>
+                    <li class="nav-item"><a href="#session" class="nav-link"><i class="fas fa-users"></i> Phần 3: HttpSession</a></li>
+                    <li class="nav-item"><a href="#cookie" class="nav-link"><i class="fas fa-cookie-bite"></i> Phần 4: Cookie</a></li>
+                    <li class="nav-item"><a href="#compare" class="nav-link"><i class="fas fa-balance-scale"></i> Phần 5: So sánh Session & Cookie</a></li>
+                    <li class="nav-item"><a href="#login" class="nav-link"><i class="fas fa-lock"></i> Phần 6: Ứng dụng đăng nhập</a></li>
+                    <li class="nav-item"><a href="#remember" class="nav-link"><i class="fas fa-save"></i> Phần 7: Remember Me</a></li>
+                    <li class="nav-item"><a href="#baitap" class="nav-link"><i class="fas fa-dumbbell"></i> Phần 8: Bài tập</a></li>
+                    <li class="nav-item"><a href="#tongket" class="nav-link"><i class="fas fa-check-circle"></i> Tổng kết</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- GIỚI THIỆU -->
+                <section id="gioi-thieu" class="section active">
+                    <h2><i class="fas fa-home"></i> GIỚI THIỆU BUỔI 3</h2>
+                    <div class="success-box">
+                        <h4>Nội dung chính:</h4>
+                        <ul>
+                            <li>Vòng đời Servlet (init, service, destroy)</li>
+                            <li>Cách Container quản lý Servlet</li>
+                            <li>HttpSession - Quản lý phiên làm việc</li>
+                            <li>Cookie - Lưu dữ liệu ở client</li>
+                            <li>Xây dựng ứng dụng đăng nhập hoàn chỉnh</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1: VÒNG ĐỜI SERVLET -->
+                <section id="lifecycle" class="section">
+                    <h2><i class="fas fa-life-ring"></i> PHẦN 1: VÒNG ĐỜI SERVLET</h2>
+
+                    <h3>1.1. Khái niệm</h3>
+                    <p>Vòng đời Servlet là quá trình từ khi Servlet được tạo ra, xử lý request, đến khi bị hủy bỏ. Toàn bộ quá trình này được quản lý bởi Servlet Container (Tomcat).</p>
+
+                    <h3>1.2. Các giai đoạn</h3>
+                    <div class="ascii-art">
+┌─────────────────┐
+│   LOADING       │ ← Container nạp class Servlet
+└─────────────────┘
+         ↓
+┌─────────────────┐
+│  INSTANTIATION  │ ← Tạo instance (new)
+└─────────────────┘
+         ↓
+┌─────────────────┐
+│  INITIALIZATION │ ← Gọi init() - 1 lần
+└─────────────────┘
+         ↓
+┌─────────────────┐
+│  REQUEST HANDLING│ ← Gọi service() - nhiều lần
+└─────────────────┘
+         ↓
+┌─────────────────┐
+│   DESTRUCTION   │ ← Gọi destroy() - 1 lần
+└─────────────────┘
+                    </div>
+
+                    <h3>1.3. Ba phương thức chính</h3>
+                    
+                    <h4>init()</h4>
+                    <div class="code-block">
+public void init() throws ServletException
+// hoặc
+public void init(ServletConfig config) throws ServletException
+                    </div>
+                    <p>Được gọi 1 lần duy nhất khi Servlet khởi tạo. Dùng để kết nối DB, đọc cấu hình.</p>
+
+                    <h4>service()</h4>
+                    <div class="code-block">
+public void service(ServletRequest req, ServletResponse res) 
+        throws ServletException, IOException
+                    </div>
+                    <p>Được gọi cho mỗi request. Quyết định gọi doGet/doPost.</p>
+
+                    <h4>destroy()</h4>
+                    <div class="code-block">
+public void destroy()
+                    </div>
+                    <p>Được gọi 1 lần khi Servlet bị hủy. Dùng để đóng kết nối, giải phóng tài nguyên.</p>
+
+                    <div class="success-box">
+                        <h4>📌 Ví dụ 1: Minh họa vòng đời</h4>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>LifecycleServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/lifecycle")
+public class LifecycleServlet extends HttpServlet {
+    
+    @Override
+    public void init() throws ServletException {
+        System.out.println("=== 1. init() ===");
+        System.out.println("Servlet được khởi tạo");
+    }
+    
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        System.out.println("=== 2. service() ===");
+        System.out.println("Request: " + req.getMethod() + " " + req.getRequestURI());
+        super.service(req, resp);
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        System.out.println("=== 3. doGet() ===");
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Vòng đời Servlet&lt;/h2&gt;");
+        out.println("&lt;p&gt;Xem console để thấy log&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+    
+    @Override
+    public void destroy() {
+        System.out.println("=== 4. destroy() ===");
+        System.out.println("Servlet bị hủy");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 2: CONTAINER QUẢN LÝ SERVLET -->
+                <section id="container" class="section">
+                    <h2><i class="fas fa-server"></i> PHẦN 2: CÁCH SERVLET ĐƯỢC QUẢN LÝ BỞI CONTAINER</h2>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bước</th>
+                                    <th>Container làm gì</th>
+                                    <th>Thời điểm</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Đọc cấu hình (@WebServlet hoặc web.xml)</td><td>Khi deploy</td></tr>
+                                <tr><td>2</td><td>Nạp class Servlet vào bộ nhớ</td><td>Khi deploy hoặc request đầu</td></tr>
+                                <tr><td>3</td><td>Tạo instance (chỉ 1 lần)</td><td>Request đầu tiên</td></tr>
+                                <tr><td>4</td><td>Gọi init()</td><td>Sau khi tạo instance</td></tr>
+                                <tr><td>5</td><td>Tạo thread mới cho mỗi request</td><td>Mỗi request</td></tr>
+                                <tr><td>6</td><td>Gọi service() → doGet/doPost</td><td>Trong thread</td></tr>
+                                <tr><td>7</td><td>Gọi destroy() và dọn dẹp</td><td>Khi undeploy/shutdown</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="note">
+                        <strong>Servlet là Singleton:</strong> Chỉ có MỘT instance duy nhất cho tất cả request.
+                    </div>
+
+                    <div class="success-box">
+                        <h4>📌 Ví dụ 2: Kiểm tra Servlet là Singleton</h4>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>CounterServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/counter")
+public class CounterServlet extends HttpServlet {
+    
+    private int count = 0; // biến instance
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        count++;
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Kiểm tra Singleton&lt;/h2&gt;");
+        out.println("&lt;p&gt;Số lần truy cập: " + count + "&lt;/p&gt;");
+        out.println("&lt;p&gt;Mở nhiều tab và refresh để thấy số đếm tăng dần&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 3: HTTPSESSION -->
+                <section id="session" class="section">
+                    <h2><i class="fas fa-users"></i> PHẦN 3: HTTPSESSION - QUẢN LÝ PHIÊN LÀM VIỆC</h2>
+
+                    <h3>3.1. Khái niệm Session</h3>
+                    <p>Session là vùng lưu trữ dữ liệu riêng cho từng người dùng, tồn tại xuyên suốt nhiều request.</p>
+
+                    <h4>Đặc điểm:</h4>
+                    <ul>
+                        <li>Mỗi user có một session riêng</li>
+                        <li>Dữ liệu lưu ở server</li>
+                        <li>Tự động hết hạn sau thời gian nhất định</li>
+                        <li>Định danh bằng Session ID (lưu trong cookie)</li>
+                    </ul>
+
+                    <h3>3.2. Các phương thức chính</h3>
+                    
+                    <h4>Lấy session:</h4>
+                    <div class="code-block">
+HttpSession session = request.getSession();  // tạo mới nếu chưa có
+HttpSession session = request.getSession(true);  // giống trên
+HttpSession session = request.getSession(false); // null nếu chưa có
+                    </div>
+
+                    <h4>Thao tác với dữ liệu:</h4>
+                    <div class="code-block">
+session.setAttribute("username", "admin");     // lưu dữ liệu
+String user = (String) session.getAttribute("username"); // đọc dữ liệu
+session.removeAttribute("username");           // xóa một dữ liệu
+session.invalidate();                          // hủy toàn bộ session
+                    </div>
+
+                    <h4>Thông tin session:</h4>
+                    <div class="code-block">
+String id = session.getId();                    // lấy ID
+long time = session.getCreationTime();          // thời gian tạo
+long last = session.getLastAccessedTime();      // lần cuối truy cập
+session.setMaxInactiveInterval(30*60);          // set thời gian sống (giây)
+int interval = session.getMaxInactiveInterval(); // lấy thời gian sống
+                    </div>
+
+                    <div class="success-box">
+                        <h4>📌 Ví dụ 3: Đếm số lần truy cập bằng Session</h4>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>SessionCounterServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/session-counter")
+public class SessionCounterServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession();
+        
+        Integer count = (Integer) session.getAttribute("count");
+        if (count == null) {
+            count = 1;
+        } else {
+            count++;
+        }
+        session.setAttribute("count", count);
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Đếm bằng Session&lt;/h2&gt;");
+        out.println("&lt;p&gt;Session ID: " + session.getId() + "&lt;/p&gt;");
+        out.println("&lt;p&gt;Bạn đã truy cập: " + count + " lần&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 4: COOKIE -->
+                <section id="cookie" class="section">
+                    <h2><i class="fas fa-cookie-bite"></i> PHẦN 4: COOKIE</h2>
+
+                    <h3>4.1. Khái niệm Cookie</h3>
+                    <p>Cookie là dữ liệu nhỏ được server gửi xuống và lưu ở trình duyệt, được gửi lại server mỗi request.</p>
+
+                    <h4>Đặc điểm:</h4>
+                    <ul>
+                        <li>Lưu ở client (trình duyệt)</li>
+                        <li>Dung lượng tối đa 4KB</li>
+                        <li>Có thời gian sống</li>
+                        <li>Kém an toàn hơn session</li>
+                    </ul>
+
+                    <h3>4.2. Các phương thức</h3>
+                    
+                    <h4>Tạo cookie:</h4>
+                    <div class="code-block">
+Cookie cookie = new Cookie("username", "admin");
+cookie.setMaxAge(60*60*24); // 1 ngày
+cookie.setPath("/");
+response.addCookie(cookie);
+                    </div>
+
+                    <h4>Đọc cookie:</h4>
+                    <div class="code-block">
+Cookie[] cookies = request.getCookies();
+if (cookies != null) {
+    for (Cookie c : cookies) {
+        if (c.getName().equals("username")) {
+            String value = c.getValue();
+        }
+    }
+}
+                    </div>
+
+                    <h4>Xóa cookie:</h4>
+                    <div class="code-block">
+Cookie cookie = new Cookie("username", "");
+cookie.setMaxAge(0);
+cookie.setPath("/");
+response.addCookie(cookie);
+                    </div>
+
+                    <div class="success-box">
+                        <h4>📌 Ví dụ 4: Tạo và đọc Cookie</h4>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>CookieDemoServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/cookie-demo")
+public class CookieDemoServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        // Tạo cookie mới
+        Cookie visitCookie = new Cookie("lastVisit", new java.util.Date().toString());
+        visitCookie.setMaxAge(30*24*60*60); // 30 ngày
+        visitCookie.setPath("/");
+        resp.addCookie(visitCookie);
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Cookie Demo&lt;/h2&gt;");
+        
+        // Đọc tất cả cookie
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            out.println("&lt;h3&gt;Các cookie hiện có:&lt;/h3&gt;");
+            out.println("&lt;ul&gt;");
+            for (Cookie c : cookies) {
+                out.println("&lt;li&gt;" + c.getName() + " = " + c.getValue() + 
+                          " (sống: " + c.getMaxAge() + "s)&lt;/li&gt;");
+            }
+            out.println("&lt;/ul&gt;");
+        } else {
+            out.println("&lt;p&gt;Chưa có cookie nào&lt;/p&gt;");
+        }
+        
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 5: SO SÁNH SESSION VÀ COOKIE -->
+                <section id="compare" class="section">
+                    <h2><i class="fas fa-balance-scale"></i> PHẦN 5: SO SÁNH SESSION VÀ COOKIE</h2>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>SESSION</th>
+                                    <th>COOKIE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Nơi lưu trữ</td><td>Server (RAM)</td><td>Client (trình duyệt)</td></tr>
+                                <tr><td>Dung lượng</td><td>Không giới hạn</td><td>Tối đa 4KB</td></tr>
+                                <tr><td>Bảo mật</td><td>Cao</td><td>Thấp</td></tr>
+                                <tr><td>Thời gian sống</td><td>Theo session (30 phút)</td><td>Có thể set lâu dài</td></tr>
+                                <tr><td>Tốc độ</td><td>Nhanh</td><td>Chậm hơn</td></tr>
+                                <tr><td>Dữ liệu nhạy cảm</td><td>✅ Nên dùng</td><td>❌ Không nên</td></tr>
+                                <tr><td>Preferences</td><td>❌ Không nên</td><td>✅ Nên dùng</td></tr>
+                                <tr><td>Cách tạo</td><td>request.getSession()</td><td>new Cookie()</td></tr>
+                                <tr><td>Cách đọc</td><td>session.getAttribute()</td><td>request.getCookies()</td></tr>
+                                <tr><td>Cách xóa</td><td>session.invalidate()</td><td>setMaxAge(0)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- PHẦN 6: ỨNG DỤNG ĐĂNG NHẬP -->
+                <section id="login" class="section">
+                    <h2><i class="fas fa-lock"></i> PHẦN 6: ỨNG DỤNG ĐĂNG NHẬP HOÀN CHỈNH</h2>
+
+                    <div class="ascii-art">
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│  login.jsp  │────▶│ LoginServlet│────▶│  welcome    │
+│  (form)     │ POST│ (xử lý)     │     │  (trang chủ)│
+└─────────────┘     └─────────────┘     └─────────────┘
+                           │                    │
+                           ▼                    ▼
+                    ┌─────────────┐     ┌─────────────┐
+                    │ Tạo session │     │ Kiểm tra    │
+                    │ setAttribute│     │ session     │
+                    └─────────────┘     └─────────────┘
+                    </div>
+
+                    <h4>1. login.jsp</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>login.jsp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Đăng nhập&lt;/title&gt;
+&lt;style&gt;
+    body { font-family: Arial; max-width: 400px; margin: 100px auto; }
+    .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; }
+    button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; }
+    .error { color: red; background: #ffeeee; padding: 10px; border-radius: 4px; }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="login-box"&gt;
+        &lt;h2&gt;ĐĂNG NHẬP&lt;/h2&gt;
+        
+        &lt;%
+            String error = (String) request.getAttribute("error");
+            if (error != null) {
+        %&gt;
+        &lt;div class="error"&gt;&lt;%= error %&gt;&lt;/div&gt;
+        &lt;%
+            }
+        %&gt;
+        
+        &lt;form action="login" method="post"&gt;
+            &lt;input type="text" name="username" placeholder="Tên đăng nhập" required&gt;
+            &lt;input type="password" name="password" placeholder="Mật khẩu" required&gt;
+            &lt;button type="submit"&gt;ĐĂNG NHẬP&lt;/button&gt;
+        &lt;/form&gt;
+        
+        &lt;hr&gt;
+        &lt;p&gt;Gợi ý: admin / 123&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+
+                    <h4>2. LoginServlet.java</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>LoginServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if (session != null && session.getAttribute("username") != null) {
+            resp.sendRedirect("welcome");
+        } else {
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
+        }
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        
+        if ("admin".equals(username) && "123".equals(password)) {
+            HttpSession session = req.getSession();
+            session.setAttribute("username", username);
+            session.setAttribute("loginTime", new java.util.Date().toString());
+            resp.sendRedirect("welcome");
+        } else {
+            req.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu!");
+            req.getRequestDispatcher("login.jsp").forward(req, resp);
+        }
+    }
+}
+                    </div>
+
+                    <h4>3. WelcomeServlet.java</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>WelcomeServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/welcome")
+public class WelcomeServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("username") == null) {
+            resp.sendRedirect("login");
+            return;
+        }
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        PrintWriter out = resp.getWriter();
+        
+        String username = (String) session.getAttribute("username");
+        String loginTime = (String) session.getAttribute("loginTime");
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Chào mừng " + username + "!&lt;/h2&gt;");
+        out.println("&lt;p&gt;Thời gian đăng nhập: " + loginTime + "&lt;/p&gt;");
+        out.println("&lt;p&gt;&lt;a href='logout'&gt;Đăng xuất&lt;/a&gt;&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+
+                    <h4>4. LogoutServlet.java</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>LogoutServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/logout")
+public class LogoutServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        resp.sendRedirect("login");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 7: REMEMBER ME -->
+                <section id="remember" class="section">
+                    <h2><i class="fas fa-save"></i> PHẦN 7: REMEMBER ME VỚI COOKIE</h2>
+
+                    <h4>login-remember.jsp</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>login-remember.jsp</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+&lt;%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;title&gt;Đăng nhập với Remember Me&lt;/title&gt;
+&lt;%
+    String savedUsername = "";
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie c : cookies) {
+            if ("rememberUsername".equals(c.getName())) {
+                savedUsername = c.getValue();
+                break;
+            }
+        }
+    }
+%&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;ĐĂNG NHẬP (CÓ REMEMBER ME)&lt;/h2&gt;
+    
+    &lt;form action="login-remember" method="post"&gt;
+        &lt;input type="text" name="username" value="&lt;%= savedUsername %&gt;"&gt;&lt;br&gt;
+        &lt;input type="password" name="password"&gt;&lt;br&gt;
+        &lt;label&gt;
+            &lt;input type="checkbox" name="remember" 
+                   &lt;%= !savedUsername.isEmpty() ? "checked" : "" %&gt;&gt;
+            Ghi nhớ đăng nhập (30 ngày)
+        &lt;/label&gt;&lt;br&gt;
+        &lt;button type="submit"&gt;ĐĂNG NHẬP&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                    </div>
+
+                    <h4>LoginRememberServlet.java</h4>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>LoginRememberServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/login-remember")
+public class LoginRememberServlet extends HttpServlet {
+    
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        String username = req.getParameter("username");
+        String password = req.getParameter("password");
+        String remember = req.getParameter("remember");
+        
+        if ("admin".equals(username) && "123".equals(password)) {
+            
+            HttpSession session = req.getSession();
+            session.setAttribute("username", username);
+            
+            if (remember != null) {
+                Cookie cookie = new Cookie("rememberUsername", username);
+                cookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày
+                cookie.setPath("/");
+                resp.addCookie(cookie);
+            } else {
+                Cookie cookie = new Cookie("rememberUsername", "");
+                cookie.setMaxAge(0);
+                cookie.setPath("/");
+                resp.addCookie(cookie);
+            }
+            
+            resp.sendRedirect("welcome");
+            
+        } else {
+            req.setAttribute("error", "Sai tên đăng nhập hoặc mật khẩu!");
+            req.getRequestDispatcher("login-remember.jsp").forward(req, resp);
+        }
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 8: BÀI TẬP -->
+                <section id="baitap" class="section">
+                    <h2><i class="fas fa-dumbbell"></i> PHẦN 8: BÀI TẬP THỰC HÀNH</h2>
+
+                    <div class="success-box">
+                        <h4>📌 Bài tập 1: Đếm số lần truy cập</h4>
+                        <p>Viết Servlet đếm số lần người dùng truy cập vào trang web, lưu bằng Session.</p>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>VisitCounterServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/visit-counter")
+public class VisitCounterServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession();
+        Integer count = (Integer) session.getAttribute("visitCount");
+        
+        if (count == null) {
+            count = 1;
+        } else {
+            count++;
+        }
+        session.setAttribute("visitCount", count);
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Bài tập đếm số lần truy cập&lt;/h2&gt;");
+        out.println("&lt;p&gt;Bạn đã truy cập: " + count + " lần&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+
+                    <div class="success-box">
+                        <h4>📌 Bài tập 2: Lưu theme bằng Cookie</h4>
+                        <p>Cho phép người dùng chọn theme (sáng/tối) và lưu bằng Cookie.</p>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>ThemeServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/theme")
+public class ThemeServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        String theme = req.getParameter("theme");
+        
+        if (theme != null) {
+            Cookie cookie = new Cookie("theme", theme);
+            cookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày
+            cookie.setPath("/");
+            resp.addCookie(cookie);
+        }
+        
+        // Đọc cookie hiện tại
+        String currentTheme = "light";
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("theme".equals(c.getName())) {
+                    currentTheme = c.getValue();
+                    break;
+                }
+            }
+        }
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        String bgColor = "dark".equals(currentTheme) ? "#333" : "white";
+        String textColor = "dark".equals(currentTheme) ? "white" : "black";
+        
+        out.println("&lt;html&gt;&lt;body style='background:" + bgColor + ";color:" + textColor + "'&gt;");
+        out.println("&lt;h2&gt;Chọn theme&lt;/h2&gt;");
+        out.println("&lt;a href='theme?theme=light'&gt;Light&lt;/a&gt; | ");
+        out.println("&lt;a href='theme?theme=dark'&gt;Dark&lt;/a&gt;");
+        out.println("&lt;p&gt;Theme hiện tại: " + currentTheme + "&lt;/p&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+
+                    <div class="success-box">
+                        <h4>📌 Bài tập 3: Giỏ hàng đơn giản</h4>
+                        <p>Thêm sản phẩm vào giỏ hàng và lưu trong Session.</p>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>CartServlet.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+package test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@WebServlet("/cart")
+public class CartServlet extends HttpServlet {
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        
+        HttpSession session = req.getSession();
+        List&lt;String&gt; cart = (List&lt;String&gt;) session.getAttribute("cart");
+        
+        if (cart == null) {
+            cart = new ArrayList&lt;&gt;();
+            session.setAttribute("cart", cart);
+        }
+        
+        String action = req.getParameter("action");
+        String product = req.getParameter("product");
+        
+        if ("add".equals(action) && product != null) {
+            cart.add(product);
+        } else if ("remove".equals(action) && product != null) {
+            cart.remove(product);
+        }
+        
+        resp.setContentType("text/html;charset=UTF-8");
+        var out = resp.getWriter();
+        
+        out.println("&lt;html&gt;&lt;body&gt;");
+        out.println("&lt;h2&gt;Giỏ hàng&lt;/h2&gt;");
+        out.println("&lt;h3&gt;Sản phẩm:&lt;/h3&gt;");
+        out.println("&lt;ul&gt;");
+        out.println("&lt;li&gt;&lt;a href='cart?action=add&amp;product=Laptop'&gt;Thêm Laptop&lt;/a&gt;&lt;/li&gt;");
+        out.println("&lt;li&gt;&lt;a href='cart?action=add&amp;product=Phone'&gt;Thêm Phone&lt;/a&gt;&lt;/li&gt;");
+        out.println("&lt;li&gt;&lt;a href='cart?action=add&amp;product=Tablet'&gt;Thêm Tablet&lt;/a&gt;&lt;/li&gt;");
+        out.println("&lt;/ul&gt;");
+        
+        out.println("&lt;h3&gt;Giỏ hàng hiện tại:&lt;/h3&gt;");
+        out.println("&lt;ul&gt;");
+        for (String item : cart) {
+            out.println("&lt;li&gt;" + item + " &lt;a href='cart?action=remove&amp;product=" + item + "'&gt;[Xóa]&lt;/a&gt;&lt;/li&gt;");
+        }
+        out.println("&lt;/ul&gt;");
+        out.println("&lt;/body&gt;&lt;/html&gt;");
+    }
+}
+                    </div>
+                </section>
+
+                <!-- PHẦN 9: TỔNG KẾT -->
+                <section id="tongket" class="section">
+                    <h2><i class="fas fa-check-circle"></i> TỔNG KẾT BUỔI 3</h2>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Cú pháp chính</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Vòng đời</td><td>init(), service(), destroy()</td></tr>
+                                <tr><td>Tạo session</td><td>request.getSession()</td></tr>
+                                <tr><td>Lưu session</td><td>session.setAttribute("key", value)</td></tr>
+                                <tr><td>Đọc session</td><td>session.getAttribute("key")</td></tr>
+                                <tr><td>Xóa session</td><td>session.invalidate()</td></tr>
+                                <tr><td>Tạo cookie</td><td>Cookie c = new Cookie("name", "value")</td></tr>
+                                <tr><td>Gửi cookie</td><td>response.addCookie(c)</td></tr>
+                                <tr><td>Đọc cookie</td><td>request.getCookies()</td></tr>
+                                <tr><td>Xóa cookie</td><td>setMaxAge(0)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="note">
+                        <h4>Lưu ý quan trọng:</h4>
+                        <ul>
+                            <li>Servlet là Singleton - chỉ có 1 instance cho tất cả request</li>
+                            <li>Session lưu ở server - an toàn cho dữ liệu nhạy cảm</li>
+                            <li>Cookie lưu ở client - phù hợp cho preferences</li>
+                            <li>Luôn kiểm tra session trước khi cho phép truy cập trang bảo mật</li>
+                        </ul>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Giáo trình Java Servlet - Buổi 3: Vòng đời Servlet, Session & Cookie &copy; 2024</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
