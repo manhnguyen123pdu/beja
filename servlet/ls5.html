@@ -1,0 +1,2659 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xin DỰNG REST API BẰNG SERVLET</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            height: 80vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .nav-link1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+        }
+
+        .btn-run {
+            background: var(--success);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+            }
+        }
+
+        .visual-array {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .array-item {
+            width: 60px;
+            height: 60px;
+            background: var(--secondary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .array-index {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            color: var(--dark);
+        }
+
+        .array-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .algorithm-steps {
+            background: #f0f7ff;
+            border-left: 4px solid #4dabf7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .algorithm-steps ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .algorithm-steps li {
+            margin-bottom: 5px;
+        }
+
+        .method-demo {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .demo .wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .demo .array {
+            display: flex;
+        }
+
+        .demo .item {
+            width: 100px;
+            padding: 15px;
+            margin: 5px;
+            background: white;
+            color: black;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.4s;
+        }
+
+        .demo .active {
+            background: #ffcc00;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .demo .arrow {
+            position: absolute;
+            top: -35px;
+            font-size: 28px;
+            transition: 0.4s;
+        }
+
+        .demo .index {
+            margin-top: 30px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code-branch"></i> XÂY DỰNG REST API BẰNG SERVLET</h1>
+        </header>
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#part1" class="nav-link active"><i class="fas fa-globe"></i> PHẦN 1:
+                            Tổng quan về API và REST</a></li>
+                    <li class="nav-item"><a href="#part2" class="nav-link"><i class="fas fa-server"></i> PHẦN 2: Servlet
+                            cho API</a></li>
+                    <li class="nav-item"><a href="#part3" class="nav-link"><i class="fas fa-exchange-alt"></i> PHẦN 3:
+                            Request trong Servlet</a></li>
+                    <li class="nav-item"><a href="#part4" class="nav-link"><i class="fas fa-database"></i> PHẦN 4: Chuẩn
+                            bị tài nguyên (DB, Model, DBConnection)</a></li>
+                    <li class="nav-item"><a href="#part5" class="nav-link"><i class="fas fa-search"></i> PHẦN 5: GET -
+                            Lấy dữ liệu</a></li>
+                    <li class="nav-item"><a href="#part6" class="nav-link"><i class="fas fa-plus-circle"></i> PHẦN 6:
+                            POST - Thêm dữ liệu</a></li>
+                    <li class="nav-item"><a href="#part7" class="nav-link"><i class="fas fa-trash-alt"></i> PHẦN 7:
+                            DELETE - Xóa dữ liệu</a></li>
+                    <li class="nav-item"><a href="#part8" class="nav-link"><i class="fas fa-edit"></i> PHẦN 8: PUT - Cập
+                            nhật dữ liệu</a></li>
+                </ul>
+            </nav>
+            <main class="main-content">
+                <!-- PHẦN 1: TỔNG QUAN VỀ API VÀ REST -->
+                <section id="part1" class="section active">
+                    <h2><i class="fas fa-globe"></i> PHẦN 1: TỔNG QUAN VỀ API VÀ REST</h2>
+                    <h3>1.1 API là gì? (Lý thuyết)</h3>
+                    <p><span class="badge">Định nghĩa</span> API (Application Programming Interface) là một tập hợp các
+                        quy tắc và giao thức cho phép các ứng dụng phần mềm giao tiếp với nhau.</p>
+                    <h4>Ví dụ thực tế</h4>
+                    <p>Hãy tưởng tượng bạn vào một nhà hàng:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Vai trò</th>
+                                    <th>Trong API</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bạn</td>
+                                    <td>Người dùng</td>
+                                    <td>Client (App, Web)</td>
+                                </tr>
+                                <tr>
+                                    <td>Người phục vụ</td>
+                                    <td>Người trung gian</td>
+                                    <td>API</td>
+                                </tr>
+                                <tr>
+                                    <td>Đầu bếp</td>
+                                    <td>Người xử lý</td>
+                                    <td>Server</td>
+                                </tr>
+                                <tr>
+                                    <td>Thực đơn</td>
+                                    <td>Danh sách các món có thể gọi</td>
+                                    <td>Documentation</td>
+                                </tr>
+                                <tr>
+                                    <td>Món ăn</td>
+                                    <td>Dữ liệu</td>
+                                    <td>Response</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Quy trình: Bạn xem thực đơn → API cung cấp danh sách các endpoint<br>Bạn gọi món (gửi request) →
+                        Client gọi API<br>Người phục vụ chuyển cho đầu bếp → API chuyển cho Server<br>Đầu bếp nấu món →
+                        Server xử lý<br>Món ăn được mang ra → Server trả response</p>
+                    <h4>Tại sao cần API?</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Vấn đề</th>
+                                    <th>Giải pháp từ API</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Ứng dụng cần lấy dữ liệu từ server</td>
+                                    <td>API cung cấp dữ liệu qua HTTP</td>
+                                </tr>
+                                <tr>
+                                    <td>Nhiều nền tảng (Web, iOS, Android) cùng dùng chung dữ liệu</td>
+                                    <td>API là lớp trung gian duy nhất</td>
+                                </tr>
+                                <tr>
+                                    <td>Bảo mật dữ liệu</td>
+                                    <td>API kiểm soát ai được truy cập gì</td>
+                                </tr>
+                                <tr>
+                                    <td>Tách biệt frontend và backend</td>
+                                    <td>Frontend chỉ gọi API, không cần biết backend xử lý thế nào</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h3>1.2 REST API là gì? (Lý thuyết)</h3>
+                    <p><span class="badge">Định nghĩa</span> REST (Representational State Transfer) là một phong cách
+                        kiến trúc để xây dựng API, do Roy Fielding đề xuất năm 2000.</p>
+                    <h4>6 Nguyên tắc của REST</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nguyên tắc</th>
+                                    <th>Giải thích</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1. Client-Server</td>
+                                    <td>Tách biệt giao diện và xử lý</td>
+                                    <td>Frontend (React) gọi Backend (Servlet)</td>
+                                </tr>
+                                <tr>
+                                    <td>2. Stateless</td>
+                                    <td>Server không lưu trạng thái client</td>
+                                    <td>Mỗi request phải có đầy đủ thông tin</td>
+                                </tr>
+                                <tr>
+                                    <td>3. Cacheable</td>
+                                    <td>Response có thể được lưu lại</td>
+                                    <td>Các request GET có thể cache</td>
+                                </tr>
+                                <tr>
+                                    <td>4. Uniform Interface</td>
+                                    <td>Giao diện thống nhất</td>
+                                    <td>Dùng chung cách đặt URL, method HTTP</td>
+                                </tr>
+                                <tr>
+                                    <td>5. Layered System</td>
+                                    <td>Hệ thống phân lớp</td>
+                                    <td>Có thể thêm proxy, gateway ở giữa</td>
+                                </tr>
+                                <tr>
+                                    <td>6. Code on Demand</td>
+                                    <td>Server gửi code xuống client</td>
+                                    <td>(Tùy chọn, ít dùng)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4>Stateless - Quan trọng nhất!</h4>
+                    <div class="code-block">
+                        <pre>- Stateful (CÓ lưu trạng thái) - KHÔNG phải REST:
+Request 1: "Tôi là A, cho tôi xem sản phẩm"
+Server: Nhớ "A đang xem sản phẩm"
+
+Request 2: "Thêm vào giỏ"
+Server: Nhớ "A thêm sản phẩm X vào giỏ"
+
+Request 3: "Thanh toán"
+Server: Nhớ "A thanh toán giỏ hàng"
+
++ Stateless (KHÔNG lưu trạng thái) - REST đúng chuẩn:
+Request 1: "Tôi là A, token=xyz123, cho tôi xem sản phẩm"
+Request 2: "Tôi là A, token=xyz123, thêm sản phẩm X vào giỏ hàng của tôi"
+Request 3: "Tôi là A, token=xyz123, thanh toán giỏ hàng của tôi"</pre>
+                    </div>
+                    <p>REST API trông như thế nào?</p>
+                    <div class="code-block">
+                        <pre>GET    /users          → Lấy danh sách users
+GET    /users/5        → Lấy user có ID = 5
+POST   /users          → Thêm user mới
+PUT    /users/5        → Cập nhật user ID = 5
+DELETE /users/5        → Xóa user ID = 5</pre>
+                    </div>
+                    <h3>1.3 HTTP Method (Phương thức) (Lý thuyết)</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Mục đích</th>
+                                    <th>Idempotent?</th>
+                                    <th>Có body?</th>
+                                    <th>An toàn?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GET</td>
+                                    <td>Lấy dữ liệu</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                </tr>
+                                <tr>
+                                    <td>POST</td>
+                                    <td>Tạo mới</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>PUT</td>
+                                    <td>Cập nhật toàn bộ</td>
+                                    <td>Có</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>PATCH</td>
+                                    <td>Cập nhật một phần</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>DELETE</td>
+                                    <td>Xóa</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                    <td>Không</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Giải thích chi tiết</strong><br>
+
+  <h3 style="color:#333;margin-bottom:30px;">
+    HTTP Methods trong REST API
+  </h3>
+
+  <!-- GET -->
+  <div style="background:white;padding:25px;border-radius:12px;
+              box-shadow:0 4px 10px rgba(0,0,0,0.1);
+              margin-bottom:20px;">
+
+    <span style="display:inline-block;
+                 background:#28a745;
+                 color:white;
+                 padding:8px 16px;
+                 border-radius:8px;
+                 font-weight:bold;
+                 margin-bottom:15px;">
+      GET
+    </span>
+
+    <h4 style="color:#222;">1. GET - Lấy dữ liệu</h4>
+
+    <pre style="background:#1e1e1e;
+                color:#00ff88;
+                padding:15px;
+                border-radius:8px;
+                overflow:auto;">
+GET /users         → Lấy tất cả users
+GET /users/1       → Lấy user có id = 1
+GET /users?name=An → Tìm user tên "An"
+    </pre>
+
+    <p style="line-height:1.8;color:#444;">
+      <b>Đặc điểm:</b><br>
+      - Không làm thay đổi dữ liệu trên server.<br>
+      - Có thể lưu cache.<br>
+      - Dữ liệu gửi qua URL (Query String).
+    </p>
+  </div>
+
+  <!-- POST -->
+  <div style="background:white;padding:25px;border-radius:12px;
+              box-shadow:0 4px 10px rgba(0,0,0,0.1);
+              margin-bottom:20px;">
+
+    <span style="display:inline-block;
+                 background:#007bff;
+                 color:white;
+                 padding:8px 16px;
+                 border-radius:8px;
+                 font-weight:bold;
+                 margin-bottom:15px;">
+      POST
+    </span>
+
+    <h4 style="color:#222;">2. POST - Tạo mới</h4>
+
+    <pre style="background:#1e1e1e;
+                color:#00ff88;
+                padding:15px;
+                border-radius:8px;
+                overflow:auto;">
+POST /users
+
+Body:
+{
+  "name": "Nguyễn Văn A",
+  "email": "a@gmail.com"
+}
+    </pre>
+
+    <p style="line-height:1.8;color:#444;">
+      <b>Đặc điểm:</b><br>
+      - Tạo tài nguyên mới.<br>
+      - Gửi 2 lần → tạo 2 bản ghi khác nhau.<br>
+      - Dữ liệu gửi trong Body.
+    </p>
+  </div>
+
+  <!-- PUT -->
+  <div style="background:white;padding:25px;border-radius:12px;
+              box-shadow:0 4px 10px rgba(0,0,0,0.1);
+              margin-bottom:20px;">
+
+    <span style="display:inline-block;
+                 background:#fd7e14;
+                 color:white;
+                 padding:8px 16px;
+                 border-radius:8px;
+                 font-weight:bold;
+                 margin-bottom:15px;">
+      PUT
+    </span>
+
+    <h4 style="color:#222;">3. PUT - Cập nhật toàn bộ</h4>
+
+    <pre style="background:#1e1e1e;
+                color:#00ff88;
+                padding:15px;
+                border-radius:8px;
+                overflow:auto;">
+PUT /users/1
+
+Body:
+{
+  "name": "Nguyễn Văn A (sửa)",
+  "email": "a_new@gmail.com"
+}
+    </pre>
+
+    <p style="line-height:1.8;color:#444;">
+      <b>Đặc điểm:</b><br>
+      - Thay thế hoàn toàn tài nguyên.<br>
+      - Gửi 2 lần → kết quả giống nhau.<br>
+      - Phải gửi đầy đủ thông tin.
+    </p>
+  </div>
+
+  <!-- PATCH -->
+  <div style="background:white;padding:25px;border-radius:12px;
+              box-shadow:0 4px 10px rgba(0,0,0,0.1);
+              margin-bottom:20px;">
+
+    <span style="display:inline-block;
+                 background:#6f42c1;
+                 color:white;
+                 padding:8px 16px;
+                 border-radius:8px;
+                 font-weight:bold;
+                 margin-bottom:15px;">
+      PATCH
+    </span>
+
+    <h4 style="color:#222;">4. PATCH - Cập nhật một phần</h4>
+
+    <pre style="background:#1e1e1e;
+                color:#00ff88;
+                padding:15px;
+                border-radius:8px;
+                overflow:auto;">
+PATCH /users/1
+
+Body:
+{
+  "name": "Nguyễn Văn A (sửa)"
+}
+    </pre>
+
+    <p style="line-height:1.8;color:#444;">
+      <b>Đặc điểm:</b><br>
+      - Chỉ cập nhật các trường được gửi.<br>
+      - Tiết kiệm băng thông.
+    </p>
+  </div>
+
+  <!-- DELETE -->
+  <div style="background:white;padding:25px;border-radius:12px;
+              box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+
+    <span style="display:inline-block;
+                 background:#dc3545;
+                 color:white;
+                 padding:8px 16px;
+                 border-radius:8px;
+                 font-weight:bold;
+                 margin-bottom:15px;">
+      DELETE
+    </span>
+
+    <h4 style="color:#222;">5. DELETE - Xóa</h4>
+
+    <pre style="background:#1e1e1e;
+                color:#00ff88;
+                padding:15px;
+                border-radius:8px;
+                overflow:auto;">
+DELETE /users/1
+    </pre>
+
+    <p style="line-height:1.8;color:#444;">
+      <b>Đặc điểm:</b><br>
+      - Xóa tài nguyên.<br>
+      - Gửi 2 lần:<br>
+      + Lần đầu → xóa thành công.<br>
+      + Lần sau → không tìm thấy dữ liệu.
+    </p>
+  </div>
+
+                    <h3>1.4 HTTP Status Code (Mã trạng thái) (Lý thuyết)</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nhóm</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1xx</td>
+                                    <td>Thông tin</td>
+                                    <td>100 Continue</td>
+                                </tr>
+                                <tr>
+                                    <td>2xx</td>
+                                    <td>Thành công</td>
+                                    <td>200 OK, 201 Created</td>
+                                </tr>
+                                <tr>
+                                    <td>3xx</td>
+                                    <td>Chuyển hướng</td>
+                                    <td>301 Moved, 304 Not Modified</td>
+                                </tr>
+                                
+                                <td>4xx</td>
+                                <td>Lỗi client</td>
+                                <td>400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found</td>
+                                </tr>
+                                <tr>
+                                    <td>5xx</td>
+                                    <td>Lỗi server</td>
+                                    <td>500 Internal Server Error</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Mã</th>
+                                    <th>Tên</th>
+                                    <th>Khi nào trả về</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>200</td>
+                                    <td>OK</td>
+                                    <td>GET, PUT, DELETE thành công</td>
+                                    <td>Lấy danh sách users</td>
+                                </tr>
+                                <tr>
+                                    <td>201</td>
+                                    <td>Created</td>
+                                    <td>POST thành công</td>
+                                    <td>Tạo user mới</td>
+                                </tr>
+                                <tr>
+                                    <td>204</td>
+                                    <td>No Content</td>
+                                    <td>Xóa thành công (không trả dữ liệu)</td>
+                                    <td>DELETE user</td>
+                                </tr>
+                                <tr>
+                                    <td>400</td>
+                                    <td>Bad Request</td>
+                                    <td>Dữ liệu gửi lên không hợp lệ</td>
+                                    <td>Thiếu trường name, email sai định dạng</td>
+                                </tr>
+                                <tr>
+                                    <td>401</td>
+                                    <td>Unauthorized</td>
+                                    <td>Chưa đăng nhập</td>
+                                    <td>Gọi API yêu cầu login</td>
+                                </tr>
+                                <tr>
+                                    <td>403</td>
+                                    <td>Forbidden</td>
+                                    <td>Đã login nhưng không có quyền</td>
+                                    <td>User thường cố xóa user khác</td>
+                                </tr>
+                                <tr>
+                                    <td>404</td>
+                                    <td>Not Found</td>
+                                    <td>Không tìm thấy tài nguyên</td>
+                                    <td>GET /users/999</td>
+                                </tr>
+                                <tr>
+                                    <td>405</td>
+                                    <td>Method Not Allowed</td>
+                                    <td>Gửi sai phương thức</td>
+                                    <td>POST vào endpoint chỉ hỗ trợ GET</td>
+                                </tr>
+                                <tr>
+                                    <td>500</td>
+                                    <td>Internal Server Error</td>
+                                    <td>Lỗi từ phía server</td>
+                                    <td>Code bị lỗi, database die</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h3>1.5 JSON - Định dạng dữ liệu (Lý thuyết)</h3>
+                    <p><span class="badge">Định nghĩa</span> JSON (JavaScript Object Notation) là định dạng dữ liệu nhẹ,
+                        dễ đọc cho người và dễ phân tích cho máy.</p>
+                    <div class="code-block">
+                        <pre>{
+    "key1": "value1",
+    "key2": 123,
+    "key3": true,
+    "key4": null,
+    "key5": {
+        "nestedKey": "nestedValue"
+    },
+    "key6": ["item1", "item2", "item3"]
+}</pre>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Kiểu</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>String</td>
+                                    <td>Chuỗi ký tự</td>
+                                    <td>"Nguyễn Văn A"</td>
+                                </tr>
+                                <tr>
+                                    <td>Number</td>
+                                    <td>Số nguyên hoặc số thực</td>
+                                    <td>25, 3.14</td>
+                                </tr>
+                                <tr>
+                                    <td>Boolean</td>
+                                    <td>Đúng/Sai</td>
+                                    <td>true, false</td>
+                                </tr>
+                                <tr>
+                                    <td>Null</td>
+                                    <td>Giá trị rỗng</td>
+                                    <td>null</td>
+                                </tr>
+                                <tr>
+                                    <td>Object</td>
+                                    <td>Đối tượng lồng nhau</td>
+                                    <td>{"name":"A","age":25}</td>
+                                </tr>
+                                <tr>
+                                    <td>Array</td>
+                                    <td>Mảng các giá trị</td>
+                                    <td>["A","B","C"]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="code-block">
+                        <pre>{
+    "id": 1,
+    "name": "Nguyễn Văn A",
+    "email": "a@gmail.com",
+    "age": 25,
+    "active": true,
+    "address": {
+        "street": "123 Lê Lợi",
+        "city": "Hà Nội"
+    },
+    "hobbies": ["đọc sách", "bơi lội", "code"]
+}</pre>
+                    </div>
+                    <p>Lý do JSON được ưa chuộng: Ngắn gọn, dễ đọc, dễ xử lý trong JavaScript.</p>
+                    <hr>
+                    </section>
+                    <section id="part2" class="section ">
+                        
+                    <!-- PHẦN 2: SERVLET CHO API -->
+                    <h2 id="part2"><i class="fas fa-server"></i> PHẦN 2: SERVLET CHO API</h2>
+                    <h3>2.1 Servlet là gì? (Lý thuyết)</h3>
+                    <p><span class="badge">Định nghĩa</span> Servlet là một class Java chạy trên server, nhận request từ
+                        client và trả về response.</p>
+                
+                    <img src="./img/Servlet.png" style="width: 60%;" alt="">
+                  
+                    <p>Vòng đời của Servlet:</p>
+                    <div class="code-block">
+                        <pre>1. Container tải Servlet
+         ↓
+2. Gọi constructor → Tạo instance
+         ↓
+3. Gọi init() → 1 LẦN DUY NHẤT
+         ↓
+4. Gọi service() → MỖI REQUEST
+    ├─ doGet()  → Xử lý GET
+    ├─ doPost() → Xử lý POST
+    ├─ doPut()  → Xử lý PUT
+    └─ doDelete() → Xử lý DELETE
+         ↓
+5. Gọi destroy() → KHI DỪNG ỨNG DỤNG</pre>
+                    </div>
+                    <table class="table-container">
+                        <tr>
+                            <thead>
+                                <tr>
+                                    <th>Method</th>
+                                    <th>Thời điểm gọi</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>init()</td>
+                                    <td>1 lần khi Servlet được tải</td>
+                                    <td>Khởi tạo tài nguyên (kết nối DB, đọc config)</td>
+                                </tr>
+                                <tr>
+                                    <td>service()</td>
+                                    <td>Mỗi request</td>
+                                    <td>Phân loại request (GET/POST/...)</td>
+                                </tr>
+                                <tr>
+                                    <td>doGet()</td>
+                                    <td>Request GET</td>
+                                    <td>Xử lý lấy dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>doPost()</td>
+                                    <td>Request POST</td>
+                                    <td>Xử lý thêm dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td>doPut()</td>
+                                    <td>Request PUT</td>
+                                    <td>Xử lý cập nhật</td>
+                                </tr>
+                                <tr>
+                                    <td>doDelete()</td>
+                                    <td>Request DELETE</td>
+                                    <td>Xử lý xóa</td>
+                                </tr>
+                                <tr>
+                                    <td>destroy()</td>
+                                    <td>1 lần khi Servlet bị hủy</td>
+                                    <td>Giải phóng tài nguyên</td>
+                                </tr>
+                            </tbody>
+                            </table>
+                   
+                    <hr>
+
+                    </section>
+                    
+                  <section id="part3" class="section">
+                      <!-- PHẦN 3: REQUEST TRONG SERVLET -->
+                    <h2 id="part3"><i class="fas fa-exchange-alt"></i> PHẦN 3: REQUEST TRONG SERVLET</h2>
+                    <h3>3.1 Các thành phần của HTTP Request</h3>
+                    <div class="code-block">
+                        <pre>POST /users HTTP/1.1                    ← Request Line (Method + URL + Version)
+Host: localhost:8080                     ← Header
+Content-Type: application/json          ← Header
+Content-Length: 45                      ← Header
+                                        ← Dòng trống
+{"name": "Nguyễn Văn A", "age": 25}    ← Body</pre>
+                    </div>
+                    <h3>3.2 Cách đọc thông tin request trong Servlet</h3>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="annotation">@WebServlet</span>(<span class="string">"/demo"</span>)
+<span class="keyword">public class</span> <span class="class-name">DemoServlet</span> <span class="keyword">extends</span> HttpServlet {
+    
+    <span class="keyword">protected void</span> doPost(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+        
+        <span class="comment">// ===== 1. ĐỌC REQUEST LINE =====</span>
+        String method = request.getMethod();           <span class="comment">// GET, POST, PUT, DELETE</span>
+        String uri = request.getRequestURI();          <span class="comment">// /demo</span>
+        String url = request.getRequestURL().toString(); <span class="comment">// http://localhost:8080/demo</span>
+        String protocol = request.getProtocol();       <span class="comment">// HTTP/1.1</span>
+        
+        <span class="comment">// ===== 2. ĐỌC QUERY STRING (dành cho GET) =====</span>
+        <span class="comment">// Ví dụ: /demo?name=An&age=25</span>
+        String name = request.getParameter(<span class="string">"name"</span>);    <span class="comment">// "An"</span>
+        String age = request.getParameter(<span class="string">"age"</span>);      <span class="comment">// "25"</span>
+        
+        <span class="comment">// ===== 3. ĐỌC PATH VARIABLE (từ URL pattern) =====</span>
+        <span class="comment">// Cần cấu hình @WebServlet("/users/*")</span>
+        String pathInfo = request.getPathInfo();       <span class="comment">// /1 nếu URL là /users/1</span>
+        
+        <span class="comment">// ===== 4. ĐỌC HEADERS =====</span>
+        String contentType = request.getHeader(<span class="string">"Content-Type"</span>);
+        String userAgent = request.getHeader(<span class="string">"User-Agent"</span>);
+        String auth = request.getHeader(<span class="string">"Authorization"</span>);
+        
+        <span class="comment">// ===== 5. ĐỌC BODY (dành cho POST, PUT) =====</span>
+        StringBuilder sb = <span class="keyword">new</span> StringBuilder();
+        String line;
+        <span class="keyword">try</span> (BufferedReader reader = request.getReader()) {
+            <span class="keyword">while</span> ((line = reader.readLine()) != <span class="keyword">null</span>) {
+                sb.append(line);
+            }
+        }
+        String body = sb.toString();  <span class="comment">// Nội dung JSON gửi lên</span>
+        
+        <span class="comment">// ===== 6. ĐỌC COOKIE =====</span>
+        Cookie[] cookies = request.getCookies();
+        
+        <span class="comment">// ===== 7. ĐỌC SESSION =====</span>
+        jakarta.servlet.http.HttpSession session = request.getSession();
+        
+        <span class="comment">// Trả về response để kiểm tra</span>
+        response.setContentType(<span class="string">"application/json"</span>);
+        PrintWriter out = response.getWriter();
+        out.print(<span class="string">"{\"method\":\""</span> + method + <span class="string">"\", \"uri\":\""</span> + uri + <span class="string">"\"}"</span>);
+    }
+}</pre>
+                    </div>
+                    <h3>3.3 Phân tích URL</h3>
+                    <img src="./img/url.png" style="width: 100%;" alt="">
+                    <hr>
+
+                  </section>
+                  <section  id="part4" class="section">
+                      <!-- PHẦN 4: CHUẨN BỊ TÀI NGUYÊN -->
+                    <h2 id="part4"><i class="fas fa-database"></i> PHẦN 4: CHUẨN BỊ TÀI NGUYÊN (DB, Model, DBConnection)
+                    </h2>
+                    <h3>KẾT NỐI DATABASE</h3>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">CREATE DATABASE</span> product_db;
+<span class="keyword">USE</span> product_db;
+
+<span class="keyword">CREATE TABLE</span> products (
+    id <span class="keyword">INT PRIMARY KEY AUTO_INCREMENT</span>,
+    name <span class="keyword">VARCHAR(200) NOT NULL</span>,
+    price <span class="keyword">DOUBLE NOT NULL</span>,
+    quantity <span class="keyword">INT NOT NULL</span>,
+    category <span class="keyword">VARCHAR(100)</span>
+);
+
+<span class="keyword">INSERT INTO</span> products (name, price, quantity, category) <span class="keyword">VALUES</span>
+(<span class="string">'Laptop Dell XPS'</span>, 1500.0, 10, <span class="string">'Laptop'</span>),
+(<span class="string">'iPhone 14'</span>, 1200.0, 5, <span class="string">'Phone'</span>),
+(<span class="string">'Tai nghe Sony'</span>, 350.0, 20, <span class="string">'Accessory'</span>),
+(<span class="string">'Samsung Galaxy S23'</span>, 1100.0, 8, <span class="string">'Phone'</span>),
+(<span class="string">'MacBook Pro'</span>, 2000.0, 7, <span class="string">'Laptop'</span>);</pre>
+                    </div>
+                    <h3>MODEL PRODUCT</h3>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.model;
+
+<span class="keyword">public class</span> <span class="class-name">Product</span> {
+    <span class="keyword">private int</span> id;
+    <span class="keyword">private</span> String name;
+    <span class="keyword">private double</span> price;
+    <span class="keyword">private int</span> quantity;
+    <span class="keyword">private</span> String category;
+
+    <span class="keyword">public</span> <span class="class-name">Product</span>() {}
+
+    <span class="keyword">public</span> <span class="class-name">Product</span>(<span class="keyword">int</span> id, String name, <span class="keyword">double</span> price, <span class="keyword">int</span> quantity, String category) {
+        <span class="keyword">this</span>.id = id;
+        <span class="keyword">this</span>.name = name;
+        <span class="keyword">this</span>.price = price;
+        <span class="keyword">this</span>.quantity = quantity;
+        <span class="keyword">this</span>.category = category;
+    }
+
+    <span class="comment">// Getters (bắt buộc để Gson hoạt động)</span>
+    <span class="keyword">public int</span> getId() { <span class="keyword">return</span> id; }
+    <span class="keyword">public void</span> setId(<span class="keyword">int</span> id) { <span class="keyword">this</span>.id = id; }
+    <span class="keyword">public</span> String getName() { <span class="keyword">return</span> name; }
+    <span class="keyword">public void</span> setName(String name) { <span class="keyword">this</span>.name = name; }
+    <span class="keyword">public double</span> getPrice() { <span class="keyword">return</span> price; }
+    <span class="keyword">public void</span> setPrice(<span class="keyword">double</span> price) { <span class="keyword">this</span>.price = price; }
+    <span class="keyword">public int</span> getQuantity() { <span class="keyword">return</span> quantity; }
+    <span class="keyword">public void</span> setQuantity(<span class="keyword">int</span> quantity) { <span class="keyword">this</span>.quantity = quantity; }
+    <span class="keyword">public</span> String getCategory() { <span class="keyword">return</span> category; }
+    <span class="keyword">public void</span> setCategory(String category) { <span class="keyword">this</span>.category = category; }
+}</pre>
+                    </div>
+                    <h3>File cấu hình db.properties (trong src/main/resources/)</h3>
+                    <div class="code-block">
+                        <pre>db.driver=com.mysql.cj.jdbc.Driver
+db.url=jdbc:mysql://localhost:3306/product_db?useSSL=false&serverTimezone=UTC
+db.username=root
+db.password=123456</pre>
+                    </div>
+                    <h3>4.3 Lớp DBConnection</h3>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.util;
+
+<span class="keyword">import</span> java.io.InputStream;
+<span class="keyword">import</span> java.sql.*;
+<span class="keyword">import</span> java.util.Properties;
+
+<span class="keyword">public class</span> <span class="class-name">DBConnection</span> {
+    <span class="keyword">private static</span> String url, username, password;
+
+    <span class="keyword">static</span> {
+        <span class="keyword">try</span> (InputStream input = DBConnection.<span class="keyword">class</span>.getClassLoader()
+                .getResourceAsStream(<span class="string">"db.properties"</span>)) {
+            Properties props = <span class="keyword">new</span> Properties();
+            props.load(input);
+            url = props.getProperty(<span class="string">"db.url"</span>);
+            username = props.getProperty(<span class="string">"db.username"</span>);
+            password = props.getProperty(<span class="string">"db.password"</span>);
+            Class.forName(props.getProperty(<span class="string">"db.driver"</span>));
+        } <span class="keyword">catch</span> (Exception e) {
+            <span class="keyword">throw new</span> RuntimeException(<span class="string">"Lỗi kết nối DB!"</span>);
+        }
+    }
+
+    <span class="keyword">public static</span> Connection getConnection() <span class="keyword">throws</span> SQLException {
+        <span class="keyword">return</span> DriverManager.getConnection(url, username, password);
+    }
+
+    <span class="keyword">public static void</span> close(Connection conn, PreparedStatement stmt, ResultSet rs) {
+        <span class="keyword">try</span> { <span class="keyword">if</span> (rs != <span class="keyword">null</span>) rs.close(); } <span class="keyword">catch</span> (SQLException e) {}
+        <span class="keyword">try</span> { <span class="keyword">if</span> (stmt != <span class="keyword">null</span>) stmt.close(); } <span class="keyword">catch</span> (SQLException e) {}
+        <span class="keyword">try</span> { <span class="keyword">if</span> (conn != <span class="keyword">null</span>) conn.close(); } <span class="keyword">catch</span> (SQLException e) {}
+    }
+}</pre>
+                    </div>
+                    <hr>
+
+                  </section>
+                  <section  id="part5" class="section">
+                    <!-- PHẦN 5: GET TRONG REST API -->
+                    <h2 id="part5"><i class="fas fa-search"></i> PHẦN 5: GET - Lấy dữ liệu</h2>
+                    <p><strong>1.1 GET là gì? (Lý thuyết)</strong><br>GET là phương thức HTTP dùng để lấy dữ liệu từ
+                        server.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Đặc điểm</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>An toàn</td>
+                                    <td>Không làm thay đổi dữ liệu trên server</td>
+                                    <td>Lấy danh sách user không làm mất user</td>
+                                </tr>
+                                <tr>
+                                    <td>Idempotent</td>
+                                    <td>Gọi 1 lần hay nhiều lần đều cho kết quả giống nhau</td>
+                                    <td>GET /users/1 luôn trả về user có ID=1</td>
+                                    </td>
+                                <tr>
+                                    <td>Có thể cache</td>
+                                    <td>Trình duyệt có thể lưu lại kết quả</td>
+                                    <td>Trang danh sách sản phẩm có thể được cache</td>
+                                </tr>
+                                <tr>
+                                    <td>Dữ liệu gửi qua URL</td>
+                                    <td>Tham số được gắn trên URL</td>
+                                    <td>/users?name=An&age=25</td>
+                                </tr>
+                                <tr>
+                                    <td>Giới hạn độ dài</td>
+                                    <td>URL có giới hạn (khoảng 2000 ký tự)</td>
+                                    <td>Không nên gửi dữ liệu lớn qua GET</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>
+                        <strong>Khi nào dùng GET?</strong><br>
+                        <b>NÊN dùng GET khi: </b>
+                        <ul>                        
+                            <li>Lấy danh sách dữ liệu (GET /users)</li>
+                            <li>Lấy chi tiết một bản ghi (GET /users/5)</li>
+                            <li>Tìm kiếm dữ liệu (GET /users?keyword=an), Lọc dữ liệu (GET/products?category=phone&minPrice=100)</li>
+                        </ul>                    
+                        <b>KHÔNG dùng GET khi:</b>
+                        <ul>
+                            <li>Thêm dữ liệu mới (dùng POST)</li>
+                        <li>Cập nhật dữ liệu (dùng PUT/PATCH), Xóa dữ liệu (dùng DELETE)</li>
+                        <li>Gửi mật khẩu, thông tin nhạy cảm</li>
+                        <li>Gửi dữ liệu lớn (ảnh, file)</p></li>
+                        </ul>
+                    <p><strong>1.2 Các dạng GET API thường gặp</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dạng</th>
+                                    <th>URL</th>
+                                    <th>Mục đích</th>
+                                    <th>Lấy tham số bằng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lấy tất cả</td>
+                                    <td>GET /users</td>
+                                    <td>Lấy danh sách tất cả user</td>
+                                    <td>Không có tham số</td>
+                                </tr>
+                                <tr>
+                                    <td>Lấy theo ID</td>
+                                    <td>GET /users/5</td>
+                                    <td>Lấy user có ID=5</td>
+                                    <td>@PathVariable (path info)</td>
+                                </tr>
+                                <tr>
+                                    <td>Lấy theo tham số</td>
+                                    <td>GET /users?name=An</td>
+                                    <td>Tìm user có tên "An"</td>
+                                    <td>@RequestParam (query string)</td>
+                                </tr>
+                                <tr>
+                                    <td>Lấy có phân trang</td>
+                                    <td>GET /users?page=1&size=10</td>
+                                    <td>Lấy trang 1, mỗi trang 10 user</td>
+                                    <td>@RequestParam</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Ví dụ 1: API Hello World</strong></p>
+                    <div class="code-block">
+    <div class="code-header">
+        <button class="copy-btn" onclick="copyCode(this)">
+            Copy
+        </button>
+    </div>
+
+    <pre><span class="keyword">package</span> com.example.api.servlet;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> java.io.PrintWriter;
+
+<span class="keyword">import</span> jakarta.servlet.ServletException;
+<span class="keyword">import</span> jakarta.servlet.annotation.WebServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletResponse;
+
+<span class="annotation">@WebServlet</span>(<span class="string">"/hello"</span>)
+<span class="keyword">public class</span> <span class="class-name">HelloServlet</span> <span class="keyword">extends</span> HttpServlet {
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+
+        <span class="comment">// Bước 1: Thiết lập kiểu dữ liệu trả về là JSON</span>
+        response.setContentType(<span class="string">"application/json"</span>);
+        response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+
+        <span class="comment">// Bước 2: Lấy đối tượng để ghi dữ liệu</span>
+        PrintWriter out = response.getWriter();
+
+        <span class="comment">// Bước 3: Tạo JSON</span>
+        String json =
+                <span class="string">"{\"message\": \"Hello from API!\", \"status\": \"success\"}"</span>;
+
+        <span class="comment">// Bước 4: Ghi JSON vào response</span>
+        out.print(json);
+        out.flush();
+    }
+}</pre>
+</div>
+                
+                    <p>Test: http://localhost:8080/YourProject/hello<br>Kết quả: {"message": "Hello from API!",
+                        "status": "success"}</p>
+                    <p><strong>Giới thiệu về Gson</strong><br>Gson là thư viện của Google dùng để chuyển đổi giữa Java
+                        Object và JSON.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Chức năng</th>
+                                    <th>Cú pháp</th>
+                                    <th>Mô tả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Object → JSON</td>
+                                    <td>gson.toJson(object)</td>
+                                    <td>Chuyển Java object thành chuỗi JSON</td>
+                                </tr>
+                                <tr>
+                                    <td>JSON → Object</td>
+                                    <td>gson.fromJson(json, Class)</td>
+                                    <td>Chuyển chuỗi JSON thành Java object</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Tại sao dùng Gson thay vì tự tạo JSON bằng tay?</strong></p>
+                    <div class="table-container">
+                        <tr>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>Tự tạo JSON (StringBuilder)</th>
+                                    <th>Dùng Gson</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dòng code</td>
+                                    <td>10-20 dòng</td>
+                                    <td>1 dòng</td>
+                                </tr>
+                                <tr>
+                                    <td>Dễ sai</td>
+                                    <td>Rất dễ (quên dấu ,, ", escape)</td>
+                                    <td>Không sai</td>
+                                </tr>
+                                <tr>
+                                    <td>Xử lý null</td>
+                                    <td>Phải tự kiểm tra</td>
+                                    <td>Tự động</td>
+                                </tr>
+                                <tr>
+                                    <td>Xử lý nested object</td>
+                                    <td>Rất phức tạp</td>
+                                    <td>Tự động</td>
+                                </tr>
+                                <td>
+                                <td>Bảo trì</td>
+                                <td>Khó (thêm trường phải sửa code)</td>
+                                <td>Dễ (chỉ thêm vào class)</td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <p><strong>2. Cài đặt Gson</strong><br>Cách 1: Dùng Maven (thêm vào pom.xml)</p>
+                    <div class="code-block">
+                        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;com.google.code.gson&lt;/groupId&gt;
+    &lt;artifactId&gt;gson&lt;/artifactId&gt;
+    &lt;version&gt;2.10.1&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+                    </div>
+                    <p>Cách 2: Tải JAR thủ công: Truy cập https://github.com/google/gson/releases, tải file
+                        gson-2.10.1.jar, copy vào thư mục src/main/webapp/WEB-INF/lib/</p>
+                    <p><strong>3. Các câu lệnh Gson cơ bản</strong></p>
+                    <div class="code-block">
+                        <pre>Gson gson = new Gson();
+
+// Object → JSON
+User user = new User(1, "Nguyễn Văn A", "a@gmail.com", 25);
+String json = gson.toJson(user);
+
+// List → JSON
+List<User> users = getUsers();
+String jsonArray = gson.toJson(users);
+
+// JSON → Object
+String json = "{\"id\":1,\"name\":\"Nguyễn Văn A\",\"email\":\"a@gmail.com\",\"age\":25}";
+User user = gson.fromJson(json, User.class);
+
+// JSON → List
+String jsonArray = "[{\"id\":1,\"name\":\"A\"},{\"id\":2,\"name\":\"B\"}]";
+Type listType = new TypeToken<List<User>>(){}.getType();
+List<User> users = gson.fromJson(jsonArray, listType);</pre>
+                    </div>
+                    <p><strong>Ví dụ 2: API nhận tham số từ URL (cách cũ)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="annotation">@WebServlet</span>(<span class="string">"/greet"</span>)
+<span class="keyword">public class</span> <span class="class-name">GreetServlet</span> <span class="keyword">extends</span> HttpServlet {
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+        response.setContentType(<span class="string">"application/json"</span>);
+        response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+        String name = request.getParameter(<span class="string">"name"</span>);
+        <span class="keyword">if</span> (name == <span class="keyword">null</span> || name.trim().isEmpty()) name = <span class="string">"Guest"</span>;
+        PrintWriter out = response.getWriter();
+        String json = <span class="string">"{\"message\": \"Xin chào "</span> + name + <span class="string">"!\", \"status\": \"success\"}"</span>;
+        out.print(json); out.flush();
+    }
+}</pre>
+                    </div>
+                    <p><strong>Với Gson</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">class</span> <span class="class-name">GreetResponse</span> {
+    <span class="keyword">private</span> String message; <span class="keyword">private</span> String status;
+    <span class="keyword">public</span> <span class="class-name">GreetResponse</span>(String message, String status) { <span class="keyword">this</span>.message = message; <span class="keyword">this</span>.status = status; }
+    <span class="keyword">public</span> String getMessage() { <span class="keyword">return</span> message; }
+    <span class="keyword">public</span> String getStatus() { <span class="keyword">return</span> status; }
+}
+<span class="annotation">@WebServlet</span>(<span class="string">"/greet"</span>)
+<span class="keyword">public class</span> <span class="class-name">GreetServlet</span> <span class="keyword">extends</span> HttpServlet {
+    <span class="keyword">private final</span> Gson gson = <span class="keyword">new</span> Gson();
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+        response.setContentType(<span class="string">"application/json"</span>); response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+        String name = request.getParameter(<span class="string">"name"</span>);
+        <span class="keyword">if</span> (name == <span class="keyword">null</span> || name.trim().isEmpty()) name = <span class="string">"Guest"</span>;
+        GreetResponse greetResponse = <span class="keyword">new</span> GreetResponse(<span class="string">"Xin chào "</span> + name + <span class="string">"!"</span>, <span class="string">"success"</span>);
+        String json = gson.toJson(greetResponse);
+        PrintWriter out = response.getWriter(); out.print(json); out.flush();
+    }
+}</pre>
+                    </div>
+                    <p>Test: http://localhost:8080/YourProject/greet?name=An<br>Kết quả: {"message": "Xin chào An!",
+                        "status": "success"}</p>
+                    <p><strong>Ví dụ 3: API lấy danh sách (dùng List)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.model;
+<span class="keyword">public class</span> <span class="class-name">User</span> {
+    <span class="keyword">private int</span> id; <span class="keyword">private</span> String name; <span class="keyword">private</span> String email; <span class="keyword">private int</span> age;
+    <span class="keyword">public</span> <span class="class-name">User</span>() {}
+    <span class="keyword">public</span> <span class="class-name">User</span>(<span class="keyword">int</span> id, String name, String email, <span class="keyword">int</span> age) { <span class="keyword">this</span>.id = id; <span class="keyword">this</span>.name = name; <span class="keyword">this</span>.email = email; <span class="keyword">this</span>.age = age; }
+    <span class="comment">// Getters và Setters</span>
+    <span class="keyword">public int</span> getId() { <span class="keyword">return</span> id; } <span class="keyword">public void</span> setId(<span class="keyword">int</span> id) { <span class="keyword">this</span>.id = id; }
+    <span class="keyword">public</span> String getName() { <span class="keyword">return</span> name; } <span class="keyword">public void</span> setName(String name) { <span class="keyword">this</span>.name = name; }
+    <span class="keyword">public</span> String getEmail() { <span class="keyword">return</span> email; } <span class="keyword">public void</span> setEmail(String email) { <span class="keyword">this</span>.email = email; }
+    <span class="keyword">public int</span> getAge() { <span class="keyword">return</span> age; } <span class="keyword">public void</span> setAge(<span class="keyword">int</span> age) { <span class="keyword">this</span>.age = age; }
+}</pre>
+                    </div>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.servlet;
+<span class="keyword">import</span> java.io.IOException; <span class="keyword">import</span> java.io.PrintWriter; <span class="keyword">import</span> java.util.ArrayList; <span class="keyword">import</span> java.util.List;
+<span class="keyword">import</span> com.google.gson.Gson; <span class="keyword">import</span> com.example.api.model.User;
+<span class="annotation">@WebServlet</span>(<span class="string">"/users"</span>)
+<span class="keyword">public class</span> <span class="class-name">UserListServlet</span> <span class="keyword">extends</span> HttpServlet {
+    <span class="keyword">private</span> List&lt;User&gt; users = <span class="keyword">new</span> ArrayList&lt;&gt;();
+    <span class="keyword">private final</span> Gson gson = <span class="keyword">new</span> Gson();
+    <span class="keyword">public</span> <span class="class-name">UserListServlet</span>() {
+        users.add(<span class="keyword">new</span> User(1, <span class="string">"Nguyễn Văn A"</span>, <span class="string">"a@gmail.com"</span>, 25));
+        users.add(<span class="keyword">new</span> User(2, <span class="string">"Trần Thị B"</span>, <span class="string">"b@gmail.com"</span>, 30));
+        users.add(<span class="keyword">new</span> User(3, <span class="string">"Lê Văn C"</span>, <span class="string">"c@gmail.com"</span>, 28));
+    }
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response) <span class="keyword">throws</span> ServletException, IOException {
+        response.setContentType(<span class="string">"application/json"</span>); response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+        String json = gson.toJson(users);
+        response.setStatus(HttpServletResponse.SC_OK);
+        PrintWriter out = response.getWriter(); out.print(json); out.flush();
+    }
+}</pre>
+                    </div>
+                    <p>Kết quả trả về khi gọi API GET http://localhost:8080/YourApp/users</p>
+                    <div class="code-block">
+                        <pre>[
+    {"id":1,"name":"Nguyễn Văn A","email":"a@gmail.com","age":25},
+    {"id":2,"name":"Trần Thị B","email":"b@gmail.com","age":30},
+    {"id":3,"name":"Lê Văn C","email":"c@gmail.com","age":28}
+]</pre>
+                    </div>
+                    <p><strong>Yêu cầu viết API cho trang sản phẩm CSDL</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>API</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>GET /products</td>
+                                    <td>Lấy danh sách tất cả</td>
+                                </tr>
+                                <tr>
+                                    <td>GET /products/5</td>
+                                    <td>Lấy sản phẩm có ID=5</td>
+                                </tr>
+                                <td>
+                                <td>GET /products?name=laptop</td>
+                                <td>Tìm sản phẩm theo tên</td>
+                                </tr>
+                                <tr>
+                                    <td>GET /products?page=1&size=10</td>
+                                    <td>Lấy trang 1, mỗi trang 10</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PRODUCTDAO (CÁC PHƯƠNG THỨC TRUY VẤN)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.dao;
+
+<span class="keyword">import</span> com.example.api.model.Product;
+<span class="keyword">import</span> com.example.api.util.DBConnection;
+<span class="keyword">import</span> java.sql.*;
+<span class="keyword">import</span> java.util.ArrayList;
+<span class="keyword">import</span> java.util.List;
+
+<span class="keyword">public class</span> <span class="class-name">ProductDAO</span> {
+
+    <span class="comment">// 1. Lấy tất cả sản phẩm</span>
+    <span class="keyword">public</span> List&lt;Product&gt; getAllProducts() {
+        List&lt;Product&gt; products = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        String sql = <span class="string">"SELECT * FROM products ORDER BY id ASC"</span>;
+        <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            <span class="keyword">while</span> (rs.next()) products.add(mapRow(rs));
+        } <span class="keyword">catch</span> (SQLException e) { e.printStackTrace(); }
+        <span class="keyword">return</span> products;
+    }
+
+    <span class="comment">// 2. Lấy sản phẩm theo ID</span>
+    <span class="keyword">public</span> Product getProductById(<span class="keyword">int</span> id) {
+        String sql = <span class="string">"SELECT * FROM products WHERE id = ?"</span>;
+        <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            <span class="keyword">if</span> (rs.next()) <span class="keyword">return</span> mapRow(rs);
+        } <span class="keyword">catch</span> (SQLException e) { e.printStackTrace(); }
+        <span class="keyword">return null</span>;
+    }
+
+    <span class="comment">// 3. Tìm kiếm theo tên (chứa keyword)</span>
+    <span class="keyword">public</span> List&lt;Product&gt; searchByName(String keyword) {
+        List&lt;Product&gt; products = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        String sql = <span class="string">"SELECT * FROM products WHERE name LIKE ?"</span>;
+        <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, <span class="string">"%"</span> + keyword + <span class="string">"%"</span>);
+            ResultSet rs = stmt.executeQuery();
+            <span class="keyword">while</span> (rs.next()) products.add(mapRow(rs));
+        } <span class="keyword">catch</span> (SQLException e) { e.printStackTrace(); }
+        <span class="keyword">return</span> products;
+    }
+
+    <span class="comment">// 4. Lấy phân trang (page bắt đầu từ 1, mỗi trang size bản ghi)</span>
+    <span class="keyword">public</span> List&lt;Product&gt; getProductsByPage(<span class="keyword">int</span> page, <span class="keyword">int</span> size) {
+        List&lt;Product&gt; products = <span class="keyword">new</span> ArrayList&lt;&gt;();
+        <span class="keyword">int</span> offset = (page - 1) * size;
+        String sql = <span class="string">"SELECT * FROM products ORDER BY id ASC LIMIT ? OFFSET ?"</span>;
+        <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, size);
+            stmt.setInt(2, offset);
+            ResultSet rs = stmt.executeQuery();
+            <span class="keyword">while</span> (rs.next()) products.add(mapRow(rs));
+        } <span class="keyword">catch</span> (SQLException e) { e.printStackTrace(); }
+        <span class="keyword">return</span> products;
+    }
+
+    <span class="comment">// 5. Đếm tổng số bản ghi (dùng cho phân trang)</span>
+    <span class="keyword">public int</span> countAll() {
+        String sql = <span class="string">"SELECT COUNT(*) FROM products"</span>;
+        <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            <span class="keyword">if</span> (rs.next()) <span class="keyword">return</span> rs.getInt(1);
+        } <span class="keyword">catch</span> (SQLException e) { e.printStackTrace(); }
+        <span class="keyword">return</span> 0;
+    }
+
+    <span class="comment">// Helper: chuyển ResultSet thành Product</span>
+    <span class="keyword">private</span> Product mapRow(ResultSet rs) <span class="keyword">throws</span> SQLException {
+        Product p = <span class="keyword">new</span> Product();
+        p.setId(rs.getInt(<span class="string">"id"</span>));
+        p.setName(rs.getString(<span class="string">"name"</span>));
+        p.setPrice(rs.getDouble(<span class="string">"price"</span>));
+        p.setQuantity(rs.getInt(<span class="string">"quantity"</span>));
+        p.setCategory(rs.getString(<span class="string">"category"</span>));
+        <span class="keyword">return</span> p;
+    }
+}</pre>
+                    </div>
+                    <p><strong>PRODUCTSERVLET (XỬ LÝ 4 DẠNG GET)</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="keyword">package</span> com.example.api.servlet;
+
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> java.io.PrintWriter;
+<span class="keyword">import</span> java.util.List;
+<span class="keyword">import</span> com.google.gson.Gson;
+<span class="keyword">import</span> com.example.api.dao.ProductDAO;
+<span class="keyword">import</span> com.example.api.model.Product;
+<span class="keyword">import</span> jakarta.servlet.ServletException;
+<span class="keyword">import</span> jakarta.servlet.annotation.WebServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServlet;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletRequest;
+<span class="keyword">import</span> jakarta.servlet.http.HttpServletResponse;
+
+<span class="annotation">@WebServlet</span>(<span class="string">"/products/*"</span>)
+<span class="keyword">public class</span> <span class="class-name">ProductServlet</span> <span class="keyword">extends</span> HttpServlet {
+
+    <span class="keyword">private</span> ProductDAO productDAO = <span class="keyword">new</span> ProductDAO();
+    <span class="keyword">private</span> Gson gson = <span class="keyword">new</span> Gson();
+
+    <span class="annotation">@Override</span>
+    <span class="keyword">protected void</span> doGet(HttpServletRequest request, HttpServletResponse response)
+            <span class="keyword">throws</span> ServletException, IOException {
+
+        response.setContentType(<span class="string">"application/json"</span>);
+        response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+        PrintWriter out = response.getWriter();
+
+        String pathInfo = request.getPathInfo();  <span class="comment">// Lấy phần sau /products</span>
+
+        <span class="comment">// ========== 1. GET /products (lấy tất cả) ==========</span>
+        <span class="keyword">if</span> (pathInfo == <span class="keyword">null</span> || <span class="string">"/"</span>.equals(pathInfo)) {
+            List&lt;Product&gt; products = productDAO.getAllProducts();
+            response.setStatus(HttpServletResponse.SC_OK);
+            out.print(gson.toJson(products));
+            out.flush();
+            <span class="keyword">return</span>;
+        }
+
+        <span class="comment">// ========== 2. GET /products?name=xxx (tìm theo tên) ==========</span>
+        String nameParam = request.getParameter(<span class="string">"name"</span>);
+        <span class="keyword">if</span> (nameParam != <span class="keyword">null</span> && !nameParam.trim().isEmpty()) {
+            List&lt;Product&gt; products = productDAO.searchByName(nameParam);
+            response.setStatus(HttpServletResponse.SC_OK);
+            out.print(gson.toJson(products));
+            out.flush();
+            <span class="keyword">return</span>;
+        }
+
+        <span class="comment">// ========== 3. GET /products?page=1&size=10 (phân trang) ==========</span>
+        String pageParam = request.getParameter(<span class="string">"page"</span>);
+        String sizeParam = request.getParameter(<span class="string">"size"</span>);
+        <span class="keyword">if</span> (pageParam != <span class="keyword">null</span> && sizeParam != <span class="keyword">null</span>) {
+            <span class="keyword">try</span> {
+                <span class="keyword">int</span> page = Integer.parseInt(pageParam);
+                <span class="keyword">int</span> size = Integer.parseInt(sizeParam);
+                List&lt;Product&gt; products = productDAO.getProductsByPage(page, size);
+                <span class="keyword">int</span> total = productDAO.countAll();
+                <span class="keyword">int</span> totalPages = (<span class="keyword">int</span>) Math.ceil((<span class="keyword">double</span>) total / size);
+                <span class="comment">// Gói response metadata</span>
+                PageResponse wrapper = <span class="keyword">new</span> PageResponse(products, page, size, total, totalPages);
+                response.setStatus(HttpServletResponse.SC_OK);
+                out.print(gson.toJson(wrapper));
+                out.flush();
+                <span class="keyword">return</span>;
+            } <span class="keyword">catch</span> (NumberFormatException e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                out.print(<span class="string">"{\"error\":\"page và size phải là số\"}"</span>);
+                out.flush();
+                <span class="keyword">return</span>;
+            }
+        }
+
+        <span class="comment">// ========== 4. GET /products/{id} (lấy theo ID) ==========</span>
+        <span class="keyword">try</span> {
+            <span class="comment">// pathInfo có dạng "/5" → bỏ dấu / đầu tiên</span>
+            <span class="keyword">int</span> id = Integer.parseInt(pathInfo.substring(1));
+            Product product = productDAO.getProductById(id);
+            <span class="keyword">if</span> (product != <span class="keyword">null</span>) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                out.print(gson.toJson(product));
+            } <span class="keyword">else</span> {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                out.print(<span class="string">"{\"error\":\"Không tìm thấy sản phẩm có ID "</span> + id + <span class="string">"\"}"</span>);
+            }
+            out.flush();
+            <span class="keyword">return</span>;
+        } <span class="keyword">catch</span> (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            out.print(<span class="string">"{\"error\":\"ID không hợp lệ\"}"</span>);
+            out.flush();
+        }
+    }
+
+    <span class="comment">// Inner class để gói response phân trang</span>
+    <span class="keyword">class</span> <span class="class-name">PageResponse</span> {
+        <span class="keyword">private</span> List&lt;Product&gt; data;
+        <span class="keyword">private int</span> page;
+        <span class="keyword">private int</span> size;
+        <span class="keyword">private int</span> total;
+        <span class="keyword">private int</span> totalPages;
+
+        <span class="keyword">public</span> <span class="class-name">PageResponse</span>(List&lt;Product&gt; data, <span class="keyword">int</span> page, <span class="keyword">int</span> size, <span class="keyword">int</span> total, <span class="keyword">int</span> totalPages) {
+            <span class="keyword">this</span>.data = data;
+            <span class="keyword">this</span>.page = page;
+            <span class="keyword">this</span>.size = size;
+            <span class="keyword">this</span>.total = total;
+            <span class="keyword">this</span>.totalPages = totalPages;
+        }
+        <span class="comment">// Getters (cần để Gson serialize)</span>
+        <span class="keyword">public</span> List&lt;Product&gt; getData() { <span class="keyword">return</span> data; }
+        <span class="keyword">public int</span> getPage() { <span class="keyword">return</span> page; }
+        <span class="keyword">public int</span> getSize() { <span class="keyword">return</span> size; }
+        <span class="keyword">public int</span> getTotal() { <span class="keyword">return</span> total; }
+        <span class="keyword">public int</span> getTotalPages() { <span class="keyword">return</span> totalPages; }
+    }
+}</pre>
+                    </div>
+                    <p><strong>KIỂM TRA TỪNG API VỚI POSTMAN</strong><br>1. GET /products (lấy tất cả)<br>GET
+                        http://localhost:8080/YourApp/products → 200 OK: [{"id":1,"name":"Laptop Dell XPS",...}]<br>2.
+                        GET /products/2 → {"id":2,"name":"iPhone 14",...}<br>Nếu không tồn tại: 404 {"error":"Không tìm
+                        thấy sản phẩm có ID 999"}<br>3. GET /products?name=laptop → [{"id":1,...},{"id":5,...}]<br>4.
+                        GET /products?page=2&size=2 → {"data":[...],"page":2,"size":2,"total":5,"totalPages":3}</p>
+                    <hr>
+                  </section>
+                  <section  id="part6" class="section">
+                    <!-- PHẦN 6: POST -->
+                    <h2 id="part6"><i class="fas fa-plus-circle"></i> PHẦN 6: POST - Thêm dữ liệu</h2>
+                    <h3>PHẦN 1: LÝ THUYẾT VỀ POST</h3>
+                    <p>1.1 POST là gì? POST là phương thức HTTP dùng để gửi dữ liệu lên server nhằm tạo mới một tài
+                        nguyên.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Đặc điểm</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Không an toàn</td>
+                                    <td>Làm thay đổi dữ liệu trên server</td>
+                                    <td>Thêm user mới làm tăng số lượng user</td>
+                                </tr>
+                                <tr>
+                                    <td>Không idempotent</td>
+                                    <td>Gửi 2 lần → tạo 2 bản ghi khác nhau</td>
+                                    <td>POST /users 2 lần tạo 2 user khác nhau</td>
+                                </tr>
+                                <tr>
+                                    <td>Không cache</td>
+                                    <td>Trình duyệt không lưu lại kết quả</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Dữ liệu gửi trong Body</td>
+                                    <td>Dữ liệu nằm trong body request, không hiện trên URL</td>
+                                    <td>An toàn hơn cho mật khẩu</td>
+                                </tr>
+                                <tr>
+                                    <td>Không giới hạn độ dài</td>
+                                    <td>Có thể gửi dữ liệu lớn (ảnh, file)</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>✅ NÊN dùng POST khi: Thêm mới một bản ghi, Đăng nhập, Gửi form dữ liệu, Upload file.<br>❌ KHÔNG
+                        dùng POST khi: Lấy dữ liệu (dùng GET), Cập nhật toàn bộ (dùng PUT), Xóa dữ liệu (dùng DELETE).
+                    </p>
+                    <p><strong>1.2 So sánh POST và GET</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>GET</th>
+                                    <th>POST</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mục đích</td>
+                                    <td>Lấy dữ liệu</td>
+                                    <td>Tạo dữ liệu mới</td>
+                                    </td>
+                                <tr>
+                                    <td>Dữ liệu gửi</td>
+                                    <td>Qua URL (query string)</td>
+                                    <td>Trong Body</td>
+                                </tr>
+                                <tr>
+                                    <td>Hiện trên URL</td>
+                                    <td>Có (lộ thông tin)</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>Giới hạn dữ liệu</td>
+                                    <td>Có (2000 ký tự)</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>Cache</td>
+                                    <td>Có thể cache</td>
+                                    <td>Không cache</td>
+                                </tr>
+                                <tr>
+                                    <td>Idempotent</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>An toàn</td>
+                                    <td>Có (không thay đổi dữ liệu)</td>
+                                    <td>Không</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PHẦN 2: CÁCH ĐỌC DỮ LIỆU TỪ BODY REQUEST</strong><br>2.1 Cấu trúc của một POST request
+                    </p>
+                    <div class="code-block">
+                        <pre>POST /products HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+Content-Length: 78
+
+{
+    "name": "Laptop Asus",
+    "price": 1800.0,
+    "quantity": 15,
+    "category": "Laptop"
+}</pre>
+                    </div>
+                    <p>2.2 Câu lệnh đọc Body trong
+                        Servlet<br><code>StringBuilder sb = new StringBuilder(); String line; try (BufferedReader reader = request.getReader()) { while ((line = reader.readLine()) != null) sb.append(line); } String jsonBody = sb.toString();</code><br>2.3
+                        Dùng Gson chuyển JSON → Java
+                        Object<br><code>Gson gson = new Gson(); Product newProduct = gson.fromJson(jsonBody, Product.class);</code>
+                    </p>
+                    <p><strong>PHẦN 3: VÍ DỤ API POST /products (THÊM SẢN PHẨM MỚI)</strong><br>3.1 Yêu cầu: POST
+                        /products, Body: {"name":"...", "price":..., "quantity":..., "category":"..."}</p>
+                    <p>3.2 Model Product (đã có)<br>3.3 Thêm phương thức insert vào ProductDAO</p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="comment">// 6. Thêm sản phẩm mới vào database</span>
+<span class="keyword">public boolean</span> insertProduct(Product product) {
+    String sql = <span class="string">"INSERT INTO products (name, price, quantity, category) VALUES (?, ?, ?, ?)"</span>;
+    <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        
+        stmt.setString(1, product.getName());
+        stmt.setDouble(2, product.getPrice());
+        stmt.setInt(3, product.getQuantity());
+        stmt.setString(4, product.getCategory());
+        
+        <span class="keyword">int</span> affectedRows = stmt.executeUpdate();
+        
+        <span class="keyword">if</span> (affectedRows > 0) {
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            <span class="keyword">if</span> (generatedKeys.next()) {
+                product.setId(generatedKeys.getInt(1));
+            }
+            <span class="keyword">return true</span>;
+        }
+        <span class="keyword">return false</span>;
+    } <span class="keyword">catch</span> (SQLException e) {
+        e.printStackTrace();
+        <span class="keyword">return false</span>;
+    }
+}</pre>
+                    </div>
+                    <p>3.4 Thêm phương thức doPost vào ProductServlet</p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="annotation">@Override</span>
+<span class="keyword">protected void</span> doPost(HttpServletRequest request, HttpServletResponse response)
+        <span class="keyword">throws</span> ServletException, IOException {
+
+    response.setContentType(<span class="string">"application/json"</span>);
+    response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+    PrintWriter out = response.getWriter();
+    Gson gson = <span class="keyword">new</span> Gson();
+
+    StringBuilder sb = <span class="keyword">new</span> StringBuilder();
+    String line;
+    <span class="keyword">try</span> (BufferedReader reader = request.getReader()) {
+        <span class="keyword">while</span> ((line = reader.readLine()) != <span class="keyword">null</span>) {
+            sb.append(line);
+        }
+    }
+    String jsonBody = sb.toString();
+
+    Product newProduct = gson.fromJson(jsonBody, Product.class);
+
+    <span class="keyword">boolean</span> inserted = productDAO.insertProduct(newProduct);
+    
+    <span class="keyword">if</span> (inserted) {
+        response.setStatus(HttpServletResponse.SC_CREATED);
+        out.print(gson.toJson(newProduct));
+    } <span class="keyword">else</span> {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        out.print(<span class="string">"{\"error\":\"Không thể thêm sản phẩm, lỗi database\"}"</span>);
+    }
+    out.flush();
+}</pre>
+                    </div>
+                    <p><strong>PHẦN 4: GIẢI THÍCH CODE THEO TỪNG BƯỚC</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bước</th>
+                                    <th>Mô tả</th>
+                                    <th>Câu lệnh</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Set Content-Type và charset</td>
+                                    <td>response.setContentType("application/json")</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Đọc body request</td>
+                                    <td>request.getReader()</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Chuyển JSON → Java object</td>
+                                    <td>gson.fromJson(jsonBody, Product.class)</td>
+                                </tr>
+                                <td>
+                                <td>4</td>
+                                <td>Lưu vào database</td>
+                                <td>productDAO.insertProduct(newProduct)</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Set status 201 Created</td>
+                                    <td>response.setStatus(HttpServletResponse.SC_CREATED)</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Trả về JSON</td>
+                                    <td>out.print(gson.toJson(newProduct))</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Lưu ý: Trong ví dụ này, chúng ta bỏ qua phần kiểm tra dữ liệu đầu vào (validation). Mọi dữ liệu
+                        gửi lên đều được chấp nhận và lưu vào database. Nếu thiếu trường (name, price, quantity,
+                        category), Gson sẽ tự động gán giá trị mặc định (null, 0).</p>
+                    <p><strong>PHẦN 5: KIỂM TRA API POST VỚI POSTMAN</strong><br>5.1 Request mẫu (đầy đủ)<br>POST
+                        http://localhost:8080/YourApp/products<br>Headers: Content-Type: application/json<br>Body:
+                        {"name": "Laptop Asus ROG", "price": 2500.0, "quantity": 8, "category": "Laptop"}<br>Response
+                        (201 Created): {"id":6,"name":"Laptop Asus
+                        ROG","price":2500.0,"quantity":8,"category":"Laptop"}<br>5.2 Request thiếu trường (ví dụ không
+                        có name)<br>Body: {"price":2500.0,"quantity":8,"category":"Laptop"}<br>Response:
+                        {"id":6,"name":null,"price":2500.0,"quantity":8,"category":"Laptop"}</p>
+                    <hr>
+                    </section>
+                    <section  id="part7" class="section">
+                    <!-- PHẦN 7: DELETE -->
+                    <h2 id="part7"><i class="fas fa-trash-alt"></i> PHẦN 7: DELETE - Xóa dữ liệu</h2>
+                    <h3>PHẦN 1: LÝ THUYẾT VỀ DELETE</h3>
+                    <p>1.1 DELETE là gì? DELETE là phương thức HTTP dùng để xóa một tài nguyên trên server.</p>
+                    <div class="table-container">
+                        </table>
+                        <thead>
+                            <tr>
+                                <th>Đặc điểm</th>
+                                <th>Mô tả</th>
+                                <th>Ví dụ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Không an toàn</td>
+                                <td>Làm thay đổi dữ liệu trên server</td>
+                                <td>Xóa user làm giảm số lượng user</td>
+                            </tr>
+                            <tr>
+                                <td>Idempotent</td>
+                                <td>Gọi 1 lần hay nhiều lần đều cho kết quả giống nhau</td>
+                                <td>DELETE /users/5 lần đầu xóa, lần sau trả về 404</td>
+                            </tr>
+                            <tr>
+                                <td>Không có body</td>
+                                <td>Không cần gửi dữ liệu kèm theo</td>
+                                <td>Chỉ cần ID trên URL</td>
+                            </tr>
+                            <tr>
+                                <td>Dữ liệu gửi qua URL</td>
+                                <td>ID của tài nguyên cần xóa nằm trên URL</td>
+                                <td>DELETE /products/5</td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </div>
+                    <p>✅ NÊN dùng DELETE khi: Xóa một bản ghi theo ID, Xóa nhiều bản ghi, Xóa toàn bộ.<br>❌ KHÔNG dùng
+                        DELETE khi: Chỉ vô hiệu hóa tài nguyên (dùng PATCH), Xóa nhưng cần giữ lại dữ liệu cho lịch sử
+                        (dùng soft delete).</p>
+                    <p>1.2 So sánh DELETE với các phương thức khác</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>GET</th>
+                                    <th>POST</th>
+                                    <th>PUT</th>
+                                    <th>DELETE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mục đích</td>
+                                    <td>Lấy dữ liệu</td>
+                                    <td>Tạo mới</td>
+                                    <td>Cập nhật</td>
+                                    <td>Xóa</td>
+                                </tr>
+                                <tr>
+                                    <td>Có body?</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                </tr>
+                                <tr>
+                                    <td>Idempotent</td>
+                                    <td>Có</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                    <td>Có</td>
+                                </tr>
+                                <tr>
+                                    <td>Thay đổi dữ liệu</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                    <td>Có</td>
+                                    <td>Có</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PHẦN 2: CÁCH LẤY ID TỪ URL (PATH VARIABLE)</strong><br>2.1 Cấu trúc URL cho DELETE:
+                        DELETE /products/5 HTTP/1.1<br>2.2 Câu lệnh lấy ID trong
+                        Servlet:<br><code>String pathInfo = request.getPathInfo(); // "/5"<br>int id = Integer.parseInt(pathInfo.substring(1));</code><br>2.3
+                        Các trường hợp đặc biệt:</p>
+                    <div class="table-container">
+                        <tr>
+                            <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>pathInfo</th>
+                                    <th>Cách xử lý</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/products</td>
+                                    <td>null</td>
+                                    <td>Không có ID → trả về lỗi 400</td>
+                                </tr>
+                                <tr>
+                                    <td>/products/</td>
+                                    <td>/</td>
+                                    <td>Không có ID → trả về lỗi 400</td>
+                                </tr>
+                                <tr>
+                                    <td>/products/abc</td>
+                                    <td>/abc</td>
+                                    <td>ID không phải số → trả về lỗi 400</td>
+                                </tr>
+                            </tbody>
+                            </table>
+                    </div>
+                    <p><strong>PHẦN 3: CÂU LỆNH XÓA TRONG DATABASE (DAO)</strong><br>3.1 Thêm phương thức delete vào
+                        ProductDAO</p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="comment">// 7. Xóa sản phẩm theo ID</span>
+<span class="keyword">public boolean</span> deleteProduct(<span class="keyword">int</span> id) {
+    String sql = <span class="string">"DELETE FROM products WHERE id = ?"</span>;
+    <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setInt(1, id);
+        <span class="keyword">int</span> affectedRows = stmt.executeUpdate();
+        <span class="keyword">return</span> affectedRows > 0;
+    } <span class="keyword">catch</span> (SQLException e) {
+        e.printStackTrace();
+        <span class="keyword">return false</span>;
+    }
+}</pre>
+                    </div>
+                    <p><strong>PHẦN 4: THÊM PHƯƠNG THỨC doDelete VÀO PRODUCTSERVLET</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="annotation">@Override</span>
+<span class="keyword">protected void</span> doDelete(HttpServletRequest request, HttpServletResponse response)
+        <span class="keyword">throws</span> ServletException, IOException {
+
+    response.setContentType(<span class="string">"application/json"</span>);
+    response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+    PrintWriter out = response.getWriter();
+
+    String pathInfo = request.getPathInfo();
+
+    <span class="keyword">if</span> (pathInfo == <span class="keyword">null</span> || <span class="string">"/"</span>.equals(pathInfo)) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print(<span class="string">"{\"error\":\"Thiếu ID sản phẩm cần xóa\"}"</span>);
+        out.flush();
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">try</span> {
+        <span class="keyword">int</span> id = Integer.parseInt(pathInfo.substring(1));
+        <span class="keyword">boolean</span> deleted = productDAO.deleteProduct(id);
+        <span class="keyword">if</span> (deleted) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            out.print(<span class="string">"{\"message\":\"Đã xóa sản phẩm có ID "</span> + id + <span class="string">"\"}"</span>);
+        } <span class="keyword">else</span> {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            out.print(<span class="string">"{\"error\":\"Không tìm thấy sản phẩm có ID "</span> + id + <span class="string">"\"}"</span>);
+        }
+        out.flush();
+    } <span class="keyword">catch</span> (NumberFormatException e) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print(<span class="string">"{\"error\":\"ID không hợp lệ\"}"</span>);
+        out.flush();
+    }
+}</pre>
+                    </div>
+                    <p><strong>PHẦN 5: GIẢI THÍCH CODE THEO TỪNG BƯỚC</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bước</th>
+                                    <th>Mô tả</th>
+                                    <th>Câu lệnh</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Set Content-Type</td>
+                                    <td>response.setContentType("application/json")</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Lấy pathInfo</td>
+                                    <td>String pathInfo = request.getPathInfo()</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Kiểm tra có ID không</td>
+                                    <td>if (pathInfo == null || "/".equals(pathInfo))</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Parse ID từ pathInfo</td>
+                                    <td>int id = Integer.parseInt(pathInfo.substring(1))</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Gọi DAO xóa</td>
+                                    <td>productDAO.deleteProduct(id)</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Set status thành công</td>
+                                    <td>response.setStatus(HttpServletResponse.SC_OK)</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Set status không tìm thấy</td>
+                                    <td>response.setStatus(HttpServletResponse.SC_NOT_FOUND)</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Set status lỗi ID</td>
+                                    <td>response.setStatus(HttpServletResponse.SC_BAD_REQUEST)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PHẦN 6: CÁC STATUS CODE TRONG DELETE</strong><br>200 OK (xóa thành công), 400 Bad Request
+                        (thiếu ID hoặc ID không hợp lệ), 404 Not Found (ID không tồn tại).</p>
+                    <p><strong>PHẦN 7: KIỂM TRA API DELETE VỚI POSTMAN</strong><br>7.1 Xóa thành công: DELETE
+                        /products/2 → 200 OK {"message":"Đã xóa sản phẩm có ID 2"}<br>7.2 ID không tồn tại: DELETE
+                        /products/999 → 404 Not Found {"error":"Không tìm thấy sản phẩm có ID 999"}<br>7.3 Thiếu ID:
+                        DELETE /products → 400 Bad Request {"error":"Thiếu ID sản phẩm cần xóa"}<br>7.4 ID không phải
+                        số: DELETE /products/abc → 400 Bad Request {"error":"ID không hợp lệ"}</p>
+                    <hr>
+                    </section>
+                    <section  id="part8" class="section">
+                    <!-- PHẦN 8: PUT -->
+                    <h2 id="part8"><i class="fas fa-edit"></i> PHẦN 8: PUT - Cập nhật dữ liệu</h2>
+                    <h3>PHẦN 1: LÝ THUYẾT VỀ PUT</h3>
+                    <p>1.1 PUT là gì? PUT là phương thức HTTP dùng để cập nhật toàn bộ một tài nguyên đã tồn tại trên
+                        server. Nếu tài nguyên chưa tồn tại, một số API có thể tạo mới (nhưng không khuyến khích).</p>
+                    <div class="table-container">
+                        <tr>
+                            <thead>
+                                <tr>
+                                    <th>Đặc điểm</th>
+                                    <th>Mô tả</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Không an toàn</td>
+                                    <td>Làm thay đổi dữ liệu trên server</td>
+                                    <td>Cập nhật thông tin user</td>
+                                </tr>
+                                <tr>
+                                    <td>Idempotent</td>
+                                    <td>Gọi 1 lần hay nhiều lần đều cho kết quả giống nhau</td>
+                                    <td>PUT /users/5 lần 1 sửa thành A, lần 2 vẫn là A</td>
+                                </tr>
+                                <tr>
+                                    <td>Có body</td>
+                                    <td>Gửi dữ liệu cập nhật trong body (dạng JSON)</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Cập nhật toàn bộ</td>
+                                    <td>Thay thế toàn bộ thông tin cũ bằng dữ liệu mới</td>
+                                    <td>Nếu thiếu trường, trường đó sẽ bị xóa hoặc thành null</td>
+                                </tr>
+                            </tbody>
+                            </table>
+                    </div>
+                    <p>✅ NÊN dùng PUT khi: Cập nhật toàn bộ thông tin một bản ghi, Thay thế hoàn toàn tài nguyên.<br>❌
+                        KHÔNG dùng PUT khi: Chỉ cập nhật một vài trường (dùng PATCH), Thêm mới (dùng POST).</p>
+                    <p>1.2 So sánh PUT và POST</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>POST</th>
+                                    <th>PUT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Mục đích</td>
+                                    <td>Tạo mới</td>
+                                    <td>Cập nhật toàn bộ</td>
+                                </tr>
+                                <tr>
+                                    <td>URL</td>
+                                    <td>/products</td>
+                                    <td>/products/{id}</td>
+                                    </td>
+                                    <td>
+                                    <td>Idempotent</td>
+                                    <td>Không</td>
+                                    <td>Có</td>
+                                </tr>
+                                <tr>
+                                    <td>Kết quả khi gọi nhiều lần</td>
+                                    <td>Tạo nhiều bản ghi</td>
+                                    <td>Cùng kết quả</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PHẦN 2: CÁCH LẤY ID TỪ URL VÀ DỮ LIỆU TỪ BODY</strong><br>2.1 Cấu trúc URL cho PUT: PUT
+                        /products/5 HTTP/1.1, Content-Type: application/json, Body: {"name":"Laptop Dell XPS
+                        Updated","price":1600.0,"quantity":12,"category":"Laptop"}<br>2.2 Các câu lệnh trong Servlet:
+                    </p>
+                    <div class="code-block">
+                        <pre>String pathInfo = request.getPathInfo(); // "/5"
+int id = Integer.parseInt(pathInfo.substring(1));
+StringBuilder sb = new StringBuilder();
+String line;
+try (BufferedReader reader = request.getReader()) {
+    while ((line = reader.readLine()) != null) sb.append(line);
+}
+String jsonBody = sb.toString();
+Product updatedProduct = gson.fromJson(jsonBody, Product.class);</pre>
+                    </div>
+                    <p><strong>PHẦN 3: CÂU LỆNH CẬP NHẬT TRONG DATABASE (DAO)</strong><br>3.1 Thêm phương thức update
+                        vào ProductDAO</p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="comment">// 8. Cập nhật sản phẩm (thay thế toàn bộ thông tin)</span>
+<span class="keyword">public boolean</span> updateProduct(Product product) {
+    String sql = <span class="string">"UPDATE products SET name = ?, price = ?, quantity = ?, category = ? WHERE id = ?"</span>;
+    <span class="keyword">try</span> (Connection conn = DBConnection.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, product.getName());
+        stmt.setDouble(2, product.getPrice());
+        stmt.setInt(3, product.getQuantity());
+        stmt.setString(4, product.getCategory());
+        stmt.setInt(5, product.getId());
+        <span class="keyword">int</span> affectedRows = stmt.executeUpdate();
+        <span class="keyword">return</span> affectedRows > 0;
+    } <span class="keyword">catch</span> (SQLException e) {
+        e.printStackTrace();
+        <span class="keyword">return false</span>;
+    }
+}</pre>
+                    </div>
+                    <p><strong>PHẦN 4: THÊM PHƯƠNG THỨC doPut VÀO PRODUCTSERVLET</strong></p>
+                    <div class="code-block">
+                        <div class="code-header"><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+                        <pre><span class="annotation">@Override</span>
+<span class="keyword">protected void</span> doPut(HttpServletRequest request, HttpServletResponse response)
+        <span class="keyword">throws</span> ServletException, IOException {
+
+    response.setContentType(<span class="string">"application/json"</span>);
+    response.setCharacterEncoding(<span class="string">"UTF-8"</span>);
+    PrintWriter out = response.getWriter();
+
+    String pathInfo = request.getPathInfo();
+
+    <span class="keyword">if</span> (pathInfo == <span class="keyword">null</span> || <span class="string">"/"</span>.equals(pathInfo)) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print(<span class="string">"{\"error\":\"Thiếu ID sản phẩm cần cập nhật\"}"</span>);
+        out.flush();
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">int</span> id;
+    <span class="keyword">try</span> {
+        id = Integer.parseInt(pathInfo.substring(1));
+    } <span class="keyword">catch</span> (NumberFormatException e) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        out.print(<span class="string">"{\"error\":\"ID không hợp lệ\"}"</span>);
+        out.flush();
+        <span class="keyword">return</span>;
+    }
+
+    StringBuilder sb = <span class="keyword">new</span> StringBuilder();
+    String line;
+    <span class="keyword">try</span> (BufferedReader reader = request.getReader()) {
+        <span class="keyword">while</span> ((line = reader.readLine()) != <span class="keyword">null</span>) {
+            sb.append(line);
+        }
+    }
+    String jsonBody = sb.toString();
+
+    Product productData = gson.fromJson(jsonBody, Product.class);
+    productData.setId(id);
+
+    Product existing = productDAO.getProductById(id);
+    <span class="keyword">if</span> (existing == <span class="keyword">null</span>) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        out.print(<span class="string">"{\"error\":\"Không tìm thấy sản phẩm có ID "</span> + id + <span class="string">"\"}"</span>);
+        out.flush();
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">boolean</span> updated = productDAO.updateProduct(productData);
+
+    <span class="keyword">if</span> (updated) {
+        response.setStatus(HttpServletResponse.SC_OK);
+        out.print(gson.toJson(productData));
+    } <span class="keyword">else</span> {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        out.print(<span class="string">"{\"error\":\"Lỗi cập nhật sản phẩm\"}"</span>);
+    }
+    out.flush();
+}</pre>
+                    </div>
+                    <p><strong>PHẦN 5: GIẢI THÍCH CODE THEO TỪNG BƯỚC</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Bước</th>
+                                    <th>Mô tả</th>
+                                    <th>Câu lệnh</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Set Content-Type</td>
+                                    <td>response.setContentType("application/json")</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Lấy ID từ URL</td>
+                                    <td>String pathInfo = request.getPathInfo()</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Parse ID</td>
+                                    <td>int id = Integer.parseInt(pathInfo.substring(1))</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Đọc body JSON</td>
+                                    <td>request.getReader()</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Chuyển JSON → Object</td>
+                                    <td>productData = gson.fromJson(jsonBody, Product.class)</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Gán ID vào object</td>
+                                    <td>productData.setId(id)</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Kiểm tra tồn tại (tùy chọn)</td>
+                                    <td>productDAO.getProductById(id)</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Cập nhật database</td>
+                                    <td>productDAO.updateProduct(productData)</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Trả về response</td>
+                                    <td>status 200 + JSON sản phẩm mới</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>PHẦN 6: CÁC STATUS CODE TRONG PUT</strong><br>200 OK (cập nhật thành công), 400 Bad
+                        Request (thiếu ID hoặc ID không hợp lệ), 404 Not Found (không tìm thấy sản phẩm), 500 Internal
+                        Server Error (lỗi database).</p>
+                    <p><strong>PHẦN 7: KIỂM TRA API PUT VỚI POSTMAN</strong><br>7.1 Cập nhật thành công: PUT
+                        /products/1, Body: {"name":"Laptop Dell XPS
+                        (Updated)","price":1600.0,"quantity":12,"category":"Laptop"} → 200 OK trả về product mới.<br>7.2
+                        ID không tồn tại: PUT /products/999 → 404 Not Found {"error":"Không tìm thấy sản phẩm có ID
+                        999"}<br>7.3 Thiếu ID: PUT /products → 400 Bad Request {"error":"Thiếu ID sản phẩm cần cập
+                        nhật"}<br>7.4 ID không phải số: PUT /products/abc → 400 Bad Request {"error":"ID không hợp lệ"}
+                    </p>
+                    <div class="success-box"><strong>📌 Tổng kết:</strong> Bạn đã hoàn thành toàn bộ các phương thức
+                        CRUD cơ bản cho REST API bằng Servlet: GET, POST, PUT, DELETE. Sử dụng JDBC để kết nối MySQL và
+                        Gson để xử lý JSON.</div>
+                </section>
+            </main>
+        </div>
+        <footer>
+            <p>Giáo trình: XÂY DỰNG REST API BẰNG SERVLET - Servlet + JDBC + Gson</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+        });
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
