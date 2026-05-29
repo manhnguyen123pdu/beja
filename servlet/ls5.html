@@ -1897,6 +1897,12 @@ List<User> users = gson.fromJson(jsonArray, listType);</pre>
                         thấy sản phẩm có ID 999"}<br>3. GET /products?name=laptop → [{"id":1,...},{"id":5,...}]<br>4.
                         GET /products?page=2&size=2 → {"data":[...],"page":2,"size":2,"total":5,"totalPages":3}</p>
                     <hr>
+
+                    		 // CORS
+	    <ul><li>resp.setHeader("Access-Control-Allow-Origin", "*");</li>
+	    <li>resp.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");</li>
+	    <li>resp.setHeader("Access-Control-Allow-Headers", "Content-Type");</li>
+</ul>
                   </section>
                   <section  id="part6" class="section">
                     <!-- PHẦN 6: POST -->
