@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xin DỰNG REST API BẰNG SERVLET</title>
+    <title> REST API BẰNG SERVLET</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
    <style>
         * {
@@ -478,7 +478,9 @@
         <div class="content-wrapper">
             <nav class="sidebar">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="#part1" class="nav-link active"><i class="fas fa-globe"></i> PHẦN 1:
+                    <li class="nav-item"><a href="#part0" class="nav-link active"><i class="fas fa-globe"></i>MVC và API
+                        </a></li>
+                    <li class="nav-item"><a href="#part1" class="nav-link "><i class="fas fa-globe"></i> PHẦN 1:
                             Tổng quan về API và REST</a></li>
                     <li class="nav-item"><a href="#part2" class="nav-link"><i class="fas fa-server"></i> PHẦN 2: Servlet
                             cho API</a></li>
@@ -497,8 +499,135 @@
                 </ul>
             </nav>
             <main class="main-content">
+                 <section id="part0" class="section active">
+
+ <h1>API và MVC</h1>
+
+
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Tiêu chí</th>
+                <th>MVC</th>
+                <th>API (REST API)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Mục đích</td>
+                <td>Xây dựng cả giao diện và xử lý dữ liệu</td>
+                <td>Cung cấp dữ liệu cho ứng dụng khác</td>
+            </tr>
+            <tr>
+                <td>Kiến trúc</td>
+                <td>Model - View - Controller</td>
+                <td>Client - Server</td>
+            </tr>
+            <tr>
+                <td>Dữ liệu trả về</td>
+                <td>HTML, JSP, Thymeleaf</td>
+                <td>JSON, XML</td>
+            </tr>
+            <tr>
+                <td>Render giao diện</td>
+                <td>Server Render</td>
+                <td>Client Render</td>
+            </tr>
+            <tr>
+                <td>View</td>
+                <td>Có</td>
+                <td>Không</td>
+            </tr>
+            <tr>
+                <td>Frontend</td>
+                <td>JSP, Thymeleaf</td>
+                <td>React, Vue, Angular, Mobile</td>
+            </tr>
+            <tr>
+                <td>Khả năng tái sử dụng</td>
+                <td>Thấp</td>
+                <td>Cao</td>
+            </tr>
+            <tr>
+                <td>Hỗ trợ Mobile</td>
+                <td>Khó</td>
+                <td>Tốt</td>
+            </tr>
+            <tr>
+                <td>SPA</td>
+                <td>Không phù hợp</td>
+                <td>Rất phù hợp</td>
+            </tr>
+            <tr>
+                <td>Hiệu năng</td>
+                <td>Load lại toàn bộ trang</td>
+                <td>Chỉ tải dữ liệu cần thiết</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+   
+  <div style="display: flex;gap: 20px; margin-top: 15px ;">
+    <div>
+          <h2> Luồng Xử Lý MVC</h2>
+
+     <img src="./img/Luồng Xử Lý MVC.png" width="100%" alt="">
+
+
+    <h3>Kết quả trả về</h3>
+
+    <code>
+&lt;h1&gt;Danh sách sinh viên&lt;/h1&gt;
+&lt;table&gt;
+    ...
+&lt;/table&gt;
+    </code>
+
+    <hr>
+    </div>
+    <div>
+          <h2> Luồng Xử Lý API</h2>
+
+  <img src="./img/Luồng Xử Lý API.png" width="100%" alt="">
+
+    <h3>Kết quả trả về</h3>
+
+    <pre>
+[
+   {
+      "id": 1,
+      "name": "Nguyen Van A"
+   }
+]
+    </pre>
+
+    <hr>
+    </div>
+  </div>
+
+  
+
+    <h2>Cấu Trúc Dự Án </h2>
+<img src="./img/mvc vs api.png" width="100%" alt="">
+
+    <h2> Khi Nào Dùng MVC - API</h2>
+
+<img src="./img/mvc vs api2.png" width="100%" alt="">
+ 
+    <h2>Tóm Tắt</h2>
+
+    <dl>
+        <dt><strong>MVC</strong></dt>
+        <dd>Trả về HTML, có View, Server Render, phù hợp dự án nhỏ.</dd>
+
+        <dt><strong>API</strong></dt>
+        <dd>Trả về JSON, không có View, Client Render, phù hợp dự án hiện đại.</dd>
+    </dl>
+
+                 </section>
                 <!-- PHẦN 1: TỔNG QUAN VỀ API VÀ REST -->
-                <section id="part1" class="section active">
+                <section id="part1" class="section ">
                     <h2><i class="fas fa-globe"></i> PHẦN 1: TỔNG QUAN VỀ API VÀ REST</h2>
                     <h3>1.1 API là gì? (Lý thuyết)</h3>
                     <p><span class="badge">Định nghĩa</span> API (Application Programming Interface) là một tập hợp các

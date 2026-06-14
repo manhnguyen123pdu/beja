@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Security Test</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        body{
+            font-family: Arial;
+            width: 500px;
+            margin: 30px auto;
+        }
+
+        input{
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+
+        button{
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        #result{
+            background: #f5f5f5;
+            padding: 15px;
+            margin-top: 20px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Test Spring Security + Axios</h2>
+
+<input type="text" id="username" placeholder="Username">
+
+<input type="password" id="password" placeholder="Password">
+
+<div>
+    <button onclick="callPublicApi()">
+        Public API
+    </button>
+
+    <button onclick="callUserApi()">
+        User API
+    </button>
+
+    <button onclick="callAdminApi()">
+        Admin API
+    </button>
+</div>
+
+<pre id="result"></pre>
+
+<script>
+
+const API_URL = "http://localhost:8080";
+
+function show(data){
+    document.getElementById("result").textContent =
+        typeof data === "string"
+        ? data
+        : JSON.stringify(data,null,4);
+}
+
+function getAuth(){
+    return {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    };
+}
+
+function callPublicApi(){
+
+    axios.get(API_URL + "/api/public/hello")
+        .then(res => {
+            show(res.data);
+        })
+        .catch(err => {
+            show(err.message);
+        });
+}
+
+function callUserApi(){
+
+    axios.get(
+        API_URL + "/api/user/profile",
+        {
+            auth: getAuth()
+        }
+    )
+    .then(res => {
+        show(res.data);
+    })
+    .catch(err => {
+
+        if(err.response){
+            show("Status: " + err.response.status);
+        }else{
+            show(err.message);
+        }
+
+    });
+}
+
+function callAdminApi(){
+
+    axios.get(
+        API_URL + "/api/admin/dashboard",
+        {
+            auth: getAuth()
+        }
+    )
+    .then(res => {
+        show(res.data);
+    })
+    .catch(err => {
+
+        if(err.response){
+            show("Status: " + err.response.status);
+        }else{
+            show(err.message);
+        }
+
+    });
+}
+
+</script>
+
+</body>
+</html>

@@ -1336,25 +1336,7 @@
                     </div>
 
                     <h3>3. Tình huống thực tế</h3>
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Tình huống</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        Frontend (React/Vue)          Backend (Spring Boot)<br>
-                        http://localhost:3000    →    http://localhost:8080<br>
-                                 │                                  │<br>
-                                 │ 1. Gọi API                       │<br>
-                                 │ ────────────────────────────────>│<br>
-                                 │                                  │<br>
-                                 │ 2. Trả dữ liệu                    │<br>
-                                 │ <────────────────────────────────│<br>
-                                 │                                  │<br>
-                                 │ 3. Trình duyệt KIỂM TRA           │<br>
-                                 │ "Frontend 3000 gọi Backend 8080"  │<br>
-                                 │ "Khác port! CHẶN!"                │<br>
-                                 │                                  │<br>
-                    </div>
+                        <img src="./img/CORS1.png" width="100%" alt="">
                     <p><strong>Kết quả:</strong> Trình duyệt chặn request, hiện lỗi CORS</p>
 
                     <h3>4. Lỗi CORS trông như thế nào?</h3>
@@ -1530,24 +1512,7 @@
                     </div>
 
                     <h3>10. Sơ đồ luồng CORS</h3>
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span>Luồng CORS</span>
-                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                        </div>
-                        Frontend (5500)          Browser               Backend (8080)<br>
-                             │                       │                       │<br>
-                             │─── Gọi API ──────────>│                       │<br>
-                             │                       │─── Request ──────────>│<br>
-                             │                       │                       │<br>
-                             │                       │<─── Response + header─│<br>
-                             │                       │  Access-Control-Allow-Origin: *<br>
-                             │                       │                       │<br>
-                             │                       │ Kiểm tra header        │<br>
-                             │                       │ "Được phép! Cho qua"   │<br>
-                             │<─── Nhận dữ liệu ─────│                       │<br>
-                             │                       │                       │<br>
-                    </div>
+               <img src="./img/CORS1.png" width="100%" alt="">
                 </section>
 
                 <!-- PHẦN VÍ DỤ TỔNG HỢP -->

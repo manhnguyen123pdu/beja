@@ -46,7 +46,7 @@
             background: var(--primary);
             color: white;
             text-align: center;
-            padding: 30px;
+            /* padding: 30px; */
         }
 
         header h1 {
@@ -426,38 +426,7 @@
 
                     <h3>1.2. Giải pháp: MVC - Phân công rõ ràng</h3>
                     <p>MVC = Model - View - Controller</p>
-                    <div class="architecture">
-                        <pre style="color: #fff; font-family: monospace;">
-┌─────────────────────────────────────────────────────────────────────┐
-│                                                                      │
-│   ┌──────────────┐      ┌──────────────┐      ┌──────────────┐      │
-│   │   VIEW       │      │ CONTROLLER   │      │   MODEL      │      │
-│   │   (JSP)      │◀────▶│  (Servlet)   │─────▶│   (DAO)      │      │
-│   │              │      │              │      │              │      │
-│   │ Nhiệm vụ:    │      │ Nhiệm vụ:    │      │ Nhiệm vụ:    │      │
-│   │ - Hiển thị   │      │ - Nhận request│     │ - Lấy dữ liệu│      │
-│   │ - Giao diện  │      │ - Gọi Model   │      │ - Truy vấn DB│      │
-│   │ - KHÔNG có   │      │ - Chọn View   │      │ - KHÔNG có   │      │
-│   │   Java logic │      │ - KHÔNG có    │      │   HTML       │      │
-│   │   phức tạp   │      │   SQL/HTML    │      │              │      │
-│   └──────────────┘      └──────────────┘      └──────────────┘      │
-│          ▲                      ▲                      ▲            │
-│          │                      │                      │            │
-│          └──────────────────────┴──────────────────────┘            │
-│                                                                      │
-│                    LUỒNG DỮ LIỆU MVC                                 │
-│                                                                      │
-│   1. Trình duyệt → Controller (gửi request)                         │
-│   2. Controller → Model (yêu cầu lấy dữ liệu)                       │
-│   3. Model → Database (truy vấn)                                    │
-│   4. Model ← Database (kết quả)                                     │
-│   5. Controller ← Model (nhận dữ liệu)                              │
-│   6. Controller → View (gửi dữ liệu và chuyển đến JSP)              │
-│   7. View → Trình duyệt (hiển thị HTML)                             │
-│                                                                      │
-└─────────────────────────────────────────────────────────────────────┘
-                        </pre>
-                    </div>
+               <img src="./img/mvc.png" width="100%" alt="">
 
                     <h3>1.3. So sánh trước và sau khi dùng MVC</h3>
                     <div class="table-container">
@@ -488,22 +457,7 @@
 
                     <h3>2.2. Entity Model là gì?</h3>
                     <p><strong>Định nghĩa:</strong> Một class Java bình thường, mỗi thuộc tính tương ứng với một cột trong bảng database.</p>
-                    <div class="architecture">
-                        <!-- <pre style="color: #fff;">
-Bảng users trong database:                    Class User trong Java:
-┌──────────────┬─────────────┐               ┌────────────────────────┐
-│ id (INT)     │ name(VARCHAR)│             │ public class User {    │
-├──────────────┼─────────────┤               │   private int id;      │
-│ 1            │ Nguyễn Văn A │               │   private String name; │
-│ 2            │ Trần Thị B   │               │   private String email;│
-└──────────────┴─────────────┘               │   // getter/setter     │
-                                              │ }                      │
-                                              └────────────────────────┘
-                                              
-Mỗi dòng trong DB → một object User trong Java
-                        </pre> -->
-                    </div>
-
+               <img src="./img/model.png" width="100%" alt="">
                     <h3>2.3. Cú pháp tạo Entity Model</h3>
                     <div class="code-block">
                         <div class="code-header">
@@ -1270,32 +1224,12 @@ student-management/
                         <p><strong>Bài tập 4:</strong> Thêm chức năng lọc theo chuyên ngành</p>
                     </div>
 
-                    <div class="architecture">
-                        <pre style="color: #fff; text-align: center;">
-┌─────────────────────────────────────────────────────────────────┐
-│                                                                  │
-│   📚 TỔNG KẾT MVC TRONG JAVA WEB                                │
-│                                                                  │
-│   Model     → Dữ liệu (Student, StudentDAO)                     │
-│   View      → Giao diện (JSP + EL + JSTL)                       │
-│   Controller→ Điều khiển (Servlet)                              │
-│                                                                  │
-│   "Phân chia trách nhiệm rõ ràng = Code dễ bảo trì"            │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
-                        </pre>
-                    </div>
-
-                    <div class="demo-box">
-                        <p style="font-size: 1.2rem;"><i class="fas fa-check-circle" style="color: #27ae60;"></i> Chúc mừng bạn đã hoàn thành giáo trình MVC!</p>
-                        <p>Hãy thực hành từng ví dụ nhỏ trước khi ghép vào dự án lớn.</p>
-                    </div>
                 </section>
             </main>
         </div>
 
         <footer>
-            <p><i class="fas fa-layer-group"></i> MÔ HÌNH MVC TRONG JAVA WEB - Giáo trình tự học dành cho sinh viên đã biết Servlet cơ bản</p>
+            <p><i class="fas fa-layer-group"></i> MÔ HÌNH MVC TRONG JAVA WEB </p>
         </footer>
     </div>
 
