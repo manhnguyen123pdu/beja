@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --jpa: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            height: 85vh;
+            overflow-y: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--jpa);
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--jpa);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--jpa);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--jpa);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--jpa);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note, .info-box, .success-box, .warning-box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-one { background: #e74c3c; color: white; }
+        .badge-many { background: #3498db; color: white; }
+        .badge-jpa { background: #9b59b6; color: white; }
+        .badge-join { background: #1abc9c; color: white; }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--jpa);
+                height: auto;
+                max-height: 300px;
+            }
+        }
+
+        .architecture {
+            background: linear-gradient(135deg, #2c3e50, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 24px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin: 25px 0;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .formula-box {
+            background: #e8f4f8;
+            border-left: 4px solid var(--jpa);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--jpa), transparent);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1><i class="fas fa-lock"></i> BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT</h1>
+    </header>
+
+    <div class="content-wrapper">
+        <nav class="sidebar">
+            <ul class="nav-list">
+                <li class="nav-item"><a href="#section1" class="nav-link active"><i class="fas fa-exclamation-triangle"></i> 1. Tại sao không lưu Plain Text?</a></li>
+                <li class="nav-item"><a href="#section2" class="nav-link"><i class="fas fa-calculator"></i> 2. Thuật toán BCrypt</a></li>
+                <li class="nav-item"><a href="#section3" class="nav-link"><i class="fas fa-code"></i> 3. PasswordEncoder</a></li>
+                <li class="nav-item"><a href="#section4" class="nav-link"><i class="fas fa-cog"></i> 4. BCryptPasswordEncoder</a></li>
+                <li class="nav-item"><a href="#section5" class="nav-link"><i class="fas fa-sync-alt"></i> 5. Cập nhật UserDetailsService</a></li>
+                <li class="nav-item"><a href="#section6" class="nav-link"><i class="fas fa-bug"></i> 6. Lỗi thường gặp</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+
+            <!-- SECTION 1: Tại sao không lưu mật khẩu dạng Plain Text -->
+            <section id="section1" class="section active">
+                <h2><i class="fas fa-exclamation-triangle"></i> 1. Tại sao không lưu mật khẩu dạng Plain Text?</h2>
+
+                <h3>1.1. Khái niệm Plain Text</h3>
+                <h4>1.1.1. Plain Text là gì?</h4>
+                <p>Trong lĩnh vực bảo mật, Plain Text (văn bản thuần) là dữ liệu được lưu giữ dưới đúng dạng ban đầu mà người dùng cung cấp, không qua bất kỳ quá trình mã hóa hay biến đổi nào.</p>
+                <p>Đối với mật khẩu, lưu dạng Plain Text nghĩa là: Mật khẩu người dùng nhập vào sẽ được lưu trực tiếp trong cơ sở dữ liệu dưới dạng chuỗi ký tự có thể đọc được.</p>
+                <p><strong>Ví dụ:</strong></p>
+                <p>Người dùng đăng ký tài khoản:</p>
+                <ul>
+                    <li><strong>Username:</strong> nguyenvana</li>
+                    <li><strong>Password:</strong> 123456</li>
+                </ul>
+                <p>Dữ liệu được lưu xuống Database:</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>id</th><th>username</th><th>password</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>nguyenvana</td><td>123456</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="warning-box">
+                    <p><strong>Lưu ý:</strong> Password trong database = Password thật của người dùng. Bất kỳ ai có quyền truy cập database đều có thể nhìn thấy mật khẩu.</p>
+                </div>
+
+                <h3>1.2. Tại sao nhiều hệ thống ban đầu lại lưu Plain Text?</h3>
+                <p>Trong giai đoạn đầu của phát triển phần mềm, nhiều lập trình viên mới thường có suy nghĩ: "Chỉ cần lưu username và password xuống database, khi đăng nhập thì lấy ra so sánh là được."</p>
+                <p><strong>Ví dụ:</strong></p>
+                <p>Khi đăng nhập: Người dùng nhập:</p>
+                <ul>
+                    <li><strong>username:</strong> admin</li>
+                    <li><strong>password:</strong> 123456</li>
+                </ul>
+                <p>Server thực hiện:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Code cũ</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">if</span> (username.equals(database.username) && password.equals(database.password)) {
+    loginSuccess();
+}</pre>
+                </div>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+User nhập password
+        |
+        |
+        v
+Server nhận password
+        |
+        |
+        v
+So sánh trực tiếp với database
+        |
+        |
+        v
+Đăng nhập thành công</pre>
+                </div>
+                <p>Cách này có thể hoạt động về mặt chức năng. Tuy nhiên, về mặt bảo mật thì rất nguy hiểm.</p>
+
+                <h3>1.3. Nguy cơ khi lưu mật khẩu dạng Plain Text</h3>
+                <h4>1.3.1. Rò rỉ toàn bộ mật khẩu khi database bị tấn công</h4>
+                <p>Đây là nguy cơ nghiêm trọng nhất.</p>
+                <p>Giả sử một website có bảng users:</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>id</th><th>username</th><th>password</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>admin</td><td>admin123</td></tr>
+                            <tr><td>2</td><td>manh</td><td>123456</td></tr>
+                            <tr><td>3</td><td>user01</td><td>password123</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Một hacker khai thác được lỗ hổng và lấy được database. Khi đó hacker có ngay:</p>
+                <ul>
+                    <li>admin / admin123</li>
+                    <li>manh / 123456</li>
+                    <li>user01 / password123</li>
+                </ul>
+                <p>Không cần giải mã.</p>
+
+                <h4>1.3.2. Nhân viên quản trị database cũng có thể xem mật khẩu</h4>
+                <p>Một vấn đề khác: Không chỉ hacker. Những người có quyền truy cập database cũng có thể nhìn thấy mật khẩu.</p>
+                <p><strong>Ví dụ:</strong> Database administrator mở bảng:</p>
+                <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                    <pre style="color:#ecf0f1;">SELECT * FROM users;</pre>
+                </div>
+                <p>Kết quả:</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>id</th><th>username</th><th>password</th></tr></thead>
+                        <tbody>
+                            <tr><td>1</td><td>admin</td><td>123456</td></tr>
+                            <tr><td>2</td><td>manh</td><td>abc123</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Như vậy: Developer, Database Administrator, Người quản trị hệ thống đều có thể biết mật khẩu người dùng. Một hệ thống bảo mật tốt không được phép xảy ra điều này.</p>
+
+                <h3>1.4. Người dùng thường sử dụng lại mật khẩu</h3>
+                <p>Một thực tế phổ biến: Nhiều người dùng sử dụng cùng một mật khẩu cho nhiều dịch vụ:</p>
+                <ul>
+                    <li>Facebook: 123456</li>
+                    <li>Email: 123456</li>
+                    <li>Ngân hàng: 123456</li>
+                </ul>
+                <p>Nếu một website bị lộ database:</p>
+                <ul>
+                    <li><strong>username:</strong> manh</li>
+                    <li><strong>password:</strong> 123456</li>
+                </ul>
+                <p>Kẻ tấn công có thể thử mật khẩu này trên: Email, Mạng xã hội, Website khác, Dịch vụ tài chính.</p>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng này gọi là:</strong> Password Reuse Attack (Tấn công do sử dụng lại mật khẩu)</p>
+                </div>
+
+                <h3>1.5. Nguyên tắc bảo mật mật khẩu</h3>
+                <p>Một nguyên tắc quan trọng trong bảo mật: <strong>Hệ thống không bao giờ được lưu mật khẩu thật của người dùng.</strong></p>
+                <p>Database chỉ nên lưu <strong>Password Hash</strong> chứ không lưu <strong>Original Password</strong>.</p>
+                <p>Ví dụ:</p>
+                <ul>
+                    <li>Không lưu: <code>123456</code></li>
+                    <li>Mà lưu: <code>$2a$10$8Y7nLk9PqW3...</code></li>
+                </ul>
+
+                <h3>1.6. Hash Password là gì?</h3>
+                <h4>1.6.1. Khái niệm Hash</h4>
+                <p>Hash là quá trình biến đổi dữ liệu đầu vào thành một chuỗi có độ dài cố định.</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Input
+   |
+   |
+ Hash Algorithm
+   |
+   |
+Output</pre>
+                </div>
+                <p>Ví dụ:</p>
+                <ul>
+                    <li><strong>Input:</strong> 123456</li>
+                    <li><strong>Sau khi hash:</strong> e10adc3949ba59abbe56e057f20f883e</li>
+                </ul>
+
+                <h4>1.6.2. Đặc điểm của Hash</h4>
+                <p><strong>Đặc điểm 1: Một chiều</strong></p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password
+     |
+     v
+Hash</pre>
+                </div>
+                <p>Không thể:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Hash
+     |
+     X
+     |
+Password</pre>
+                </div>
+                <p>Ví dụ: Có <code>e10adc3949ba59abbe56e057f20f883e</code> không thể lấy lại <code>123456</code>.</p>
+
+                <p><strong>Đặc điểm 2: Cùng dữ liệu có thể tạo cùng kết quả</strong></p>
+                <p>Ví dụ: <code>Hash("123456")</code> luôn cho <code>e10adc3949ba59abbe56e057f20f883e</code>.</p>
+                <div class="warning-box">
+                    <p><strong>Vấn đề:</strong> Nếu tất cả người dùng dùng <code>123456</code> thì hash giống nhau.</p>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>User</th><th>Password Hash</th></tr></thead>
+                        <tbody>
+                            <tr><td>A</td><td>abcxyz</td></tr>
+                            <tr><td>B</td><td>abcxyz</td></tr>
+                            <tr><td>C</td><td>abcxyz</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Điều này tạo ra nguy cơ bị phân tích.</p>
+
+                <h3>1.7. Salt - giải pháp cải thiện bảo mật</h3>
+                <p>Để giải quyết vấn đề trên, hệ thống sử dụng <strong>Salt</strong>.</p>
+                <h4>1.7.1. Salt là gì?</h4>
+                <p>Salt là một chuỗi dữ liệu ngẫu nhiên được thêm vào mật khẩu trước khi hash.</p>
+                <p>Ví dụ: Mật khẩu <code>123456</code>, không hash trực tiếp: <code>Hash(123456)</code> mà: <code>Password + Salt</code>.</p>
+                <p>Ví dụ: <code>123456 + A7x9</code> → <code>Hash(123456A7x9)</code>.</p>
+
+                <h4>1.7.2. Kết quả sử dụng Salt</h4>
+                <p>Hai người cùng mật khẩu <code>123456</code> nhưng có salt khác nhau:</p>
+                <ul>
+                    <li>User A: <code>123456 + abc</code> → Hash: <code>$2a$10$AAA...</code></li>
+                    <li>User B: <code>123456 + xyz</code> → Hash: <code>$2a$10$BBB...</code></li>
+                </ul>
+                <p>Kết quả: <strong>Hash khác nhau</strong>.</p>
+
+                <h3>1.8. Spring Security xử lý mật khẩu như thế nào?</h3>
+                <p>Trong Spring Security, mật khẩu không được kiểm tra bằng cách: <code>password nhập vào = password database</code>.</p>
+                <p>Mà:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password người dùng nhập
+          |
+          v
+PasswordEncoder
+          |
+          v
+Hash mới
+          |
+          v
+So sánh với hash database</pre>
+                </div>
+                <p>Ví dụ: Database: <code>$2a$10$Xyz123...</code>, Người dùng nhập: <code>123456</code>.</p>
+                <p>Spring Security: <code>BCrypt("123456")</code> sau đó <code>matches()</code>. Nếu đúng: <code>Authentication Success</code>.</p>
+
+                <h3>1.9. Kết luận mục 1</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Vấn đề</th><th>Hậu quả</th></tr></thead>
+                        <tbody>
+                            <tr><td>Database bị lộ</td><td>Lộ toàn bộ tài khoản</td></tr>
+                            <tr><td>Admin database xem được</td><td>Mất tính riêng tư</td></tr>
+                            <tr><td>Người dùng dùng lại mật khẩu</td><td>Ảnh hưởng nhiều hệ thống</td></tr>
+                            <tr><td>Không có Salt</td><td>Dễ phân tích mật khẩu</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="success-box">
+                    <p><strong>Giải pháp:</strong> Không lưu Password thật → Hash Password → Sử dụng BCrypt → Spring Security xác thực bằng PasswordEncoder</p>
+                </div>
+                <div class="note">
+                    <p><strong>Ở mục tiếp theo chúng ta sẽ tìm hiểu chi tiết:</strong> 2. Thuật toán BCrypt, BCrypt là gì? Vì sao BCrypt phù hợp để lưu mật khẩu? Cấu trúc chuỗi BCrypt. Salt trong BCrypt. Work Factor (Cost). Cách BCrypt chống Brute Force Attack.</p>
+                </div>
+            </section>
+
+            <!-- SECTION 2: Thuật toán BCrypt -->
+            <section id="section2" class="section">
+                <h2><i class="fas fa-calculator"></i> 2. Thuật toán BCrypt</h2>
+
+                <h3>2.1. Tổng quan về BCrypt</h3>
+                <h4>2.1.1. BCrypt là gì?</h4>
+                <p>BCrypt là một thuật toán hash mật khẩu (password hashing algorithm) được thiết kế chuyên biệt để bảo vệ mật khẩu người dùng.</p>
+                <p>BCrypt được phát triển dựa trên thuật toán mã hóa Blowfish bởi Niels Provos và David Mazières vào năm 1999.</p>
+                <p>Mục tiêu ban đầu của BCrypt là: Tạo ra một thuật toán lưu trữ mật khẩu an toàn, có khả năng chống lại các phương pháp dò tìm mật khẩu bằng máy tính tốc độ cao.</p>
+                <p>Hiện nay BCrypt được sử dụng rộng rãi trong: Ứng dụng Web, Hệ thống thương mại điện tử, Hệ thống ngân hàng, API Backend, Framework bảo mật như Spring Security.</p>
+
+                <h3>2.2. BCrypt khác gì so với mã hóa thông thường?</h3>
+                <p>Một lỗi phổ biến của lập trình viên mới là nhầm lẫn giữa Encryption (mã hóa) và Hashing (băm dữ liệu). Hai khái niệm này hoàn toàn khác nhau.</p>
+
+                <h4>2.2.1. Encryption (mã hóa)</h4>
+                <p>Mã hóa là quá trình biến dữ liệu ban đầu thành dữ liệu bị che giấu.</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Dữ liệu gốc
+     |
+     |
+     v
+ Encryption + Key
+     |
+     |
+     v
+ Dữ liệu đã mã hóa</pre>
+                </div>
+                <p>Có thể giải mã:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Encrypted Data
+       |
+       |
+       v
+     Key
+       |
+       |
+       v
+Original Data</pre>
+                </div>
+                <p>Ví dụ: Message <code>Hello</code> → Encrypt <code>X7a9Pq2</code> → Decrypt <code>Hello</code>.</p>
+                <p>Mục đích: Bảo vệ dữ liệu khi truyền, Lưu trữ dữ liệu cần lấy lại (HTTPS, Mã hóa file, Token).</p>
+
+                <h4>2.2.2. Hashing (băm dữ liệu)</h4>
+                <p>Hashing hoạt động khác.</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password
+    |
+    |
+    v
+ Hash Algorithm
+    |
+    |
+    v
+Hash Value</pre>
+                </div>
+                <p>Không có chiều ngược lại:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Hash Value
+      |
+      X
+      |
+Password</pre>
+                </div>
+                <p>Ví dụ: Input <code>123456</code> → BCrypt <code>$2a$10$8Yd7Kp9L...</code> không thể lấy lại <code>123456</code>.</p>
+
+                <h3>2.3. Tại sao BCrypt được dùng để lưu mật khẩu?</h3>
+                <p>Các thuật toán hash thông thường như MD5, SHA-1, SHA-256 không phù hợp để lưu password.</p>
+                <p>Lý do: Chúng được thiết kế để tính toán nhanh, kiểm tra dữ liệu, kiểm tra checksum.</p>
+                <p>Ví dụ: <code>SHA256("123456")</code> thực hiện cực kỳ nhanh. Điều này tốt cho kiểm tra file nhưng nguy hiểm với password.</p>
+
+                <div class="example-card">
+                    <h4>Ví dụ tấn công Brute Force</h4>
+                    <p>Giả sử hacker có database:</p>
+                    <ul>
+                        <li><strong>username:</strong> admin</li>
+                        <li><strong>password hash:</strong> e10adc3949ba59abbe56e057f20f883e</li>
+                    </ul>
+                    <p>Hacker thử: 000000, 000001, 000002, ..., 123456</p>
+                    <p>Vì SHA-256 rất nhanh: 1 giây có thể thử hàng triệu lần. Mật khẩu yếu có thể bị tìm ra rất nhanh.</p>
+                </div>
+
+                <h3>2.4. BCrypt giải quyết vấn đề này như thế nào?</h3>
+                <p>BCrypt được thiết kế để:</p>
+                <ul>
+                    <li>Chậm có chủ đích</li>
+                    <li>Tốn tài nguyên CPU</li>
+                    <li>Có Salt tự động</li>
+                    <li>Có thể điều chỉnh độ khó</li>
+                </ul>
+                <p>Điều này làm cho việc dò mật khẩu trở nên khó khăn hơn.</p>
+
+                <h3>2.5. Cơ chế hoạt động của BCrypt</h3>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password người dùng nhập
+        |
+        |
+        v
+Thêm Salt ngẫu nhiên
+        |
+        |
+        v
+Thực hiện thuật toán BCrypt
+        |
+        |
+        v
+Sinh Password Hash
+        |
+        |
+        v
+Lưu Database</pre>
+                </div>
+                <p>Ví dụ: Người dùng đăng ký Password: <code>123456</code>. BCrypt tạo Salt: <code>$2a$10$K8s9dP...</code>. Kết hợp: <code>123456 + Salt</code>. Sau đó tạo Hash: <code>$2a$10$K8s9dP8Hj...</code>. Database chỉ lưu: <code>$2a$10$K8s9dP8Hj...</code></p>
+
+                <h3>2.6. Cấu trúc của một chuỗi BCrypt</h3>
+                <p>Một chuỗi BCrypt thường có dạng:</p>
+                <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                    <pre style="color:#ecf0f1;">$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy</pre>
+                </div>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
+ |   |                         |
+ |   |                         |
+ |   |                         |
+ |   |                         |
+Version Cost                  Hash</pre>
+                </div>
+
+                <h4>2.6.1. Version</h4>
+                <p>Phần đầu <code>$2a$</code> cho biết phiên bản BCrypt.</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Version</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>2a</td><td>Phiên bản phổ biến</td></tr>
+                            <tr><td>2b</td><td>Phiên bản cải tiến</td></tr>
+                            <tr><td>2y</td><td>Một biến thể khác</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Trong Spring Security thường sử dụng <code>$2a$</code> hoặc <code>$2b$</code>.</p>
+
+                <h4>2.6.2. Cost Factor</h4>
+                <p>Ví dụ: <code>$2a$10$</code>, số <code>10</code> gọi là <strong>Cost Factor</strong> hoặc <strong>Work Factor</strong>. Nó quyết định độ khó của thuật toán.</p>
+                <p>Ví dụ: <code>new BCryptPasswordEncoder(10);</code> nghĩa là <code>Cost = 10</code>.</p>
+
+                <h3>2.7. Work Factor trong BCrypt</h3>
+                <h4>2.7.1. Work Factor là gì?</h4>
+                <p>Work Factor xác định số lần BCrypt thực hiện các phép tính nội bộ.</p>
+                <p>Công thức: <strong>Số vòng lặp = 2^cost</strong></p>
+                <ul>
+                    <li>Cost = 10: 2^10 = 1024 vòng</li>
+                    <li>Cost = 12: 2^12 = 4096 vòng</li>
+                </ul>
+                <p>Cost càng lớn: Hash càng chậm, Hacker càng khó dò, Server cần nhiều tài nguyên hơn.</p>
+
+                <h4>2.7.2. Chọn Cost Factor bao nhiêu?</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Cost</th><th>Mức độ</th></tr></thead>
+                        <tbody>
+                            <tr><td>4</td><td>Quá yếu</td></tr>
+                            <tr><td>8</td><td>Thấp</td></tr>
+                            <tr><td>10</td><td>Thông dụng</td></tr>
+                            <tr><td>12</td><td>Bảo mật cao</td></tr>
+                            <tr><td>14</td><td>Rất chậm</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Spring Security thường dùng <code>new BCryptPasswordEncoder()</code> mặc định <code>Strength = 10</code>.</p>
+
+                <h3>2.8. BCrypt và Salt</h3>
+                <h4>2.8.1. Vấn đề khi không có Salt</h4>
+                <p>Giả sử hai người User A và User B đều có password = 123456. Nếu dùng SHA: Hash A = abcxyz, Hash B = abcxyz. Giống nhau.</p>
+
+                <h4>2.8.2. BCrypt tự sinh Salt</h4>
+                <p>BCrypt tự tạo Salt mỗi lần mã hóa.</p>
+                <p>Ví dụ:</p>
+                <ul>
+                    <li>Lần 1: <code>encoder.encode("123456")</code> → <code>$2a$10$abc123....</code></li>
+                    <li>Lần 2: <code>encoder.encode("123456")</code> → <code>$2a$10$xyz789....</code></li>
+                </ul>
+                <p>Mặc dù Password giống nhau nhưng Hash khác nhau.</p>
+
+                <h3>2.9. BCrypt kiểm tra mật khẩu như thế nào?</h3>
+                <p>Nếu BCrypt có Salt khác nhau, làm sao kiểm tra đăng nhập?</p>
+                <p>Ví dụ: Database <code>$2a$10$abc123xyz...</code>, người dùng nhập <code>123456</code>.</p>
+                <p>Spring không tạo hash mới rồi so sánh trực tiếp. Nó làm:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password nhập
+      +
+Salt được lưu trong hash
+      |
+      v
+BCrypt Verify
+      |
+      v
+True / False</pre>
+                </div>
+                <p>Trong Spring Security:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Kiểm tra mật khẩu</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>passwordEncoder.matches("123456", "$2a$10$abc123...");</pre>
+                </div>
+                <p>Kết quả: <code>true</code>. Nếu sai: <code>false</code>.</p>
+
+                <h3>2.10. BCrypt chống tấn công như thế nào?</h3>
+                <h4>2.10.1. Brute Force Attack</h4>
+                <p>Brute Force là cách thử tất cả khả năng mật khẩu (000000, 000001, ..., 999999).</p>
+                <ul>
+                    <li>Với SHA: 1 triệu lần thử rất nhanh</li>
+                    <li>Với BCrypt: 1 triệu lần thử rất chậm (mỗi lần hash phải tốn nhiều tài nguyên)</li>
+                </ul>
+
+                <h4>2.10.2. Rainbow Table Attack</h4>
+                <p>Rainbow Table là danh sách Password → Hash (ví dụ: 123456 → e10adc3949...). BCrypt chống lại bằng Salt ngẫu nhiên, hash khác nhau mỗi lần.</p>
+
+                <h3>2.11. Ví dụ sử dụng BCrypt trong Java</h3>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> TestBCrypt.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">import</span> org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+<span class="keyword">public class</span> <span class="class-name">TestBCrypt</span> {
+    <span class="keyword">public static void</span> main(String[] args) {
+        BCryptPasswordEncoder encoder = <span class="keyword">new</span> BCryptPasswordEncoder();
+        String password = <span class="string">"123456"</span>;
+        String hash = encoder.encode(password);
+        System.out.println(hash);
+        <span class="keyword">boolean</span> result = encoder.matches(password, hash);
+        System.out.println(result);
+    }
+}</pre>
+                </div>
+                <p><strong>Kết quả:</strong> <code>$2a$10$7H9K....</code> và <code>true</code>.</p>
+
+                <h3>2.12. Kết luận mục 2</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Đặc điểm</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td>Hash một chiều</td><td>Không thể lấy lại password</td></tr>
+                            <tr><td>Salt tự động</td><td>Tránh hash trùng nhau</td></tr>
+                            <tr><td>Cost Factor</td><td>Có thể tăng độ khó</td></tr>
+                            <tr><td>Chậm có chủ đích</td><td>Chống Brute Force</td></tr>
+                            <tr><td>Được hỗ trợ trong Spring Security</td><td>Dễ triển khai</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+User Password
+       |
+       v
+BCrypt Encoder
+       |
+       v
+Password Hash
+       |
+       v
+Database</pre>
+                </div>
+                <div class="note">
+                    <p><strong>Trong mục tiếp theo:</strong> 3. PasswordEncoder trong Spring Security</p>
+                </div>
+            </section>
+
+            <!-- SECTION 3: PasswordEncoder trong Spring Security -->
+            <section id="section3" class="section">
+                <h2><i class="fas fa-code"></i> 3. PasswordEncoder trong Spring Security</h2>
+
+                <h3>3.1. Tổng quan về PasswordEncoder</h3>
+                <h4>3.1.1. PasswordEncoder là gì?</h4>
+                <p>Trong Spring Security, PasswordEncoder là một interface dùng để xử lý mật khẩu trong quá trình:</p>
+                <ul>
+                    <li>Mã hóa mật khẩu trước khi lưu vào database</li>
+                    <li>Kiểm tra mật khẩu khi người dùng đăng nhập</li>
+                    <li>So sánh mật khẩu người dùng nhập với mật khẩu đã được mã hóa</li>
+                </ul>
+                <p>Package: <code>org.springframework.security.crypto.password.PasswordEncoder</code></p>
+                <p>Có thể hiểu đơn giản: PasswordEncoder là lớp trung gian giữa Mật khẩu người dùng và Mật khẩu đã mã hóa → Database.</p>
+                <p>Ví dụ: Người dùng đăng ký Username: <code>manh</code>, Password: <code>123456</code>. Spring Security không lưu <code>123456</code> mà gọi <code>passwordEncoder.encode("123456")</code>. Kết quả: <code>$2a$10$8Kx9dPq7L....</code> sau đó lưu vào database.</p>
+
+                <h3>3.2. Tại sao Spring Security sử dụng PasswordEncoder?</h3>
+                <h4>3.2.1. Không nên xử lý password trực tiếp</h4>
+                <p>Một cách làm sai:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Cách làm sai</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">if</span> (password.equals(user.getPassword())) {
+    loginSuccess();
+}</pre>
+                </div>
+                <p>Mặc dù chạy được nhưng cực kỳ nguy hiểm. Vấn đề: Database chứa mật khẩu thật. Người có quyền truy cập database biết password. Nếu bị lộ dữ liệu, toàn bộ tài khoản bị mất.</p>
+
+                <h4>3.2.2. PasswordEncoder tạo lớp bảo vệ</h4>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password thật
+      |
+      |
+      v
+PasswordEncoder
+      |
+      |
+      v
+Password Hash
+      |
+      |
+      v
+Database</pre>
+                </div>
+                <p>Khi đăng nhập:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Password người dùng nhập
+          |
+          |
+          v
+PasswordEncoder
+          |
+          |
+          v
+So sánh với hash database
+          |
+          |
+          v
+Authentication thành công</pre>
+                </div>
+
+                <h3>3.3. Cấu trúc của PasswordEncoder</h3>
+                <p>PasswordEncoder là một interface:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> PasswordEncoder.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">public interface</span> PasswordEncoder {
+    String encode(CharSequence rawPassword);
+    <span class="keyword">boolean</span> matches(CharSequence rawPassword, String encodedPassword);
+    <span class="keyword">default boolean</span> upgradeEncoding(String encodedPassword) {
+        <span class="keyword">return false</span>;
+    }
+}</pre>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Phương thức</th><th>Chức năng</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>encode()</strong></td><td>Mã hóa mật khẩu</td></tr>
+                            <tr><td><strong>matches()</strong></td><td>Kiểm tra mật khẩu</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3.4. Phương thức encode()</h3>
+                <h4>3.4.1. Khái niệm</h4>
+                <p><code>encode()</code> dùng để biến mật khẩu dạng thường thành mật khẩu đã hash.</p>
+                <p>Cú pháp: <code>String encode(CharSequence rawPassword);</code></p>
+                <ul>
+                    <li><strong>Tham số:</strong> rawPassword - Mật khẩu ban đầu</li>
+                    <li><strong>Kết quả trả về:</strong> String - Chuỗi password đã mã hóa</li>
+                </ul>
+
+                <h4>3.4.2. Ví dụ sử dụng</h4>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ encode</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Autowired</span>
+<span class="keyword">private</span> PasswordEncoder passwordEncoder;
+
+String password = passwordEncoder.encode(<span class="string">"123456"</span>);
+<span class="comment">// Kết quả: $2a$10$N9qo8uLOickgx2ZMRZoMye....</span></pre>
+                </div>
+                <p>Database lưu:</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>username</th><th>password</th></tr></thead>
+                        <tbody>
+                            <tr><td>manh</td><td>$2a$10$N9qo8uLOickgx2ZMRZoMye...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>3.5. Encode nhiều lần có giống nhau không?</h3>
+                <p>Đây là điểm rất quan trọng.</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Test encode</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>passwordEncoder.encode(<span class="string">"123456"</span>);  <span class="comment">// $2a$10$ABC123....</span>
+passwordEncoder.encode(<span class="string">"123456"</span>);  <span class="comment">// $2a$10$XYZ789....</span></pre>
+                </div>
+                <p>Hai kết quả khác nhau. Nguyên nhân: BCrypt tự tạo Salt ngẫu nhiên.</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+123456 + Salt A → Hash A
+123456 + Salt B → Hash B</pre>
+                </div>
+
+                <h3>3.6. Phương thức matches()</h3>
+                <h4>3.6.1. Khái niệm</h4>
+                <p><code>matches()</code> dùng để kiểm tra: Mật khẩu người dùng nhập có đúng với mật khẩu đã lưu trong database hay không.</p>
+                <p>Cú pháp: <code>boolean matches(CharSequence rawPassword, String encodedPassword);</code></p>
+                <ul>
+                    <li><strong>rawPassword:</strong> Password người dùng nhập</li>
+                    <li><strong>encodedPassword:</strong> Password hash trong database</li>
+                </ul>
+
+                <h3>3.7. Ví dụ matches()</h3>
+                <p>Database: username: <code>admin</code>, password: <code>$2a$10$abcxyz...</code></p>
+                <p>Người dùng đăng nhập: username: <code>admin</code>, password: <code>123456</code></p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ matches</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>passwordEncoder.matches(<span class="string">"123456"</span>, <span class="string">"$2a$10$abcxyz..."</span>);  <span class="comment">// true</span></pre>
+                </div>
+                <p>Nếu đúng: <code>true</code> → Cho phép đăng nhập. Nếu sai: <code>false</code> → <code>401 Unauthorized</code>.</p>
+
+                <h3>3.8. Tại sao không dùng encode() để kiểm tra?</h3>
+                <p>Một sinh viên thường mắc lỗi:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Cách làm sai</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">if</span> (passwordEncoder.encode(<span class="string">"123456"</span>).equals(databasePassword)) {
+    login();
+}</pre>
+                </div>
+                <p>Cách này sai vì:</p>
+                <ul>
+                    <li>Lần 1: <code>encode("123456")</code> → <code>$2a$10$ABC...</code></li>
+                    <li>Database: <code>$2a$10$XYZ...</code></li>
+                    <li>So sánh: <code>ABC == XYZ</code> → <code>false</code></li>
+                </ul>
+                <p>Đúng phải dùng <code>matches()</code>.</p>
+
+                <h3>3.9. PasswordEncoder trong quá trình đăng ký</h3>
+                <p><strong>Bước 1:</strong> Người dùng nhập username: <code>manh</code>, password: <code>123456</code>.</p>
+                <p><strong>Bước 2:</strong> Controller nhận dữ liệu:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Controller</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@PostMapping</span>(<span class="string">"/register"</span>)
+<span class="keyword">public</span> User register(<span class="annotation">@RequestBody</span> User user) { }</pre>
+                </div>
+                <p><strong>Bước 3:</strong> Service mã hóa password:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Service</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>user.setPassword(passwordEncoder.encode(user.getPassword()));</pre>
+                </div>
+                <p><strong>Bước 4:</strong> Lưu database: username: <code>manh</code>, password: <code>$2a$10$8Hs7K...</code></p>
+
+                <h3>3.10. PasswordEncoder trong quá trình đăng nhập</h3>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+HTTP Request
+      |
+      v
+UsernamePasswordAuthenticationFilter
+      |
+      v
+AuthenticationManager
+      |
+      v
+AuthenticationProvider
+      |
+      v
+UserDetailsService
+      |
+      v
+PasswordEncoder.matches()
+      |
+      v
+Authentication Success</pre>
+                </div>
+
+                <h3>3.11. Các loại PasswordEncoder trong Spring Security</h3>
+                <p>Spring Security cung cấp nhiều loại:</p>
+                <p><strong>1. BCryptPasswordEncoder</strong> - Sử dụng thuật toán BCrypt. Được khuyến nghị sử dụng.</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> BCryptPasswordEncoder</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+PasswordEncoder passwordEncoder() {
+    <span class="keyword">return new</span> BCryptPasswordEncoder();
+}</pre>
+                </div>
+                <p><strong>2. NoOpPasswordEncoder</strong> - Không mã hóa. <code>NoOpPasswordEncoder.getInstance();</code> Password: <code>123456</code>, Database: <code>123456</code>. Không an toàn. Chỉ dùng Demo, Học tập. Không dùng thực tế.</p>
+                <p><strong>3. SCryptPasswordEncoder</strong> - Sử dụng thuật toán SCrypt. Có độ bảo mật cao.</p>
+                <p><strong>4. Argon2PasswordEncoder</strong> - Thuật toán hiện đại. Được thiết kế chống GPU Attack, Brute Force.</p>
+
+                <h3>3.12. Cấu hình PasswordEncoder trong Spring Security</h3>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Configuration</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+        <span class="keyword">return new</span> BCryptPasswordEncoder();
+    }
+}</pre>
+                </div>
+                <p>Sau đó có thể Inject:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> UserService.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Service</span>
+<span class="keyword">public class</span> <span class="class-name">UserService</span> {
+    <span class="annotation">@Autowired</span>
+    <span class="keyword">private</span> PasswordEncoder passwordEncoder;
+}</pre>
+                </div>
+
+                <h3>3.13. Vai trò của PasswordEncoder trong hệ thống Authentication</h3>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+               User
+                 |
+                 |
+        Nhập username/password
+                 |
+                 |
+                 v
+        AuthenticationManager
+                 |
+                 |
+                 v
+        UserDetailsService
+                 |
+                 |
+                 v
+          Lấy User Database
+                 |
+                 |
+                 v
+       PasswordEncoder.matches()
+                 |
+          +------+------+
+          |             |
+        Đúng           Sai
+          |             |
+          v             v
+     Login OK      401 Error</pre>
+                </div>
+
+                <h3>3.14. Tổng kết mục 3</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Kiến thức</th><th>Ý nghĩa</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>PasswordEncoder</strong></td><td>Interface xử lý mật khẩu</td></tr>
+                            <tr><td><strong>encode()</strong></td><td>Mã hóa password trước khi lưu</td></tr>
+                            <tr><td><strong>matches()</strong></td><td>Kiểm tra password khi login</td></tr>
+                            <tr><td><strong>Không dùng encode để so sánh</strong></td><td>Vì BCrypt có Salt</td></tr>
+                            <tr><td><strong>BCryptPasswordEncoder</strong></td><td>Implementation phổ biến nhất</td></tr>
+                            <tr><td><strong>Bean PasswordEncoder</strong></td><td>Cung cấp cho Spring quản lý</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Đăng ký:
+Password → encode() → Database
+
+Đăng nhập:
+Password nhập → matches() → Database Hash</pre>
+                </div>
+                <div class="note">
+                    <p><strong>Mục tiếp theo:</strong> 4. BCryptPasswordEncoder. Nội dung sẽ gồm: BCryptPasswordEncoder là gì? Cách Spring tạo Bean. Cấu hình Strength. encode() thực tế. matches() thực tế. Tích hợp vào Service. Ví dụ hoàn chỉnh với Spring Boot.</p>
+                </div>
+            </section>
+
+            <!-- SECTION 4: BCryptPasswordEncoder trong Spring Security -->
+            <section id="section4" class="section">
+                <h2><i class="fas fa-cog"></i> 4. BCryptPasswordEncoder trong Spring Security</h2>
+
+                <h3>4.1. Tổng quan về BCryptPasswordEncoder</h3>
+                <h4>4.1.1. BCryptPasswordEncoder là gì?</h4>
+                <p>BCryptPasswordEncoder là một class có sẵn trong Spring Security, được sử dụng để thực hiện việc mã hóa mật khẩu bằng thuật toán BCrypt. Nó là một implementation (lớp triển khai) của interface <strong>PasswordEncoder</strong>.</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+PasswordEncoder
+       |
+       |
++------+------+
+|             |
+|             |
+BCryptPasswordEncoder  NoOpPasswordEncoder</pre>
+                </div>
+                <ul>
+                    <li><strong>PasswordEncoder:</strong> Quy định các phương thức cần có</li>
+                    <li><strong>BCryptPasswordEncoder:</strong> Thực hiện mã hóa bằng BCrypt</li>
+                </ul>
+
+                <h4>4.1.2. Vị trí của BCryptPasswordEncoder trong Spring Security</h4>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+User nhập password
+        |
+        v
+Spring Security
+        |
+        v
+PasswordEncoder
+        |
+        v
+BCryptPasswordEncoder
+        |
+        v
+Kiểm tra BCrypt Hash
+        |
+        v
+Authentication thành công</pre>
+                </div>
+                <p>Spring Security không tự biết cách mã hóa password. Chúng ta phải cung cấp <code>@Bean PasswordEncoder passwordEncoder()</code> để Spring sử dụng.</p>
+
+                <h3>4.2. Dependency cần thiết</h3>
+                <p>Để sử dụng BCryptPasswordEncoder, project cần có Spring Security.</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> pom.xml</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+                </div>
+                <p>Spring Boot sẽ tự động cung cấp <code>org.springframework.security.crypto.password.BCryptPasswordEncoder</code>.</p>
+
+                <h3>4.3. Tạo BCryptPasswordEncoder Bean</h3>
+                <h4>4.3.1. Bean là gì?</h4>
+                <p>Trong Spring, Bean là một object được Spring tạo ra và quản lý vòng đời. Thay vì tự tạo <code>PasswordEncoder encoder = new BCryptPasswordEncoder();</code> chúng ta để Spring quản lý.</p>
+
+                <h4>4.3.2. Cấu hình trong SecurityConfig</h4>
+                <p>Tạo file: <code>config/SecurityConfig.java</code></p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Configuration</span>
+<span class="annotation">@EnableWebSecurity</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+        <span class="keyword">return new</span> BCryptPasswordEncoder();
+    }
+}</pre>
+                </div>
+                <p><strong>Giải thích:</strong></p>
+                <ul>
+                    <li><strong>@Bean:</strong> Thông báo cho Spring: Hãy tạo object PasswordEncoder và lưu vào Application Context.</li>
+                    <li><strong>PasswordEncoder:</strong> Kiểu trả về cho phép các class khác sử dụng <code>@Autowired private PasswordEncoder passwordEncoder;</code></li>
+                    <li><strong>new BCryptPasswordEncoder():</strong> Tạo một object sử dụng thuật toán BCrypt.</li>
+                </ul>
+
+                <h3>4.4. Sử dụng BCryptPasswordEncoder để mã hóa password</h3>
+                <h4>4.4.1. Ví dụ cơ bản</h4>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> TestBCrypt.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="keyword">public class</span> <span class="class-name">TestBCrypt</span> {
+    <span class="keyword">public static void</span> main(String[] args) {
+        BCryptPasswordEncoder encoder = <span class="keyword">new</span> BCryptPasswordEncoder();
+        String password = <span class="string">"123456"</span>;
+        String hash = encoder.encode(password);
+        System.out.println(hash);
+    }
+}</pre>
+                </div>
+                <p>Kết quả ví dụ: <code>$2a$10$wX9hKJ8s7dL3....</code></p>
+                <p>Mỗi lần chạy sẽ ra kết quả khác nhau:</p>
+                <ul>
+                    <li>Lần 1: <code>$2a$10$ABC123....</code></li>
+                    <li>Lần 2: <code>$2a$10$XYZ789....</code></li>
+                </ul>
+                <p>Mặc dù password = 123456.</p>
+
+                <h3>4.5. Phân tích kết quả BCrypt</h3>
+                <p>Ví dụ: <code>$2a$10$N9qo8uLOickgx2ZMRZoMye...</code></p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+$2a$10$N9qo8uLOickgx2ZMRZoMye
+ |   |              |
+ |   |              |
+ |   |              |
+Version Cost       Salt + Hash</pre>
+                </div>
+
+                <h4>4.5.1. Version</h4>
+                <p><code>$2a$</code> cho biết phiên bản BCrypt (có thể là $2a$, $2b$, $2y$).</p>
+
+                <h4>4.5.2. Strength</h4>
+                <p><code>$10$</code> là độ khó của BCrypt. <code>new BCryptPasswordEncoder(10);</code> tương đương Cost = 10.</p>
+
+                <h4>4.5.3. Salt</h4>
+                <p>BCrypt tự sinh Salt. Ví dụ: Password: <code>123456</code>, Salt: <code>A7x9Kp</code>, Hash: <code>$2a$10$A7x9Kp....</code> Salt được lưu chung trong chuỗi BCrypt.</p>
+
+                <h3>4.6. Cấu hình Strength cho BCryptPasswordEncoder</h3>
+                <h4>4.6.1. Constructor mặc định</h4>
+                <p><code>new BCryptPasswordEncoder();</code> → Strength = 10</p>
+
+                <h4>4.6.2. Tự cấu hình Strength</h4>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Cấu hình Strength</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+    <span class="keyword">return new</span> BCryptPasswordEncoder(<span class="keyword">12</span>);
+}</pre>
+                </div>
+                <p>Ở đây Strength = 12.</p>
+
+                <h4>4.6.3. So sánh Strength</h4>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Strength</th><th>Đặc điểm</th></tr></thead>
+                        <tbody>
+                            <tr><td>4</td><td>Rất nhanh, không an toàn</td></tr>
+                            <tr><td>8</td><td>Thấp</td></tr>
+                            <tr><td>10</td><td>Thông dụng</td></tr>
+                            <tr><td>12</td><td>Bảo mật cao</td></tr>
+                            <tr><td>14</td><td>Chậm</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Trong ứng dụng thực tế: 10 - 12 là mức thường được lựa chọn.</p>
+
+                <h3>4.7. Kiểm tra mật khẩu với matches()</h3>
+                <h4>4.7.1. Vấn đề</h4>
+                <p>Giả sử database lưu: <code>$2a$10$ABCXYZ....</code>, người dùng nhập: <code>123456</code>.</p>
+                <p>Không thể: <code>encode("123456") == databasePassword</code> vì <code>encode()</code> sinh hash mới.</p>
+
+                <h4>4.7.2. Sử dụng matches()</h4>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ matches</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre>BCryptPasswordEncoder encoder = <span class="keyword">new</span> BCryptPasswordEncoder();
+String password = <span class="string">"123456"</span>;
+String hash = encoder.encode(password);
+<span class="keyword">boolean</span> result = encoder.matches(password, hash);
+System.out.println(result);  <span class="comment">// true</span></pre>
+                </div>
+                <p>Nếu <code>encoder.matches("abcdef", hash);</code> → <code>false</code>.</p>
+
+                <h3>4.8. Tích hợp BCryptPasswordEncoder vào Service</h3>
+                <p>Giả sử có Entity:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> User.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Entity</span>
+<span class="keyword">public class</span> <span class="class-name">User</span> {
+    <span class="annotation">@Id</span>
+    <span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span> 
+    <span class="keyword">private</span> Integer id;
+    <span class="keyword">private</span> String username;
+    <span class="keyword">private</span> String password;
+    <span class="keyword">private</span> String role;
+    <span class="keyword">private</span> String enabled;
+}</pre>
+                </div>
+ <p><strong>SecurityConfig</strong></p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Configuration</span>
+<span class="annotation">@EnableWebSecurity</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+        <span class="keyword">return new</span> BCryptPasswordEncoder();
+    }
+}</pre>
+                </div>
+                <h4>4.8.1. UserService</h4>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> UserService.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Service</span>
+<span class="keyword">public class</span> <span class="class-name">UserService</span> {
+    <span class="annotation">@Autowired</span>
+    <span class="keyword">private</span> UserRepository userRepository;
+    <span class="annotation">@Autowired</span>
+    <span class="keyword">private</span> PasswordEncoder passwordEncoder;
+
+    <span class="keyword">public</span> User save(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        <span class="keyword">return</span> userRepository.save(user);
+    }
+}</pre>
+                </div>
+
+                <h4>4.8.2. Luồng đăng ký</h4>
+                <p>Người dùng gửi: <code>{ "username": "user1", "password": "123456",  "role": "USER",   "enabled": true}</code></p>
+                <ul>
+                    <li>Controller nhận: password = 123456</li>
+                    <li>Service: <code>encode("123456")</code></li>
+                    <li>Database: username: <code>manh</code>, password: <code>$2a$10$8Kdj29....</code></li>
+                </ul>
+
+                <h3>4.9. BCryptPasswordEncoder trong Authentication</h3>
+                <p>Khi đăng nhập:</p>
+                <p>Request: username: <code>manh</code>, password: <code>123456</code></p>
+                <p>Spring Security:</p>
+                <ul>
+                    <li><strong>Bước 1:</strong> Tìm user: UserDetailsService</li>
+                    <li><strong>Bước 2:</strong> Lấy password trong database: <code>$2a$10$ABC...</code></li>
+                    <li><strong>Bước 3:</strong> Gọi: <code>passwordEncoder.matches("123456", "$2a$10$ABC...");</code></li>
+                    <li><strong>Bước 4:</strong> Kết quả: Đúng → Authentication Success, Sai → 401 Unauthorized</li>
+                </ul>
+
+
+                <h3>4.10. Những lỗi khi sử dụng BCryptPasswordEncoder</h3>
+                <p><strong>Lỗi 1: Encode password ở Controller</strong></p>
+                <div class="warning-box">
+                    <p><strong>Sai:</strong></p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre><span class="annotation">@PostMapping</span>
+<span class="keyword">public</span> User save(User user) {
+    user.setPassword(encoder.encode(user.getPassword()));
+}</pre>
+                    </div>
+                    <p><strong>Vấn đề:</strong> Controller chỉ nên nhận request. Nên đặt logic ở Service Layer.</p>
+                </div>
+
+                <p><strong>Lỗi 2: Encode password nhiều lần</strong></p>
+                <div class="warning-box">
+                    <p><strong>Sai:</strong></p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>user.setPassword(encoder.encode(encoder.encode(password)));</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong> Hash của Hash → Login thất bại.</p>
+                </div>
+
+                <p><strong>Lỗi 3: Database lưu password quá ngắn</strong></p>
+                <div class="warning-box">
+                    <p><strong>Sai:</strong> <code>password VARCHAR(20)</code></p>
+                    <p>BCrypt hash dài khoảng 60 ký tự. Nên dùng <code>password VARCHAR(100)</code> hoặc <code>VARCHAR(255)</code>.</p>
+                </div>
+
+                <div class="note" style="margin-top:30px;">
+                    <p><strong>Mục tiếp theo:</strong> 5. Cập nhật UserDetailsService sử dụng BCrypt</p>
+                </div>
+            </section>
+
+            <!-- SECTION 5: Cập nhật UserDetailsService sử dụng BCrypt -->
+            <section id="section5" class="section">
+                <h2><i class="fas fa-sync-alt"></i> 5. Cập nhật UserDetailsService sử dụng BCrypt</h2>
+
+                <p>Ở bài trước ta có:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> UserDetailsService cũ</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> UserDetailsService userDetailsService() {
+    UserDetails user = User.builder()
+            .username(<span class="string">"manh"</span>)
+            .password(<span class="string">"{noop}123456"</span>)
+            .roles(<span class="string">"USER"</span>)
+            .build();
+    <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
+}</pre>
+                </div>
+                <p><strong>Vấn đề:</strong> <code>.password("{noop}123456")</code> nghĩa là mật khẩu đang lưu dạng Plain Text. Spring Security không mã hóa.</p>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>username</th><th>password</th></tr></thead>
+                        <tbody>
+                            <tr><td>manh</td><td>123456</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p>Sau khi học BCrypt, ta thay đổi:</p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+123456 → BCrypt → $2a$10$8sd78f9sd7f8sd...</pre>
+                </div>
+
+                <h3>5.1. Tạo PasswordEncoder</h3>
+                <p>Trong SecurityConfig:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+    <span class="keyword">return new</span> BCryptPasswordEncoder();
+}</pre>
+                </div>
+                <p>Bean này sẽ được Spring quản lý. Nó có nhiệm vụ: Mã hóa mật khẩu, Kiểm tra mật khẩu khi đăng nhập.</p>
+
+                <h3>5.2. Tạo mật khẩu BCrypt</h3>
+                <p>Ta cần tạo mật khẩu đã mã hóa trước.</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> DemoApplication.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@SpringBootApplication</span>
+<span class="keyword">public class</span> <span class="class-name">DemoApplication</span> {
+    <span class="keyword">public static void</span> main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+    <span class="annotation">@Bean</span>
+    CommandLineRunner testPassword(PasswordEncoder encoder) {
+        <span class="keyword">return</span> args -> {
+            String password = encoder.encode(<span class="string">"123456"</span>);
+            System.out.println(password);
+        };
+    }
+}</pre>
+                </div>
+                <p>Khi chạy: Ví dụ kết quả <code>$2a$10$7w8sd7f8sd7f8sdf87sdf</code>. Mỗi lần chạy sẽ khác nhau.</p>
+
+                <h3>5.3. Cập nhật UserDetailsService</h3>
+                <p>Bây giờ thay <code>.password("{noop}123456")</code> bằng <code>.password("$2a$10$7w8sd7f8sd7f8sdf87sdf")</code></p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> UserDetailsService đã cập nhật</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> UserDetailsService userDetailsService() {
+    UserDetails user = User.builder()
+            .username(<span class="string">"manh"</span>)
+            .password(<span class="string">"$2a$10$7w8sd7f8sd7f8sdf87sdf"</span>)
+            .roles(<span class="string">"USER"</span>)
+            .build();
+    <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
+}</pre>
+                </div>
+
+                <h3>5.4. Nhưng không nên tự copy BCrypt thủ công</h3>
+                <p>Cách trên chỉ để minh họa. Thực tế nên tạo user như sau:</p>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> UserDetailsService khuyến nghị</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> UserDetailsService userDetailsService(PasswordEncoder encoder) {
+    UserDetails user = User.builder()
+            .username(<span class="string">"manh"</span>)
+            .password(encoder.encode(<span class="string">"123456"</span>))
+            .roles(<span class="string">"USER"</span>)
+            .build();
+    <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
+}</pre>
+                </div>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+Ứng dụng khởi động
+        |
+        v
+encoder.encode("123456")
+        |
+        v
+$2a$10$abcxyz...
+        |
+        v
+InMemoryUserDetailsManager lưu UserDetails</pre>
+                </div>
+
+                <h3>5.5. SecurityConfig hoàn chỉnh sau khi cập nhật</h3>
+                <div class="code-block">
+                    <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                    <pre><span class="annotation">@Configuration</span>
+<span class="annotation">@EnableWebSecurity</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http) <span class="keyword">throws</span> Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()
+            )
+            .httpBasic(Customizer.withDefaults());
+        <span class="keyword">return</span> http.build();
+    }
+
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> UserDetailsService userDetailsService(PasswordEncoder encoder) {
+        UserDetails user = User.builder()
+                .username(<span class="string">"manh"</span>)
+                .password(encoder.encode(<span class="string">"123456"</span>))
+                .roles(<span class="string">"USER"</span>)
+                .build();
+        <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
+    }
+
+    <span class="annotation">@Bean</span>
+    <span class="keyword">public</span> PasswordEncoder passwordEncoder() {
+        <span class="keyword">return new</span> BCryptPasswordEncoder();
+    }
+}</pre>
+                </div>
+
+                <h3>5.6. Kiểm tra đăng nhập</h3>
+                <p>Request: username: <code>manh</code>, password: <code>123456</code></p>
+                <div class="architecture">
+                    <pre style="color: #ecf0f1; margin:0;">
+123456
+   |
+   |
+PasswordEncoder.matches()
+   |
+   |
+$2a$10$abcxyz...
+   |
+   |
+true</pre>
+                </div>
+                <p>Kết quả: <code>HTTP 200 OK</code></p>
+
+                <div class="note" style="margin-top:30px;">
+                    <p><strong>Mục tiếp theo:</strong> 7. Lỗi thường gặp (đánh số 7 theo tài liệu gốc).</p>
+                </div>
+            </section>
+
+            <!-- SECTION 6: Lỗi thường gặp -->
+            <section id="section6" class="section">
+                <h2><i class="fas fa-bug"></i> 7. Lỗi thường gặp</h2>
+
+                <p>Trong quá trình sử dụng BCryptPasswordEncoder, sinh viên thường gặp một số lỗi phổ biến. Phần này sẽ phân tích nguyên nhân và cách khắc phục để giúp người học dễ dàng xử lý khi thực hành.</p>
+
+                <h3>7.1. Lỗi 1: So sánh mật khẩu bằng dấu equals()</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Sinh viên thường viết:</p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Code sai</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>BCryptPasswordEncoder encoder = <span class="keyword">new</span> BCryptPasswordEncoder();
+String hash = encoder.encode(<span class="string">"123456"</span>);
+<span class="keyword">if</span> (encoder.encode(<span class="string">"123456"</span>).equals(hash)) {
+    System.out.println(<span class="string">"Đăng nhập thành công"</span>);
+}</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong> Không in ra "Đăng nhập thành công" mặc dù mật khẩu đều là 123456.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Mỗi lần gọi <code>encoder.encode("123456");</code> BCrypt sẽ sinh Salt mới và chuỗi hash mới.</p>
+                    <ul>
+                        <li>Lần 1: <code>$2a$10$ABC123...</code></li>
+                        <li>Lần 2: <code>$2a$10$XYZ789...</code></li>
+                    </ul>
+                    <p>Hai chuỗi hash khác nhau. Do đó <code>equals()</code> luôn trả về <code>false</code>.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Không sử dụng <code>equals()</code>. Mà sử dụng:</p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>encoder.matches(<span class="string">"123456"</span>, hash);</pre>
+                    </div>
+                    <p><code>matches()</code> sẽ tự động đọc Salt từ chuỗi hash, thực hiện lại thuật toán BCrypt và so sánh kết quả.</p>
+                </div>
+
+                <h3>7.2. Lỗi 2: Cho rằng BCrypt có thể giải mã</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Nhiều sinh viên tìm cách viết: <code>encoder.decode(hash);</code> hoặc <code>encoder.decrypt(hash);</code></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>BCrypt là thuật toán <strong>Hash</strong>, không phải <strong>Encryption</strong>. Hash chỉ có một chiều:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:10px; margin:10px 0;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Password → BCrypt → Hash</pre>
+                    </div>
+                    <p>Không tồn tại chiều ngược lại: <code>Hash → X → Password</code></p>
+                    <p>Do đó <code>decode()</code> và <code>decrypt()</code> không tồn tại.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Khi cần kiểm tra mật khẩu, sử dụng <code>encoder.matches(password, hash);</code> thay vì cố gắng giải mã chuỗi hash.</p>
+                </div>
+
+                <h3>7.3. Lỗi 3: Nghĩ rằng cùng mật khẩu sẽ cho cùng kết quả</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Sinh viên chạy:</p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>System.out.println(encoder.encode(<span class="string">"123456"</span>));
+System.out.println(encoder.encode(<span class="string">"123456"</span>));</pre>
+                    </div>
+                    <p>Kết quả: <code>$2a$10$A...</code> và <code>$2a$10$B...</code> khác nhau. Sau đó nghĩ rằng chương trình bị lỗi.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>BCrypt luôn tạo Salt ngẫu nhiên. Do đó <code>123456</code> không bao giờ sinh cùng một chuỗi hash. Đây là cơ chế bảo mật của BCrypt.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Đây không phải lỗi. Đó là hành vi đúng của BCrypt. Muốn kiểm tra mật khẩu phải dùng <code>matches()</code>.</p>
+                </div>
+
+                <h3>7.4. Lỗi 4: Quên import BCryptPasswordEncoder</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>IDE báo lỗi: <code>BCryptPasswordEncoder cannot be resolved</code> hoặc <code>Cannot find symbol BCryptPasswordEncoder</code>.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Chưa import: <code>import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;</code> hoặc project chưa thêm Spring Security.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Thêm import: <code>import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;</code></p>
+                    <p>Đồng thời kiểm tra project đã có dependency:</p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+                    </div>
+                    <p>Sau đó cập nhật Maven hoặc Gradle.</p>
+                </div>
+
+                <h3>7.5. Lỗi 5: Chưa thêm thư viện Spring Security</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Khi import <code>BCryptPasswordEncoder</code> IDE hiển thị màu đỏ.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Project chưa thêm <code>spring-boot-starter-security</code>.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Thêm dependency:</p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+                    </div>
+                    <p>Sau đó: Maven → Reload Project hoặc Gradle → Refresh Dependencies.</p>
+                </div>
+
+                <h3>7.6. Lỗi 6: Viết sai tên lớp</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Sinh viên viết: <code>BCryptEncoder</code> hoặc <code>BcryptPasswordEncoder</code>. IDE báo lỗi <code>Cannot resolve symbol</code>.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Tên lớp không đúng. Tên chính xác là <strong>BCryptPasswordEncoder</strong>.</p>
+                    <p>Lưu ý: Chữ B, C, P, E đều viết hoa. Java phân biệt chữ hoa và chữ thường.</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <p>Sử dụng đúng tên: <code>BCryptPasswordEncoder</code></p>
+                </div>
+
+                <h3>7.7. Lỗi 7: Nhầm lẫn giữa Hash và Encryption</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Sinh viên cho rằng <code>encode()</code> là mã hóa. Sau đó cố gắng <code>decode()</code> để lấy lại mật khẩu.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Nhầm lẫn giữa Hash và Encryption:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Hash</th><th>Encryption</th></tr></thead>
+                            <tbody>
+                                <tr><td>Một chiều</td><td>Hai chiều</td></tr>
+                                <tr><td>Không giải mã được</td><td>Có thể giải mã</td></tr>
+                                <tr><td>Dùng lưu mật khẩu</td><td>Dùng bảo vệ dữ liệu</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>BCrypt thuộc nhóm <strong>Hash</strong>, không phải <strong>Encryption</strong>.</p>
+                </div>
+
+                <h3>7.8. Lỗi 8: Khai báo sai kiểu dữ liệu</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre><span class="keyword">int</span> password = 123456;
+encoder.encode(password);  <span class="comment">// Lỗi</span></pre>
+                    </div>
+                    <p>IDE báo lỗi: <code>Required: CharSequence, Provided: int</code></p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p><code>encode()</code> nhận tham số kiểu <code>CharSequence</code> (thường là <code>String</code>).</p>
+                </div>
+                <div class="success-box">
+                    <p><strong>Cách khắc phục</strong></p>
+                    <div class="code-block" style="margin:10px 0;">
+                        <pre>String password = <span class="string">"123456"</span>;
+encoder.encode(password);</pre>
+                    </div>
+                </div>
+
+                <h3>7.9. Lỗi 9: Hiểu sai về chuỗi hash</h3>
+                <div class="warning-box">
+                    <p><strong>Hiện tượng</strong></p>
+                    <p>Một số sinh viên nghĩ rằng <code>$2a$10$...</code> là mật khẩu đã được mã hóa và có thể đổi ngược.</p>
+                </div>
+                <div class="info-box">
+                    <p><strong>Nguyên nhân</strong></p>
+                    <p>Đây là <strong>Password Hash</strong>, không phải <strong>Encrypted Password</strong>. Do đó không thể chuyển <code>$2a$10$... → 123456</code>.</p>
+                </div>
+
+                <h3>7.10. Tổng kết</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Lỗi</th><th>Nguyên nhân</th><th>Cách khắc phục</th></tr></thead>
+                        <tbody>
+                            <tr><td>So sánh bằng equals()</td><td>BCrypt sinh Salt mới mỗi lần mã hóa</td><td>Sử dụng matches()</td></tr>
+                            <tr><td>Muốn giải mã mật khẩu</td><td>Hash là thuật toán một chiều</td><td>Không giải mã, dùng matches()</td></tr>
+                            <tr><td>Hash khác nhau mỗi lần</td><td>BCrypt tạo Salt ngẫu nhiên</td><td>Đây là hành vi bình thường</td></tr>
+                            <tr><td>Không import được lớp</td><td>Thiếu import hoặc thiếu thư viện</td><td>Thêm import và dependency</td></tr>
+                            <tr><td>Viết sai tên lớp</td><td>Sai cú pháp Java</td><td>Sử dụng đúng BCryptPasswordEncoder</td></tr>
+                            <tr><td>Nhầm Hash với Encryption</td><td>Chưa phân biệt hai khái niệm</td><td>Hiểu rõ mục đích của từng kỹ thuật</td></tr>
+                            <tr><td>Truyền sai kiểu dữ liệu</td><td>encode() nhận CharSequence</td><td>Sử dụng kiểu String</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="note" style="margin-top:30px;">
+                    <p><strong>Tổng kết:</strong> Việc hiểu rõ những lỗi trên sẽ giúp sinh viên tránh được các sai sót phổ biến khi xây dựng chức năng mã hóa và xác thực mật khẩu trong các ứng dụng sử dụng Spring Security.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer>
+        <p><i class="fas fa-lock"></i> BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT - Giáo trình Spring Security</p>
+    </footer>
+</div>
+
+<script>
+    function copyCode(btn) {
+        const pre = btn.closest('.code-block').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+            }, 2000);
+        }).catch(err => {
+            alert('Không thể copy: ' + err);
+        });
+    }
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            const targetId = this.getAttribute('href').substring(1);
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>

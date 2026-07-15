@@ -1,0 +1,3646 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giới thiệu Spring Security và cấu hình cơ bản </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --jpa: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            height: 85vh;
+            overflow-y: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--jpa);
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--jpa);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--jpa);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--jpa);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--jpa);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note,
+        .info-box,
+        .success-box,
+        .warning-box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-one {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-many {
+            background: #3498db;
+            color: white;
+        }
+
+        .badge-jpa {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .badge-join {
+            background: #1abc9c;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--jpa);
+                height: auto;
+                max-height: 300px;
+            }
+        }
+
+        .architecture {
+            background: linear-gradient(135deg, #2c3e50, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 24px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin: 25px 0;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .formula-box {
+            background: #e8f4f8;
+            border-left: 4px solid var(--jpa);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--jpa), transparent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-project-diagram"></i> QUAN HỆ TRONG JPA</h1>
+
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#chuong1" class="nav-link active">
+                            <i class="fas fa-info-circle"></i> Giới thiệu Spring Security
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong2" class="nav-link">
+                            <i class="fas fa-user-lock"></i> Các khái niệm Authentication và Authorization
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong3" class="nav-link">
+                            <i class="fas fa-sitemap"></i> Kiến trúc Spring Security
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong4" class="nav-link">
+                            <i class="fas fa-filter"></i> Security Filter Chain
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong5" class="nav-link">
+                            <i class="fas fa-folder-plus"></i> Tạo project
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong6" class="nav-link">
+                            <i class="fas fa-cogs"></i> Cấu hình SecurityFilterChain
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong7" class="nav-link">
+                            <i class="fas fa-users-cog"></i> InMemoryUserDetailsManager
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong8" class="nav-link">
+                            <i class="fas fa-key"></i> Basic Authentication
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong9" class="nav-link">
+                            <i class="fas fa-shield-alt"></i> Thực hành bảo vệ 3 API
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#chuong10" class="nav-link">
+                            <i class="fas fa-vial"></i> Kiểm thử bằng Postman
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN 1: GIỚI THIỆU SPRING SECURITY -->
+                <section id="chuong1" class="section active">
+                    <h2><i class="fas fa-info-circle"></i> 1.1 Giới thiệu về Spring Security</h2>
+
+                    <h3>1.1.1 Bảo mật trong ứng dụng Web</h3>
+                    <p>Trong thời đại chuyển đổi số, hầu hết các hệ thống phần mềm đều hoạt động trên nền tảng Internet.
+                        Các ứng dụng như ngân hàng điện tử, thương mại điện tử, quản lý nhân sự, bệnh viện, giáo dục hay
+                        mạng xã hội đều lưu trữ lượng lớn dữ liệu quan trọng của người dùng.</p>
+                    <p>Nếu không có cơ chế bảo mật phù hợp, hệ thống có thể đối mặt với nhiều nguy cơ như:</p>
+                    <ul>
+                        <li>Truy cập trái phép vào dữ liệu.</li>
+                        <li>Đánh cắp tài khoản người dùng.</li>
+                        <li>Thay đổi hoặc xóa dữ liệu.</li>
+                        <li>Chiếm quyền quản trị hệ thống.</li>
+                        <li>Tấn công từ chối dịch vụ (DoS/DDoS).</li>
+                        <li>Tấn công Cross Site Scripting (XSS).</li>
+                        <li>Tấn công SQL Injection.</li>
+                        <li>Giả mạo phiên đăng nhập (Session Hijacking).</li>
+                        <li>Cross Site Request Forgery (CSRF).</li>
+                    </ul>
+                    <div class="example-card">
+                        <h4>Ví dụ:</h4>
+                        <p>Một website bán hàng có hai loại người dùng:</p>
+                        <ul>
+                            <li>Khách hàng</li>
+                            <li>Quản trị viên</li>
+                        </ul>
+                        <p>Nếu không có cơ chế bảo mật, khách hàng chỉ cần nhập trực tiếp địa chỉ:</p>
+                        <div class="code-block" style="background:#2c3e50; color:#ecf0f1; margin:10px 0;">
+                            <pre>http://localhost:8080/admin/products</pre>
+                        </div>
+                        <p>vẫn có thể truy cập vào trang quản trị. Điều này gây hậu quả rất nghiêm trọng:</p>
+                        <ul>
+                            <li>Xóa sản phẩm</li>
+                            <li>Thay đổi giá bán</li>
+                            <li>Xóa đơn hàng</li>
+                            <li>Thay đổi thông tin khách hàng</li>
+                        </ul>
+                        <p>Do đó, mọi ứng dụng Web đều cần có cơ chế xác thực và phân quyền.</p>
+                    </div>
+
+                    <h3>1.1.2 Bảo mật là gì?</h3>
+                    <p>Bảo mật (Security) là tập hợp các kỹ thuật và cơ chế nhằm bảo vệ hệ thống thông tin khỏi các hành
+                        vi truy cập trái phép, mất mát dữ liệu hoặc các cuộc tấn công từ bên ngoài.</p>
+                    <p>Mục tiêu của bảo mật là đảm bảo chỉ những người được phép mới có thể truy cập đúng tài nguyên mà
+                        họ được cấp quyền.</p>
+                    <p>Một hệ thống bảo mật tốt cần đảm bảo ba nguyên tắc cơ bản, thường được gọi là mô hình CIA:</p>
+                    <div class="info-box">
+                        <h4><i class="fas fa-lock"></i> a. Confidentiality (Tính bảo mật)</h4>
+                        <p>Chỉ những người được cấp quyền mới được phép truy cập dữ liệu.</p>
+                        <p><em>Ví dụ:</em> Nhân viên không thể xem bảng lương của tất cả công ty. Sinh viên chỉ được xem
+                            điểm của chính mình.</p>
+                    </div>
+                    <div class="info-box">
+                        <h4><i class="fas fa-check-circle"></i> b. Integrity (Tính toàn vẹn)</h4>
+                        <p>Dữ liệu không được phép bị thay đổi trái phép.</p>
+                        <p><em>Ví dụ:</em> Điểm thi của sinh viên chỉ giảng viên mới có quyền cập nhật.</p>
+                    </div>
+                    <div class="info-box">
+                        <h4><i class="fas fa-clock"></i> c. Availability (Tính sẵn sàng)</h4>
+                        <p>Hệ thống phải luôn hoạt động và phục vụ người dùng hợp lệ.</p>
+                        <p><em>Ví dụ:</em> Website bán hàng phải luôn sẵn sàng để khách hàng đặt hàng.</p>
+                    </div>
+
+                    <h3>1.1.3 Các mối đe dọa phổ biến</h3>
+                    <p>Trong quá trình phát triển ứng dụng Web, lập trình viên cần nhận biết các nguy cơ bảo mật thường
+                        gặp.</p>
+
+                    <h4>1. SQL Injection</h4>
+                    <p>Kẻ tấn công chèn mã SQL vào ô nhập liệu để thao túng cơ sở dữ liệu.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ SQL Injection</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><span class="comment">-- Câu lệnh SQL dự kiến</span>
+SELECT * FROM users WHERE username='admin' AND password='123456';
+
+<span class="comment">-- Nếu ứng dụng ghép chuỗi trực tiếp:</span>
+String sql = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
+
+<span class="comment">-- Người dùng nhập:</span>
+Username: admin
+Password: ' OR '1'='1
+
+<span class="comment">-- Câu lệnh SQL trở thành:</span>
+SELECT * FROM users WHERE username='admin' AND password='' OR '1'='1';
+<span class="comment">-- Điều kiện luôn đúng. Hacker đăng nhập thành công.</span></pre>
+                    </div>
+
+                    <h4>2. Cross Site Scripting (XSS)</h4>
+                    <p>Kẻ tấn công chèn JavaScript vào website.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ XSS</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>&lt;script&gt;alert("Hack")&lt;/script&gt;</pre>
+                    </div>
+                    <p>Nếu hệ thống không kiểm tra dữ liệu đầu vào, đoạn mã này sẽ được thực thi trên trình duyệt của
+                        người dùng khác.</p>
+
+                    <h4>3. Cross Site Request Forgery (CSRF)</h4>
+                    <p>Kẻ tấn công lợi dụng phiên đăng nhập của người dùng để gửi yêu cầu giả mạo.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ CSRF</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>&lt;img src="https://bank.com/transfer?money=10000000&to=123456"&gt;</pre>
+                    </div>
+                    <p>Trình duyệt sẽ tự động gửi request. Nếu không có CSRF Protection, tiền sẽ bị chuyển.</p>
+
+                    <h4>4. Brute Force</h4>
+                    <p>Hacker thử hàng nghìn hoặc hàng triệu mật khẩu. Ví dụ: 123456, 12345678, password, admin, qwerty,
+                        ... Nếu không giới hạn số lần đăng nhập, tài khoản sẽ rất dễ bị chiếm.</p>
+
+                    <h4>5. Session Hijacking</h4>
+                    <p>Sau khi người dùng đăng nhập, hacker đánh cắp Session ID và sử dụng để truy cập hệ thống mà không
+                        cần biết mật khẩu.</p>
+
+                    <h3>1.1.4 Vì sao cần Spring Security?</h3>
+                    <p>Trước đây, lập trình viên thường tự viết chức năng đăng nhập:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Code truyền thống</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><span class="keyword">if</span> (username.equals("admin") && password.equals("123456")) {
+    <span class="comment">// Login</span>
+}</pre>
+                    </div>
+                    <p>Cách làm này có nhiều nhược điểm:</p>
+                    <ul>
+                        <li>Không mã hóa mật khẩu.</li>
+                        <li>Không phân quyền.</li>
+                        <li>Không chống CSRF.</li>
+                        <li>Không chống Session Hijacking.</li>
+                        <li>Không quản lý Session.</li>
+                        <li>Không hỗ trợ OAuth2.</li>
+                        <li>Không hỗ trợ JWT.</li>
+                        <li>Khó mở rộng.</li>
+                        <li>Khó bảo trì.</li>
+                    </ul>
+                    <p><strong>Spring Security</strong> ra đời nhằm giải quyết toàn bộ các vấn đề trên.</p>
+
+                    <h3>1.1.5 Spring Security là gì?</h3>
+                    <p>Spring Security là framework bảo mật chính thức của hệ sinh thái Spring, được thiết kế để cung
+                        cấp các giải pháp xác thực (Authentication) và phân quyền (Authorization) cho ứng dụng Java.</p>
+                    <p>Spring Security không chỉ xử lý việc đăng nhập mà còn hỗ trợ:</p>
+                    <ul>
+                        <li>Quản lý người dùng.</li>
+                        <li>Mã hóa mật khẩu.</li>
+                        <li>Quản lý phiên đăng nhập.</li>
+                        <li>Phân quyền truy cập.</li>
+                        <li>Bảo vệ API REST.</li>
+                        <li>Hỗ trợ JWT.</li>
+                        <li>Hỗ trợ OAuth2.</li>
+                        <li>Hỗ trợ OpenID Connect.</li>
+                        <li>Chống CSRF.</li>
+                        <li>Chống Session Fixation.</li>
+                        <li>Chống Clickjacking.</li>
+                        <li>Bảo vệ HTTP Header.</li>
+                        <li>Remember Me.</li>
+                        <li>Login bằng Google.</li>
+                        <li>Login bằng Facebook.</li>
+                        <li>Login bằng GitHub.</li>
+                        <li>LDAP Authentication.</li>
+                        <li>Database Authentication.</li>
+                    </ul>
+                    <p>Nhờ đó, lập trình viên không cần xây dựng toàn bộ hệ thống bảo mật từ đầu.</p>
+
+                    <h3>1.1.6 Các chức năng chính của Spring Security</h3>
+                    <p>Spring Security cung cấp nhiều tính năng quan trọng.</p>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-user-check"></i> Xác thực người dùng (Authentication)</h4>
+                        <p>Kiểm tra danh tính của người dùng thông qua:</p>
+                        <ul>
+                            <li>Username/Password</li>
+                            <li>JWT Token</li>
+                            <li>OAuth2</li>
+                            <li>LDAP</li>
+                            <li>Google Login</li>
+                            <li>Facebook Login</li>
+                        </ul>
+                        <p><em>Ví dụ:</em> Username: admin, Password: 123456. Nếu thông tin chính xác, hệ thống cho phép
+                            đăng nhập.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-user-shield"></i> Phân quyền (Authorization)</h4>
+                        <p>Sau khi đăng nhập thành công, hệ thống xác định người dùng được phép thực hiện những chức
+                            năng nào.</p>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Vai trò</th>
+                                        <th>Quyền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>ADMIN</td>
+                                        <td>Toàn quyền</td>
+                                    </tr>
+                                    <tr>
+                                        <td>USER</td>
+                                        <td>Xem sản phẩm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>STAFF</td>
+                                        <td>Quản lý đơn hàng</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-lock"></i> Mã hóa mật khẩu</h4>
+                        <p>Spring Security sử dụng các thuật toán mạnh như:</p>
+                        <ul>
+                            <li>BCrypt (khuyến nghị)</li>
+                            <li>PBKDF2</li>
+                            <li>SCrypt</li>
+                            <li>Argon2</li>
+                        </ul>
+                        <p>Thay vì lưu: <code>123456</code>, hệ thống lưu: <code>$2a$10$E2B9vH....</code></p>
+                        <p>Ngay cả quản trị viên cũng không thể biết mật khẩu gốc của người dùng.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-server"></i> Quản lý Session</h4>
+                        <p>Spring Security tự động:</p>
+                        <ul>
+                            <li>Tạo Session.</li>
+                            <li>Hủy Session khi đăng xuất.</li>
+                            <li>Chống Session Fixation.</li>
+                            <li>Giới hạn số lượng Session.</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-shield-alt"></i> Bảo vệ API REST</h4>
+                        <p>Spring Security có thể bảo vệ API:</p>
+                        <ul>
+                            <li>GET /users</li>
+                            <li>POST /products</li>
+                            <li>DELETE /orders/10</li>
+                        </ul>
+                        <p>Chỉ người có quyền phù hợp mới được phép thực hiện.</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-token"></i> Hỗ trợ JWT</h4>
+                        <p>Đối với các ứng dụng hiện đại như: React, Angular, Vue, Flutter, Android, iOS, Spring
+                            Security hỗ trợ xác thực bằng JSON Web Token (JWT), giúp xây dựng các hệ thống RESTful API
+                            an toàn và không phụ thuộc vào Session.</p>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Spring Security là giải pháp toàn diện, mạnh mẽ và linh hoạt cho bảo mật ứng dụng Spring,
+                            giúp lập trình viên tập trung vào nghiệp vụ mà không cần lo lắng về các vấn đề bảo mật cơ
+                            bản.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.2: AUTHENTICATION VÀ AUTHORIZATION -->
+                <section id="chuong2" class="section ">
+                    <h2><i class="fas fa-key"></i> 1.2. Authentication và Authorization</h2>
+
+                    <h3>1.2.1. Giới thiệu</h3>
+                    <p>Trong hầu hết các ứng dụng Web hiện nay, người dùng không thể truy cập tất cả các chức năng của
+                        hệ thống. Mỗi người sẽ được cấp những quyền khác nhau tùy theo vai trò của họ.</p>
+                    <p>Ví dụ, trong một hệ thống quản lý bán hàng:</p>
+                    <ul>
+                        <li>Khách hàng (Customer) có thể xem sản phẩm và đặt hàng.</li>
+                        <li>Nhân viên (Staff) có thể quản lý đơn hàng.</li>
+                        <li>Quản trị viên (Admin) có toàn quyền quản lý hệ thống.</li>
+                    </ul>
+                    <p>Để thực hiện điều này, ứng dụng cần trả lời hai câu hỏi quan trọng:</p>
+                    <ul>
+                        <li><strong>Bạn là ai?</strong></li>
+                        <li><strong>Bạn được phép làm gì?</strong></li>
+                    </ul>
+                    <p>Câu hỏi thứ nhất liên quan đến <strong>Authentication</strong> (xác thực), còn câu hỏi thứ hai
+                        liên quan đến <strong>Authorization</strong> (phân quyền).</p>
+                    <p>Hai khái niệm này là nền tảng của mọi hệ thống bảo mật và là cốt lõi của Spring Security.</p>
+
+                    <h3>1.2.2. Authentication là gì?</h3>
+                    <p><strong>Authentication (Xác thực)</strong> là quá trình kiểm tra danh tính của người dùng.</p>
+                    <p>Nói cách khác, hệ thống sẽ xác minh xem người đang gửi yêu cầu có đúng là người mà họ khai báo
+                        hay không.</p>
+
+                    <div class="example-card">
+                        <h4>Ví dụ:</h4>
+                        <p>Người dùng nhập:</p>
+                        <ul>
+                            <li><strong>Username:</strong> admin</li>
+                            <li><strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p>Hệ thống sẽ:</p>
+                        <ul>
+                            <li>Tìm tài khoản có tên admin.</li>
+                            <li>So sánh mật khẩu nhập vào với mật khẩu đã lưu trong cơ sở dữ liệu.</li>
+                            <li>Nếu trùng khớp → xác thực thành công.</li>
+                            <li>Nếu không trùng → từ chối đăng nhập.</li>
+                        </ul>
+                        <p>Nếu xác thực thành công, Spring Security sẽ coi người dùng là đã đăng nhập (Authenticated
+                            User).</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Ví dụ thực tế</h4>
+                        <p>Khi đến thư viện trường đại học, sinh viên phải xuất trình thẻ sinh viên.</p>
+                        <ul>
+                            <li>Nếu thẻ hợp lệ → được vào thư viện.</li>
+                            <li>Nếu thẻ giả hoặc không đúng → bị từ chối.</li>
+                        </ul>
+                        <p>Trong trường hợp này:</p>
+                        <ul>
+                            <li>Thẻ sinh viên đóng vai trò là thông tin xác thực.</li>
+                            <li>Nhân viên thư viện thực hiện quá trình Authentication.</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.2.3. Authorization là gì?</h3>
+                    <p>Sau khi người dùng đã được xác thực, hệ thống cần quyết định họ được phép thực hiện những hành
+                        động nào.</p>
+                    <p>Quá trình này được gọi là <strong>Authorization (Phân quyền)</strong>.</p>
+
+                    <div class="example-card">
+                        <h4>Ví dụ:</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Người dùng</th>
+                                        <th>Vai trò</th>
+                                        <th>Quyền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Admin</td>
+                                        <td>ADMIN</td>
+                                        <td>Toàn quyền</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nhân viên</td>
+                                        <td>STAFF</td>
+                                        <td>Quản lý đơn hàng</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Khách hàng</td>
+                                        <td>USER</td>
+                                        <td>Đặt hàng</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>Giả sử:</p>
+                        <ul>
+                            <li><code>GET /products</code> → Mọi người dùng đều có thể truy cập.</li>
+                            <li><code>DELETE /products/10</code> → Chỉ ADMIN mới được phép thực hiện.</li>
+                        </ul>
+                        <p>Nếu USER gửi yêu cầu xóa sản phẩm, Spring Security sẽ trả về:</p>
+                        <div class="code-block" style="background:#2c3e50; color:#ecf0f1; margin:10px 0;">
+                            <pre>403 Forbidden</pre>
+                        </div>
+                        <p>Điều này cho thấy người dùng đã đăng nhập thành công nhưng không có quyền truy cập.</p>
+                    </div>
+
+                    <h3>1.2.4. So sánh Authentication và Authorization</h3>
+                    <p>Đây là hai khái niệm thường bị nhầm lẫn.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Authentication</th>
+                                    <th>Authorization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Xác thực người dùng</td>
+                                    <td>Phân quyền người dùng</td>
+                                </tr>
+                                <tr>
+                                    <td>Trả lời câu hỏi <strong>"Bạn là ai?"</strong></td>
+                                    <td>Trả lời câu hỏi <strong>"Bạn được phép làm gì?"</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Thực hiện trước</td>
+                                    <td>Thực hiện sau</td>
+                                </tr>
+                                <tr>
+                                    <td>Kiểm tra Username và Password</td>
+                                    <td>Kiểm tra Role hoặc Permission</td>
+                                </tr>
+                                <tr>
+                                    <td>Thành công mới được phân quyền</td>
+                                    <td>Chỉ áp dụng khi đã xác thực</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Ví dụ:</h4>
+                        <ul>
+                            <li>Một nhân viên đăng nhập thành công vào hệ thống.</li>
+                            <li><strong>Authentication</strong> xác nhận đây đúng là tài khoản của nhân viên.</li>
+                            <li><strong>Authorization</strong> xác định nhân viên chỉ được xem đơn hàng, không được xóa
+                                tài khoản người dùng.</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.2.5. Vai trò của User, Role và Permission</h3>
+                    <p>Để quản lý quyền truy cập, Spring Security thường sử dụng ba khái niệm:</p>
+
+                    <h4>a. User</h4>
+                    <p>Là người sử dụng hệ thống.</p>
+                    <p><em>Ví dụ:</em> admin, manh, student01</p>
+                    <p>Mỗi User thường có các thông tin:</p>
+                    <ul>
+                        <li>Username</li>
+                        <li>Password</li>
+                        <li>Email</li>
+                        <li>Trạng thái tài khoản</li>
+                        <li>Danh sách quyền</li>
+                    </ul>
+
+                    <h4>b. Role</h4>
+                    <p>Role là vai trò của người dùng.</p>
+                    <p><em>Ví dụ:</em> ROLE_ADMIN, ROLE_USER, ROLE_MANAGER</p>
+                    <p>Một người có thể có nhiều Role.</p>
+                    <p><em>Ví dụ:</em> Nguyễn Văn A có thể có cả ROLE_USER và ROLE_MANAGER.</p>
+                    <div class="note">
+                        <p><strong>Lưu ý:</strong> Trong Spring Security, tên Role thường được đặt với tiền tố
+                            <code>ROLE_</code>.
+                        </p>
+                        <p><em>Ví dụ:</em> ROLE_ADMIN, ROLE_USER, ROLE_STAFF</p>
+                        <p>Khi sử dụng phương thức <code>.hasRole("ADMIN")</code>, Spring Security sẽ tự động hiểu là
+                            <code>ROLE_ADMIN</code>.
+                        </p>
+                    </div>
+
+                    <h4>c. Permission</h4>
+                    <p>Permission là quyền cụ thể mà người dùng có thể thực hiện.</p>
+                    <p><em>Ví dụ:</em> READ_PRODUCT, CREATE_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT</p>
+                    <p>Một Role sẽ bao gồm nhiều Permission.</p>
+                    <p><em>Ví dụ:</em></p>
+                    <ul>
+                        <li><strong>ROLE_ADMIN:</strong> CREATE_PRODUCT, UPDATE_PRODUCT, DELETE_PRODUCT, CREATE_USER,
+                            DELETE_USER</li>
+                        <li><strong>ROLE_USER:</strong> READ_PRODUCT, CREATE_ORDER</li>
+                    </ul>
+
+                    <h3>1.2.6. Mối quan hệ giữa User, Role và Permission</h3>
+                    <p>Có thể mô tả như sau:</p>
+                    <div class="architecture">
+                        <pre style="color: #fff; text-align: center;">
+User
+  │
+  ▼
+Role
+  │
+  ▼
+Permission
+        </pre>
+                    </div>
+                    <div class="example-card">
+                        <h4>Ví dụ:</h4>
+                        <div class="architecture" style="background:#1e2a3a; color:#ecf0f1; padding:15px;">
+                            <pre style="margin:0; color:#ecf0f1;">
+Nguyễn Văn A
+        │
+        ▼
+ROLE_ADMIN
+        │
+ ┌──────┼─────────┐
+ ▼      ▼         ▼
+CREATE UPDATE DELETE
+            </pre>
+                        </div>
+                        <p>Trong thực tế, doanh nghiệp thường chỉ gán Role cho người dùng, còn các quyền cụ thể
+                            (Permission) sẽ được gán vào từng Role. Cách làm này giúp việc quản lý dễ dàng hơn.</p>
+                    </div>
+
+                    <h3>1.2.7. Quy trình Authentication và Authorization</h3>
+                    <p>Quá trình xử lý một yêu cầu trong Spring Security có thể mô tả như sau:</p>
+                    <div class="architecture">
+                        <img src="./img/Quy trình xử lý yêu cầu trong Spring Security.png" style="width: 100%;" alt="">
+                    </div>
+                    <p>Quy trình này diễn ra hoàn toàn tự động khi ứng dụng được cấu hình Spring Security.</p>
+
+                    <h3>1.2.8. Ví dụ minh họa</h3>
+                    <p>Giả sử hệ thống có ba API:</p>
+                    <ul>
+                        <li><code>GET /public</code></li>
+                        <li><code>GET /user</code></li>
+                        <li><code>GET /admin</code></li>
+                    </ul>
+                    <p>Quy tắc phân quyền:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>API</th>
+                                    <th>Quyền truy cập</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/public</td>
+                                    <td>Tất cả mọi người</td>
+                                </tr>
+                                <tr>
+                                    <td>/user</td>
+                                    <td>USER, ADMIN</td>
+                                </tr>
+                                <tr>
+                                    <td>/admin</td>
+                                    <td>ADMIN</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 1: Chưa đăng nhập</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <p><strong>Kết quả:</strong> <code>401 Unauthorized</code></p>
+                        <p><strong>Nguyên nhân:</strong> Người dùng chưa được xác thực (Authentication thất bại).</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 2: Đăng nhập bằng USER</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <p><strong>Kết quả:</strong> <code>403 Forbidden</code></p>
+                        <p><strong>Nguyên nhân:</strong> Đăng nhập thành công nhưng không có quyền (Authorization thất
+                            bại).</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 3: Đăng nhập bằng ADMIN</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                        <p><strong>Nguyên nhân:</strong> Đã xác thực thành công và có đủ quyền truy cập.</p>
+                    </div>
+
+                    <h3>1.2.9. Những lỗi thường gặp</h3>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> 1. Nhầm lẫn giữa 401 và 403</h4>
+                        <ul>
+                            <li><strong>401 Unauthorized:</strong> Chưa xác thực hoặc thông tin đăng nhập không hợp lệ.
+                            </li>
+                            <li><strong>403 Forbidden:</strong> Đã xác thực nhưng không có quyền truy cập.</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> 2. Đặt sai tên Role</h4>
+                        <div class="code-block" style="background:#2c3e50; color:#ecf0f1; margin:10px 0;">
+                            <pre>.hasRole("ADMIN")</pre>
+                        </div>
+                        <p>Trong cơ sở dữ liệu lại lưu:</p>
+                        <div class="code-block" style="background:#2c3e50; color:#ecf0f1; margin:10px 0;">
+                            <pre>ADMIN</pre>
+                        </div>
+                        <p>Thay vì:</p>
+                        <div class="code-block" style="background:#2c3e50; color:#ecf0f1; margin:10px 0;">
+                            <pre>ROLE_ADMIN</pre>
+                        </div>
+                        <p>Điều này có thể khiến việc kiểm tra quyền không hoạt động như mong đợi nếu cấu hình không
+                            thống nhất.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> 3. Cho rằng đăng nhập thành công là có toàn
+                            quyền</h4>
+                        <p>Thực tế, đăng nhập chỉ chứng minh danh tính. Mọi hành động sau đó vẫn phải được kiểm tra
+                            quyền truy cập.</p>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Authentication và Authorization là hai khái niệm nền tảng của bảo mật ứng dụng Web.
+                            Authentication xác định "ai là ai", còn Authorization quyết định "ai được làm gì". Spring
+                            Security cung cấp cơ chế mạnh mẽ để quản lý cả hai quá trình này một cách tự động và linh
+                            hoạt.</p>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.3: KIẾN TRÚC SPRING SECURITY -->
+                <section id="chuong3" class="section">
+                    <h2><i class="fas fa-sitemap"></i> 1.3. Kiến trúc Spring Security</h2>
+
+                    <h3>1.3.1. Tổng quan kiến trúc Spring Security</h3>
+                    <p>Spring Security không chỉ là một thư viện cung cấp chức năng đăng nhập mà còn là một framework
+                        bảo mật hoàn chỉnh. Framework này được xây dựng theo mô hình nhiều tầng (Layered Architecture),
+                        trong đó mỗi thành phần đảm nhận một nhiệm vụ riêng biệt và phối hợp với nhau để xử lý yêu cầu
+                        từ người dùng.</p>
+                    <p>Khi một HTTP Request được gửi đến ứng dụng, Spring Security sẽ chặn yêu cầu trước khi nó đến
+                        Controller. Hệ thống sẽ kiểm tra:</p>
+                    <ul>
+                        <li>Người dùng đã đăng nhập hay chưa.</li>
+                        <li>Thông tin đăng nhập có hợp lệ hay không.</li>
+                        <li>Người dùng có quyền truy cập tài nguyên hay không.</li>
+                    </ul>
+                    <p>Nếu tất cả điều kiện đều thỏa mãn, yêu cầu mới được chuyển đến Controller để xử lý.</p>
+
+                    <h3>1.3.2. Kiến trúc tổng quát</h3>
+                    <p>Luồng hoạt động của Spring Security có thể mô tả như sau:</p>
+                    <div class="architecture">
+                        <pre style="color: #fff; text-align: left;">
+HTTP Request
+     │
+     ▼
+Security Filter Chain
+     │
+┌────┴────┐
+▼         ▼
+Authentication  Authorization
+│         │
+▼         ▼
+AuthenticationManager  Kiểm tra Role
+│         │
+▼         ▼
+AuthenticationProvider  Có quyền ?
+│         │
+▼         │
+UserDetailsService      │
+│         │
+▼         │
+Database / Memory       │
+│         │
+▼         ▼
+PasswordEncoder  Cho phép truy cập
+     │
+     ▼
+Controller
+        </pre>
+                    </div>
+                    <p>Có thể chia thành hai giai đoạn chính:</p>
+                    <ul>
+                        <li><strong>Giai đoạn 1 - Authentication:</strong> Kiểm tra danh tính người dùng.</li>
+                        <li><strong>Giai đoạn 2 - Authorization:</strong> Kiểm tra quyền truy cập tài nguyên.</li>
+                    </ul>
+
+                    <h3>1.3.3. Các thành phần chính của Spring Security</h3>
+                    <p>Spring Security gồm nhiều thành phần, nhưng trong chương này chúng ta tập trung vào sáu thành
+                        phần quan trọng nhất.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SecurityFilterChain</strong></td>
+                                    <td>Chặn và xử lý mọi Request</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AuthenticationManager</strong></td>
+                                    <td>Điều phối quá trình xác thực</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AuthenticationProvider</strong></td>
+                                    <td>Thực hiện xác thực</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>UserDetailsService</strong></td>
+                                    <td>Lấy thông tin người dùng</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PasswordEncoder</strong></td>
+                                    <td>Kiểm tra mật khẩu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>SecurityContextHolder</strong></td>
+                                    <td>Lưu thông tin người dùng đã đăng nhập</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.3.4. Security Filter Chain</h3>
+                    <div class="info-box">
+                        <h4><i class="fas fa-shield-alt"></i> Khái niệm</h4>
+                        <p><strong>SecurityFilterChain</strong> là trái tim của Spring Security. Đây là thành phần đầu
+                            tiên nhận tất cả các HTTP Request trước khi chúng được chuyển đến Controller.</p>
+                    </div>
+                    <p>Có thể hình dung SecurityFilterChain giống như cổng kiểm soát an ninh của một tòa nhà. Mọi người
+                        muốn vào tòa nhà đều phải đi qua cổng kiểm tra. Nếu không đạt yêu cầu, họ sẽ không được phép vào
+                        bên trong. Trong Spring Security cũng vậy, mọi Request đều phải đi qua Filter Chain.</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                      <img src="./img/Spring Security3.png" width="100%" alt="">
+                    </div>
+                    <p>Nếu người dùng chưa đăng nhập: <code>HTTP 401</code>. Nếu không có quyền: <code>HTTP 403</code>.
+                        Controller sẽ không bao giờ được gọi.</p>
+
+                    <h4>Vai trò</h4>
+                    <p>Security Filter Chain chịu trách nhiệm:</p>
+                    <ul>
+                        <li>Kiểm tra Authentication.</li>
+                        <li>Kiểm tra Authorization.</li>
+                        <li>Kiểm tra CSRF.</li>
+                        <li>Kiểm tra Session.</li>
+                        <li>Kiểm tra JWT.</li>
+                        <li>Kiểm tra Header bảo mật.</li>
+                        <li>Chống Session Fixation.</li>
+                        <li>Quản lý Logout.</li>
+                    </ul>
+                    <p>Trong chương này chúng ta chủ yếu sử dụng: <strong>Authentication</strong> và
+                        <strong>Authorization</strong>.
+                    </p>
+
+                    <h3>1.3.5. AuthenticationManager</h3>
+                    <p>Sau khi Request đi qua Filter Chain, nếu cần xác thực, Spring Security sẽ chuyển việc này cho
+                        <strong>AuthenticationManager</strong>.
+                    </p>
+                    <p>AuthenticationManager có nhiệm vụ điều phối quá trình xác thực. Nó không trực tiếp kiểm tra
+                        Username hoặc Password mà chỉ quyết định sử dụng AuthenticationProvider nào để xử lý.</p>
+                    <div class="example-card">
+                        <h4>Ví dụ minh họa</h4>
+                        <p>Có thể hình dung:</p>
+                        <ul>
+                            <li>Sinh viên</li>
+                            <li>→ Phòng đào tạo (AuthenticationManager)</li>
+                            <li>→ Giảng viên phụ trách (AuthenticationProvider)</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.3.6. AuthenticationProvider</h3>
+                    <p><strong>AuthenticationProvider</strong> là thành phần thực hiện việc xác thực.</p>
+                    <p>Nhiệm vụ của nó gồm:</p>
+                    <ul>
+                        <li>Lấy Username.</li>
+                        <li>Lấy Password.</li>
+                        <li>Tìm User.</li>
+                        <li>Kiểm tra Password.</li>
+                        <li>Trả về kết quả Authentication.</li>
+                    </ul>
+                    <p>Nếu thông tin đúng: <code>Authenticated = true</code>. Nếu sai:
+                        <code>BadCredentialsException</code> → Spring Security trả về <code>401 Unauthorized</code>.
+                    </p>
+
+                    <h3>1.3.7. UserDetailsService</h3>
+                    <p>AuthenticationProvider không tự đọc dữ liệu từ cơ sở dữ liệu. Thay vào đó, nó gọi
+                        <strong>UserDetailsService</strong>.
+                    </p>
+                    <p>Nhiệm vụ của UserDetailsService:</p>
+                    <ul>
+                        <li>Tìm User theo Username.</li>
+                        <li>Trả về UserDetails.</li>
+                    </ul>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> UserDetailsService
+                                interface</span><button class="copy-btn" onclick="copyCode(this)"><i
+                                    class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="keyword">public interface</span> UserDetailsService {
+    UserDetails loadUserByUsername(String username);
+}</pre>
+                    </div>
+                    <p>Giả sử người dùng nhập <code>Username = admin</code>, UserDetailsService sẽ thực hiện
+                        <code>SELECT * FROM users WHERE username='admin'</code> và tạo đối tượng UserDetails.
+                    </p>
+
+                    <h3>1.3.8. UserDetails</h3>
+                    <p><strong>UserDetails</strong> là một interface mô tả thông tin bảo mật của người dùng.</p>
+                    <p>Thông thường bao gồm:</p>
+                    <ul>
+                        <li>Username</li>
+                        <li>Password</li>
+                        <li>Authorities (ROLE_ADMIN, ROLE_USER, ...)</li>
+                        <li>Enabled</li>
+                        <li>AccountExpired</li>
+                        <li>AccountLocked</li>
+                        <li>CredentialsExpired</li>
+                    </ul>
+                    <div class="example-card">
+                        <h4>Ví dụ</h4>
+                        <ul>
+                            <li><strong>Username:</strong> admin</li>
+                            <li><strong>Password:</strong> $2a$10....</li>
+                            <li><strong>Authorities:</strong> ROLE_ADMIN, ROLE_USER</li>
+                        </ul>
+                        <p>Spring Security sẽ lưu đối tượng này trong bộ nhớ sau khi đăng nhập thành công.</p>
+                    </div>
+
+                    <h3>1.3.9. PasswordEncoder</h3>
+                    <p>Mật khẩu trong Database không nên lưu dạng <code>123456</code> mà nên mã hóa như
+                        <code>$2a$10$A1B.....</code>. Do đó Spring Security sử dụng <strong>PasswordEncoder</strong> để:
+                    </p>
+                    <ul>
+                        <li>Mã hóa Password.</li>
+                        <li>So sánh Password.</li>
+                    </ul>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ kiểm tra mật khẩu</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>passwordEncoder.matches(rawPassword, encodedPassword);</pre>
+                    </div>
+                    <p>Nếu <code>rawPassword = "123456"</code> khớp với BCrypt <code>$2a$10$......</code> thì xác thực
+                        thành công.</p>
+
+                    <h3>1.3.10. SecurityContextHolder</h3>
+                    <p>Sau khi đăng nhập thành công, Spring Security cần lưu thông tin người dùng. Thành phần thực hiện
+                        việc này là <strong>SecurityContextHolder</strong>.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Lấy thông tin người dùng hiện
+                                tại</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i>
+                                Copy</button></div>
+                        <pre>Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+String username = authentication.getName(); <span class="comment">// admin</span>
+Collection&lt;? extends GrantedAuthority&gt; authorities = authentication.getAuthorities(); <span class="comment">// ROLE_ADMIN, ROLE_USER</span></pre>
+                    </div>
+
+                    <h3>1.3.11. Luồng xử lý chi tiết</h3>
+                    <p>Giả sử người dùng gửi <code>GET /admin</code> kèm <strong>Username: admin</strong>,
+                        <strong>Password: 123456</strong>. Quá trình diễn ra như sau:
+                    </p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Bước 1:  Request đi vào Security Filter Chain
+Bước 2:  Filter yêu cầu xác thực
+Bước 3:  AuthenticationManager nhận yêu cầu
+Bước 4:  AuthenticationProvider thực hiện xác thực
+Bước 5:  AuthenticationProvider gọi UserDetailsService
+Bước 6:  UserDetailsService lấy dữ liệu từ Database
+Bước 7:  PasswordEncoder kiểm tra Password
+Bước 8:  Nếu đúng → Authentication Success
+Bước 9:  Thông tin người dùng được lưu vào SecurityContextHolder
+Bước 10: Spring Security kiểm tra quyền (ROLE_ADMIN)
+Bước 11: Nếu hợp lệ → Controller
+Bước 12: Controller trả Response
+        </pre>
+                    </div>
+
+                    <h3>1.3.12. Ví dụ thực tế</h3>
+                    <p>Hãy tưởng tượng một công ty:</p>
+                    <ul>
+                        <li>Bảo vệ đứng ở cổng → <strong>Security Filter Chain</strong></li>
+                        <li>Kiểm tra thẻ nhân viên → <strong>Authentication</strong></li>
+                        <li>Liên hệ phòng nhân sự → <strong>UserDetailsService</strong></li>
+                        <li>Xác nhận nhân viên → <strong>Database</strong></li>
+                        <li>Kiểm tra chức vụ → <strong>Authorization</strong></li>
+                        <li>Nếu là Giám đốc → Cho vào phòng họp → <strong>Controller</strong></li>
+                    </ul>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thực tế</th>
+                                    <th>Spring Security</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bảo vệ</td>
+                                    <td>Security Filter Chain</td>
+                                </tr>
+                                <tr>
+                                    <td>Phòng nhân sự</td>
+                                    <td>UserDetailsService</td>
+                                </tr>
+                                <tr>
+                                    <td>Danh sách nhân viên</td>
+                                    <td>Database</td>
+                                </tr>
+                                <tr>
+                                    <td>Kiểm tra thẻ</td>
+                                    <td>PasswordEncoder</td>
+                                </tr>
+                                <tr>
+                                    <td>Trưởng phòng bảo vệ</td>
+                                    <td>AuthenticationManager</td>
+                                </tr>
+                                <tr>
+                                    <td>Nhân viên kiểm tra</td>
+                                    <td>AuthenticationProvider</td>
+                                </tr>
+                                <tr>
+                                    <td>Thẻ đã xác minh</td>
+                                    <td>SecurityContextHolder</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Kiến trúc Spring Security được thiết kế theo mô hình Filter Chain với các thành phần rõ ràng.
+                            Việc hiểu rõ vai trò của từng thành phần giúp lập trình viên dễ dàng cấu hình và mở rộng bảo
+                            mật cho ứng dụng.</p>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.4: SECURITY FILTER CHAIN -->
+                <section id="chuong4" class="section">
+                    <h2><i class="fas fa-filter"></i> 1.4. Security Filter Chain</h2>
+
+                    <h3>1.4.1. Giới thiệu</h3>
+                    <p>Một trong những thành phần quan trọng nhất của Spring Security là Security Filter Chain. Đây là
+                        "cánh cổng bảo vệ" đầu tiên của ứng dụng.</p>
+                    <p>Trong một ứng dụng Spring Boot thông thường, khi người dùng gửi một yêu cầu HTTP (HTTP Request),
+                        yêu cầu sẽ được chuyển trực tiếp đến Controller để xử lý.</p>
+                    
+                    <p>Tuy nhiên, khi Spring Security được tích hợp vào ứng dụng, luồng xử lý sẽ thay đổi. Mọi HTTP
+                        Request trước khi đến Controller đều phải đi qua Security Filter Chain.</p>
+                    
+                    <p>Điều này giúp Spring Security có thể kiểm tra các yêu cầu trước khi cho phép truy cập tài nguyên.
+                    </p>
+                    <img src="./img/So sánh luồng yêu cầu với và không có Spring Security.png" style="width: 100%;" alt="">
+
+                    <h3>1.4.2. Filter là gì?</h3>
+                    <p>Trước khi tìm hiểu Security Filter Chain, cần hiểu khái niệm <strong>Filter</strong>.</p>
+                    <p>Trong Java Web, Filter là một thành phần nằm giữa Client và Servlet.</p>
+                    <p>Filter có nhiệm vụ:</p>
+                    <ul>
+                        <li>Chặn Request.</li>
+                        <li>Kiểm tra dữ liệu.</li>
+                        <li>Thay đổi Request nếu cần.</li>
+                        <li>Thay đổi Response nếu cần.</li>
+                        <li>Ghi log.</li>
+                        <li>Kiểm tra quyền truy cập.</li>
+                    </ul>
+                    <div class="example-card">
+                        <h4>Ví dụ minh họa</h4>
+                        <p>Có thể hình dung Filter giống như cửa kiểm soát an ninh tại sân bay.</p>
+                        <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                            <pre style="color:#ecf0f1; margin:0;">
+Hành khách
+      │
+      ▼
+Cửa kiểm tra an ninh
+      │
+      ▼
+Phòng chờ
+            </pre>
+                        </div>
+                        <p>Nếu không đạt yêu cầu kiểm tra, hành khách sẽ không được phép vào khu vực bên trong. Spring
+                            Security áp dụng chính nguyên lý này cho các yêu cầu HTTP.</p>
+                    </div>
+
+                    <h3>1.4.3. Security Filter Chain là gì?</h3>
+                    <p><strong>Security Filter Chain</strong> là tập hợp nhiều Filter được Spring Security sắp xếp theo
+                        một thứ tự nhất định để xử lý các yêu cầu HTTP. Mỗi Filter đảm nhận một nhiệm vụ riêng.</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Request
+   │
+   ▼
+Filter 1
+   │
+   ▼
+Filter 2
+   │
+   ▼
+Filter 3
+   │
+   ▼
+Controller
+        </pre>
+                    </div>
+                    <p>Một Request phải lần lượt đi qua tất cả các Filter trước khi được chuyển đến Controller. Nếu một
+                        Filter từ chối Request thì toàn bộ quá trình sẽ dừng lại.</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Request
+      │
+      ▼
+Authentication Filter
+      │
+      ▼
+Không đăng nhập
+      │
+      ▼
+401 Unauthorized
+        </pre>
+                    </div>
+                    <p>Controller sẽ không được gọi.</p>
+
+                    <h3>1.4.4. Vì sao cần Security Filter Chain?</h3>
+                    <p>Giả sử hệ thống có API: <code>GET /admin</code></p>
+                    <p>Nếu không có Security Filter Chain:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Client
+      │
+      ▼
+Controller
+        </pre>
+                    </div>
+                    <p>Bất kỳ ai cũng có thể truy cập. Điều này gây nguy cơ mất an toàn cho hệ thống.</p>
+                    <p>Khi sử dụng Spring Security:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Client
+      │
+      ▼
+Security Filter Chain
+      │
+      ▼
+Kiểm tra đăng nhập
+      │
+      ▼
+Kiểm tra Role
+      │
+      ▼
+Controller
+        </pre>
+                    </div>
+                    <p>Chỉ những người dùng hợp lệ mới được phép truy cập.</p>
+
+                    <h3>1.4.5. Cơ chế hoạt động của Security Filter Chain</h3>
+                    <p>Giả sử người dùng gửi yêu cầu: <code>GET /admin</code></p>
+                    <p>Quá trình xử lý diễn ra như sau:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+Browser/Postman
+       │
+       ▼
+Tomcat
+       │
+       ▼
+Spring Security
+       │
+       ▼
+Security Filter Chain
+       │
+       ▼
+Authentication Filter
+       │
+       ▼
+Authorization Filter
+       │
+       ▼
+Controller
+       │
+       ▼
+Service
+       │
+       ▼
+Repository
+       │
+       ▼
+Database
+        </pre>
+                    </div>
+                    <p>Nếu Authentication hoặc Authorization thất bại thì Request sẽ bị dừng ngay tại Filter.</p>
+
+                    <h3>1.4.6. Các Filter trong Spring Security</h3>
+                    <p>Spring Security có hơn 30 Filter khác nhau. Mỗi Filter thực hiện một nhiệm vụ chuyên biệt.</p>
+                    <p>Một số Filter quan trọng:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Filter</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>SecurityContextHolderFilter</strong></td>
+                                    <td>Khởi tạo Security Context</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CsrfFilter</strong></td>
+                                    <td>Kiểm tra CSRF</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>LogoutFilter</strong></td>
+                                    <td>Xử lý đăng xuất</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>UsernamePasswordAuthenticationFilter</strong></td>
+                                    <td>Xử lý đăng nhập bằng Username và Password</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>BasicAuthenticationFilter</strong></td>
+                                    <td>Xử lý HTTP Basic Authentication</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AnonymousAuthenticationFilter</strong></td>
+                                    <td>Tạo người dùng Anonymous</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ExceptionTranslationFilter</strong></td>
+                                    <td>Xử lý các ngoại lệ bảo mật</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AuthorizationFilter</strong></td>
+                                    <td>Kiểm tra quyền truy cập</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Trong chương này, chúng ta tập trung vào hai Filter thường gặp nhất:
+                        <strong>BasicAuthenticationFilter</strong> và <strong>AuthorizationFilter</strong>.
+                    </p>
+
+                    <h3>1.4.7. Security Filter Chain hoạt động như thế nào?</h3>
+                    <p>Giả sử ứng dụng sử dụng Basic Authentication.</p>
+                    <p>Người dùng gửi: <code>GET /user</code> với Header:
+                        <code>Authorization: Basic YWRtaW46MTIzNDU2</code>
+                    </p>
+                    <p>Quá trình xử lý:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+HTTP Request
+      │
+      ▼
+SecurityContextHolderFilter
+      │
+      ▼
+BasicAuthenticationFilter
+      │
+      ▼
+UsernamePasswordAuthenticationToken
+      │
+      ▼
+AuthenticationManager
+      │
+      ▼
+AuthenticationProvider
+      │
+      ▼
+UserDetailsService
+      │
+      ▼
+Database
+        </pre>
+                    </div>
+                    <p>Nếu thông tin hợp lệ: <strong>Authentication Success</strong>. Thông tin người dùng sẽ được lưu
+                        vào SecurityContextHolder.</p>
+                    <p>Sau đó Request tiếp tục đi đến <strong>AuthorizationFilter</strong>. Filter này sẽ kiểm tra người
+                        dùng có quyền truy cập URL hay không.</p>
+
+                    <h3>1.4.8. Minh họa quá trình xử lý</h3>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 1: Người dùng chưa đăng nhập</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                            <pre style="color:#ecf0f1; margin:0;">
+Request
+      │
+      ▼
+Security Filter Chain
+      │
+      ▼
+Authentication Filter
+      │
+      ▼
+Không có Username
+      │
+      ▼
+401 Unauthorized
+            </pre>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 2: Đăng nhập bằng USER</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                            <pre style="color:#ecf0f1; margin:0;">
+Request
+      │
+      ▼
+Authentication Success
+      │
+      ▼
+Authorization Filter
+      │
+      ▼
+ROLE_USER
+      │
+      ▼
+Yêu cầu ROLE_ADMIN
+      │
+      ▼
+403 Forbidden
+            </pre>
+                        </div>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 3: Đăng nhập bằng ADMIN</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                            <pre style="color:#ecf0f1; margin:0;">
+Request
+      │
+      ▼
+Authentication Success
+      │
+      ▼
+Authorization Success
+      │
+      ▼
+Controller
+            </pre>
+                        </div>
+                    </div>
+
+                    <h3>1.4.9. Security Filter Chain và Filter Chain của Servlet</h3>
+                    <p>Nhiều sinh viên thường nhầm lẫn giữa Filter của Servlet và Security Filter Chain.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Servlet Filter</th>
+                                    <th>Security Filter Chain</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Thuộc Java Servlet</td>
+                                    <td>Thuộc Spring Security</td>
+                                </tr>
+                                <tr>
+                                    <td>Lập trình viên tự tạo</td>
+                                    <td>Spring Security tự cấu hình</td>
+                                </tr>
+                                <tr>
+                                    <td>Có thể dùng cho logging, encoding,...</td>
+                                    <td>Chỉ phục vụ mục đích bảo mật</td>
+                                </tr>
+                                <tr>
+                                    <td>Hoạt động độc lập</td>
+                                    <td>Gồm nhiều Security Filter kết hợp</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Có thể coi Security Filter Chain là một Filter đặc biệt chứa nhiều Filter nhỏ bên trong.</p>
+
+                    <h3>1.4.10. Ưu điểm của Security Filter Chain</h3>
+                    <p>Việc xử lý thông qua Security Filter Chain mang lại nhiều lợi ích:</p>
+                    <ul>
+                        <li>Tập trung toàn bộ logic bảo mật tại một nơi.</li>
+                        <li>Dễ dàng thêm hoặc loại bỏ các cơ chế bảo mật.</li>
+                        <li>Hỗ trợ nhiều phương thức xác thực như Basic Authentication, Form Login, JWT và OAuth2.</li>
+                        <li>Dễ mở rộng, bảo trì và kiểm soát luồng xử lý.</li>
+                        <li>Giảm thiểu việc viết mã bảo mật trong Controller và Service.</li>
+                    </ul>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Security Filter Chain là trái tim của Spring Security. Nó chặn và xử lý mọi HTTP Request
+                            trước khi đến Controller, đảm bảo các yêu cầu đều được kiểm tra xác thực và phân quyền một
+                            cách thống nhất.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.5: TẠO PROJECT -->
+                <section id="chuong5" class="section">
+                    <h2><i class="fas fa-folder-open"></i> 1.5. Tạo project</h2>
+
+                    <h3>1.5.1. Giới thiệu</h3>
+                    <p>Sau khi đã tìm hiểu về Authentication, Authorization và Security Filter Chain, bước tiếp theo là
+                        xây dựng một dự án Spring Boot để triển khai các chức năng bảo mật.</p>
+                    <p>Trong chương này, chúng ta sẽ phát triển một ứng dụng RESTful API đơn giản với các công nghệ sau:
+                    </p>
+                    <ul>
+                        <li>Java</li>
+                        <li>Spring Boot</li>
+                        <li>Spring Security</li>
+                        <li>Spring Data JPA</li>
+                        <li>MySQL</li>
+                        <li>Maven</li>
+                        <li>IntelliJ IDEA</li>
+                        <li>Postman</li>
+                    </ul>
+                    <p>Đây là bộ công nghệ được sử dụng rộng rãi trong các doanh nghiệp khi xây dựng các ứng dụng Web và
+                        hệ thống Backend.</p>
+
+                    <h3>1.5.2. Chuẩn bị môi trường phát triển</h3>
+                    <p>Trước khi tạo dự án, cần cài đặt đầy đủ các phần mềm sau.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Phần mềm</th>
+                                    <th>Phiên bản khuyến nghị</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>JDK</strong></td>
+                                    <td>21 hoặc mới hơn</td>
+                                    <td>Biên dịch và chạy chương trình Java</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>IntelliJ IDEA</strong></td>
+                                    <td>Community hoặc Ultimate</td>
+                                    <td>Môi trường phát triển tích hợp (IDE)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Maven</strong></td>
+                                    <td>Tích hợp trong IntelliJ</td>
+                                    <td>Quản lý thư viện và quá trình build</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MySQL Server</strong></td>
+                                    <td>8.0 trở lên</td>
+                                    <td>Hệ quản trị cơ sở dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MySQL Workbench</strong></td>
+                                    <td>Mới nhất</td>
+                                    <td>Quản lý và thao tác với cơ sở dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Postman</strong></td>
+                                    <td>Mới nhất</td>
+                                    <td>Kiểm thử REST API</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Git (khuyến nghị)</strong></td>
+                                    <td>Mới nhất</td>
+                                    <td>Quản lý mã nguồn</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="note">
+                        <p><strong>Lưu ý:</strong> Giáo trình sử dụng Java 21 và Spring Boot 3.x/4.x. Nếu sử dụng phiên
+                            bản thấp hơn, một số API hoặc cách cấu hình có thể khác.</p>
+                    </div>
+
+                    <h3>1.5.3. Tạo dự án bằng Spring Initializr</h3>
+                    <p>Spring Initializr là công cụ chính thức của Spring dùng để khởi tạo nhanh một dự án Spring Boot
+                        với đầy đủ cấu trúc và các thư viện cần thiết.</p>
+                    <p><strong>Các bước thực hiện</strong></p>
+                    <p><strong>Bước 1:</strong> Truy cập trang <a href="https://start.spring.io" target="_blank">Spring
+                            Initializr</a>.</p>
+                    <p><strong>Bước 2:</strong> Chọn các thông số:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thuộc tính</th>
+                                    <th>Giá trị</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Project</td>
+                                    <td>Maven</td>
+                                </tr>
+                                <tr>
+                                    <td>Language</td>
+                                    <td>Java</td>
+                                </tr>
+                                <tr>
+                                    <td>Spring Boot</td>
+                                    <td>Phiên bản ổn định mới nhất</td>
+                                </tr>
+                                <tr>
+                                    <td>Packaging</td>
+                                    <td>Jar</td>
+                                </tr>
+                                <tr>
+                                    <td>Java</td>
+                                    <td>21</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Bước 3:</strong> Nhập thông tin dự án.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thuộc tính</th>
+                                    <th>Ví dụ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Group</td>
+                                    <td>com.example</td>
+                                </tr>
+                                <tr>
+                                    <td>Artifact</td>
+                                    <td>spring-security-demo</td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td>spring-security-demo</td>
+                                </tr>
+                                <tr>
+                                    <td>Package Name</td>
+                                    <td>com.example.springsecuritydemo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p><strong>Bước 4:</strong> Chọn các dependency.</p>
+                    <p>Sau khi hoàn tất, nhấn <strong>Generate</strong> để tải dự án về máy.</p>
+
+                    <h3>1.5.4. Tạo SQL</h3>
+        
+             <div class="code-block">
+    <div class="code-header">
+        <span><i class="fas fa-database"></i> init-db.sql</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    <pre><span class="sql-keyword">DROP DATABASE IF EXISTS</span> spring_security;
+
+<span class="sql-keyword">CREATE DATABASE</span> spring_security;
+<span class="sql-keyword">USE</span> spring_security;
+
+<span class="sql-keyword">CREATE TABLE</span> users (
+    id <span class="sql-type">INT</span> <span class="sql-keyword">PRIMARY KEY AUTO_INCREMENT</span>,
+    username <span class="sql-type">VARCHAR</span>(50) <span class="sql-keyword">NOT NULL UNIQUE</span>,
+    password <span class="sql-type">VARCHAR</span>(100) <span class="sql-keyword">NOT NULL</span>,
+    role <span class="sql-type">VARCHAR</span>(20) <span class="sql-keyword">NOT NULL</span>,
+    enabled <span class="sql-type">BOOLEAN</span> <span class="sql-keyword">DEFAULT TRUE</span>
+);
+
+<span class="sql-keyword">INSERT INTO</span> users (username, password, role, enabled) <span class="sql-keyword">VALUES</span>
+(<span class="sql-string">'user'</span>, <span class="sql-string">'123456'</span>, <span class="sql-string">'USER'</span>, <span class="sql-literal">TRUE</span>),
+(<span class="sql-string">'admin'</span>, <span class="sql-string">'123456'</span>, <span class="sql-string">'ADMIN'</span>, <span class="sql-literal">TRUE</span>),
+(<span class="sql-string">'manager'</span>, <span class="sql-string">'123456'</span>, <span class="sql-string">'MANAGER'</span>, <span class="sql-literal">TRUE</span>);
+
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> users;</pre>
+</div>
+
+<p>Kết quả sau khi chạy script sẽ hiển thị bảng <code>users</code> với 3 bản ghi như sau:</p>
+
+<div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+    <div class="code-header">
+        <span><i class="fas fa-table"></i> Kết quả truy vấn</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    <pre style="color:#ecf0f1;">+----+----------+----------+---------+---------+
+| id | username | password | role    | enabled |
++----+----------+----------+---------+---------+
+|  1 | user     | 123456   | USER    |       1 |
+|  2 | admin    | 123456   | ADMIN   |       1 |
+|  3 | manager  | 123456   | MANAGER |       1 |
++----+----------+----------+---------+---------+</pre>
+</div>
+
+                    <h3>1.5.5. Cấu trúc dự án</h3>
+                    <p>Sau khi mở bằng IntelliJ IDEA, dự án sẽ có cấu trúc như sau:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">
+spring-security-demo
+│
+├── src
+│   ├── main
+│   │
+│   ├── java
+│   │
+│   │── controller
+│   │── service
+│   │── repository
+│   │── entity
+│   │── config
+│   │── dto
+│   │── SpringSecurityDemoApplication.java
+│   │
+│   └── resources
+│       │
+│       ├── application.properties
+│       ├── static
+│       └── templates
+│
+└── pom.xml
+        </pre>
+                    </div>
+                    <p><strong>Ý nghĩa các thư mục</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thư mục</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>controller</strong></td>
+                                    <td>Tiếp nhận HTTP Request</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>service</strong></td>
+                                    <td>Xử lý nghiệp vụ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>repository</strong></td>
+                                    <td>Truy cập cơ sở dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>entity</strong></td>
+                                    <td>Ánh xạ bảng dữ liệu</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>config</strong></td>
+                                    <td>Chứa các lớp cấu hình Spring Security</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>resources</strong></td>
+                                    <td>Lưu tệp cấu hình và tài nguyên</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.5.6. Tệp pom.xml</h3>
+                    <p>pom.xml là tệp cấu hình trung tâm của Maven.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> pom.xml</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>&lt;dependencies&gt;
+
+    <span class="comment">&lt;!-- Spring Web --&gt;</span>
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    <span class="comment">&lt;!-- Spring Security --&gt;</span>
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    <span class="comment">&lt;!-- Spring Data JPA --&gt;</span>
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+    <span class="comment">&lt;!-- MySQL --&gt;</span>
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+
+&lt;/dependencies&gt;</pre>
+                    </div>
+                    <p>Maven sẽ tự động tải các thư viện này từ kho lưu trữ Maven Central và quản lý các thư viện phụ
+                        thuộc (transitive dependencies), giúp giảm đáng kể công sức cấu hình thủ công.</p>
+
+                    <h3>1.5.7. Cấu hình kết nối MySQL</h3>
+                    <p>Trong tệp application.properties:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> application.properties</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>spring.datasource.url=jdbc:mysql://localhost:3306/spring_security
+spring.datasource.username=root
+spring.datasource.password=123456
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true</pre>
+                    </div>
+                    <p><strong>Giải thích</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thuộc tính</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>spring.datasource.url</strong></td>
+                                    <td>Địa chỉ kết nối MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>spring.datasource.username</strong></td>
+                                    <td>Tài khoản MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>spring.datasource.password</strong></td>
+                                    <td>Mật khẩu MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>spring.jpa.hibernate.ddl-auto=update</strong></td>
+                                    <td>Tự động cập nhật cấu trúc bảng</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>spring.jpa.show-sql=true</strong></td>
+                                    <td>Hiển thị câu lệnh SQL trên Console</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>spring.jpa.properties.hibernate.format_sql=true</strong></td>
+                                    <td>Định dạng SQL dễ đọc</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                 <h3>1.5.8. Chạy ứng dụng</h3>
+<p>Mở lớp chứa phương thức <code>main()</code>:</p>
+<div class="code-block">
+    <div class="code-header">
+        <span><i class="fas fa-code"></i> SpringSecurityDemoApplication.java</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    <pre><span class="annotation">@SpringBootApplication</span>
+<span class="keyword">public class</span> <span class="class-name">SpringSecurityDemoApplication</span> {
+
+    <span class="keyword">public static void</span> main(String[] args) {
+        SpringApplication.run(SpringSecurityDemoApplication.class, args);
+    }
+
+}</pre>
+</div>
+<p>Nhấn <strong>Run</strong> trong IntelliJ IDEA.</p>
+<p>Nếu khởi động thành công, cửa sổ Console sẽ hiển thị log. <strong>Tuỳ thuộc vào việc bạn đã thêm dependency <code>spring-boot-starter-security</code> hay chưa</strong>, log sẽ có sự khác biệt:</p>
+
+<ul>
+    <li><strong>Trường hợp chưa có Spring Security</strong> (chưa thêm dependency hoặc đã comment nó trong <code>pom.xml</code>):</li>
+</ul>
+<div class="code-block" style="background:#1e2a3a; color:#2ecc71;">
+    <pre style="color:#2ecc71;">Tomcat started on port 8080
+Started SpringSecurityDemoApplication</pre>
+</div>
+
+<ul>
+    <li><strong>Trường hợp đã có Spring Security</strong> (là tình huống phổ biến nếu bạn làm theo đúng thứ tự và đã thêm dependency ở mục 1.6 hoặc giữ nó ngay từ đầu):</li>
+</ul>
+<div class="code-block" style="background:#1e2a3a; color:#2ecc71;">
+    <pre style="color:#2ecc71;">Tomcat started on port 8080
+Started SpringSecurityDemoApplication
+Using generated security password: 467a97ae-fcae-49ac-9e8a-412e84633fb8</pre>
+</div>
+<p>(Nếu dùng JPA/Hibernate, bạn còn thấy các dòng log về Hibernate và JPA, điều đó hoàn toàn bình thường.)</p>
+
+<p>Ý nghĩa của các dòng log:</p>
+<ul>
+    <li><code>Tomcat started on port 8080</code> – Máy chủ Tomcat đã khởi động và lắng nghe tại cổng 8080.</li>
+    <li><code>Started SpringSecurityDemoApplication</code> – Ứng dụng Spring Boot đã sẵn sàng.</li>
+    <li><code>Using generated security password: ...</code> – Spring Security tự động tạo một mật khẩu ngẫu nhiên cho người dùng mặc định là <code>user</code>. Bạn sẽ dùng mật khẩu này để xác thực khi gửi yêu cầu đến ứng dụng (nếu chưa cấu hình bảo mật tuỳ chỉnh).</li>
+</ul>
+
+<div style="background:#fcf8e3; padding:10px; border-left:4px solid #f0ad4e; margin:15px 0;">
+    <strong>⚠️ Lưu ý quan trọng:</strong> Nếu bạn đã có Spring Security trong classpath, ứng dụng sẽ tự động áp dụng bảo mặc mặc định: tất cả các endpoint đều yêu cầu xác thực, và một trang đăng nhập mặc định được cung cấp tại <code>/login</code>. Do đó, hành vi kiểm tra ở mục 1.5.9 sẽ khác so với khi chưa có Security.
+</div>
+
+<h3>1.5.9. Kiểm tra hoạt động</h3>
+<p>Tạo một Controller đơn giản để kiểm tra:</p>
+<div class="code-block">
+    <div class="code-header">
+        <span><i class="fas fa-code"></i> HomeController.java</span>
+        <button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+    </div>
+    <pre><span class="annotation">@RestController</span>
+<span class="keyword">public class</span> <span class="class-name">HomeController</span> {
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/"</span>)
+    <span class="keyword">public</span> String home() {
+        <span class="keyword">return</span> <span class="string">"Welcome to Spring Security!"</span>;
+    }
+}</pre>
+</div>
+
+<h4>Nếu bạn <strong>chưa</strong> thêm Spring Security</h4>
+<p>Gửi yêu cầu <code>GET http://localhost:8080/</code> (bằng trình duyệt hoặc Postman) sẽ nhận được phản hồi:</p>
+<div class="code-block" style="background:#1e2a3a; color:#2ecc71;">
+    <pre style="color:#2ecc71;">Welcome to Spring Security!</pre>
+</div>
+
+<h4>Nếu bạn <strong>đã</strong> thêm Spring Security (tình huống thực tế)</h4>
+<p>Ứng dụng sẽ yêu cầu xác thực. Bạn cần gửi kèm thông tin đăng nhập:</p>
+<ul>
+    <li><strong>Username</strong>: <code>user</code></li>
+    <li><strong>Password</strong>: Lấy từ dòng log <code>Using generated security password: ...</code> trong Console khi chạy ứng dụng (ví dụ: <code>467a97ae-fcae-49ac-9e8a-412e84633fb8</code>).</li>
+</ul>
+
+<p><strong>Cách kiểm tra:</strong></p>
+<ul>
+    <li><strong>Dùng Postman</strong>:
+        <ul>
+            <li>Chọn phương thức <code>GET</code>, nhập URL <code>http://localhost:8080/</code>.</li>
+            <li>Vào thẻ <strong>Authorization</strong>, chọn <strong>Basic Auth</strong>.</li>
+            <li>Nhập <code>user</code> và password vừa lấy được.</li>
+            <li>Gửi yêu cầu – bạn sẽ nhận được phản hồi <code>Welcome to Spring Security!</code>.</li>
+        </ul>
+    </li>
+    <li><strong>Dùng <code>curl</code></strong>:
+        <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+            <pre style="color:#ecf0f1;">curl -u user:467a97ae-fcae-49ac-9e8a-412e84633fb8 http://localhost:8080/</pre>
+        </div>
+    </li>
+    <li><strong>Dùng trình duyệt</strong>:
+        <ul>
+            <li>Truy cập <code>http://localhost:8080/</code>, trình duyệt sẽ tự động chuyển hướng đến trang đăng nhập mặc định (giao diện trắng của Spring Security).</li>
+            <li>Nhập <code>user</code> và password, sau đó đăng nhập. Bạn sẽ thấy dòng chữ <code>Welcome to Spring Security!</code>.</li>
+        </ul>
+    </li>
+</ul>
+
+<p>Nếu bạn gửi yêu cầu <strong>không</strong> có thông tin xác thực, sẽ nhận được lỗi <strong>401 Unauthorized</strong> (đối với Postman/curl) hoặc bị chuyển hướng đến trang login (đối với trình duyệt).</p>
+
+<div style="background:#dff0d8; padding:10px; border-left:4px solid #3c763d; margin:15px 0;">
+    <strong>✅ Tóm lại:</strong> Khi đã có Spring Security, mọi yêu cầu đều phải được xác thực trước khi truy cập nội dung. Điều này minh họa rõ ràng vai trò của Spring Security trong việc bảo vệ ứng dụng của bạn.
+</div>
+                    <h3>1.5.10. Những lỗi thường gặp</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Lỗi</th>
+                                    <th>Nguyên nhân</th>
+                                    <th>Cách khắc phục</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Port 8080 was already in use</strong></td>
+                                    <td>Cổng 8080 đang được ứng dụng khác sử dụng</td>
+                                    <td>Dừng ứng dụng hoặc đổi server.port</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Communications link failure</strong></td>
+                                    <td>MySQL chưa chạy hoặc sai thông tin kết nối</td>
+                                    <td>Kiểm tra MySQL và application.properties</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ClassNotFoundException</strong></td>
+                                    <td>Thiếu dependency</td>
+                                    <td>Kiểm tra pom.xml và Reload Maven</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Unsupported class file major version</strong></td>
+                                    <td>Phiên bản JDK không tương thích</td>
+                                    <td>Cập nhật JDK hoặc điều chỉnh cấu hình dự án</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Sau khi hoàn thành bước này, bạn đã có một dự án Spring Boot sẵn sàng với đầy đủ cấu hình cơ
+                            bản. Các bước tiếp theo sẽ tập trung vào việc cấu hình Spring Security và xây dựng các chức
+                            năng bảo mật cho ứng dụng.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.6: CẤU HÌNH SECURITYFILTERCHAIN -->
+                <section id="chuong6" class="section">
+                    <h2><i class="fas fa-cogs"></i> 1.6. Cấu hình SecurityFilterChain</h2>
+
+                    <h3>1.6.1. Mục tiêu</h3>
+                    <p>Sau khi hoàn thành nội dung này, sinh viên có thể:</p>
+                    <ul>
+                        <li>Hiểu vai trò của SecurityFilterChain trong Spring Security.</li>
+                        <li>Tạo và cấu hình SecurityFilterChain cho ứng dụng Spring Boot.</li>
+                        <li>Cấu hình xác thực và phân quyền cho các API.</li>
+                        <li>Hiểu ý nghĩa của các phương thức authorizeHttpRequests(), requestMatchers(), permitAll(),
+                            authenticated() và hasRole().</li>
+                        <li>Kiểm thử các API bằng Postman.</li>
+                    </ul>
+
+                    <h3>1.6.2. Giới thiệu SecurityFilterChain</h3>
+                    <div class="info-box">
+                        <h4><i class="fas fa-shield-alt"></i> Khái niệm SecurityFilterChain</h4>
+                        <p><strong>SecurityFilterChain</strong> là một interface trong Spring Security, đại diện cho một
+                            chuỗi các bộ lọc (Filter) sẽ được áp dụng cho các yêu cầu HTTP khớp với một pattern nhất
+                            định.</p>
+                    </div>
+
+                    <h4>Vì sao WebSecurityConfigurerAdapter không còn được sử dụng?</h4>
+                    <p>Trong Spring Security 5.x và các phiên bản trước đó, cách phổ biến để cấu hình bảo mật là kế thừa
+                        lớp <code>WebSecurityConfigurerAdapter</code> và ghi đè các phương thức
+                        <code>configure()</code>.</p>
+                    <p>Tuy nhiên, từ <strong>Spring Security 5.7.0-M2</strong> trở đi, lớp này đã bị đánh dấu là
+                        <strong>Deprecated</strong> (không còn được khuyến nghị sử dụng). Nguyên nhân là do:</p>
+                    <ul>
+                        <li>Khuyến khích sử dụng cấu hình dựa trên Bean thay vì kế thừa.</li>
+                        <li>Giảm sự phụ thuộc vào kế thừa, tăng tính linh hoạt và dễ kiểm thử.</li>
+                        <li>Phù hợp với xu hướng cấu hình hàm (functional configuration) trong Spring Boot.</li>
+                    </ul>
+                    <p>Thay vào đó, Spring Security khuyến nghị sử dụng <strong>SecurityFilterChain Bean</strong> được
+                        khai báo trong lớp <code>@Configuration</code>.</p>
+
+                    <h4>Vai trò của HttpSecurity</h4>
+                    <p><strong>HttpSecurity</strong> là một đối tượng cấu hình cho phép định nghĩa các quy tắc bảo mật
+                        cho các yêu cầu HTTP. Nó cung cấp các phương thức để:</p>
+                    <ul>
+                        <li>Phân quyền cho các endpoint (<code>authorizeHttpRequests()</code>).</li>
+                        <li>Cấu hình xác thực (<code>httpBasic()</code>, <code>formLogin()</code>).</li>
+                        <li>Quản lý Session (<code>sessionManagement()</code>).</li>
+                        <li>Cấu hình bảo vệ CSRF (<code>csrf()</code>).</li>
+                    </ul>
+
+                    <h4>Mối quan hệ giữa SecurityFilterChain và các Security Filter</h4>
+                    <p><strong>SecurityFilterChain</strong> là nơi tập hợp các Filter và quyết định thứ tự thực thi của
+                        chúng. Khi một HTTP Request được gửi đến:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+HTTP Request
+      │
+      ▼
+SecurityFilterChain
+      │
+      ├── SecurityContextHolderFilter
+      │
+      ├── CsrfFilter
+      │
+      ├── BasicAuthenticationFilter
+      │
+      ├── AuthorizationFilter
+      │
+      ▼
+Controller
+        </pre>
+                    </div>
+                    <p>Mỗi Filter trong chuỗi có thể:</p>
+                    <ul>
+                        <li>Xử lý Request và chuyển tiếp cho Filter tiếp theo.</li>
+                        <li>Dừng chuỗi và trả về Response (ví dụ: 401 Unauthorized).</li>
+                    </ul>
+
+                    <h3>1.6.3. Tạo lớp cấu hình bảo mật</h3>
+                    <p>Tạo package <code>config</code> và lớp <code>SecurityConfig.java</code>.</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><span class="keyword">package</span> com.example.springsecuritydemo.config;
+
+<span class="keyword">import</span> org.springframework.context.annotation.Configuration;
+<span class="keyword">import</span> org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+
+<span class="annotation">@Configuration</span>         <span class="comment">// Đánh dấu đây là lớp cấu hình</span>
+<span class="annotation">@EnableWebSecurity</span>    <span class="comment">// Kích hoạt Spring Security</span>
+<span class="keyword">public class</span> <span class="class-name">SecurityConfig</span> {
+
+}</pre>
+                    </div>
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li><strong>@Configuration:</strong> Đánh dấu lớp chứa các Bean cấu hình cho Spring Container.
+                        </li>
+                        <li><strong>@EnableWebSecurity:</strong> Kích hoạt Spring Security và tích hợp với ứng dụng. Nếu
+                            thiếu annotation này, các cấu hình bảo mật sẽ không được áp dụng.</li>
+                    </ul>
+
+                    <h3>1.6.4. Tạo Bean SecurityFilterChain</h3>
+                    <p>Trong <code>SecurityConfig</code>, khai báo Bean <code>SecurityFilterChain</code>:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http)<span class="keyword">throws</span> Exception {
+
+    http
+            .authorizeHttpRequests(auth -> auth
+                    .anyRequest().authenticated()   <span class="comment">// Mọi request đều yêu cầu xác thực</span>
+            )
+            .httpBasic(Customizer.withDefaults());  <span class="comment">// Sử dụng Basic Authentication</span>
+
+    <span class="keyword">return</span> http.build();   <span class="comment">// Xây dựng SecurityFilterChain</span>
+}</pre>
+                    </div>
+
+                    <p><strong>Phân tích từng dòng mã:</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thành phần</th>
+                                    <th>Ý nghĩa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>@Bean</strong></td>
+                                    <td>Đăng ký phương thức trả về SecurityFilterChain như một Bean trong Spring
+                                        Container.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>HttpSecurity http</strong></td>
+                                    <td>Đối tượng cấu hình cho các quy tắc bảo mật HTTP.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>authorizeHttpRequests()</strong></td>
+                                    <td>Bắt đầu cấu hình phân quyền cho các request.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>anyRequest().authenticated()</strong></td>
+                                    <td>Áp dụng quy tắc: mọi request đều yêu cầu người dùng đã xác thực.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>httpBasic(Customizer.withDefaults())</strong></td>
+                                    <td>Kích hoạt Basic Authentication với cấu hình mặc định.</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>http.build()</strong></td>
+                                    <td>Xây dựng đối tượng SecurityFilterChain từ cấu hình HttpSecurity.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.6.5. Tạo các API kiểm thử</h3>
+                    <p>Tạo <code>DemoController</code> với ba endpoint để kiểm thử:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> DemoController.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre><span class="annotation">@RestController</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/api/demo"</span>)
+<span class="keyword">public class</span> <span class="class-name">DemoController</span> {
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/public"</span>)
+    <span class="keyword">public</span> String publicEndpoint() {
+        <span class="keyword">return</span> <span class="string">"This is a public endpoint"</span>;
+    }
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/user"</span>)
+    <span class="keyword">public</span> String userEndpoint() {
+        <span class="keyword">return</span> <span class="string">"Hello User!"</span>;
+    }
+
+    <span class="annotation">@GetMapping</span>(<span class="string">"/admin"</span>)
+    <span class="keyword">public</span> String adminEndpoint() {
+        <span class="keyword">return</span> <span class="string">"Hello Admin!"</span>;
+    }
+}</pre>
+                    </div>
+                    <p><strong>Mục đích của từng API:</strong></p>
+                    <ul>
+                        <li><strong>/public</strong>: Endpoint công khai, không cần đăng nhập.</li>
+                        <li><strong>/user</strong>: Chỉ dành cho người dùng có role USER.</li>
+                        <li><strong>/admin</strong>: Chỉ dành cho người dùng có role ADMIN.</li>
+                    </ul>
+
+                    <h3>1.6.6. Cho phép truy cập công khai</h3>
+                    <p>Cập nhật <code>SecurityConfig</code> để cho phép truy cập /public mà không cần xác thực:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java (cập
+                                nhật)</span><button class="copy-btn" onclick="copyCode(this)"><i
+                                    class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http)
+        <span class="keyword">throws</span> Exception {
+
+    http
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(<span class="string">"/api/demo/public"</span>).permitAll()  <span class="comment">// Cho phép truy cập công khai</span>
+                    .anyRequest().authenticated()
+            )
+            .httpBasic(Customizer.withDefaults());
+
+    <span class="keyword">return</span> http.build();
+}</pre>
+                    </div>
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li><strong>requestMatchers("/api/demo/public")</strong>: Chỉ định các URL áp dụng quy tắc.</li>
+                        <li><strong>permitAll()</strong>: Cho phép tất cả mọi người truy cập (không cần xác thực).</li>
+                    </ul>
+
+                    <h3>1.6.7. Yêu cầu xác thực</h3>
+                    <p>Cấu hình <code>.anyRequest().authenticated()</code> yêu cầu mọi request khác (không khớp với
+                        <code>requestMatchers</code> trước đó) đều phải xác thực.</p>
+                    <p>Nếu người dùng chưa đăng nhập và gửi yêu cầu đến <code>/api/demo/user</code>:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">GET http://localhost:8080/api/demo/user</pre>
+                    </div>
+                    <p>Kết quả sẽ là:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#e74c3c;">
+                        <pre style="color:#e74c3c;">401 Unauthorized</pre>
+                    </div>
+
+                    <h3>1.6.8. Phân quyền theo vai trò</h3>
+                    <p>Cập nhật <code>SecurityConfig</code> để phân quyền theo Role:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java (phân
+                                quyền)</span><button class="copy-btn" onclick="copyCode(this)"><i
+                                    class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+<span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http)
+        <span class="keyword">throws</span> Exception {
+
+    http
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(<span class="string">"/api/demo/public"</span>).permitAll()
+                    .requestMatchers(<span class="string">"/api/demo/user"</span>).hasRole(<span class="string">"USER"</span>)   <span class="comment">// Chỉ USER mới được truy cập</span>
+                    .requestMatchers(<span class="string">"/api/demo/admin"</span>).hasRole(<span class="string">"ADMIN"</span>) <span class="comment">// Chỉ ADMIN mới được truy cập</span>
+                    .anyRequest().authenticated()
+            )
+            .httpBasic(Customizer.withDefaults());
+
+    <span class="keyword">return</span> http.build();
+}</pre>
+                    </div>
+                    <p><strong>Giải thích:</strong></p>
+                    <ul>
+                        <li><strong>hasRole("USER")</strong>: Chỉ cho phép người dùng có role USER (tức ROLE_USER).</li>
+                        <li><strong>hasRole("ADMIN")</strong>: Chỉ cho phép người dùng có role ADMIN (tức ROLE_ADMIN).
+                        </li>
+                        <li><strong>Tiền tố ROLE_</strong>: Spring Security tự động thêm tiền tố ROLE_ khi sử dụng
+                            hasRole(). Vì vậy, khi cấu hình <code>.hasRole("ADMIN")</code>, hệ thống sẽ kiểm tra quyền
+                            <code>ROLE_ADMIN</code>.</li>
+                    </ul>
+
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân biệt hasRole() và hasAuthority()</h4>
+                        <ul>
+                            <li><strong>hasRole("ADMIN")</strong>: Tự động thêm tiền tố ROLE_ → kiểm tra ROLE_ADMIN.
+                            </li>
+                            <li><strong>hasAuthority("ROLE_ADMIN")</strong>: Kiểm tra chính xác quyền ROLE_ADMIN (không
+                                thêm tiền tố).</li>
+                            <li><strong>hasAuthority("ADMIN")</strong>: Kiểm tra quyền ADMIN (không có tiền tố).</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.6.9. Luồng xử lý của một HTTP Request</h3>
+                    <p>Ví dụ với <code>GET /api/demo/admin</code>:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+HTTP Request
+      │
+      ▼
+SecurityFilterChain
+      │
+      ▼
+Authentication (BasicAuthenticationFilter)
+      │
+      ├── Chưa đăng nhập → 401 Unauthorized
+      │
+      ▼
+Authorization (AuthorizationFilter)
+      │
+      ├── Role USER → 403 Forbidden
+      │
+      ▼
+Controller → 200 OK
+        </pre>
+                    </div>
+                    <p><strong>Các trường hợp thực tế:</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Trường hợp</th>
+                                    <th>Yêu cầu</th>
+                                    <th>Kết quả</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Chưa đăng nhập</td>
+                                    <td>GET /api/demo/admin</td>
+                                    <td>401 Unauthorized</td>
+                                </tr>
+                                <tr>
+                                    <td>Đăng nhập USER</td>
+                                    <td>GET /api/demo/admin</td>
+                                    <td>403 Forbidden</td>
+                                </tr>
+                                <tr>
+                                    <td>Đăng nhập ADMIN</td>
+                                    <td>GET /api/demo/admin</td>
+                                    <td>200 OK "Hello Admin!"</td>
+                                </tr>
+                                <tr>
+                                    <td>Chưa đăng nhập</td>
+                                    <td>GET /api/demo/public</td>
+                                    <td>200 OK "This is a public endpoint"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.6.10. Kiểm thử bằng Postman</h3>
+                    <p><strong>Trường hợp 1: Gọi /public</strong></p>
+                    <ul>
+                        <li>Method: GET</li>
+                        <li>URL: <code>http://localhost:8080/api/demo/public</code></li>
+                        <li>Không cần Authorization</li>
+                        <li><strong>Kết quả dự kiến:</strong> 200 OK, body: "This is a public endpoint"</li>
+                    </ul>
+
+                    <p><strong>Trường hợp 2: Gọi /user khi chưa đăng nhập</strong></p>
+                    <ul>
+                        <li>Method: GET</li>
+                        <li>URL: <code>http://localhost:8080/api/demo/user</code></li>
+                        <li>Không có Authorization header</li>
+                        <li><strong>Kết quả dự kiến:</strong> 401 Unauthorized</li>
+                    </ul>
+
+                    <p><strong>Trường hợp 3: Gọi /user với tài khoản USER</strong></p>
+                    <ul>
+                        <li>Method: GET</li>
+                        <li>URL: <code>http://localhost:8080/api/demo/user</code></li>
+                        <li>Authorization: Basic Auth với username: user, password: 123456</li>
+                        <li><strong>Kết quả dự kiến:</strong> 200 OK, body: "Hello User!"</li>
+                    </ul>
+
+                    <p><strong>Trường hợp 4: Gọi /admin với tài khoản USER</strong></p>
+                    <ul>
+                        <li>Method: GET</li>
+                        <li>URL: <code>http://localhost:8080/api/demo/admin</code></li>
+                        <li>Authorization: Basic Auth với username: user, password: 123456</li>
+                        <li><strong>Kết quả dự kiến:</strong> 403 Forbidden (không đủ quyền)</li>
+                    </ul>
+
+                    <p><strong>Trường hợp 5: Gọi /admin với tài khoản ADMIN</strong></p>
+                    <ul>
+                        <li>Method: GET</li>
+                        <li>URL: <code>http://localhost:8080/api/demo/admin</code></li>
+                        <li>Authorization: Basic Auth với username: admin, password: 123456</li>
+                        <li><strong>Kết quả dự kiến:</strong> 200 OK, body: "Hello Admin!"</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4><i class="fas fa-code"></i> Hướng dẫn cấu hình Basic Auth trong Postman</h4>
+                        <ul>
+                            <li>Chọn tab <strong>Authorization</strong>.</li>
+                            <li>Chọn loại <strong>Basic Auth</strong>.</li>
+                            <li>Nhập Username và Password.</li>
+                            <li>Postman tự động thêm header <code>Authorization: Basic base64(username:password)</code>.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3>1.6.11. Những lỗi thường gặp</h3>
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lỗi thường gặp và cách khắc phục</h4>
+                        <ul>
+                            <li><strong>Quên khai báo @Bean</strong> → SecurityFilterChain không được tạo, Spring
+                                Security sử dụng cấu hình mặc định.</li>
+                            <li><strong>Quên return http.build()</strong> → Lỗi biên dịch hoặc Bean không hợp lệ.</li>
+                            <li><strong>Sai thứ tự requestMatchers()</strong> → Các quy tắc được áp dụng theo thứ tự
+                                khai báo. Quy tắc chung (anyRequest()) nên để sau cùng.</li>
+                            <li><strong>Nhầm giữa permitAll() và authenticated()</strong> → permitAll() cho phép tất cả
+                                (kể cả chưa đăng nhập), authenticated() yêu cầu đã đăng nhập.</li>
+                            <li><strong>Sai tên Role</strong> → Khi dùng hasRole("ADMIN"), Spring Security tìm quyền
+                                ROLE_ADMIN. Nếu lưu "ADMIN" trong database mà không có tiền tố ROLE_, cần dùng
+                                hasAuthority("ADMIN").</li>
+                            <li><strong>Thiếu httpBasic()</strong> → Không có cơ chế xác thực nào được kích hoạt, mọi
+                                request sẽ bị từ chối.</li>
+                        </ul>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Spring Security cung cấp cách cấu hình linh hoạt thông qua SecurityFilterChain. Việc hiểu rõ
+                            các phương thức như authorizeHttpRequests(), requestMatchers(), permitAll(), authenticated()
+                            và hasRole() là nền tảng để xây dựng hệ thống bảo mật cho ứng dụng Spring Boot.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.7: INMEMORYUSERDETAILSMANAGER -->
+                <section id="chuong7" class="section">
+                    <h2><i class="fas fa-user-plus"></i> 1.7. InMemoryUserDetailsManager</h2>
+
+                    <h3>1.7.1. Mục tiêu</h3>
+                    <p>Sau khi hoàn thành nội dung này, sinh viên có thể:</p>
+                    <ul>
+                        <li>Hiểu khái niệm UserDetails và UserDetailsService.</li>
+                        <li>Hiểu vai trò của InMemoryUserDetailsManager.</li>
+                        <li>Tạo người dùng trong bộ nhớ (In-Memory User).</li>
+                        <li>Cấu hình nhiều tài khoản với các vai trò khác nhau.</li>
+                        <li>Hiểu cách Spring Security xác thực người dùng.</li>
+                        <li>Kiểm thử đăng nhập bằng Basic Authentication với Postman.</li>
+                    </ul>
+
+                    <h3>1.7.2. Giới thiệu</h3>
+                    <p>Trong mục trước, chúng ta đã cấu hình SecurityFilterChain để bảo vệ các API. Tuy nhiên, ứng dụng vẫn chưa có bất kỳ người dùng nào để thực hiện quá trình xác thực.</p>
+                    <p>Để giải quyết vấn đề này, Spring Security cung cấp nhiều cách quản lý người dùng như:</p>
+                    <ul>
+                        <li>InMemoryUserDetailsManager</li>
+                        <li>JdbcUserDetailsManager</li>
+                        <li>UserDetailsService</li>
+                        <li>LDAP</li>
+                        <li>OAuth2</li>
+                        <li>JWT</li>
+                    </ul>
+                    <p>Trong giai đoạn học tập và phát triển ban đầu, cách đơn giản nhất là sử dụng <strong>InMemoryUserDetailsManager</strong>.</p>
+                    <div class="info-box">
+                        <p>InMemoryUserDetailsManager lưu thông tin người dùng trực tiếp trong bộ nhớ của ứng dụng. Khi ứng dụng dừng, toàn bộ dữ liệu sẽ bị mất.</p>
+                        <p>Do đó, cách này không phù hợp với hệ thống thực tế, nhưng rất hữu ích để học tập và kiểm thử.</p>
+                    </div>
+
+                    <h3>1.7.3. UserDetails là gì?</h3>
+                    <p><strong>UserDetails</strong> là một interface của Spring Security, đại diện cho thông tin của một người dùng.</p>
+                    <p>Đối tượng UserDetails chứa các thông tin như:</p>
+                    <ul>
+                        <li>Username</li>
+                        <li>Password</li>
+                        <li>Danh sách quyền (Authorities)</li>
+                        <li>Trạng thái tài khoản</li>
+                        <li>Trạng thái khóa tài khoản</li>
+                        <li>Trạng thái hết hạn mật khẩu</li>
+                        <li>Trạng thái tài khoản có được kích hoạt hay không</li>
+                    </ul>
+                    <p>Khi người dùng đăng nhập, Spring Security sẽ lấy thông tin từ UserDetails để thực hiện xác thực và phân quyền.</p>
+
+                    <h3>1.7.4. UserDetailsService là gì?</h3>
+                    <p><strong>UserDetailsService</strong> là interface chịu trách nhiệm tìm kiếm người dùng theo tên đăng nhập.</p>
+                    <p>Spring Security sẽ gọi phương thức:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Phương thức loadUserByUsername</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>loadUserByUsername(String username)</pre>
+                    </div>
+                    <p>để lấy thông tin người dùng.</p>
+                    <p>Trong chương này, <strong>InMemoryUserDetailsManager</strong> chính là một lớp cài đặt (implements) của UserDetailsService.</p>
+                    <p>Điều này có nghĩa là Spring Security sẽ tìm kiếm người dùng trong bộ nhớ thay vì trong cơ sở dữ liệu.</p>
+
+                    <h3>1.7.5. Cấu hình InMemoryUserDetailsManager</h3>
+                    <p>Trong lớp <code>SecurityConfig</code>, tạo Bean:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+                <span class="keyword">public</span> UserDetailsService userDetailsService() {
+
+                    UserDetails user = User.withUsername(<span class="string">"user"</span>)
+                            .password(<span class="string">"{noop}123456"</span>)
+                            .roles(<span class="string">"USER"</span>)
+                            .build();
+
+                    <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
+                }</pre>
+                    </div>
+                    <p><strong>Giải thích</strong></p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Phương thức</th><th>Ý nghĩa</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>User.withUsername()</strong></td><td>Tạo một người dùng mới.</td></tr>
+                                <tr><td><strong>password("{noop}123456")</strong></td><td>Thiết lập mật khẩu. {noop} cho biết mật khẩu chưa được mã hóa.</td></tr>
+                                <tr><td><strong>roles("USER")</strong></td><td>Gán vai trò ROLE_USER.</td></tr>
+                                <tr><td><strong>build()</strong></td><td>Tạo đối tượng UserDetails.</td></tr>
+                                <tr><td><strong>InMemoryUserDetailsManager</strong></td><td>Quản lý danh sách người dùng trong bộ nhớ.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="note">
+                        <p><strong>Lưu ý:</strong> <code>{noop}</code> là một PasswordEncoder đặc biệt, cho biết mật khẩu được lưu dạng plain text (không mã hóa). Trong thực tế, chúng ta sẽ sử dụng <code>BCryptPasswordEncoder</code> để mã hóa mật khẩu.</p>
+                    </div>
+
+                    <h3>1.7.6. Tạo nhiều người dùng</h3>
+                    <p>Có thể tạo nhiều tài khoản như sau:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java (nhiều user)</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+                <span class="keyword">public</span> UserDetailsService userDetailsService() {
+
+                    UserDetails user = User.withUsername(<span class="string">"user"</span>)
+                            .password(<span class="string">"{noop}123456"</span>)
+                            .roles(<span class="string">"USER"</span>)
+                            .build();
+
+                    UserDetails admin = User.withUsername(<span class="string">"admin"</span>)
+                            .password(<span class="string">"{noop}123456"</span>)
+                            .roles(<span class="string">"ADMIN"</span>)
+                            .build();
+
+                    <span class="keyword">return new</span> InMemoryUserDetailsManager(user, admin);
+                }</pre>
+                    </div>
+                    <p>Sau khi khởi động ứng dụng sẽ có hai tài khoản:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Username</th><th>Password</th><th>Role</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>user</strong></td><td>123456</td><td>USER</td></tr>
+                                <tr><td><strong>admin</strong></td><td>123456</td><td>ADMIN</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.7.7. Vai trò (Role)</h3>
+                    <p>Trong Spring Security, Role thực chất là một Authority có tiền tố <code>ROLE_</code>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ Role</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>.roles(<span class="string">"ADMIN"</span>)  <span class="comment">// Spring Security tự động chuyển thành ROLE_ADMIN</span></pre>
+                    </div>
+                    <p>Tương tự:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Ví dụ Role</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>.roles(<span class="string">"USER"</span>)   <span class="comment">// Spring Security tự động chuyển thành ROLE_USER</span></pre>
+                    </div>
+                    <p>Do đó, khi sử dụng:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Kiểm tra Role</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>.hasRole(<span class="string">"ADMIN"</span>)</pre>
+                    </div>
+                    <p>Spring Security sẽ kiểm tra quyền <code>ROLE_ADMIN</code>.</p>
+
+                    <h3>1.7.8. Kiểm thử với Postman</h3>
+                    <p>Sau khi cấu hình xong, sử dụng Postman để kiểm thử.</p>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 1: GET /api/demo/public</h4>
+                        <p><strong>Yêu cầu:</strong></p>
+                        <ul>
+                            <li>Method: GET</li>
+                            <li>URL: <code>http://localhost:8080/api/demo/public</code></li>
+                            <li>Không cần đăng nhập</li>
+                        </ul>
+                        <p><strong>Kết quả dự kiến:</strong> <code>200 OK</code> - "This is a public endpoint"</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 2: GET /api/demo/user (Đăng nhập USER)</h4>
+                        <p><strong>Yêu cầu:</strong></p>
+                        <ul>
+                            <li>Method: GET</li>
+                            <li>URL: <code>http://localhost:8080/api/demo/user</code></li>
+                            <li>Authorization: Basic Auth</li>
+                            <li>Username: <code>user</code></li>
+                            <li>Password: <code>123456</code></li>
+                        </ul>
+                        <p><strong>Kết quả dự kiến:</strong> <code>200 OK</code> - "Hello User!"</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 3: GET /api/demo/admin (Đăng nhập USER)</h4>
+                        <p><strong>Yêu cầu:</strong></p>
+                        <ul>
+                            <li>Method: GET</li>
+                            <li>URL: <code>http://localhost:8080/api/demo/admin</code></li>
+                            <li>Authorization: Basic Auth</li>
+                            <li>Username: <code>user</code></li>
+                            <li>Password: <code>123456</code></li>
+                        </ul>
+                        <p><strong>Kết quả dự kiến:</strong> <code>403 Forbidden</code> (không đủ quyền)</p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 4: GET /api/demo/admin (Đăng nhập ADMIN)</h4>
+                        <p><strong>Yêu cầu:</strong></p>
+                        <ul>
+                            <li>Method: GET</li>
+                            <li>URL: <code>http://localhost:8080/api/demo/admin</code></li>
+                            <li>Authorization: Basic Auth</li>
+                            <li>Username: <code>admin</code></li>
+                            <li>Password: <code>123456</code></li>
+                        </ul>
+                        <p><strong>Kết quả dự kiến:</strong> <code>200 OK</code> - "Hello Admin!"</p>
+                    </div>
+
+                    <h3>1.7.9. Luồng xác thực</h3>
+                    <p>Khi người dùng gửi yêu cầu đăng nhập, Spring Security sẽ thực hiện các bước sau:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+                HTTP Request
+                    │
+                    ▼
+                SecurityFilterChain
+                    │
+                    ▼
+                BasicAuthenticationFilter
+                    │
+                    ▼
+                AuthenticationManager
+                    │
+                    ▼
+                InMemoryUserDetailsManager
+                    │
+                    ▼
+                Tìm User theo Username
+                    │
+                    ▼
+                Kiểm tra Password
+                    │
+                    ▼
+                Authentication Success
+                    │
+                    ▼
+                Controller
+                        </pre>
+                    </div>
+                    <p>Nếu không tìm thấy người dùng hoặc mật khẩu không đúng, Spring Security sẽ trả về:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#e74c3c;">
+                        <pre style="color:#e74c3c;">401 Unauthorized</pre>
+                    </div>
+
+                    <h3>1.7.10. Hạn chế của InMemoryUserDetailsManager</h3>
+                    <p>Mặc dù rất thuận tiện cho việc học tập, InMemoryUserDetailsManager có một số hạn chế:</p>
+                    <ul>
+                        <li>Dữ liệu chỉ tồn tại trong bộ nhớ.</li>
+                        <li>Không thể quản lý số lượng lớn người dùng.</li>
+                        <li>Không thể thêm, sửa hoặc xóa người dùng trong khi ứng dụng đang chạy.</li>
+                        <li>Không phù hợp với các hệ thống thực tế.</li>
+                    </ul>
+                    <div class="note">
+                        <p><strong>Lưu ý:</strong> Trong các chương sau, chúng ta sẽ thay thế bằng UserDetailsService kết hợp với cơ sở dữ liệu MySQL.</p>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>InMemoryUserDetailsManager là cách nhanh nhất để thêm người dùng vào ứng dụng Spring Security. Nó giúp lập trình viên tập trung vào việc cấu hình bảo mật mà không cần quan tâm đến cơ sở dữ liệu. Tuy nhiên, cần hiểu rõ đây chỉ là giải pháp tạm thời cho môi trường phát triển và học tập.</p>
+                    </div>
+                </section>
+
+                <!-- PHẦN 1.8: BASIC AUTHENTICATION -->
+                <section id="chuong8" class="section">
+                    <h2><i class="fas fa-key"></i> 1.8. Basic Authentication</h2>
+
+                    <h3>1.8.1. Mục tiêu</h3>
+                    <p>Sau khi hoàn thành nội dung này, sinh viên có thể:</p>
+                    <ul>
+                        <li>Hiểu khái niệm Basic Authentication.</li>
+                        <li>Giải thích được cơ chế hoạt động của Basic Authentication trong Spring Security.</li>
+                        <li>Cấu hình Basic Authentication cho ứng dụng Spring Boot.</li>
+                        <li>Thực hiện xác thực bằng Postman.</li>
+                        <li>Phân biệt Basic Authentication với Form Login.</li>
+                        <li>Hiểu ưu điểm, nhược điểm và phạm vi sử dụng của Basic Authentication.</li>
+                    </ul>
+
+                    <h3>1.8.2. Giới thiệu Basic Authentication</h3>
+                    <p><strong>Basic Authentication</strong> là một trong những phương pháp xác thực đơn giản nhất của giao thức HTTP. Phương pháp này được định nghĩa trong chuẩn <strong>RFC 7617</strong>, trong đó thông tin đăng nhập của người dùng được gửi kèm theo mỗi yêu cầu (Request) dưới dạng Username và Password.</p>
+                    <p>Trong Spring Security, Basic Authentication thường được sử dụng để:</p>
+                    <ul>
+                        <li>Xây dựng RESTful API.</li>
+                        <li>Kiểm thử API bằng Postman.</li>
+                        <li>Kết nối giữa các hệ thống (System-to-System).</li>
+                        <li>Phục vụ quá trình học tập và phát triển ứng dụng.</li>
+                    </ul>
+                    <p>Khác với Form Login, Basic Authentication không hiển thị giao diện đăng nhập mà sử dụng Header của giao thức HTTP để truyền thông tin xác thực.</p>
+
+                    <h3>1.8.3. Nguyên lý hoạt động</h3>
+                    <p>Quá trình xác thực bằng Basic Authentication diễn ra theo các bước sau:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+                Client
+                │
+                │  GET /user
+                ▼
+                Spring Security
+                │
+                │ Không có thông tin xác thực
+                ▼
+                401 Unauthorized
+                │
+                │ WWW-Authenticate: Basic
+                ▼
+                Client gửi lại Request
+                │
+                │ Authorization: Basic xxxxxxxxx
+                ▼
+                SecurityFilterChain
+                │
+                ▼
+                BasicAuthenticationFilter
+                │
+                ▼
+                AuthenticationManager
+                │
+                ▼
+                UserDetailsService
+                │
+                ▼
+                Kiểm tra Username và Password
+                │
+                ┌───────────────┐
+                │               │
+                ▼               ▼
+                Đúng             Sai
+                │               │
+                ▼               ▼
+                200 OK       401 Unauthorized
+                        </pre>
+                    </div>
+                    <p>Trong quá trình này, <strong>BasicAuthenticationFilter</strong> sẽ đọc thông tin xác thực từ Header của HTTP Request, sau đó chuyển cho <strong>AuthenticationManager</strong> để kiểm tra.</p>
+
+                    <h3>1.8.4. Header Authorization</h3>
+                    <p>Basic Authentication sử dụng Header có tên <strong>Authorization</strong>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">Authorization: Basic dXNlcjoxMjM0NTY=</pre>
+                    </div>
+                    <p>Trong đó:</p>
+                    <ul>
+                        <li><strong>Basic</strong> là kiểu xác thực.</li>
+                        <li><strong>dXNlcjoxMjM0NTY=</strong> là chuỗi Base64 của: <code>user:123456</code></li>
+                    </ul>
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lưu ý quan trọng</h4>
+                        <p>Base64 không phải là mã hóa mà chỉ là phương pháp chuyển đổi dữ liệu sang dạng văn bản ASCII. Vì vậy, nếu không sử dụng giao thức <strong>HTTPS</strong>, thông tin đăng nhập có thể bị giải mã dễ dàng.</p>
+                    </div>
+                    <p><strong>Ví dụ chi tiết:</strong></p>
+                    <ul>
+                        <li><strong>Username:</strong> user</li>
+                        <li><strong>Password:</strong> 123456</li>
+                        <li>Ghép thành: <code>user:123456</code></li>
+                        <li>Sau khi mã hóa Base64: <code>dXNlcjoxMjM0NTY=</code></li>
+                    </ul>
+                    <p>Spring Security sẽ tự động giải mã chuỗi này khi nhận được yêu cầu.</p>
+
+                    <h3>1.8.5. Cấu hình Basic Authentication</h3>
+                    <p>Trong Spring Security, Basic Authentication được kích hoạt thông qua phương thức <code>httpBasic()</code>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+                <span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http) <span class="keyword">throws</span> Exception {
+
+                    http
+                            .authorizeHttpRequests(auth -> auth
+                                    .requestMatchers(<span class="string">"/public"</span>).permitAll()
+                                    .requestMatchers(<span class="string">"/user"</span>).hasRole(<span class="string">"USER"</span>)
+                                    .requestMatchers(<span class="string">"/admin"</span>).hasRole(<span class="string">"ADMIN"</span>)
+                                    .anyRequest().authenticated()
+                            )
+                            .httpBasic(Customizer.withDefaults());
+
+                    <span class="keyword">return</span> http.build();
+                }</pre>
+                    </div>
+                    <p><strong>Giải thích</strong></p>
+                    <ul>
+                        <li><strong>httpBasic()</strong> kích hoạt cơ chế Basic Authentication.</li>
+                        <li><strong>Customizer.withDefaults()</strong> sử dụng các thiết lập mặc định của Spring Security.</li>
+                        <li>Khi người dùng truy cập tài nguyên được bảo vệ, Spring Security sẽ yêu cầu gửi Header Authorization.</li>
+                    </ul>
+
+                    <h3>1.8.6. Kiểm thử bằng Postman</h3>
+                    <div class="example-card">
+                        <h4>Trường hợp 1: Truy cập API công khai</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /public</code></p>
+                        <p>Không cần cấu hình Authorization.</p>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 2: Truy cập API yêu cầu xác thực</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /user</code></p>
+                        <p>Cấu hình trong Postman:</p>
+                        <ul>
+                            <li>Chọn tab <strong>Authorization</strong>.</li>
+                            <li>Chọn loại <strong>Basic Auth</strong>.</li>
+                            <li>Nhập <strong>Username:</strong> user, <strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 3: Sai mật khẩu</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /user</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> user</li>
+                            <li><strong>Password:</strong> 111111</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>401 Unauthorized</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 4: Không đủ quyền</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> user</li>
+                            <li><strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>403 Forbidden</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 5: Đăng nhập bằng tài khoản ADMIN</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> admin</li>
+                            <li><strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <h3>1.8.7. Phân biệt 401 và 403</h3>
+                    <p>Trong quá trình làm việc với Spring Security, hai mã trạng thái HTTP thường gặp là <strong>401 Unauthorized</strong> và <strong>403 Forbidden</strong>.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Mã trạng thái</th><th>Ý nghĩa</th><th>Nguyên nhân</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>401 Unauthorized</strong></td><td>Chưa xác thực hoặc thông tin đăng nhập không hợp lệ</td><td>Không gửi Header Authorization hoặc nhập sai Username/Password</td></tr>
+                                <tr><td><strong>403 Forbidden</strong></td><td>Đã xác thực nhưng không có quyền truy cập</td><td>Người dùng không có Role hoặc Authority phù hợp</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="example-card">
+                        <h4>Ví dụ</h4>
+                        <ul>
+                            <li>Chưa đăng nhập truy cập <code>/user</code> → <strong>401 Unauthorized</strong></li>
+                            <li>Đăng nhập bằng tài khoản USER nhưng truy cập <code>/admin</code> → <strong>403 Forbidden</strong></li>
+                        </ul>
+                        <p>Việc phân biệt đúng hai mã trạng thái này giúp lập trình viên dễ dàng xác định nguyên nhân của lỗi và xử lý phù hợp.</p>
+                    </div>
+
+                    <h3>1.8.8. Ưu điểm và hạn chế</h3>
+                    <div class="info-box">
+                        <h4><i class="fas fa-check-circle"></i> Ưu điểm</h4>
+                        <ul>
+                            <li>Dễ cấu hình và triển khai.</li>
+                            <li>Không cần xây dựng giao diện đăng nhập.</li>
+                            <li>Phù hợp với RESTful API.</li>
+                            <li>Được Postman và nhiều công cụ HTTP hỗ trợ sẵn.</li>
+                            <li>Thích hợp cho quá trình học tập và kiểm thử.</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Hạn chế</h4>
+                        <ul>
+                            <li>Thông tin xác thực được gửi trong mỗi yêu cầu.</li>
+                            <li>Base64 không phải là phương pháp mã hóa.</li>
+                            <li>Không hỗ trợ cơ chế đăng xuất thực sự.</li>
+                            <li>Không phù hợp cho các ứng dụng Web có giao diện người dùng.</li>
+                            <li><strong>Cần sử dụng HTTPS</strong> để đảm bảo an toàn khi truyền dữ liệu.</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.8.9. So sánh Basic Authentication và Form Login</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Tiêu chí</th><th>Basic Authentication</th><th>Form Login</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Giao diện đăng nhập</strong></td><td>Không có</td><td>Có</td></tr>
+                                <tr><td><strong>Thông tin xác thực</strong></td><td>Header Authorization</td><td>Form HTML</td></tr>
+                                <tr><td><strong>Phù hợp</strong></td><td>REST API</td><td>Web MVC</td></tr>
+                                <tr><td><strong>Lưu trạng thái</strong></td><td>Không</td><td>Có Session</td></tr>
+                                <tr><td><strong>Công cụ kiểm thử</strong></td><td>Postman, Curl</td><td>Trình duyệt</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Trong giáo trình này, Basic Authentication được sử dụng vì đơn giản, dễ cấu hình và phù hợp với việc kiểm thử API trước khi chuyển sang các cơ chế xác thực hiện đại hơn như JWT.</p>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Basic Authentication là phương pháp xác thực đơn giản nhưng hiệu quả cho RESTful API. Nó dễ cấu hình, dễ kiểm thử và được hỗ trợ rộng rãi. Tuy nhiên, do thông tin đăng nhập được gửi trong mỗi yêu cầu và chỉ được mã hóa Base64 (không an toàn nếu không dùng HTTPS), phương pháp này chỉ nên sử dụng trong môi trường phát triển, kiểm thử hoặc kết nối nội bộ với HTTPS.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.8: BASIC AUTHENTICATION -->
+                <section id="chuong9" class="section">
+                    <h2><i class="fas fa-key"></i> 1.8. Basic Authentication</h2>
+
+                    <h3>1.8.1. Mục tiêu</h3>
+                    <p>Sau khi hoàn thành nội dung này, sinh viên có thể:</p>
+                    <ul>
+                        <li>Hiểu khái niệm Basic Authentication.</li>
+                        <li>Giải thích được cơ chế hoạt động của Basic Authentication trong Spring Security.</li>
+                        <li>Cấu hình Basic Authentication cho ứng dụng Spring Boot.</li>
+                        <li>Thực hiện xác thực bằng Postman.</li>
+                        <li>Phân biệt Basic Authentication với Form Login.</li>
+                        <li>Hiểu ưu điểm, nhược điểm và phạm vi sử dụng của Basic Authentication.</li>
+                    </ul>
+
+                    <h3>1.8.2. Giới thiệu Basic Authentication</h3>
+                    <p><strong>Basic Authentication</strong> là một trong những phương pháp xác thực đơn giản nhất của giao thức HTTP. Phương pháp này được định nghĩa trong chuẩn <strong>RFC 7617</strong>, trong đó thông tin đăng nhập của người dùng được gửi kèm theo mỗi yêu cầu (Request) dưới dạng Username và Password.</p>
+                    <p>Trong Spring Security, Basic Authentication thường được sử dụng để:</p>
+                    <ul>
+                        <li>Xây dựng RESTful API.</li>
+                        <li>Kiểm thử API bằng Postman.</li>
+                        <li>Kết nối giữa các hệ thống (System-to-System).</li>
+                        <li>Phục vụ quá trình học tập và phát triển ứng dụng.</li>
+                    </ul>
+                    <p>Khác với Form Login, Basic Authentication không hiển thị giao diện đăng nhập mà sử dụng Header của giao thức HTTP để truyền thông tin xác thực.</p>
+
+                    <h3>1.8.3. Nguyên lý hoạt động</h3>
+                    <p>Quá trình xác thực bằng Basic Authentication diễn ra theo các bước sau:</p>
+                    <div class="architecture" style="background:#1e2a3a; padding:15px;">
+                        <pre style="color:#ecf0f1; margin:0;">
+                Client
+                │
+                │  GET /user
+                ▼
+                Spring Security
+                │
+                │ Không có thông tin xác thực
+                ▼
+                401 Unauthorized
+                │
+                │ WWW-Authenticate: Basic
+                ▼
+                Client gửi lại Request
+                │
+                │ Authorization: Basic xxxxxxxxx
+                ▼
+                SecurityFilterChain
+                │
+                ▼
+                BasicAuthenticationFilter
+                │
+                ▼
+                AuthenticationManager
+                │
+                ▼
+                UserDetailsService
+                │
+                ▼
+                Kiểm tra Username và Password
+                │
+                ┌───────────────┐
+                │               │
+                ▼               ▼
+                Đúng             Sai
+                │               │
+                ▼               ▼
+                200 OK       401 Unauthorized
+                        </pre>
+                    </div>
+                    <p>Trong quá trình này, <strong>BasicAuthenticationFilter</strong> sẽ đọc thông tin xác thực từ Header của HTTP Request, sau đó chuyển cho <strong>AuthenticationManager</strong> để kiểm tra.</p>
+
+                    <h3>1.8.4. Header Authorization</h3>
+                    <p>Basic Authentication sử dụng Header có tên <strong>Authorization</strong>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">Authorization: Basic dXNlcjoxMjM0NTY=</pre>
+                    </div>
+                    <p>Trong đó:</p>
+                    <ul>
+                        <li><strong>Basic</strong> là kiểu xác thực.</li>
+                        <li><strong>dXNlcjoxMjM0NTY=</strong> là chuỗi Base64 của: <code>user:123456</code></li>
+                    </ul>
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lưu ý quan trọng</h4>
+                        <p>Base64 không phải là mã hóa mà chỉ là phương pháp chuyển đổi dữ liệu sang dạng văn bản ASCII. Vì vậy, nếu không sử dụng giao thức <strong>HTTPS</strong>, thông tin đăng nhập có thể bị giải mã dễ dàng.</p>
+                    </div>
+                    <p><strong>Ví dụ chi tiết:</strong></p>
+                    <ul>
+                        <li><strong>Username:</strong> user</li>
+                        <li><strong>Password:</strong> 123456</li>
+                        <li>Ghép thành: <code>user:123456</code></li>
+                        <li>Sau khi mã hóa Base64: <code>dXNlcjoxMjM0NTY=</code></li>
+                    </ul>
+                    <p>Spring Security sẽ tự động giải mã chuỗi này khi nhận được yêu cầu.</p>
+
+                    <h3>1.8.5. Cấu hình Basic Authentication</h3>
+                    <p>Trong Spring Security, Basic Authentication được kích hoạt thông qua phương thức <code>httpBasic()</code>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre><span class="annotation">@Bean</span>
+                <span class="keyword">public</span> SecurityFilterChain securityFilterChain(HttpSecurity http) <span class="keyword">throws</span> Exception {
+
+                    http
+                            .authorizeHttpRequests(auth -> auth
+                                    .requestMatchers(<span class="string">"/public"</span>).permitAll()
+                                    .requestMatchers(<span class="string">"/user"</span>).hasRole(<span class="string">"USER"</span>)
+                                    .requestMatchers(<span class="string">"/admin"</span>).hasRole(<span class="string">"ADMIN"</span>)
+                                    .anyRequest().authenticated()
+                            )
+                            .httpBasic(Customizer.withDefaults());
+
+                    <span class="keyword">return</span> http.build();
+                }</pre>
+                    </div>
+                    <p><strong>Giải thích</strong></p>
+                    <ul>
+                        <li><strong>httpBasic()</strong> kích hoạt cơ chế Basic Authentication.</li>
+                        <li><strong>Customizer.withDefaults()</strong> sử dụng các thiết lập mặc định của Spring Security.</li>
+                        <li>Khi người dùng truy cập tài nguyên được bảo vệ, Spring Security sẽ yêu cầu gửi Header Authorization.</li>
+                    </ul>
+
+                    <h3>1.8.6. Kiểm thử bằng Postman</h3>
+                    <div class="example-card">
+                        <h4>Trường hợp 1: Truy cập API công khai</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /public</code></p>
+                        <p>Không cần cấu hình Authorization.</p>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 2: Truy cập API yêu cầu xác thực</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /user</code></p>
+                        <p>Cấu hình trong Postman:</p>
+                        <ul>
+                            <li>Chọn tab <strong>Authorization</strong>.</li>
+                            <li>Chọn loại <strong>Basic Auth</strong>.</li>
+                            <li>Nhập <strong>Username:</strong> user, <strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 3: Sai mật khẩu</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /user</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> user</li>
+                            <li><strong>Password:</strong> 111111</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>401 Unauthorized</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 4: Không đủ quyền</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> user</li>
+                            <li><strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>403 Forbidden</code></p>
+                    </div>
+
+                    <div class="example-card">
+                        <h4>Trường hợp 5: Đăng nhập bằng tài khoản ADMIN</h4>
+                        <p><strong>Yêu cầu:</strong> <code>GET /admin</code></p>
+                        <ul>
+                            <li><strong>Username:</strong> admin</li>
+                            <li><strong>Password:</strong> 123456</li>
+                        </ul>
+                        <p><strong>Kết quả:</strong> <code>200 OK</code></p>
+                    </div>
+
+                    <h3>1.8.7. Phân biệt 401 và 403</h3>
+                    <p>Trong quá trình làm việc với Spring Security, hai mã trạng thái HTTP thường gặp là <strong>401 Unauthorized</strong> và <strong>403 Forbidden</strong>.</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Mã trạng thái</th><th>Ý nghĩa</th><th>Nguyên nhân</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>401 Unauthorized</strong></td><td>Chưa xác thực hoặc thông tin đăng nhập không hợp lệ</td><td>Không gửi Header Authorization hoặc nhập sai Username/Password</td></tr>
+                                <tr><td><strong>403 Forbidden</strong></td><td>Đã xác thực nhưng không có quyền truy cập</td><td>Người dùng không có Role hoặc Authority phù hợp</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="example-card">
+                        <h4>Ví dụ</h4>
+                        <ul>
+                            <li>Chưa đăng nhập truy cập <code>/user</code> → <strong>401 Unauthorized</strong></li>
+                            <li>Đăng nhập bằng tài khoản USER nhưng truy cập <code>/admin</code> → <strong>403 Forbidden</strong></li>
+                        </ul>
+                        <p>Việc phân biệt đúng hai mã trạng thái này giúp lập trình viên dễ dàng xác định nguyên nhân của lỗi và xử lý phù hợp.</p>
+                    </div>
+
+                    <h3>1.8.8. Ưu điểm và hạn chế</h3>
+                    <div class="info-box">
+                        <h4><i class="fas fa-check-circle"></i> Ưu điểm</h4>
+                        <ul>
+                            <li>Dễ cấu hình và triển khai.</li>
+                            <li>Không cần xây dựng giao diện đăng nhập.</li>
+                            <li>Phù hợp với RESTful API.</li>
+                            <li>Được Postman và nhiều công cụ HTTP hỗ trợ sẵn.</li>
+                            <li>Thích hợp cho quá trình học tập và kiểm thử.</li>
+                        </ul>
+                    </div>
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Hạn chế</h4>
+                        <ul>
+                            <li>Thông tin xác thực được gửi trong mỗi yêu cầu.</li>
+                            <li>Base64 không phải là phương pháp mã hóa.</li>
+                            <li>Không hỗ trợ cơ chế đăng xuất thực sự.</li>
+                            <li>Không phù hợp cho các ứng dụng Web có giao diện người dùng.</li>
+                            <li><strong>Cần sử dụng HTTPS</strong> để đảm bảo an toàn khi truyền dữ liệu.</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.8.9. So sánh Basic Authentication và Form Login</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Tiêu chí</th><th>Basic Authentication</th><th>Form Login</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Giao diện đăng nhập</strong></td><td>Không có</td><td>Có</td></tr>
+                                <tr><td><strong>Thông tin xác thực</strong></td><td>Header Authorization</td><td>Form HTML</td></tr>
+                                <tr><td><strong>Phù hợp</strong></td><td>REST API</td><td>Web MVC</td></tr>
+                                <tr><td><strong>Lưu trạng thái</strong></td><td>Không</td><td>Có Session</td></tr>
+                                <tr><td><strong>Công cụ kiểm thử</strong></td><td>Postman, Curl</td><td>Trình duyệt</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Trong giáo trình này, Basic Authentication được sử dụng vì đơn giản, dễ cấu hình và phù hợp với việc kiểm thử API trước khi chuyển sang các cơ chế xác thực hiện đại hơn như JWT.</p>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Basic Authentication là phương pháp xác thực đơn giản nhưng hiệu quả cho RESTful API. Nó dễ cấu hình, dễ kiểm thử và được hỗ trợ rộng rãi. Tuy nhiên, do thông tin đăng nhập được gửi trong mỗi yêu cầu và chỉ được mã hóa Base64 (không an toàn nếu không dùng HTTPS), phương pháp này chỉ nên sử dụng trong môi trường phát triển, kiểm thử hoặc kết nối nội bộ với HTTPS.</p>
+                    </div>
+                </section>
+                <!-- PHẦN 1.10: KIỂM THỬ ỨNG DỤNG BẰNG POSTMAN -->
+                <section id="chuong10" class="section">
+                    <h2><i class="fas fa-vial"></i> 1.10. Kiểm thử ứng dụng bằng Postman</h2>
+
+                    <h3>1.10.1. Mục tiêu</h3>
+                    <p>Sau khi hoàn thành nội dung này, sinh viên có thể:</p>
+                    <ul>
+                        <li>Hiểu vai trò của Postman trong quá trình phát triển và kiểm thử RESTful API.</li>
+                        <li>Thực hiện gửi các yêu cầu HTTP đến ứng dụng Spring Boot.</li>
+                        <li>Cấu hình Basic Authentication trong Postman.</li>
+                        <li>Kiểm tra kết quả xác thực (Authentication) và phân quyền (Authorization).</li>
+                        <li>Phân tích các mã trạng thái HTTP do Spring Security trả về.</li>
+                        <li>Phát hiện và xử lý một số lỗi thường gặp khi kiểm thử API.</li>
+                    </ul>
+
+                    <h3>1.10.2. Giới thiệu Postman</h3>
+                    <p><strong>Postman</strong> là một công cụ phổ biến được sử dụng để thiết kế, kiểm thử và quản lý các RESTful API. Thay vì phải xây dựng giao diện người dùng hoặc sử dụng trình duyệt web, lập trình viên có thể gửi trực tiếp các yêu cầu HTTP đến máy chủ và quan sát kết quả trả về.</p>
+                    <p>Trong quá trình học Spring Security, Postman giúp sinh viên:</p>
+                    <ul>
+                        <li>Kiểm thử các API mà không cần xây dựng giao diện người dùng.</li>
+                        <li>Gửi yêu cầu với nhiều phương thức HTTP như GET, POST, PUT và DELETE.</li>
+                        <li>Thêm các Header cần thiết, bao gồm Authorization.</li>
+                        <li>Kiểm tra mã trạng thái HTTP và nội dung phản hồi từ máy chủ.</li>
+                        <li>Mô phỏng nhiều tình huống xác thực và phân quyền khác nhau.</li>
+                    </ul>
+                    <p>Nhờ đó, Postman trở thành công cụ không thể thiếu trong quá trình phát triển và kiểm thử ứng dụng Spring Boot.</p>
+
+                    <h3>1.10.3. Chuẩn bị trước khi kiểm thử</h3>
+                    <p>Trước khi tiến hành kiểm thử, cần đảm bảo các điều kiện sau:</p>
+                    <ul>
+                        <li>Ứng dụng Spring Boot đã được khởi động thành công.</li>
+                        <li>Máy chủ Tomcat đang lắng nghe tại cổng 8080.</li>
+                        <li>SecurityFilterChain đã được cấu hình.</li>
+                        <li>InMemoryUserDetailsManager đã tạo hai tài khoản:</li>
+                    </ul>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Username</th><th>Password</th><th>Role</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>user</strong></td><td>123456</td><td>USER</td></tr>
+                                <tr><td><strong>admin</strong></td><td>123456</td><td>ADMIN</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <ul>
+                        <li>Các API cần kiểm thử:</li>
+                    </ul>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>API</th><th>Quyền truy cập</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>/public</strong></td><td>Công khai</td></tr>
+                                <tr><td><strong>/user</strong></td><td>USER hoặc ADMIN</td></tr>
+                                <tr><td><strong>/admin</strong></td><td>ADMIN</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Địa chỉ cơ sở của ứng dụng:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">http://localhost:8080</pre>
+                    </div>
+
+                    <h3>1.10.4. Kiểm thử API công khai</h3>
+                    <p><strong>Bước 1:</strong> Mở Postman.</p>
+                    <p><strong>Bước 2:</strong> Chọn phương thức <strong>GET</strong>.</p>
+                    <p><strong>Bước 3:</strong> Nhập địa chỉ:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">http://localhost:8080/public</pre>
+                    </div>
+                    <p>Không cấu hình phần Authorization.</p>
+                    <p><strong>Bước 4:</strong> Nhấn <strong>Send</strong>.</p>
+                    <p><strong>Kết quả mong đợi:</strong></p>
+                    <ul>
+                        <li><strong>Status:</strong> <code>200 OK</code></li>
+                        <li><strong>Response Body:</strong> <code>Public API</code></li>
+                    </ul>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>API <code>/public</code> được cấu hình bằng:</p>
+                        <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                            <pre style="color:#ecf0f1;">.requestMatchers("/public").permitAll()</pre>
+                        </div>
+                        <p>Do đó, mọi người dùng đều có thể truy cập mà không cần đăng nhập.</p>
+                    </div>
+
+                    <h3>1.10.5. Kiểm thử API yêu cầu xác thực</h3>
+                    <p>Tiếp tục kiểm thử API:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">http://localhost:8080/user</pre>
+                    </div>
+                    <p>Không khai báo Authorization.</p>
+                    <p><strong>Kết quả:</strong> <code>401 Unauthorized</code></p>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>Người dùng chưa cung cấp thông tin xác thực nên Spring Security từ chối truy cập và trả về mã trạng thái HTTP <strong>401 Unauthorized</strong>.</p>
+                    </div>
+
+                    <h3>1.10.6. Cấu hình Basic Authentication trong Postman</h3>
+                    <p>Để gửi thông tin xác thực, thực hiện các bước sau:</p>
+                    <ul>
+                        <li>Chọn tab <strong>Authorization</strong>.</li>
+                        <li>Tại mục <strong>Type</strong>, chọn <strong>Basic Auth</strong>.</li>
+                        <li>Nhập thông tin:</li>
+                    </ul>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thuộc tính</th><th>Giá trị</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Username</strong></td><td>user</td></tr>
+                                <tr><td><strong>Password</strong></td><td>123456</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Postman sẽ tự động tạo Header:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">Authorization: Basic dXNlcjoxMjM0NTY=</pre>
+                    </div>
+                    <div class="note">
+                        <p><strong>Lưu ý:</strong> Người dùng không cần tự mã hóa chuỗi Base64 vì Postman thực hiện công việc này tự động.</p>
+                    </div>
+
+                    <h3>1.10.7. Kiểm thử với tài khoản USER</h3>
+                    <p>Sau khi cấu hình Basic Authentication, gửi yêu cầu:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">GET http://localhost:8080/user</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong></p>
+                    <ul>
+                        <li><strong>Status:</strong> <code>200 OK</code></li>
+                        <li><strong>Response Body:</strong> <code>User API</code></li>
+                    </ul>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>Tài khoản <strong>user</strong> có vai trò USER, phù hợp với quy tắc bảo mật của API <code>/user</code>, vì vậy yêu cầu được xử lý thành công.</p>
+                    </div>
+
+                    <h3>1.10.8. Kiểm thử phân quyền</h3>
+                    <p>Giữ nguyên tài khoản:</p>
+                    <ul>
+                        <li><strong>Username:</strong> user</li>
+                        <li><strong>Password:</strong> 123456</li>
+                    </ul>
+                    <p>Gửi yêu cầu:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">GET http://localhost:8080/admin</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong> <code>403 Forbidden</code></p>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>Người dùng đã đăng nhập thành công nhưng chỉ có vai trò USER. API <code>/admin</code> yêu cầu vai trò ADMIN, do đó Spring Security từ chối truy cập và trả về mã trạng thái <strong>403 Forbidden</strong>.</p>
+                    </div>
+
+                    <h3>1.10.9. Kiểm thử với tài khoản ADMIN</h3>
+                    <p>Thay đổi thông tin đăng nhập:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thuộc tính</th><th>Giá trị</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Username</strong></td><td>admin</td></tr>
+                                <tr><td><strong>Password</strong></td><td>123456</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Gửi yêu cầu:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">GET http://localhost:8080/admin</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong></p>
+                    <ul>
+                        <li><strong>Status:</strong> <code>200 OK</code></li>
+                        <li><strong>Response Body:</strong> <code>Admin API</code></li>
+                    </ul>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>Tài khoản <strong>admin</strong> có vai trò ADMIN, đáp ứng điều kiện truy cập API <code>/admin</code>.</p>
+                    </div>
+
+                    <h3>1.10.10. Kiểm thử trường hợp sai mật khẩu</h3>
+                    <p>Cấu hình:</p>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Thuộc tính</th><th>Giá trị</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>Username</strong></td><td>admin</td></tr>
+                                <tr><td><strong>Password</strong></td><td>111111</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Gửi yêu cầu:</p>
+                    <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
+                        <pre style="color:#ecf0f1;">GET http://localhost:8080/admin</pre>
+                    </div>
+                    <p><strong>Kết quả:</strong> <code>401 Unauthorized</code></p>
+                    <div class="note">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích</h4>
+                        <p>Spring Security không thể xác thực người dùng do mật khẩu không đúng. Quá trình xác thực thất bại trước khi kiểm tra quyền truy cập.</p>
+                    </div>
+
+                    <h3>1.10.11. Tổng hợp kết quả kiểm thử</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>STT</th><th>API</th><th>Tài khoản</th><th>Kết quả</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td>/public</td><td>Không đăng nhập</td><td><span style="color:#27ae60;">200 OK</span></td></tr>
+                                <tr><td>2</td><td>/user</td><td>Không đăng nhập</td><td><span style="color:#e74c3c;">401 Unauthorized</span></td></tr>
+                                <tr><td>3</td><td>/user</td><td>user</td><td><span style="color:#27ae60;">200 OK</span></td></tr>
+                                <tr><td>4</td><td>/user</td><td>admin</td><td><span style="color:#27ae60;">200 OK</span></td></tr>
+                                <tr><td>5</td><td>/admin</td><td>user</td><td><span style="color:#e67e22;">403 Forbidden</span></td></tr>
+                                <tr><td>6</td><td>/admin</td><td>admin</td><td><span style="color:#27ae60;">200 OK</span></td></tr>
+                                <tr><td>7</td><td>/admin</td><td>admin (sai mật khẩu)</td><td><span style="color:#e74c3c;">401 Unauthorized</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>1.10.12. Một số lỗi thường gặp</h3>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lỗi 404 Not Found</h4>
+                        <p><strong>Nguyên nhân:</strong></p>
+                        <ul>
+                            <li>Sai URL.</li>
+                            <li>Chưa tạo API.</li>
+                            <li>Sai @RequestMapping hoặc @GetMapping.</li>
+                        </ul>
+                        <p><strong>Cách khắc phục:</strong></p>
+                        <ul>
+                            <li>Kiểm tra lại địa chỉ URL.</li>
+                            <li>Kiểm tra lớp Controller.</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lỗi 401 Unauthorized</h4>
+                        <p><strong>Nguyên nhân:</strong></p>
+                        <ul>
+                            <li>Chưa khai báo Basic Authentication.</li>
+                            <li>Sai Username hoặc Password.</li>
+                        </ul>
+                        <p><strong>Cách khắc phục:</strong></p>
+                        <ul>
+                            <li>Kiểm tra lại tài khoản.</li>
+                            <li>Kiểm tra phần Authorization trong Postman.</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lỗi 403 Forbidden</h4>
+                        <p><strong>Nguyên nhân:</strong></p>
+                        <ul>
+                            <li>Người dùng không có quyền truy cập API.</li>
+                        </ul>
+                        <p><strong>Cách khắc phục:</strong></p>
+                        <ul>
+                            <li>Kiểm tra Role của tài khoản.</li>
+                            <li>Kiểm tra cấu hình hasRole() hoặc hasAnyRole().</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Lỗi Connection Refused</h4>
+                        <p><strong>Nguyên nhân:</strong></p>
+                        <ul>
+                            <li>Ứng dụng Spring Boot chưa chạy.</li>
+                            <li>Sai cổng truy cập.</li>
+                        </ul>
+                        <p><strong>Cách khắc phục:</strong></p>
+                        <ul>
+                            <li>Khởi động lại ứng dụng.</li>
+                            <li>Kiểm tra cổng trong application.properties.</li>
+                        </ul>
+                    </div>
+
+                    <div class="note" style="margin-top: 30px;">
+                        <h4><i class="fas fa-check-circle"></i> Tổng kết</h4>
+                        <p>Postman là công cụ hiệu quả để kiểm thử các API được bảo vệ bởi Spring Security. Thông qua việc kiểm thử các trường hợp thành công và thất bại, sinh viên có thể hiểu rõ cơ chế xác thực và phân quyền của ứng dụng, từ đó phát hiện và khắc phục lỗi kịp thời.</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <footer>
+            <p><i class="fas fa-project-diagram"></i> QUAN HỆ TRONG JPA - Giáo trình tự học ORM Mapping</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+
+                    document.querySelector('.main-content').scrollTop = 0;
+                });
+            });
+        });
+
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+
+            button.innerHTML = '<i class="fas fa-check"></i> Đã copy!';
+            button.style.background = '#27ae60';
+
+            navigator.clipboard.writeText(text).then(() => {
+                setTimeout(() => {
+                    button.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    button.style.background = '#555';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
