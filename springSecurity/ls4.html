@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JWT BASIC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --jpa: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 80vh;
+        }
+
+        .sidebar {
+            height: 85vh;
+            overflow-y: auto;
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--jpa);
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--jpa);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--jpa);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--jpa);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .sidebar ul {
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--jpa);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note,
+        .info-box,
+        .success-box,
+        .warning-box {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-one {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-many {
+            background: #3498db;
+            color: white;
+        }
+
+        .badge-jpa {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .badge-join {
+            background: #1abc9c;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--jpa));
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--jpa);
+                height: auto;
+                max-height: 300px;
+            }
+        }
+
+        .architecture {
+            background: linear-gradient(135deg, #2c3e50, #9b59b6);
+            color: white;
+            padding: 25px;
+            border-radius: 24px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin: 25px 0;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .formula-box {
+            background: #e8f4f8;
+            border-left: 4px solid var(--jpa);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .example-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--jpa), transparent);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-database"></i>DATABASE AUTHENTICATION</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a class="nav-link" href="#jwt-overview"><i class="fas fa-info-circle"></i> 1.
+                            Tổng quan về JWT Authentication</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#jwt-jjwt"><i class="fas fa-code"></i> 2. JWT và
+                            JJWT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#jwt-token-provider"><i class="fas fa-key"></i> 3.
+                            JwtTokenProvider</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dang-nhap"><i class="fas fa-sign-in-alt"></i> 4.
+                            Đăng nhập và tạo JWT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#jwt-filter"><i class="fas fa-filter"></i> 5.
+                            JwtAuthenticationFilter</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#security-context"><i class="fas fa-lock"></i> 6.
+                            SecurityContext và Authentication</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#cau-hinh-stateless"><i class="fas fa-cogs"></i> 7.
+                            Cấu hình JWT Stateless</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#bearer-token"><i class="fas fa-token"></i> 8. Bearer
+                            Token</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#401"><i class="fas fa-exclamation-triangle"></i> 9.
+                            Xử lý 401 Unauthorized</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kiem-thu"><i class="fas fa-vial"></i> 10. Kiểm thử
+                            JWT Authentication</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tong-ket-luong"><i
+                                class="fas fa-flag-checkered"></i> 11. Tổng kết luồng JWT Authentication</a></li>
+                </ul>
+            </nav>
+            <main class="main-content">
+                <!-- PHẦN SECTION BÀI 1: TỔNG QUAN VỀ JWT -->
+<section id="jwt-overview" class="section">
+    <h2><i class="fas fa-lock"></i> 1. TỔNG QUAN VỀ JWT</h2>
+    
+    <h3>1.1. JWT là gì?</h3>
+
+    <h4>1.1.1. Khái niệm</h4>
+    <p>JWT (JSON Web Token) là một chuẩn token dùng để truyền tải thông tin giữa các bên dưới dạng một chuỗi JSON được mã hóa theo cấu trúc chuẩn.</p>
+    <p>Trong ứng dụng Web/API, JWT thường được sử dụng để xác thực người dùng (Authentication) và xác định quyền truy cập (Authorization).</p>
+
+    <div class="info-box">
+        <pre>Client
+   │
+   │ username + password
+   ▼
+Server
+   │
+   │ xác thực thành công
+   ▼
+JWT Token
+   │
+   │ trả về Client
+   ▼
+Client lưu JWT</pre>
+    </div>
+    <p>Sau đó, mỗi khi Client gọi API:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ Authorization: Bearer &lt;JWT&gt;
+   ▼
+Server
+   │
+   │ kiểm tra JWT
+   ▼
+Cho phép / Từ chối</pre>
+    </div>
+
+    <h4>1.1.2. JWT có phải là mã hóa không?</h4>
+    <p>Cần phân biệt:</p>
+    <ul>
+        <li>JWT thường được <strong>ký (signed)</strong> chứ không mặc định được mã hóa.</li>
+        <li>Nội dung Payload có thể được đọc nếu người khác có được token.</li>
+        <li>Chữ ký dùng để kiểm tra token có bị thay đổi hay không.</li>
+    </ul>
+    <div class="info-box">
+        <pre>JWT
+ │
+ ├── Header
+ ├── Payload      ← Có thể đọc
+ └── Signature    ← Dùng để kiểm tra tính hợp lệ</pre>
+    </div>
+    <div class="warning-box">
+        <p><strong>Không nên đưa thông tin bí mật vào Payload</strong>, chẳng hạn:</p>
+        <ul>
+            <li>❌ password</li>
+            <li>❌ số thẻ ngân hàng</li>
+            <li>❌ secret key</li>
+        </ul>
+    </div>
+
+    <h3>1.2. JWT dùng để làm gì?</h3>
+    <p>JWT thường được sử dụng trong hai mục đích chính.</p>
+
+    <h4>1.2.1. Authentication – Xác thực</h4>
+    <p>Xác định: <em>"Người đang gọi API là ai?"</em></p>
+    <div class="info-box">
+        <pre>Username: admin
+Password: 123456
+
+Server xác thực thành công và tạo JWT:
+
+JWT
+↓
+Client</pre>
+    </div>
+    <p>Sau đó Client gửi JWT trong các request tiếp theo.</p>
+
+    <h4>1.2.2. Authorization – Phân quyền</h4>
+    <p>Sau khi biết người dùng là ai, Server có thể kiểm tra người đó có quyền gì.</p>
+    <div class="code-block">
+        <div class="code-header"><span>Ví dụ Payload</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "sub": "admin",
+  "role": "ADMIN"
+}</pre>
+    </div>
+    <p>Server có thể kiểm tra:</p>
+    <div class="info-box">
+        <pre>role = ADMIN
+       ↓
+Cho phép /admin/users</pre>
+    </div>
+    <p>Trong khi:</p>
+    <div class="info-box">
+        <pre>role = USER
+       ↓
+Không được phép /admin/users</pre>
+    </div>
+
+    <h3>1.3. Cấu trúc JWT</h3>
+    <p>JWT có cấu trúc:</p>
+    <div class="info-box">
+        <pre>Header.Payload.Signature</pre>
+    </div>
+    <p>Ba phần được ngăn cách bởi dấu <code>.</code>.</p>
+    <div class="info-box">
+        <pre>xxxxx.yyyyy.zzzzz</pre>
+    </div>
+    <ul>
+        <li><strong>xxxxx</strong> → Header</li>
+        <li><strong>yyyyy</strong> → Payload</li>
+        <li><strong>zzzzz</strong> → Signature</li>
+    </ul>
+    <p>JWT sử dụng Base64URL encoding cho Header và Payload.</p>
+
+    <h3>1.4. Header</h3>
+    <h4>1.4.1. Khái niệm</h4>
+    <p>Header chứa thông tin mô tả JWT.</p>
+    <div class="code-block">
+        <div class="code-header"><span>Ví dụ Header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "alg": "HS256",
+  "typ": "JWT"
+}</pre>
+    </div>
+
+    <h4>1.4.2. Các thông tin thường gặp</h4>
+    <ul>
+        <li><strong>alg</strong>: Cho biết thuật toán được sử dụng để tạo chữ ký. Ví dụ: <code>HS256</code>, <code>RS256</code>, <code>ES256</code>.</li>
+        <li><strong>typ</strong>: Cho biết loại token. Thông thường: <code>"typ": "JWT"</code>.</li>
+    </ul>
+
+    <h3>1.5. Payload</h3>
+    <h4>1.5.1. Khái niệm</h4>
+    <p>Payload chứa các thông tin gọi là Claims.</p>
+    <div class="code-block">
+        <div class="code-header"><span>Ví dụ Payload</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "sub": "admin",
+  "role": "ADMIN",
+  "iat": 1720000000,
+  "exp": 1720003600
+}</pre>
+    </div>
+
+    <h4>1.5.2. Một số Claim phổ biến</h4>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Claim</th><th>Ý nghĩa</th></tr></thead>
+            <tbody>
+                <tr><td><strong>sub</strong></td><td>Subject – đối tượng của token</td></tr>
+                <tr><td><strong>iat</strong></td><td>Thời điểm token được tạo</td></tr>
+                <tr><td><strong>exp</strong></td><td>Thời điểm token hết hạn</td></tr>
+                <tr><td><strong>iss</strong></td><td>Issuer – bên phát hành</td></tr>
+                <tr><td><strong>aud</strong></td><td>Audience – đối tượng nhận token</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="warning-box">
+        <p><strong>Lưu ý:</strong> Payload không phải nơi để lưu dữ liệu bí mật.</p>
+    </div>
+
+    <h3>1.6. Signature</h3>
+    <h4>1.6.1. Khái niệm</h4>
+    <p>Signature là phần chữ ký được sử dụng để kiểm tra:</p>
+    <ul>
+        <li>Token có được tạo bởi bên hợp lệ hay không.</li>
+        <li>Token có bị thay đổi sau khi tạo hay không.</li>
+    </ul>
+    <p><strong>Ví dụ với HS256:</strong></p>
+    <div class="info-box">
+        <pre>Signature =
+HMACSHA256(
+    Base64URL(Header) + "." + Base64URL(Payload),
+    SecretKey
+)</pre>
+    </div>
+    <div class="info-box">
+        <pre>Header
+   +
+Payload
+   +
+Secret Key
+   ↓
+Signature</pre>
+    </div>
+
+    <h4>1.6.2. Tại sao cần Signature?</h4>
+    <p>Giả sử JWT ban đầu:</p>
+    <div class="code-block">
+        <div class="code-header"><span>JWT ban đầu</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "sub": "user",
+  "role": "USER"
+}</pre>
+    </div>
+    <p>Kẻ tấn công sửa thành:</p>
+    <div class="code-block">
+        <div class="code-header"><span>JWT bị sửa</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "sub": "user",
+  "role": "ADMIN"
+}</pre>
+    </div>
+    <div class="info-box">
+        <pre>Payload mới
+    ↓
+Tạo lại Signature
+    ↓
+Không khớp Signature cũ
+    ↓
+Token không hợp lệ</pre>
+    </div>
+    <p>Vì vậy người dùng không thể đơn giản sửa Payload để tự nâng quyền.</p>
+
+    <h3>1.7. JWT hoạt động như thế nào?</h3>
+    <p>Quy trình cơ bản:</p>
+    <div class="info-box">
+        <pre>             LOGIN
+                │
+                ▼
+      Username + Password
+                │
+                ▼
+       AuthenticationManager
+                │
+                ▼
+    DaoAuthenticationProvider
+                │
+                ▼
+       UserDetailsService
+                │
+                ▼
+           Database
+                │
+                ▼
+        UserDetails
+                │
+                ▼
+       PasswordEncoder
+                │
+                ▼
+      Authentication OK
+                │
+                ▼
+          Tạo JWT
+                │
+                ▼
+             Client</pre>
+    </div>
+    <p>Sau khi đăng nhập thành công:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ JWT
+   ▼
+API</pre>
+    </div>
+    <p>Ví dụ Header HTTP:</p>
+    <div class="info-box">
+        <pre>Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...</pre>
+    </div>
+    <p>Server sẽ:</p>
+    <div class="info-box">
+        <pre>JWT
+ │
+ ├── Kiểm tra Signature
+ ├── Kiểm tra exp
+ ├── Đọc username
+ └── Đọc quyền
+       │
+       ▼
+Authentication
+       │
+       ▼
+Authorization
+       │
+       ▼
+Cho phép truy cập API</pre>
+    </div>
+
+    <h3>1.8. JWT khác Basic Authentication như thế nào?</h3>
+
+    <h4>1.8.1. Basic Authentication</h4>
+    <p>Client gửi username và password trong mỗi request.</p>
+    <div class="info-box">
+        <pre>Authorization: Basic base64(username:password)</pre>
+    </div>
+    <div class="info-box">
+        <pre>Request
+   │
+   ├── Username
+   └── Password
+          │
+          ▼
+       Server</pre>
+    </div>
+    <p>Mỗi request cần gửi lại thông tin xác thực.</p>
+
+    <h4>1.8.2. JWT Authentication</h4>
+    <p>Client đăng nhập một lần:</p>
+    <div class="info-box">
+        <pre>Username + Password
+        ↓
+      Server
+        ↓
+       JWT</pre>
+    </div>
+    <p>Sau đó các request tiếp theo gửi JWT:</p>
+    <div class="info-box">
+        <pre>Authorization: Bearer &lt;JWT&gt;</pre>
+    </div>
+
+    <h4>1.8.3. So sánh</h4>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Tiêu chí</th><th>Basic Authentication</th><th>JWT</th></tr></thead>
+            <tbody>
+                <tr><td>Gửi username/password</td><td>Mỗi request</td><td>Thường chỉ lúc login</td></tr>
+                <tr><td>Token</td><td>Không</td><td>Có</td></tr>
+                <tr><td>Dùng Bearer Token</td><td>Không</td><td>Có</td></tr>
+                <tr><td>Stateless</td><td>Có thể</td><td>Thường có</td></tr>
+                <tr><td>Phù hợp REST API</td><td>Có</td><td>Rất phổ biến</td></tr>
+                <tr><td>Phân quyền</td><td>Cần xử lý riêng</td><td>Có thể chứa claims/roles</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="warning-box">
+        <p><strong>Điểm quan trọng:</strong> JWT không phải là một phương thức mã hóa password. JWT là token được sử dụng sau quá trình xác thực.</p>
+    </div>
+
+    <h3>1.9. JWT khác Session Authentication như thế nào?</h3>
+    <p>Đây là phần rất quan trọng.</p>
+
+    <h4>1.9.1. Session Authentication</h4>
+    <p>Sau khi login:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ username + password
+   ▼
+Server
+   │
+   │ tạo Session
+   ▼
+Session ID
+   │
+   ▼
+Client</pre>
+    </div>
+    <p>Server lưu thông tin Session:</p>
+    <div class="info-box">
+        <pre>Server
+ │
+ └── Session
+       ├── sessionId
+       ├── username
+       └── authentication</pre>
+    </div>
+    <p>Client thường giữ Session ID trong Cookie.</p>
+    <p>Request tiếp theo:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ Cookie: JSESSIONID=abc123
+   ▼
+Server
+   │
+   ▼
+Tìm Session
+   │
+   ▼
+Xác định User</pre>
+    </div>
+
+    <h4>1.9.2. JWT Authentication</h4>
+    <p>JWT hoạt động theo hướng khác.</p>
+    <p>Sau login:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ username + password
+   ▼
+Server
+   │
+   │ tạo JWT
+   ▼
+JWT
+   │
+   ▼
+Client</pre>
+    </div>
+    <p>Request tiếp theo:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ Authorization: Bearer JWT
+   ▼
+Server
+   │
+   │ Verify JWT
+   ▼
+Authentication</pre>
+    </div>
+    <p>Server không nhất thiết phải lưu Session tương ứng với JWT.</p>
+
+    <h4>1.9.3. So sánh JWT và Session</h4>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Tiêu chí</th><th>Session</th><th>JWT</th></tr></thead>
+            <tbody>
+                <tr><td>Thông tin đăng nhập</td><td>Server lưu</td><td>Token chứa claims</td></tr>
+                <tr><td>Client giữ</td><td>Session ID</td><td>JWT</td></tr>
+                <tr><td>Server lưu Session</td><td>Có</td><td>Thường không</td></tr>
+                <tr><td>Stateless</td><td>Không</td><td>Thường có</td></tr>
+                <tr><td>Scale nhiều Server</td><td>Cần xử lý Session</td><td>Thuận tiện hơn</td></tr>
+                <tr><td>Revoke token</td><td>Dễ hơn</td><td>Phức tạp hơn</td></tr>
+                <tr><td>Token chứa thông tin</td><td>Không đáng kể</td><td>Có Claims</td></tr>
+                <tr><td>Phù hợp REST API</td><td>Có</td><td>Rất phổ biến</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>Có thể nhớ đơn giản:</p>
+    <div class="info-box">
+        <pre>SESSION
+
+Client ── Session ID ──> Server
+                           │
+                           ▼
+                       Session Store</pre>
+    </div>
+    <p>Trong khi:</p>
+    <div class="info-box">
+        <pre>JWT
+
+Client ── JWT ──> Server
+                   │
+                   ▼
+              Verify Token</pre>
+    </div>
+
+    <h3>1.10. Stateless Authentication là gì?</h3>
+
+    <h4>1.10.1. Stateful</h4>
+    <p>Stateful nghĩa là Server phải duy trì trạng thái của Client.</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ Session ID
+   ▼
+Server
+   │
+   ▼
+Session Store
+   │
+   └── User = admin</pre>
+    </div>
+    <p>Server phải biết:</p>
+    <div class="info-box">
+        <pre>Session ID abc123
+        ↓
+User admin</pre>
+    </div>
+
+    <h4>1.10.2. Stateless</h4>
+    <p>Stateless Authentication nghĩa là Server không cần lưu trạng thái đăng nhập của từng Client giữa các request.</p>
+    <p>Mỗi request chứa đủ thông tin để Server xác định và xác thực người dùng.</p>
+    <div class="info-box">
+        <pre>Request
+   │
+   ├── URL
+   ├── Method
+   └── JWT
+        │
+        ▼
+      Server
+        │
+        ├── Verify Signature
+        ├── Check Expiration
+        └── Read Claims
+                │
+                ▼
+          Authentication</pre>
+    </div>
+    <p>Server không cần truy vấn:</p>
+    <div class="info-box">
+        <pre>Session ID
+      ↓
+Session Store
+      ↓
+User</pre>
+    </div>
+
+    <h3>1.11. Vì sao JWT thường được dùng cho Stateless Authentication?</h3>
+    <p>JWT có thể chứa:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Ví dụ JWT Payload</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "sub": "admin",
+  "role": "ADMIN",
+  "exp": 1720003600
+}</pre>
+    </div>
+    <p>Khi nhận request:</p>
+    <div class="info-box">
+        <pre>JWT
+ ↓
+Verify
+ ↓
+Đọc sub
+ ↓
+Đọc role
+ ↓
+Tạo Authentication</pre>
+    </div>
+    <p>Do đó Server có thể xử lý request dựa trên token mà không cần duy trì Session cho người dùng.</p>
+
+    <h3>1.12. Tổng kết kiến thức</h3>
+    <p>Có thể ghi nhớ toàn bộ phần này bằng sơ đồ:</p>
+    <div class="info-box">
+        <pre>                         JWT
+                          │
+             ┌────────────┼────────────┐
+             ▼            ▼            ▼
+          Header       Payload      Signature
+             │            │            │
+             │            │            │
+          Algorithm      Claims      Kiểm tra
+                                      tính hợp lệ
+                          │
+                          ▼
+                    Authentication
+                          │
+                          ▼
+                    Authorization</pre>
+    </div>
+    <p>Và quy trình tổng quát:</p>
+    <div class="info-box">
+        <pre>1. User Login
+      │
+      ▼
+2. Username + Password
+      │
+      ▼
+3. Server xác thực
+      │
+      ▼
+4. Tạo JWT
+      │
+      ▼
+5. Client nhận JWT
+      │
+      ▼
+6. Client gửi JWT ở các request tiếp theo
+      │
+      ▼
+7. Server Verify JWT
+      │
+      ▼
+8. Tạo Authentication
+      │
+      ▼
+9. Kiểm tra quyền
+      │
+      ▼
+10. Cho phép / từ chối truy cập</pre>
+    </div>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>JWT</strong> là chuỗi token gồm 3 phần: Header, Payload, Signature.</li>
+            <li><strong>Authentication</strong> → xác thực người dùng.</li>
+            <li><strong>Authorization</strong> → phân quyền dựa trên claims (role).</li>
+            <li>JWT thường được <strong>ký</strong>, không mã hóa payload.</li>
+            <li>JWT giúp <strong>Stateless</strong>, server không cần lưu session.</li>
+            <li>Không đưa thông tin bí mật (password, secret) vào Payload.</li>
+            <li>JWT khác Basic Auth (gửi user/pass mỗi request) và khác Session Auth (server lưu session).</li>
+        </ul>
+    </div>
+</section>
+            
+            
+            </main>
+        </div>
+
+        <footer>
+            <p><i class="fas fa-database"></i></p>
+        </footer>
+    </div>
+
+    <script>
+        function copyCode(btn) {
+            const pre = btn.closest('.code-block').querySelector('pre');
+            const text = pre.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('Không thể copy: ' + err);
+            });
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const targetId = this.getAttribute('href').substring(1);
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

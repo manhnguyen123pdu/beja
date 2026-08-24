@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lombok, Mapper, Response & Exception trong Spring Boot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 85vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        h5 {
+            color: var(--dark);
+            margin: 15px 0 8px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #666;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .method {
+            color: #dcdcaa;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .interactive-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            border-left: 4px solid var(--warning);
+            display: none;
+        }
+
+        .result.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .code-block {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .syntax {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid var(--info);
+        }
+
+        .diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-table {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        pre {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-code"></i> LOMBOK, MAPPER, RESPONSE & EXCEPTION TRONG SPRING BOOT</h1>
+        </header>
+
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#phan1" class="nav-link active"><i class="fas fa-cube"></i> 1. Lombok</a></li>
+                    <li class="nav-item"><a href="#phan2" class="nav-link"><i class="fas fa-exchange-alt"></i> 2. Mapper</a></li>
+                    <li class="nav-item"><a href="#phan3" class="nav-link"><i class="fas fa-reply-all"></i> 3. Chuẩn hóa Response</a></li>
+                    <li class="nav-item"><a href="#phan4" class="nav-link"><i class="fas fa-exclamation-triangle"></i> 4. Xử lý Exception</a></li>
+                    <li class="nav-item"><a href="#phan5" class="nav-link"><i class="fas fa-sitemap"></i> 5. Kết hợp tổng thể</a></li>
+                </ul>
+            </nav>
+
+            <main class="main-content">
+                <!-- PHẦN 1: LOMBOK -->
+                <section id="phan1" class="section active">
+                    <h2><i class="fas fa-cube"></i> 1. LOMBOK TRONG JAVA VÀ SPRING BOOT</h2>
+                    
+                    <div class="info-box">
+                        <h4>Mục tiêu</h4>
+                        <p>Sau khi học xong phần này, học viên có thể:</p>
+                        <ul>
+                            <li>Hiểu Lombok là gì.</li>
+                            <li>Hiểu tại sao cần sử dụng Lombok.</li>
+                            <li>Cài đặt Lombok trong dự án Java/Spring Boot.</li>
+                            <li>Hiểu và sử dụng các annotation phổ biến.</li>
+                            <li>Phân biệt được các loại constructor của Lombok.</li>
+                            <li>Sử dụng Lombok trong Entity, DTO, Service và Controller.</li>
+                            <li>Hiểu những trường hợp không nên sử dụng Lombok.</li>
+                        </ul>
+                    </div>
+
+                    <h3>1.1. Lombok là gì?</h3>
+                    <h4>1.1.1. Khái niệm</h4>
+                    <p>Lombok là một thư viện dành cho Java, được sử dụng để giảm các đoạn boilerplate code – những đoạn code lặp đi lặp lại và ít chứa logic nghiệp vụ.</p>
+                    <p>Trong Java, khi xây dựng một class, chúng ta thường phải viết:</p>
+                    <ul>
+                        <li>Getter.</li>
+                        <li>Setter.</li>
+                        <li>Constructor.</li>
+                        <li>toString().</li>
+                        <li>equals().</li>
+                        <li>hashCode().</li>
+                    </ul>
+                    <p><strong>Ví dụ không sử dụng Lombok:</strong></p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Student.java</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Student() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Student(Long id, String name, String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> Long getId() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setId(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> String getEmail() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public void</span> setEmail(String email) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.email = email;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Có thể nhận thấy phần lớn code ở trên chỉ phục vụ cho việc đọc, ghi và khởi tạo dữ liệu. Nếu class có 10 hoặc 20 thuộc tính, số lượng code lặp lại sẽ rất lớn.</p>
+                    <p>Lombok giải quyết vấn đề này bằng cách cho phép chúng ta sử dụng annotation.</p>
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span>Student.java với Lombok</span>
+                            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                        </div>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Code ngắn hơn rất nhiều nhưng vẫn có getter, setter và constructor tương ứng.</p>
+
+                    <h4>1.1.2. Boilerplate Code là gì?</h4>
+                    <p>Boilerplate Code là những đoạn code cần thiết nhưng thường được lặp lại trong nhiều class.</p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        }
+                    </div>
+                    <p>Đây là code hợp lệ và cần thiết, nhưng nếu class có 20 field thì chúng ta phải viết rất nhiều getter tương tự. Lombok giúp tự động sinh các đoạn code này.</p>
+
+                    <h4>1.1.3. Lombok hoạt động như thế nào?</h4>
+                    <p>Lombok sử dụng cơ chế Annotation Processing của Java.</p>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        }
+                    </div>
+                    <p>Annotation <code>@Getter</code> nói cho Lombok biết rằng class cần getter.</p>
+                    <p>Về mặt tư duy, có thể hình dung:</p>
+                    <pre>Java Source Code
+       ↓
+Lombok Annotation
+       ↓
+Annotation Processing
+       ↓
+Sinh code cần thiết
+       ↓
+Java Compiler
+       ↓
+.class</pre>
+                    <p>Do đó, Lombok không phải là một “phép thuật” làm thay đổi Java. Nó chỉ giúp sinh tự động những phần code mà lập trình viên có thể viết thủ công.</p>
+
+                    <h4>1.1.4. Lombok sử dụng Annotation</h4>
+                    <p>Annotation là những thông tin được đặt trước class, method hoặc field.</p>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        }
+                    </div>
+                    <p>Một số annotation thường gặp:</p>
+                    <ul>
+                        <li><code>@Getter</code></li>
+                        <li><code>@Setter</code></li>
+                        <li><code>@Data</code></li>
+                        <li><code>@Builder</code></li>
+                        <li><code>@NoArgsConstructor</code></li>
+                        <li><code>@AllArgsConstructor</code></li>
+                        <li><code>@RequiredArgsConstructor</code></li>
+                        <li><code>@ToString</code></li>
+                        <li><code>@EqualsAndHashCode</code></li>
+                    </ul>
+
+                    <h4>1.1.5. Khi nào nên sử dụng Lombok?</h4>
+                    <p>Lombok đặc biệt hữu ích trong các project:</p>
+                    <ul>
+                        <li>Spring Boot.</li>
+                        <li>Spring MVC.</li>
+                        <li>Spring Data JPA.</li>
+                        <li>REST API.</li>
+                        <li>Các project có nhiều DTO.</li>
+                        <li>Các project có nhiều Entity/model.</li>
+                    </ul>
+                    <p>Ví dụ một project Spring Boot có: User, Product, Order, Medicine, Invoice, Customer, Employee... Nếu mỗi class đều phải viết getter, setter, constructor thì lượng code sẽ rất lớn. Lombok giúp giảm đáng kể phần code này.</p>
+
+                    <!-- 1.2 Cài đặt Lombok -->
+                    <h3>1.2. Cài đặt Lombok</h3>
+                    <h4>1.2.1. Cài Lombok bằng Maven</h4>
+                    <p>Trong project Maven, mở file: <code>pom.xml</code></p>
+                    <p>Thêm dependency:</p>
+                    <div class="code-block">
+                        &lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;lombok&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;optional&gt;true&lt;/optional&gt;<br>
+                        &lt;/dependency&gt;
+                    </div>
+
+                    <h4>1.2.2. Giải thích cú pháp</h4>
+                    <p><strong>&lt;dependency&gt;</strong> – Đây là phần khai báo một thư viện mà project cần sử dụng.</p>
+                    <p><strong>&lt;groupId&gt;</strong> – <code>org.projectlombok</code> xác định nhóm/tổ chức phát hành thư viện.</p>
+                    <p><strong>&lt;artifactId&gt;</strong> – <code>lombok</code> xác định tên thư viện.</p>
+                    <p><strong>&lt;optional&gt;</strong> – <code>true</code> đánh dấu Lombok là dependency hỗ trợ cho project.</p>
+
+                    <h4>1.2.3. Import Lombok</h4>
+                    <p>Sau khi cài đặt, trong Java có thể import annotation:</p>
+                    <div class="code-block">
+                        <span class="keyword">import</span> lombok.Getter;<br>
+                        <span class="keyword">import</span> lombok.Setter;
+                    </div>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <span class="keyword">import</span> lombok.Getter;<br>
+                        <span class="keyword">import</span> lombok.Setter;<br>
+                        <br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        }
+                    </div>
+
+                    <h4>1.2.4. Kiểm tra Lombok</h4>
+                    <p>Tạo:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        }
+                    </div>
+                    <p>Sau đó:</p>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">Main</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public static void</span> main(String[] args) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Student student = <span class="keyword">new</span> Student();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;student.setName(<span class="string">"Nguyễn Văn An"</span>);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(student.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Nếu chương trình hoạt động bình thường thì Lombok đã được cấu hình.</p>
+
+                    <!-- 1.3 @Getter, @Setter -->
+                    <h3>1.3. @Getter, @Setter</h3>
+                    <h4>1.3.1. Lý thuyết về Getter</h4>
+                    <p>Trong Java, thuộc tính thường được khai báo private. Do đó class bên ngoài không nên truy cập trực tiếp. Thay vào đó, sử dụng getter để lấy giá trị của thuộc tính.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <span class="keyword">private</span> String name;
+                    </div>
+                    <p>Getter có nhiệm vụ: Lấy giá trị của một thuộc tính.</p>
+                    <h4>1.3.2. Cú pháp getter truyền thống</h4>
+                    <div class="code-block">
+                        <span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        }
+                    </div>
+                    <p>Giải thích:</p>
+                    <ul>
+                        <li><code>public</code> – phương thức có thể được gọi từ bên ngoài class.</li>
+                        <li><code>String</code> – kiểu dữ liệu trả về.</li>
+                        <li><code>getName()</code> – tên phương thức getter.</li>
+                        <li><code>return name;</code> – trả về giá trị của thuộc tính name.</li>
+                    </ul>
+                    <h4>1.3.3. @Getter</h4>
+                    <p>Thay vì viết getter thủ công, có thể sử dụng <code>@Getter</code> trên field hoặc class.</p>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="keyword">private</span> String name;
+                    </div>
+                    <p>Hoặc:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Lombok tự tạo getter.</p>
+                    <h4>1.3.4. Getter ở cấp class</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private int</span> age;<br>
+                        }
+                    </div>
+                    <p>Lombok sẽ tạo tương ứng:</p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> Long getId() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> id;<br>
+                        }<br>
+                        <br>
+                        <span class="keyword">public</span> String getName() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> name;<br>
+                        }<br>
+                        <br>
+                        <span class="keyword">public int</span> getAge() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> age;<br>
+                        }
+                    </div>
+                    <h4>1.3.5. Getter ở cấp field</h4>
+                    <p>Có thể chỉ tạo getter cho một field cụ thể.</p>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Getter</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String password;<br>
+                        }
+                    </div>
+                    <p>Khi đó: <code>user.getUsername();</code> có thể sử dụng, nhưng <code>user.getPassword();</code> không được Lombok tạo.</p>
+                    <h4>1.3.6. Lý thuyết về Setter</h4>
+                    <p>Setter được sử dụng để thay đổi giá trị của thuộc tính.</p>
+                    <div class="code-block">
+                        <span class="keyword">public void</span> setName(String name) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        }
+                    </div>
+                    <p>Giải thích:</p>
+                    <ul>
+                        <li><code>void</code> – setter không trả về giá trị.</li>
+                        <li><code>setName(...)</code> – phương thức thay đổi thuộc tính name.</li>
+                        <li><code>this.name</code> – thuộc tính của object hiện tại.</li>
+                        <li><code>name</code> – tham số được truyền vào.</li>
+                    </ul>
+                    <h4>1.3.7. @Setter</h4>
+                    <p>Thay vì viết setter thủ công, có thể sử dụng <code>@Setter</code>.</p>
+                    <div class="code-block">
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">private</span> String name;
+                    </div>
+                    <p>Hoặc:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <h4>1.3.8. Sử dụng cả Getter và Setter</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Sử dụng:</p>
+                    <div class="code-block">
+                        Student student = <span class="keyword">new</span> Student();<br>
+                        <br>
+                        student.setName(<span class="string">"An"</span>);<br>
+                        <br>
+                        String name = student.getName();<br>
+                        <br>
+                        System.out.println(name);
+                    </div>
+                    <p>Luồng hoạt động: <code>setName("An")</code> → <code>name = "An"</code> → <code>getName()</code> → <code>"An"</code>.</p>
+                    <h4>1.3.9. Lưu ý khi sử dụng Setter</h4>
+                    <p>Không phải field nào cũng nên có setter. Ví dụ <code>id</code> chỉ có getter, còn <code>email</code> có cả getter và setter. Cách này giúp kiểm soát tốt hơn việc thay đổi dữ liệu.</p>
+
+                    <!-- 1.4 @NoArgsConstructor, @AllArgsConstructor -->
+                    <h3>1.4. @NoArgsConstructor, @AllArgsConstructor</h3>
+                    <h4>1.4.1. Constructor là gì?</h4>
+                    <p>Constructor là phương thức đặc biệt được gọi khi tạo object. Constructor có cùng tên với class và không có kiểu trả về.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        Student student = <span class="keyword">new</span> Student();
+                    </div>
+                    <p>Java gọi constructor: <code>public Student() { }</code></p>
+                    <h4>1.4.2. @NoArgsConstructor</h4>
+                    <p>Tạo constructor không tham số.</p>
+                    <div class="code-block">
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        }
+                    </div>
+                    <p>Lombok tạo: <code>public Student() { }</code></p>
+                    <p>Do đó <code>Student student = new Student();</code> có thể thực hiện bình thường.</p>
+                    <h4>1.4.3. Khi nào sử dụng @NoArgsConstructor?</h4>
+                    <p>Thường sử dụng khi:</p>
+                    <ul>
+                        <li>Cần constructor mặc định.</li>
+                        <li>Làm việc với JPA Entity.</li>
+                        <li>Framework cần tạo object.</li>
+                        <li>DTO cần khởi tạo rỗng.</li>
+                    </ul>
+                    <p>Ví dụ Entity:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Product</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        }
+                    </div>
+                    <h4>1.4.4. @AllArgsConstructor</h4>
+                    <p>Tạo constructor với tất cả tham số.</p>
+                    <div class="code-block">
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private int</span> age;<br>
+                        }
+                    </div>
+                    <p>Lombok tạo:</p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> Student(Long id, String name, <span class="keyword">int</span> age) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.id = id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.name = name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.age = age;<br>
+                        }
+                    </div>
+                    <p>Có thể: <code>Student student = new Student(1L, "An", 20);</code></p>
+                    <h4>1.4.5. Kết hợp</h4>
+                    <p>Có thể kết hợp cả hai annotation để có cả constructor rỗng và constructor đầy đủ.</p>
+                    <div class="code-block">
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        }
+                    </div>
+                    <p>Có: <code>new Student();</code> và <code>new Student(1L, "An");</code></p>
+
+                    <!-- 1.5 @RequiredArgsConstructor -->
+                    <h3>1.5. @RequiredArgsConstructor</h3>
+                    <h4>1.5.1. Khái niệm</h4>
+                    <p><code>@RequiredArgsConstructor</code> tạo constructor chứa các field bắt buộc. Trường hợp quan trọng nhất: <code>private final</code>.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> UserRepository userRepository;<br>
+                        }
+                    </div>
+                    <p>Lombok tạo:</p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> UserService(UserRepository userRepository) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.userRepository = userRepository;<br>
+                        }
+                    </div>
+                    <h4>1.5.2. Vì sao dùng final?</h4>
+                    <p><code>private final UserRepository userRepository;</code> – <code>final</code> đảm bảo biến phải được khởi tạo và không thể gán sang dependency khác sau đó. Điều này phù hợp với constructor injection.</p>
+                    <h4>1.5.3. Sử dụng trong Spring Boot</h4>
+                    <p>Không dùng Lombok:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> UserRepository userRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> UserService(UserRepository userRepository) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">this</span>.userRepository = userRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Dùng Lombok:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> UserRepository userRepository;<br>
+                        }
+                    </div>
+                    <p>Đây là một trong những cách sử dụng Lombok phổ biến nhất trong Spring Boot.</p>
+
+                    <!-- 1.6 @Data -->
+                    <h3>1.6. @Data</h3>
+                    <h4>1.6.1. Khái niệm</h4>
+                    <p><code>@Data</code> là annotation tổng hợp bao gồm các chức năng tương tự: <code>@Getter</code>, <code>@Setter</code>, <code>@RequiredArgsConstructor</code>, <code>@ToString</code>, <code>@EqualsAndHashCode</code>.</p>
+                    <h4>1.6.2. Cú pháp</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Student</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Lombok hỗ trợ sinh: <code>getId()</code>, <code>setId()</code>, <code>getName()</code>, <code>setName()</code>, <code>getEmail()</code>, <code>setEmail()</code>, <code>toString()</code>, <code>equals()</code>, <code>hashCode()</code>.</p>
+                    <h4>1.6.3. Ví dụ thực tế</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">ProductRequest</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Integer quantity;<br>
+                        }
+                    </div>
+                    <p>Có thể:</p>
+                    <div class="code-block">
+                        ProductRequest request = <span class="keyword">new</span> ProductRequest();<br>
+                        <br>
+                        request.setName(<span class="string">"Laptop"</span>);<br>
+                        request.setPrice(20000000.0);<br>
+                        request.setQuantity(2);
+                    </div>
+                    <h4>1.6.4. Kết hợp constructor</h4>
+                    <p>Nếu cần cả hai constructor:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">ProductRequest</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <h4>1.6.5. Lưu ý</h4>
+                    <p>Không nên mặc định dùng <code>@Data</code> cho mọi Entity. Đối với DTO, <code>@Data</code> thường phù hợp hơn.</p>
+
+                    <!-- 1.7 @Builder -->
+                    <h3>1.7. @Builder</h3>
+                    <h4>1.7.1. Khái niệm Builder Pattern</h4>
+                    <p>Builder Pattern là cách xây dựng object bằng cách thiết lập từng thuộc tính, dễ đọc hơn constructor có quá nhiều tham số.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        User.builder()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.name(<span class="string">"An"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.email(<span class="string">"an@gmail.com"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.age(20)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.build();
+                    </div>
+                    <h4>1.7.2. Cú pháp</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Builder</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Sau đó:</p>
+                    <div class="code-block">
+                        User user = User.builder()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.id(1L)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.name(<span class="string">"An"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.email(<span class="string">"an@gmail.com"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.build();
+                    </div>
+                    <h4>1.7.3. Giải thích cú pháp</h4>
+                    <ul>
+                        <li><code>User.builder()</code> – bắt đầu quá trình xây dựng object.</li>
+                        <li><code>.id(1L)</code> – thiết lập id.</li>
+                        <li><code>.name("An")</code> – thiết lập name.</li>
+                        <li><code>.email("an@gmail.com")</code> – thiết lập email.</li>
+                        <li><code>.build()</code> – kết thúc và tạo object.</li>
+                    </ul>
+                    <h4>1.7.4. Builder trong DTO</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@Builder</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">UserResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Sử dụng:</p>
+                    <div class="code-block">
+                        UserResponse response = UserResponse.builder()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.id(1L)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.username(<span class="string">"admin"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.email(<span class="string">"admin@gmail.com"</span>)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.build();
+                    </div>
+
+                    <!-- 1.8 @ToString -->
+                    <h3>1.8. @ToString</h3>
+                    <h4>1.8.1. Khái niệm</h4>
+                    <p><code>toString()</code> dùng để chuyển object thành chuỗi biểu diễn. <code>@ToString</code> giúp sinh tự động.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        System.out.println(user);
+                    </div>
+                    <p>Java sẽ gọi: <code>user.toString();</code> Nếu không override, kết quả thường khó đọc.</p>
+                    <h4>1.8.2. Sử dụng @ToString</h4>
+                    <div class="code-block">
+                        <span class="annotation">@ToString</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        }
+                    </div>
+                    <p>Kết quả có thể dạng: <code>User(id=1, username=admin)</code></p>
+                    <h4>1.8.3. Cú pháp loại trừ field</h4>
+                    <div class="code-block">
+                        <span class="annotation">@ToString</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ToString.Exclude</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String password;<br>
+                        }
+                    </div>
+                    <p><code>password</code> sẽ không được đưa vào <code>toString()</code>.</p>
+                    <h4>1.8.4. Tại sao cần loại trừ password?</h4>
+                    <p>Không nên log <code>password=123456</code> vì log có thể được lưu lại hoặc được người khác truy cập. Do đó <code>@ToString.Exclude</code> là một biện pháp hữu ích để tránh vô tình đưa dữ liệu nhạy cảm vào chuỗi debug.</p>
+
+                    <!-- 1.9 @EqualsAndHashCode -->
+                    <h3>1.9. @EqualsAndHashCode</h3>
+                    <h4>1.9.1. equals()</h4>
+                    <p><code>equals()</code> dùng để xác định hai object có được xem là bằng nhau hay không.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        User user1 = <span class="keyword">new</span> User(1L, <span class="string">"An"</span>);<br>
+                        User user2 = <span class="keyword">new</span> User(1L, <span class="string">"An"</span>);
+                    </div>
+                    <p>Có thể định nghĩa rằng hai object này bằng nhau dựa trên id.</p>
+                    <h4>1.9.2. hashCode()</h4>
+                    <p><code>hashCode()</code> tạo ra một giá trị hash cho object, đặc biệt quan trọng với <code>HashSet</code>, <code>HashMap</code>. Java sử dụng kết hợp <code>hashCode()</code> và <code>equals()</code> để xử lý việc so sánh object trong các cấu trúc dữ liệu dựa trên hash.</p>
+                    <h4>1.9.3. Sử dụng Lombok</h4>
+                    <div class="code-block">
+                        <span class="annotation">@EqualsAndHashCode</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        }
+                    </div>
+                    <p>Lombok tự sinh <code>equals()</code> và <code>hashCode()</code>.</p>
+                    <h4>1.9.4. Chỉ định field</h4>
+                    <div class="code-block">
+                        <span class="annotation">@EqualsAndHashCode(onlyExplicitlyIncluded = true)</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">User</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@EqualsAndHashCode.Include</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String username;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String email;<br>
+                        }
+                    </div>
+                    <p>Ở đây chỉ <code>id</code> được đánh dấu để tham gia vào <code>equals()</code> và <code>hashCode()</code>.</p>
+
+                    <!-- 1.10 Lombok trong Spring Boot -->
+                    <h3>1.10. Lombok trong Spring Boot</h3>
+                    <h4>1.10.1. Lombok trong Entity</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p>Giải thích:</p>
+                    <ul>
+                        <li><code>@Entity</code> – biến class thành JPA Entity.</li>
+                        <li><code>@Getter</code> – tạo getter.</li>
+                        <li><code>@Setter</code> – tạo setter.</li>
+                        <li><code>@NoArgsConstructor</code> – tạo constructor không tham số.</li>
+                    </ul>
+                    <h4>1.10.2. Lombok trong DTO</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@Builder</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p>Class này có: Getter, Setter, toString(), equals(), hashCode(), Constructor, Builder.</p>
+                    <h4>1.10.3. Lombok trong Service</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        }
+                    </div>
+                    <p>Lombok tự sinh constructor để Spring Boot inject <code>MedicineRepository</code>.</p>
+                    <h4>1.10.4. Lombok trong Controller</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping("/medicines")</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineService medicineService;<br>
+                        }
+                    </div>
+
+                    <!-- 1.11 Ví dụ tổng hợp -->
+                    <h3>1.11. Ví dụ tổng hợp</h3>
+                    <p>Một cấu trúc Spring Boot có thể như sau:</p>
+                    <pre>entity
+    Medicine.java
+
+repository
+    MedicineRepository.java
+
+service
+    MedicineService.java
+
+controller
+    MedicineController.java
+
+dto
+    MedicineResponse.java</pre>
+                    <p><strong>Entity</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Repository</strong></p>
+                    <div class="code-block">
+                        <span class="keyword">public interface</span> <span class="class-name">MedicineRepository</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">extends</span> JpaRepository&lt;Medicine, Long&gt; {<br>
+                        }
+                    </div>
+                    <p><strong>DTO</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@Builder</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Service</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id).orElseThrow();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> MedicineResponse.builder()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.id(medicine.getId())<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.name(medicine.getName())<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.price(medicine.getPrice())<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.build();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p><strong>Controller</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping("/medicines")</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineService medicineService;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping("/{id}")</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineService.findById(id);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <!-- 1.12 Bảng ghi nhớ -->
+                    <h3>1.12. Bảng ghi nhớ</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Annotation</th>
+                                    <th>Ý nghĩa</th>
+                                    <th>Thường dùng ở đâu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>@Getter</td><td>Sinh getter</td><td>Entity, DTO</td></tr>
+                                <tr><td>@Setter</td><td>Sinh setter</td><td>Entity, DTO</td></tr>
+                                <tr><td>@NoArgsConstructor</td><td>Constructor rỗng</td><td>Entity, DTO</td></tr>
+                                <tr><td>@AllArgsConstructor</td><td>Constructor đầy đủ</td><td>DTO, Model</td></tr>
+                                <tr><td>@RequiredArgsConstructor</td><td>Constructor cho field bắt buộc</td><td>Service, Controller</td></tr>
+                                <tr><td>@Data</td><td>Getter + Setter + nhiều chức năng khác</td><td>DTO</td></tr>
+                                <tr><td>@Builder</td><td>Xây dựng object</td><td>DTO, Response</td></tr>
+                                <tr><td>@ToString</td><td>Sinh toString()</td><td>DTO, Model</td></tr>
+                                <tr><td>@EqualsAndHashCode</td><td>Sinh equals/hashCode</td><td>Model, một số DTO</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="success-box">
+                        <h4>Quy tắc quan trọng cần nhớ</h4>
+                        <ul>
+                            <li>DTO → @Data + @Builder</li>
+                            <li>Service → @RequiredArgsConstructor</li>
+                            <li>Controller → @RequiredArgsConstructor</li>
+                            <li>Entity → @Getter + @Setter + @NoArgsConstructor</li>
+                            <li>Không sử dụng @Data một cách máy móc cho JPA Entity, nhất là Entity có quan hệ @OneToMany, @ManyToOne, @ManyToMany, @OneToOne.</li>
+                        </ul>
+                    </div>
+                    <p><em>Nếu soạn theo chuẩn giáo trình tự học, mỗi phần từ 1.3 đến 1.10 nên giữ đúng cấu trúc này: Lý thuyết → Cú pháp → Giải thích từng thành phần cú pháp → Ví dụ → Phân tích ví dụ → Ứng dụng Spring Boot → Lưu ý. Đây sẽ phù hợp hơn nhiều so với kiểu chỉ liệt kê annotation và code.</em></p>
+                </section>
+
+                <!-- PHẦN 2: MAPPER -->
+                <section id="phan2" class="section">
+                    <h2><i class="fas fa-exchange-alt"></i> 2. MAPPER TRONG SPRING BOOT</h2>
+                    
+                    <p>Trong các ứng dụng Spring Boot, đặc biệt là những project sử dụng Entity – DTO – Service – Controller, chúng ta thường xuyên phải chuyển đổi dữ liệu giữa các object.</p>
+                    <p>Ví dụ:</p>
+                    <pre>Database
+   ↓
+Entity
+   ↓
+Mapper
+   ↓
+DTO
+   ↓
+Controller
+   ↓
+Client</pre>
+                    <p>Hoặc theo chiều ngược lại:</p>
+                    <pre>Client
+   ↓
+Request DTO
+   ↓
+Mapper
+   ↓
+Entity
+   ↓
+Database</pre>
+                    <p>Mapper giúp tách biệt object dùng để làm việc với database và object dùng để giao tiếp với client/API.</p>
+
+                    <h3>2.1. Mapper là gì?</h3>
+                    <h4>2.1.1. Khái niệm Mapper</h4>
+                    <p>Mapper là thành phần có nhiệm vụ chuyển đổi dữ liệu từ một object sang một object khác.</p>
+                    <p>Ví dụ trong Spring Boot chúng ta có Entity:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p>Và DTO:</p>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p>Hai class có cấu trúc tương đối giống nhau nhưng chúng là hai object khác nhau. Chúng ta cần chuyển <code>Medicine</code> → <code>MedicineResponse</code>. Đây chính là công việc của Mapper.</p>
+                    <h4>2.1.2. Tại sao cần Mapper?</h4>
+                    <p>Trong một ứng dụng Spring Boot, chúng ta thường không muốn trả trực tiếp Entity ra API.</p>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> Medicine getById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineRepository.findById(id).orElseThrow();<br>
+                        }
+                    </div>
+                    <p>Cách này có thể khiến API trả trực tiếp toàn bộ dữ liệu của Entity. Trong thực tế, Entity có thể chứa:</p>
+                    <ul>
+                        <li>Thông tin nội bộ.</li>
+                        <li>Quan hệ với Entity khác.</li>
+                        <li>Field không muốn trả về client.</li>
+                        <li>Dữ liệu phục vụ database nhưng không phục vụ API.</li>
+                    </ul>
+                    <p>Do đó thường sử dụng: Entity → Mapper → DTO → API Response.</p>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> MedicineResponse getById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineService.findById(id);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(medicine);<br>
+                        }
+                    </div>
+                    <h4>2.1.3. Entity và DTO có vai trò khác nhau</h4>
+                    <p><strong>Entity</strong> – đại diện cho dữ liệu được quản lý bởi JPA/Hibernate và thường ánh xạ với database.</p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>DTO</strong> – Data Transfer Object – được sử dụng để truyền dữ liệu giữa các tầng hoặc giữa server và client.</p>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p>Có thể hình dung: Entity → phục vụ persistence/database, DTO → phục vụ truyền dữ liệu. Mapper đứng giữa hai object này.</p>
+
+                    <h3>2.2. Mapping thủ công</h3>
+                    <h4>2.2.1. Mapping thủ công là gì?</h4>
+                    <p>Mapping thủ công là cách lập trình viên tự viết code để lấy dữ liệu từ object nguồn và gán sang object đích.</p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> MedicineResponse toResponse(Medicine medicine) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse response = <span class="keyword">new</span> MedicineResponse();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setId(medicine.getId());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setName(medicine.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setPrice(medicine.getPrice());<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> response;<br>
+                        }
+                    </div>
+                    <p>Đây là mapping thủ công.</p>
+                    <h4>2.2.2. Phân tích quá trình mapping</h4>
+                    <p>Object nguồn: <code>Medicine medicine</code>; Object đích: <code>MedicineResponse response</code>.</p>
+                    <p>Các bước: <code>medicine.getId()</code> → <code>response.setId()</code>; <code>medicine.getName()</code> → <code>response.setName()</code>; <code>medicine.getPrice()</code> → <code>response.setPrice()</code>.</p>
+                    <h4>2.2.3. Ví dụ đầy đủ</h4>
+                    <p><strong>Entity</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>DTO</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Mapper</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Component</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineMapper</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse toResponse(Medicine medicine) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse response = <span class="keyword">new</span> MedicineResponse();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.setId(medicine.getId());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.setName(medicine.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;response.setPrice(medicine.getPrice());<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> response;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>2.2.4. Sử dụng Mapper trong Service</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineMapper medicineMapper;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id).orElseThrow();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(medicine);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Service thực hiện: Repository → Medicine Entity → MedicineMapper → MedicineResponse.</p>
+
+                    <h3>2.3. Hạn chế của Mapping thủ công</h3>
+                    <p>Mapping thủ công dễ hiểu và không phụ thuộc thư viện bên ngoài. Tuy nhiên, khi project lớn, cách này có nhiều hạn chế.</p>
+                    <h4>2.3.1. Nhiều code lặp lại</h4>
+                    <p>Ví dụ DTO có 10 field: <code>response.setId(entity.getId());</code>, <code>response.setName(entity.getName());</code>, v.v. Nếu có 50 DTO, số lượng code mapping sẽ rất lớn.</p>
+                    <h4>2.3.2. Dễ quên field</h4>
+                    <p>Entity có nhiều field nhưng lập trình viên chỉ viết một số, bỏ sót các field khác. Chương trình vẫn chạy nhưng dữ liệu trả về không đầy đủ.</p>
+                    <h4>2.3.3. Khó bảo trì</h4>
+                    <p>Khi Entity thêm field mới, Mapper cũng cần sửa. Với project lớn, việc này trở nên mất thời gian.</p>
+                    <h4>2.3.4. Mapping danh sách dài</h4>
+                    <p>Nếu có <code>List&lt;Medicine&gt;</code>, phải lặp mapping cho từng phần tử. Bản thân đoạn này không quá phức tạp, nhưng nếu logic mapping ngày càng nhiều thì việc quản lý thủ công sẽ trở nên khó khăn.</p>
+
+                    <h3>2.4. ModelMapper</h3>
+                    <h4>2.4.1. ModelMapper là gì?</h4>
+                    <p>ModelMapper là thư viện Java hỗ trợ tự động mapping dữ liệu giữa các object.</p>
+                    <p>Thay vì phải viết thủ công, có thể sử dụng:</p>
+                    <div class="code-block">
+                        MedicineResponse response = modelMapper.map(medicine, MedicineResponse.class);
+                    </div>
+                    <p>ModelMapper sẽ dựa trên tên và kiểu dữ liệu của các thuộc tính để thực hiện mapping.</p>
+                    <h4>2.4.2. Cơ chế hoạt động cơ bản</h4>
+                    <p>Giả sử <code>Medicine</code> có <code>id</code>, <code>name</code>, <code>price</code> và <code>MedicineResponse</code> cũng có các field tương tự. ModelMapper hiểu: <code>Medicine.id</code> → <code>MedicineResponse.id</code>, <code>Medicine.name</code> → <code>MedicineResponse.name</code>, v.v.</p>
+                    <h4>2.4.3. Điều kiện mapping cơ bản</h4>
+                    <p>ModelMapper hoạt động thuận lợi nhất khi:</p>
+                    <ul>
+                        <li>Tên field giống nhau.</li>
+                        <li>Kiểu dữ liệu tương thích.</li>
+                        <li>Object nguồn và object đích có cấu trúc tương đối tương đồng.</li>
+                    </ul>
+
+                    <h3>2.5. Cài đặt và cấu hình ModelMapper</h3>
+                    <h4>2.5.1. Thêm dependency</h4>
+                    <p>Trong pom.xml:</p>
+                    <div class="code-block">
+                        &lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.modelmapper&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;modelmapper&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;3.2.4&lt;/version&gt;<br>
+                        &lt;/dependency&gt;
+                    </div>
+                    <p>Khi sử dụng trong project thực tế, nên kiểm tra version hiện hành tương thích với project của bạn.</p>
+                    <h4>2.5.2. Tạo Bean ModelMapper</h4>
+                    <p>Tạo class cấu hình:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Configuration</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MapperConfig</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Bean</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ModelMapper modelMapper() {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return new</span> ModelMapper();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>2.5.3. Giải thích cấu hình</h4>
+                    <ul>
+                        <li><code>@Configuration</code> – đánh dấu class là class cấu hình của Spring.</li>
+                        <li><code>@Bean</code> – cho Spring biết method này trả về một object mà Spring cần quản lý.</li>
+                        <li><code>return new ModelMapper();</code> – tạo instance của ModelMapper.</li>
+                    </ul>
+                    <p>Sau đó có thể inject: <code>private final ModelMapper modelMapper;</code></p>
+
+                    <h3>2.6. Entity → DTO</h3>
+                    <p>Đây là trường hợp phổ biến nhất khi trả dữ liệu từ API.</p>
+                    <h4>2.6.1. Entity</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <h4>2.6.2. DTO</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <h4>2.6.3. Mapping</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> ModelMapper modelMapper;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id).orElseThrow();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> modelMapper.map(medicine, MedicineResponse.class);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>2.6.4. Giải thích modelMapper.map()</h4>
+                    <p>Cú pháp: <code>modelMapper.map(source, Destination.class);</code></p>
+                    <p>Trong đó: <code>source</code> là object nguồn, <code>Destination.class</code> là class của object đích.</p>
+
+                    <h3>2.7. DTO → Entity</h3>
+                    <p>Mapping không chỉ có chiều Entity → DTO mà còn chiều DTO → Entity, thường xuất hiện khi client gửi request tạo hoặc cập nhật dữ liệu.</p>
+                    <h4>2.7.1. Request DTO</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineRequest</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <h4>2.7.2. Entity</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <h4>2.7.3. Mapping</h4>
+                    <div class="code-block">
+                        Medicine medicine = modelMapper.map(request, Medicine.class);
+                    </div>
+                    <p>ModelMapper thực hiện: <code>MedicineRequest.name</code> → <code>Medicine.name</code>, <code>MedicineRequest.price</code> → <code>Medicine.price</code>.</p>
+                    <h4>2.7.4. Ví dụ trong Service</h4>
+                    <div class="code-block">
+                        <span class="keyword">public</span> Medicine create(MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = modelMapper.map(request, Medicine.class);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineRepository.save(medicine);<br>
+                        }
+                    </div>
+                    <p>Quy trình: Client → MedicineRequest → ModelMapper → Medicine → Repository → Database.</p>
+
+                    <h3>2.8. Mapping danh sách</h3>
+                    <h4>2.8.1. Vấn đề</h4>
+                    <p>Repository thường trả về <code>List&lt;Medicine&gt;</code>, trong khi API cần <code>List&lt;MedicineResponse&gt;</code>. Cần mapping từng phần tử.</p>
+                    <h4>2.8.2. Sử dụng Stream API</h4>
+                    <div class="code-block">
+                        List&lt;MedicineResponse&gt; responses = medicines.stream()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.map(medicine -> modelMapper.map(medicine, MedicineResponse.class))<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.toList();
+                    </div>
+                    <h4>2.8.3. Giải thích</h4>
+                    <p>Giả sử <code>List&lt;Medicine&gt; medicines;</code>. Thực hiện mapping từng phần tử: Medicine 1 → ModelMapper → Response 1, Medicine 2 → Response 2, v.v.</p>
+                    <h4>2.8.4. Ví dụ Service</h4>
+                    <div class="code-block">
+                        <span class="keyword">public</span> List&lt;MedicineResponse&gt; findAll() {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;Medicine&gt; medicines = medicineRepository.findAll();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicines.stream()<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.map(medicine -> modelMapper.map(medicine, MedicineResponse.class))<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.toList();<br>
+                        }
+                    </div>
+
+                    <h3>2.9. Mapping thuộc tính khác tên</h3>
+                    <h4>2.9.1. Vấn đề</h4>
+                    <p>ModelMapper hoạt động tốt khi tên field giống nhau. Nếu khác tên (ví dụ Entity: <code>name</code>, DTO: <code>medicineName</code>), ModelMapper không thể tự động mapping.</p>
+                    <h4>2.9.2. Mapping thủ công</h4>
+                    <p>Có thể tự xử lý: <code>response.setMedicineName(medicine.getName());</code></p>
+                    <h4>2.9.3. Cấu hình ModelMapper</h4>
+                    <p>Có thể cấu hình <code>typeMap</code> để chỉ định mapping:</p>
+                    <div class="code-block">
+                        ModelMapper modelMapper = <span class="keyword">new</span> ModelMapper();<br>
+                        <br>
+                        modelMapper.typeMap(Medicine.class, MedicineResponse.class)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.addMapping(Medicine::getName, MedicineResponse::setMedicineName);
+                    </div>
+                    <p>Ý nghĩa: <code>Medicine.name</code> → <code>MedicineResponse.medicineName</code>.</p>
+                    <h4>2.9.4. Khi nào cần mapping đặc biệt?</h4>
+                    <p>Mapping tùy chỉnh thường cần khi: tên field khác nhau, kiểu dữ liệu khác nhau, cần tính toán dữ liệu, Entity có quan hệ phức tạp, DTO có field không tồn tại trong Entity.</p>
+                    <p>Ví dụ: Entity: <code>firstName</code> + <code>lastName</code> → DTO: <code>fullName</code>. Không thể đơn giản <code>firstName → fullName</code> mà cần <code>firstName + lastName → fullName</code>. Đây là lúc mapping custom hoặc mapping thủ công trở nên cần thiết.</p>
+
+                    <h3>2.10. MapStruct</h3>
+                    <h4>2.10.1. MapStruct là gì?</h4>
+                    <p>MapStruct là một thư viện hỗ trợ mapping object trong Java. Điểm khác biệt quan trọng: MapStruct tạo code mapping tại thời điểm compile thay vì thực hiện mapping chủ yếu bằng reflection lúc runtime như ModelMapper.</p>
+                    <p>Ví dụ khai báo:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Mapper(componentModel = "spring")</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">MedicineMapper</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse toResponse(Medicine medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine toEntity(MedicineRequest request);<br>
+                        }
+                    </div>
+                    <p>MapStruct sẽ tạo implementation tương ứng trong quá trình build.</p>
+                    <h4>2.10.2. Cài đặt MapStruct</h4>
+                    <p>Với Maven, thường cần dependency API:</p>
+                    <div class="code-block">
+                        &lt;dependency&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.mapstruct&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;mapstruct&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.6.3&lt;/version&gt;<br>
+                        &lt;/dependency&gt;
+                    </div>
+                    <p>Và cấu hình annotation processor cho Maven Compiler Plugin:</p>
+                    <div class="code-block">
+                        &lt;plugin&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;configuration&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;annotationProcessorPaths&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;path&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;groupId&gt;org.mapstruct&lt;/groupId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;artifactId&gt;mapstruct-processor&lt;/artifactId&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;version&gt;1.6.3&lt;/version&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/path&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/annotationProcessorPaths&gt;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&lt;/configuration&gt;<br>
+                        &lt;/plugin&gt;
+                    </div>
+                    <p>Version minh họa ở trên cần được đồng bộ với version MapStruct mà project sử dụng.</p>
+                    <h4>2.10.3. Tạo Mapper</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Mapper(componentModel = "spring")</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">MedicineMapper</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse toResponse(Medicine medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine toEntity(MedicineRequest request);<br>
+                        }
+                    </div>
+                    <h4>2.10.4. Giải thích @Mapper</h4>
+                    <ul>
+                        <li><code>@Mapper</code> – đánh dấu interface là MapStruct Mapper.</li>
+                        <li><code>@Mapper(componentModel = "spring")</code> – cho phép implementation do MapStruct sinh ra được đăng ký vào Spring Container, nhờ đó có thể inject <code>private final MedicineMapper medicineMapper;</code>.</li>
+                    </ul>
+                    <h4>2.10.5. Entity → DTO</h4>
+                    <p>Khai báo: <code>MedicineResponse toResponse(Medicine medicine);</code> – MapStruct sẽ tự sinh code tương ứng. Code được sinh ra tương tự:</p>
+                    <div class="code-block">
+                        <span class="keyword">@Override</span><br>
+                        <span class="keyword">public</span> MedicineResponse toResponse(Medicine medicine) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (medicine == <span class="keyword">null</span>) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return null</span>;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse response = <span class="keyword">new</span> MedicineResponse();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setId(medicine.getId());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setName(medicine.getName());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;response.setPrice(medicine.getPrice());<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> response;<br>
+                        }
+                    </div>
+                    <p>Lập trình viên không cần tự viết implementation này.</p>
+                    <h4>2.10.6. DTO → Entity</h4>
+                    <p>Có thể khai báo: <code>Medicine toEntity(MedicineRequest request);</code> – MapStruct sẽ sinh code chuyển <code>MedicineRequest</code> → <code>Medicine</code>.</p>
+                    <h4>2.10.7. Sử dụng trong Service</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineMapper medicineMapper;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id).orElseThrow();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(medicine);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>So với ModelMapper: <code>modelMapper.map(medicine, MedicineResponse.class);</code> thì MapStruct: <code>medicineMapper.toResponse(medicine);</code> – cách sử dụng rất rõ ràng.</p>
+
+                    <h3>2.11. So sánh ModelMapper và MapStruct</h3>
+                    <h4>2.11.1. ModelMapper</h4>
+                    <p>Ưu điểm: Dễ cài đặt, dễ học, cú pháp đơn giản, mapping nhanh trong các trường hợp cơ bản, phù hợp với project nhỏ và vừa, có thể cấu hình mapping động.</p>
+                    <p>Nhược điểm: Mapping dựa nhiều vào cơ chế runtime. Với mapping phức tạp cần cấu hình thêm. Một số lỗi mapping có thể chỉ phát hiện khi chạy chương trình. Với project lớn, việc kiểm soát mapping có thể khó hơn.</p>
+                    <h4>2.11.2. MapStruct</h4>
+                    <p>Ưu điểm: Sinh code mapping khi compile, không cần reflection cho mapping được sinh, hiệu năng tốt, kiểu dữ liệu và mapping rõ ràng, compiler có thể hỗ trợ phát hiện nhiều vấn đề mapping, phù hợp với project lớn, dễ kiểm soát logic mapping.</p>
+                    <p>Nhược điểm: Cấu hình ban đầu phức tạp hơn ModelMapper, cần hiểu annotation processor, với người mới học Spring Boot, cú pháp ban đầu có thể khó hơn.</p>
+                    <h4>2.11.3. Bảng so sánh</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Tiêu chí</th><th>ModelMapper</th><th>MapStruct</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Cách tiếp cận</td><td>Mapping runtime</td><td>Sinh code khi compile</td></tr>
+                                <tr><td>Cài đặt</td><td>Dễ</td><td>Phức tạp hơn</td></tr>
+                                <tr><td>Học ban đầu</td><td>Dễ</td><td>Khó hơn</td></tr>
+                                <tr><td>Code sử dụng</td><td>Rất ngắn</td><td>Rõ ràng</td></tr>
+                                <tr><td>Hiệu năng</td><td>Tốt</td><td>Rất tốt</td></tr>
+                                <tr><td>Reflection</td><td>Có thể sử dụng</td><td>Không dựa vào reflection cho code mapping sinh ra</td></tr>
+                                <tr><td>Kiểm tra mapping</td><td>Chủ yếu runtime</td><td>Có thể phát hiện nhiều vấn đề lúc compile</td></tr>
+                                <tr><td>Project nhỏ</td><td>Phù hợp</td><td>Phù hợp</td></tr>
+                                <tr><td>Project lớn</td><td>Có thể dùng</td><td>Rất phù hợp</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>2.12. Nên sử dụng ModelMapper hay MapStruct?</h3>
+                    <p>Không có câu trả lời tuyệt đối rằng thư viện nào luôn tốt hơn.</p>
+                    <p>Khi học Spring Boot, có thể bắt đầu với: Mapping thủ công → ModelMapper → MapStruct.</p>
+                    <p>Lý do: Mapping thủ công giúp hiểu bản chất (<code>response.setName(entity.getName());</code>). Sau đó học ModelMapper để hiểu automatic mapping (<code>modelMapper.map(entity, DTO.class);</code>). Cuối cùng học MapStruct để hiểu cách xây dựng mapper rõ ràng, type-safe và phù hợp với các project lớn (<code>mapper.toResponse(entity);</code>).</p>
+
+                    <h3>2.13. Mô hình tổng hợp trong Spring Boot</h3>
+                    <p>Một project có thể tổ chức: controller → service → mapper → entity → repository → database.</p>
+                    <p>Khi trả dữ liệu: Database → Repository → Entity → Mapper → Response DTO → Controller → Client.</p>
+                    <p>Khi nhận dữ liệu: Client → Request DTO → Mapper → Entity → Repository → Database.</p>
+                    <p>Đây chính là lý do Mapper trở thành một thành phần quan trọng trong kiến trúc Spring Boot sử dụng DTO.</p>
+
+                    <h3>2.14. Ví dụ hoàn chỉnh với MapStruct</h3>
+                    <p><strong>Entity</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Entity</span><br>
+                        <span class="annotation">@Getter</span><br>
+                        <span class="annotation">@Setter</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">Medicine</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@Id</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GeneratedValue(strategy = GenerationType.IDENTITY)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Request DTO</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineRequest</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Response DTO</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@Builder</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Mapper</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Mapper(componentModel = "spring")</span><br>
+                        <span class="keyword">public interface</span> <span class="class-name">MedicineMapper</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse toResponse(Medicine medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine toEntity(MedicineRequest request);<br>
+                        }
+                    </div>
+                    <p><strong>Service</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineMapper medicineMapper;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse create(MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineMapper.toEntity(request);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine saved = medicineRepository.save(medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(saved);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p><strong>Controller</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping("/medicines")</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineService medicineService;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@PostMapping</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse create(<span class="annotation">@RequestBody</span> MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineService.create(request);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Luồng xử lý: POST /medicines → MedicineRequest → MedicineMapper → Medicine Entity → MedicineRepository → Database → Medicine Entity → MedicineMapper → MedicineResponse → JSON Response.</p>
+
+                    <h3>2.15. Tổng kết</h3>
+                    <p>Cần ghi nhớ 3 cấp độ mapping:</p>
+                    <ul>
+                        <li><strong>Cấp độ 1 – Mapping thủ công:</strong> <code>response.setName(entity.getName());</code> – dễ hiểu, toàn quyền kiểm soát.</li>
+                        <li><strong>Cấp độ 2 – ModelMapper:</strong> <code>modelMapper.map(entity, MedicineResponse.class);</code> – đơn giản, nhanh triển khai.</li>
+                        <li><strong>Cấp độ 3 – MapStruct:</strong> <code>medicineMapper.toResponse(entity);</code> – rõ ràng, sinh code khi compile, phù hợp với project lớn.</li>
+                    </ul>
+                    <p>Kiến thức quan trọng nhất: Học viên không nên chỉ nhớ ModelMapper hay MapStruct, mà phải hiểu bản chất: Entity ≠ DTO. Entity phục vụ persistence/database, còn DTO phục vụ trao đổi dữ liệu. Mapper có nhiệm vụ: Entity → DTO và DTO → Entity. Nếu hiểu được luồng này, học viên sẽ hiểu tại sao trong một project Spring Boot thực tế thường có Entity, Request DTO, Response DTO và Mapper thay vì dùng trực tiếp Entity trong Controller.</p>
+                </section>
+
+                <!-- PHẦN 3: CHUẨN HÓA RESPONSE -->
+                <section id="phan3" class="section">
+                    <h2><i class="fas fa-reply-all"></i> 3. CHUẨN HÓA RESPONSE TRONG SPRING BOOT</h2>
+                    
+                    <div class="info-box">
+                        <h4>Mục tiêu bài học</h4>
+                        <p>Sau khi hoàn thành phần này, học viên có thể:</p>
+                        <ul>
+                            <li>Hiểu Response trong REST API là gì.</li>
+                            <li>Hiểu tại sao cần chuẩn hóa cấu trúc Response.</li>
+                            <li>Xây dựng class ApiResponse.</li>
+                            <li>Hiểu và sử dụng Generic trong ApiResponse.</li>
+                            <li>Xây dựng Response cho trường hợp thành công.</li>
+                            <li>Xây dựng Response cho trường hợp lỗi.</li>
+                            <li>Kết hợp ApiResponse với ResponseEntity.</li>
+                            <li>Hiểu và sử dụng các HTTP Status Code phổ biến.</li>
+                            <li>Xây dựng cấu trúc Response phù hợp cho project Spring Boot thực tế.</li>
+                        </ul>
+                    </div>
+
+                    <h3>3.1. Response trong REST API</h3>
+                    <h4>3.1.1. Response là gì?</h4>
+                    <p>Trong REST API, Response là dữ liệu mà server gửi trả về cho client sau khi nhận và xử lý một HTTP Request.</p>
+                    <p>Ví dụ client gửi: <code>GET /api/medicines/1</code> – Server xử lý và trả về JSON.</p>
+                    <h4>3.1.2. Response gồm những thành phần nào?</h4>
+                    <p>Một HTTP Response thường gồm: Status Code, Headers, Body.</p>
+                    <p>Ví dụ:</p>
+                    <pre>HTTP/1.1 200 OK
+Content-Type: application/json
+Body:
+{
+    "id": 1,
+    "name": "Paracetamol"
+}</pre>
+                    <p><strong>Status Code</strong> – cho biết kết quả xử lý Request (200 thành công, 201 tạo thành công, 400 Request không hợp lệ, 404 không tìm thấy, 500 lỗi server).</p>
+                    <p><strong>Headers</strong> – chứa thông tin bổ sung về Response (ví dụ Content-Type).</p>
+                    <p><strong>Body</strong> – chứa dữ liệu thực tế mà server muốn trả về.</p>
+                    <h4>3.1.3. Response đơn giản trong Spring Boot</h4>
+                    <p>Trong Spring Boot, Controller có thể trả trực tiếp một object. Spring Boot sẽ tự chuyển object Java thành JSON.</p>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> MedicineResponse getById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineService.findById(id);<br>
+                        }
+                    </div>
+                    <p>Ví dụ response: <code>{"id": 1, "name": "Paracetamol", "price": 15000.0}</code></p>
+                    <p>Cách này hoàn toàn hợp lệ. Tuy nhiên, khi project phát triển lớn, chúng ta thường muốn Response có một cấu trúc thống nhất.</p>
+
+                    <h3>3.2. Tại sao cần chuẩn hóa Response?</h3>
+                    <h4>3.2.1. Vấn đề khi không chuẩn hóa</h4>
+                    <p>Giả sử project có nhiều API. API 1 trả <code>{"id": 1, "name": "Paracetamol"}</code>, API 2 trả mảng, API 3 trả <code>{"message": "Medicine not found"}</code>, API 4 trả <code>{"error": "Invalid medicine"}</code>, API 5 trả <code>{"status": 400, "message": "Validation failed"}</code>. Như vậy cấu trúc Response không thống nhất, frontend phải xử lý rất nhiều kiểu dữ liệu khác nhau.</p>
+                    <h4>3.2.2. Chuẩn hóa Response là gì?</h4>
+                    <p>Chuẩn hóa Response là việc quy định một cấu trúc Response thống nhất cho các API trong hệ thống.</p>
+                    <p>Ví dụ thống nhất:</p>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"status": 200,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"message": "Success",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"data": {}<br>
+                        }
+                    </div>
+                    <p>Khi đó frontend luôn biết <code>status</code>, <code>message</code>, <code>data</code> nằm ở đâu.</p>
+                    <h4>3.2.3. Lợi ích của chuẩn hóa Response</h4>
+                    <ul>
+                        <li>API thống nhất.</li>
+                        <li>Frontend dễ xử lý (response.data).</li>
+                        <li>Dễ bảo trì.</li>
+                        <li>Dễ xử lý lỗi.</li>
+                        <li>API chuyên nghiệp hơn.</li>
+                    </ul>
+
+                    <h3>3.3. Xây dựng ApiResponse</h3>
+                    <h4>3.3.1. ApiResponse là gì?</h4>
+                    <p>ApiResponse là một class dùng để đóng gói Response của API vào một cấu trúc thống nhất.</p>
+                    <p>Thay vì trả trực tiếp object, chúng ta trả <code>new ApiResponse<>(200, "Success", medicineResponse);</code></p>
+                    <h4>3.3.2. Thiết kế ApiResponse cơ bản</h4>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">ApiResponse</span>&lt;T&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private int</span> status;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String message;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> T data;<br>
+                        }
+                    </div>
+                    <p>Ở đây có 3 thành phần: <code>status</code>, <code>message</code>, <code>data</code>.</p>
+                    <h4>3.3.3. Getter và Setter</h4>
+                    <p>Nếu chưa sử dụng Lombok, code khá dài. Vì đã học Lombok, có thể sử dụng:</p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">ApiResponse</span>&lt;T&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private int</span> status;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String message;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> T data;<br>
+                        }
+                    </div>
+                    <h4>3.3.4. Giải thích cấu trúc</h4>
+                    <ul>
+                        <li><code>private int status;</code> – lưu mã trạng thái (200, 201, 400, 404, 500).</li>
+                        <li><code>private String message;</code> – chứa thông báo.</li>
+                        <li><code>private T data;</code> – chứa dữ liệu Response. T là Generic Type.</li>
+                    </ul>
+
+                    <h3>3.4. Generic trong ApiResponse</h3>
+                    <h4>3.4.1. Generic là gì?</h4>
+                    <p>Generic cho phép một class hoặc method làm việc với nhiều kiểu dữ liệu khác nhau mà vẫn đảm bảo kiểm tra kiểu dữ liệu tại compile time.</p>
+                    <p>Ví dụ class <code>Box&lt;T&gt;</code> với <code>T</code> là kiểu chưa xác định. Khi sử dụng <code>Box&lt;String&gt;</code> thì <code>T = String</code>.</p>
+                    <h4>3.4.2. Tại sao ApiResponse cần Generic?</h4>
+                    <p>Nếu dùng <code>private Object data;</code> sẽ mất type safety. Generic tốt hơn: <code>private T data;</code>.</p>
+                    <h4>3.4.3. T hoạt động như thế nào?</h4>
+                    <p>Khi <code>ApiResponse&lt;MedicineResponse&gt;</code>, <code>T = MedicineResponse</code>, do đó <code>data</code> có kiểu <code>MedicineResponse</code>. Tương tự cho <code>List&lt;MedicineResponse&gt;</code>.</p>
+                    <h4>3.4.4. Ví dụ</h4>
+                    <div class="code-block">
+                        ApiResponse&lt;MedicineResponse&gt; response = <span class="keyword">new</span> ApiResponse<>(200, <span class="string">"Success"</span>, medicine);
+                    </div>
+                    <p>Với danh sách:</p>
+                    <div class="code-block">
+                        ApiResponse&lt;List&lt;MedicineResponse&gt;&gt; response = <span class="keyword">new</span> ApiResponse<>(200, <span class="string">"Success"</span>, medicines);
+                    </div>
+                    <h4>3.4.5. Generic giúp kiểm tra kiểu dữ liệu</h4>
+                    <p>Ví dụ <code>ApiResponse&lt;MedicineResponse&gt;</code> yêu cầu <code>data</code> phải là <code>MedicineResponse</code>, không thể truyền <code>UserResponse</code>. Điều này giúp phát hiện lỗi kiểu dữ liệu sớm.</p>
+
+                    <h3>3.5. Response thành công</h3>
+                    <h4>3.5.1. Response thành công là gì?</h4>
+                    <p>Khi server xử lý Request thành công, Response thường sử dụng HTTP Status Code nhóm 2xx: 200 OK, 201 Created, 204 No Content.</p>
+                    <h4>3.5.2. Response lấy một object</h4>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> ApiResponse&lt;MedicineResponse&gt; findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.findById(id);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return new</span> ApiResponse<>(200, <span class="string">"Get medicine successfully"</span>, medicine);<br>
+                        }
+                    </div>
+                    <p>Response:</p>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"status": 200,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"message": "Get medicine successfully",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"data": { "id": 1, "name": "Paracetamol", "price": 15000 }<br>
+                        }
+                    </div>
+                    <h4>3.5.3. Response danh sách</h4>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping</span><br>
+                        <span class="keyword">public</span> ApiResponse&lt;List&lt;MedicineResponse&gt;&gt; findAll() {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;List&lt;MedicineResponse&gt; medicines = medicineService.findAll();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return new</span> ApiResponse<>(200, <span class="string">"Get medicines successfully"</span>, medicines);<br>
+                        }
+                    </div>
+                    <p>Điểm quan trọng: <code>ApiResponse&lt;List&lt;MedicineResponse&gt;&gt;</code> không phải <code>ApiResponse&lt;MedicineResponse&gt;</code> vì data là một danh sách.</p>
+                    <h4>3.5.4. Response tạo mới</h4>
+                    <p>Khi tạo Resource thành công, thông thường sử dụng 201 Created.</p>
+                    <div class="code-block">
+                        <span class="annotation">@PostMapping</span><br>
+                        <span class="keyword">public</span> ApiResponse&lt;MedicineResponse&gt; create(<span class="annotation">@RequestBody</span> MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.create(request);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return new</span> ApiResponse<>(201, <span class="string">"Create medicine successfully"</span>, medicine);<br>
+                        }
+                    </div>
+                    <h4>3.5.5. Response cập nhật</h4>
+                    <p>Thông thường sử dụng 200 OK.</p>
+                    <div class="code-block">
+                        <span class="annotation">@PutMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> ApiResponse&lt;MedicineResponse&gt; update(<span class="annotation">@PathVariable</span> Long id, <span class="annotation">@RequestBody</span> MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.update(id, request);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return new</span> ApiResponse<>(200, <span class="string">"Update medicine successfully"</span>, medicine);<br>
+                        }
+                    </div>
+
+                    <h3>3.6. Response lỗi</h3>
+                    <h4>3.6.1. Tại sao Response lỗi cũng cần chuẩn hóa?</h4>
+                    <p>Không chỉ Response thành công, Response lỗi cũng cần có cấu trúc rõ ràng. Ví dụ <code>{"status": 404, "message": "Medicine not found", "data": null}</code> giúp frontend xử lý thống nhất.</p>
+                    <h4>3.6.2. Lỗi không tìm thấy dữ liệu</h4>
+                    <p>Client gọi <code>GET /api/medicines/100</code> nhưng không tồn tại, trả <code>{"status": 404, "message": "Medicine not found", "data": null}</code>.</p>
+                    <h4>3.6.3. Tạo Response lỗi</h4>
+                    <div class="code-block">
+                        <span class="keyword">return new</span> ApiResponse<>(404, <span class="string">"Medicine not found"</span>, <span class="keyword">null</span>);
+                    </div>
+                    <h4>3.6.4. Không nên trả lỗi tùy tiện</h4>
+                    <p>Không nên để API này trả <code>{"message": "Not found"}</code>, API khác trả <code>{"error": "User does not exist"}</code>. Nên thống nhất cấu trúc <code>{"status": 404, "message": "...", "data": null}</code>.</p>
+                    <h4>3.6.5. Response lỗi Validation</h4>
+                    <p>Ví dụ DTO có <code>@NotBlank</code>, <code>@Positive</code>. Nếu validation thất bại, có thể trả:</p>
+                    <div class="code-block">
+                        {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"status": 400,<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"message": "Validation failed",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;"data": {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "Name must not be blank",<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"price": "Price must be greater than 0"<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <p>Điều này giúp frontend biết chính xác field nào bị lỗi.</p>
+                    <h4>3.6.6. Response lỗi Server</h4>
+                    <p>Nếu server xảy ra lỗi không mong muốn (500), trả <code>{"status": 500, "message": "Internal server error", "data": null}</code>. Trong production, không nên trả stack trace hoặc thông tin nội bộ.</p>
+
+                    <h3>3.7. Kết hợp ApiResponse với ResponseEntity</h3>
+                    <h4>3.7.1. ResponseEntity là gì?</h4>
+                    <p>ResponseEntity là class của Spring dùng để biểu diễn toàn bộ HTTP Response, cho phép kiểm soát HTTP Status Code, Headers, Body.</p>
+                    <p>Ví dụ: <code>return ResponseEntity.ok(data);</code> – 200 OK với data là Body.</p>
+                    <h4>3.7.2. Tại sao kết hợp ApiResponse và ResponseEntity?</h4>
+                    <p>ApiResponse quản lý cấu trúc dữ liệu bên trong Body. ResponseEntity quản lý HTTP Response (status, headers). Có thể hình dung:</p>
+                    <pre>ResponseEntity
+│
+├── HTTP Status
+├── Headers
+└── Body
+      │
+      └── ApiResponse
+             ├── status
+             ├── message
+             └── data</pre>
+                    <h4>3.7.3. Ví dụ cơ bản</h4>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;MedicineResponse&gt;&gt; findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.findById(id);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;MedicineResponse&gt; response = <span class="keyword">new</span> ApiResponse<>(200, <span class="string">"Get medicine successfully"</span>, medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        }
+                    </div>
+                    <h4>3.7.4. ResponseEntity.ok()</h4>
+                    <p><code>ResponseEntity.ok(response)</code> tương đương HTTP Status 200 OK, Body = response.</p>
+                    <h4>3.7.5. Sử dụng ResponseEntity.status()</h4>
+                    <p>Nếu muốn trả 201 Created: <code>return ResponseEntity.status(HttpStatus.CREATED).body(response);</code></p>
+                    <h4>3.7.6. Ví dụ Create</h4>
+                    <div class="code-block">
+                        <span class="annotation">@PostMapping</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;MedicineResponse&gt;&gt; create(<span class="annotation">@RequestBody</span> MedicineRequest request) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.create(request);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;MedicineResponse&gt; response = <span class="keyword">new</span> ApiResponse<>(201, <span class="string">"Create medicine successfully"</span>, medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CREATED).body(response);<br>
+                        }
+                    </div>
+                    <h4>3.7.7. Response lỗi với ResponseEntity</h4>
+                    <p>Có thể kiểm tra nếu không tìm thấy và trả 404. Tuy nhiên, khi project lớn, nên sử dụng Global Exception Handler để xử lý tập trung.</p>
+                    <h4>3.7.8. Nên đặt HTTP Status ở đâu?</h4>
+                    <p>Khi sử dụng <code>ApiResponse&lt;T&gt;</code>, chúng ta có <code>private int status;</code> và ResponseEntity cũng có HTTP Status. Một số project giữ cả hai để frontend dễ xử lý. Điều quan trọng là project phải có quy ước nhất quán.</p>
+
+                    <h3>3.8. HTTP Status Code</h3>
+                    <h4>3.8.1. HTTP Status Code là gì?</h4>
+                    <p>Mã số server sử dụng để thông báo kết quả xử lý Request. Chia thành 5 nhóm: 1xx Informational, 2xx Success, 3xx Redirection, 4xx Client Error, 5xx Server Error. Trong REST API, chủ yếu làm việc với 2xx, 4xx, 5xx.</p>
+                    <h4>3.8.2. 200 OK</h4>
+                    <p>Request được xử lý thành công. Ví dụ GET trả dữ liệu. Spring Boot: <code>return ResponseEntity.ok(response);</code></p>
+                    <h4>3.8.3. 201 Created</h4>
+                    <p>Dùng khi Resource mới được tạo thành công. <code>return ResponseEntity.status(HttpStatus.CREATED).body(response);</code></p>
+                    <h4>3.8.4. 204 No Content</h4>
+                    <p>Request thành công nhưng không có dữ liệu Body cần trả về (ví dụ DELETE). Thường không cần ApiResponse.</p>
+                    <h4>3.8.5. 400 Bad Request</h4>
+                    <p>Request từ client không hợp lệ (ví dụ validation thất bại).</p>
+                    <h4>3.8.6. 401 Unauthorized</h4>
+                    <p>Client chưa được xác thực hoặc thông tin xác thực không hợp lệ.</p>
+                    <h4>3.8.7. 403 Forbidden</h4>
+                    <p>Client đã xác thực nhưng không có quyền thực hiện hành động.</p>
+                    <h4>3.8.8. Phân biệt 401 và 403</h4>
+                    <p>401 – "Bạn là ai?" – chưa xác thực. 403 – "Tôi biết bạn là ai, nhưng bạn không có quyền."</p>
+                    <h4>3.8.9. 404 Not Found</h4>
+                    <p>Resource được yêu cầu không tồn tại.</p>
+                    <h4>3.8.10. 409 Conflict</h4>
+                    <p>Request xung đột với trạng thái hiện tại của Resource (ví dụ username đã tồn tại).</p>
+                    <h4>3.8.11. 500 Internal Server Error</h4>
+                    <p>Server gặp lỗi không mong muốn. Trong production, không trả stack trace cho client.</p>
+                    <h4>3.8.12. Bảng Status Code cần nhớ</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Status</th><th>Ý nghĩa</th><th>Trường hợp thường gặp</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>200</td><td>OK</td><td>Lấy/cập nhật dữ liệu thành công</td></tr>
+                                <tr><td>201</td><td>Created</td><td>Tạo Resource thành công</td></tr>
+                                <tr><td>204</td><td>No Content</td><td>Thành công nhưng không trả Body</td></tr>
+                                <tr><td>400</td><td>Bad Request</td><td>Request/Validation không hợp lệ</td></tr>
+                                <tr><td>401</td><td>Unauthorized</td><td>Chưa xác thực hợp lệ</td></tr>
+                                <tr><td>403</td><td>Forbidden</td><td>Không có quyền</td></tr>
+                                <tr><td>404</td><td>Not Found</td><td>Không tìm thấy Resource</td></tr>
+                                <tr><td>409</td><td>Conflict</td><td>Dữ liệu bị xung đột</td></tr>
+                                <tr><td>500</td><td>Internal Server Error</td><td>Lỗi phía server</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3.9. Ví dụ hoàn chỉnh</h3>
+                    <p>Sau khi học Lombok và Mapper, kết hợp thành API hoàn chỉnh.</p>
+                    <p><strong>ApiResponse</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">ApiResponse</span>&lt;T&gt; {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private int</span> status;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String message;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> T data;<br>
+                        }
+                    </div>
+                    <p><strong>DTO</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@Data</span><br>
+                        <span class="annotation">@Builder</span><br>
+                        <span class="annotation">@NoArgsConstructor</span><br>
+                        <span class="annotation">@AllArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineResponse</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Long id;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> String name;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private</span> Double price;<br>
+                        }
+                    </div>
+                    <p><strong>Controller</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@RestController</span><br>
+                        <span class="annotation">@RequestMapping("/api/medicines")</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineService medicineService;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping("/{id}")</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;MedicineResponse&gt;&gt; findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MedicineResponse medicine = medicineService.findById(id);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;MedicineResponse&gt; response = <span class="keyword">new</span> ApiResponse<>(200, <span class="string">"Get medicine successfully"</span>, medicine);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>3.9.4. Response thực tế</h4>
+                    <p>Client gọi <code>GET /api/medicines/1</code> – server trả:</p>
+                    <pre>HTTP/1.1 200 OK
+Content-Type: application/json
+Body:
+{
+    "status": 200,
+    "message": "Get medicine successfully",
+    "data": {
+        "id": 1,
+        "name": "Paracetamol",
+        "price": 15000
+    }
+}</pre>
+
+                    <h3>3.10. Cách tổ chức Response trong project</h3>
+                    <p>Có thể tổ chức package:</p>
+                    <pre>src/main/java/com/example/project
+├── controller
+├── service
+├── repository
+├── entity
+├── dto
+│   ├── request
+│   └── response
+├── mapper
+├── exception
+└── response
+    └── ApiResponse.java</pre>
+                    <p>Trong đó: <code>dto</code> – dữ liệu Request/Response, <code>mapper</code> – chuyển đổi Entity ↔ DTO, <code>response</code> – cấu trúc Response chung.</p>
+
+                    <h3>3.11. Tổng kết kiến thức</h3>
+                    <p>Sau phần này, học viên cần nắm được luồng: Client → Controller → Service → Repository → Database.</p>
+                    <p>Khi trả dữ liệu: Database → Entity → Mapper → DTO → ApiResponse<T> → ResponseEntity → HTTP Response → Client.</p>
+                    <p>Trong đó: DTO – đại diện cho dữ liệu muốn truyền đi; Mapper – chuyển đổi Entity ↔ DTO; ApiResponse<T> – chuẩn hóa Body; ResponseEntity – quản lý HTTP Response (status, headers, body); HTTP Status Code – cho client biết kết quả Request.</p>
+                    <p>Điểm quan trọng nhất: ApiResponse và ResponseEntity không phải là hai thứ giống nhau. ApiResponse giúp chuẩn hóa dữ liệu trong Body, còn ResponseEntity giúp điều khiển HTTP Response. Khi kết hợp chúng, ta có một cấu trúc API vừa thống nhất vừa đúng với cơ chế HTTP.</p>
+                </section>
+
+                <!-- PHẦN 4: XỬ LÝ EXCEPTION -->
+                <section id="phan4" class="section">
+                    <h2><i class="fas fa-exclamation-triangle"></i> 4. XỬ LÝ EXCEPTION TRONG SPRING BOOT</h2>
+                    
+                    <p>Trong các ứng dụng Spring Boot, Exception là một vấn đề rất quan trọng cần được xử lý đúng cách. Một API thực tế không thể chỉ xử lý trường hợp thành công. Trong quá trình chạy, rất nhiều lỗi có thể xảy ra: Không tìm thấy dữ liệu, dữ liệu bị trùng, Request không hợp lệ, Validation thất bại, người dùng không có quyền, lỗi database, lỗi logic nghiệp vụ, lỗi không xác định.</p>
+                    <p>Nếu không xử lý Exception đúng cách, client có thể nhận được những Response khó hiểu. Trong một API chuyên nghiệp, chúng ta thường muốn biến những Exception đó thành Response có cấu trúc rõ ràng, ví dụ <code>{"status": 404, "message": "Medicine not found", "data": null}</code>.</p>
+
+                    <h3>4.1. Exception trong REST API</h3>
+                    <h4>4.1.1. Exception là gì?</h4>
+                    <p>Exception là một tình huống bất thường xảy ra trong quá trình chương trình thực thi, khiến luồng xử lý bình thường bị gián đoạn.</p>
+                    <p>Ví dụ: <code>int a = 10; int b = 0; int result = a / b;</code> gây ra <code>ArithmeticException</code>.</p>
+                    <p>Hoặc <code>Medicine medicine = medicineRepository.findById(id).orElse(null); return medicine.getName();</code> nếu <code>medicine == null</code> → <code>NullPointerException</code>.</p>
+                    <h4>4.1.2. Exception trong API</h4>
+                    <p>Giả sử client gọi <code>GET /api/medicines/100</code> nhưng Medicine ID 100 không tồn tại. Trong Service có thể viết <code>medicineRepository.findById(id).orElseThrow();</code> – khi không tìm thấy, Spring/JPA phát sinh Exception. Nếu không xử lý, client nhận 500 Internal Server Error, trong khi lỗi thực sự là "Medicine không tồn tại", nên trả 404 Not Found và <code>{"status": 404, "message": "Medicine not found", "data": null}</code>.</p>
+                    <h4>4.1.3. Tại sao cần xử lý Exception?</h4>
+                    <ul>
+                        <li>API trả HTTP Status phù hợp (404, 400, 409, 500).</li>
+                        <li>Client dễ hiểu lỗi (thay vì stack trace).</li>
+                        <li>Không để lộ thông tin nội bộ (stack trace, SQL, class name).</li>
+                        <li>Dễ bảo trì – các lỗi được xử lý tập trung thay vì try-catch ở hàng chục Controller.</li>
+                    </ul>
+                    <h4>4.1.4. Exception Handling trong Spring Boot</h4>
+                    <p>Một kiến trúc thường gặp: Controller → Service → Exception xảy ra → Global Exception Handler → ApiResponse → Client.</p>
+                    <p>Ví dụ: <code>GET /api/medicines/100</code> → MedicineService → ResourceNotFoundException → GlobalExceptionHandler → 404 → JSON Response.</p>
+
+                    <h3>4.2. Custom Exception</h3>
+                    <h4>4.2.1. Custom Exception là gì?</h4>
+                    <p>Custom Exception là Exception do lập trình viên tự định nghĩa để biểu diễn những lỗi nghiệp vụ cụ thể của hệ thống. Thay vì chỉ sử dụng <code>RuntimeException</code>, có thể tạo <code>ResourceNotFoundException</code> hoặc <code>DuplicateResourceException</code>.</p>
+                    <h4>4.2.2. Tại sao cần Custom Exception?</h4>
+                    <p>Giả sử <code>throw new RuntimeException("Medicine not found");</code> quá chung chung. Nếu sử dụng <code>throw new ResourceNotFoundException("Medicine not found");</code>, nhìn vào code đã hiểu: Resource mà client yêu cầu không tồn tại.</p>
+                    <h4>4.2.3. Cú pháp tạo Custom Exception</h4>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">ResourceNotFoundException</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResourceNotFoundException(String message) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(message);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>4.2.4. Giải thích cú pháp</h4>
+                    <ul>
+                        <li><code>extends RuntimeException</code> – Custom Exception kế thừa từ <code>RuntimeException</code>.</li>
+                        <li>Constructor – truyền message vào <code>super(message)</code>.</li>
+                    </ul>
+
+                    <h3>4.3. ResourceNotFoundException</h3>
+                    <h4>4.3.1. ResourceNotFoundException là gì?</h4>
+                    <p>Thường sử dụng khi Resource mà client yêu cầu không tồn tại (ví dụ Medicine ID 100 không có trong database).</p>
+                    <h4>4.3.2. Tạo Exception</h4>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">ResourceNotFoundException</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResourceNotFoundException(String message) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(message);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>4.3.3. Sử dụng trong Service</h4>
+                    <p>Thay vì <code>medicineRepository.findById(id).orElse(null);</code>, có thể:</p>
+                    <div class="code-block">
+                        Medicine medicine = medicineRepository.findById(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> ResourceNotFoundException(<span class="string">"Medicine not found"</span>));
+                    </div>
+                    <h4>4.3.4. Phân tích orElseThrow()</h4>
+                    <p>Nếu tìm thấy → trả về Medicine; nếu không tìm thấy → throw ResourceNotFoundException.</p>
+                    <h4>4.3.5. Ví dụ Service hoàn chỉnh</h4>
+                    <div class="code-block">
+                        <span class="annotation">@Service</span><br>
+                        <span class="annotation">@RequiredArgsConstructor</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineService</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineRepository medicineRepository;<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">private final</span> MedicineMapper medicineMapper;<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> ResourceNotFoundException(<span class="string">"Medicine not found with id: "</span> + id));<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(medicine);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4.4. DuplicateResourceException</h3>
+                    <h4>4.4.1. DuplicateResourceException là gì?</h4>
+                    <p>Dùng khi client cố tạo dữ liệu đã tồn tại (ví dụ email đã được đăng ký).</p>
+                    <div class="code-block">
+                        <span class="keyword">public class</span> <span class="class-name">DuplicateResourceException</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">extends</span> RuntimeException {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> DuplicateResourceException(String message) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">super</span>(message);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>4.4.2. Ví dụ kiểm tra dữ liệu trùng</h4>
+                    <p>Repository: <code>boolean existsByEmail(String email);</code></p>
+                    <p>Service:</p>
+                    <div class="code-block">
+                        <span class="keyword">if</span> (userRepository.existsByEmail(request.getEmail())) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> DuplicateResourceException(<span class="string">"Email already exists"</span>);<br>
+                        }
+                    </div>
+                    <h4>4.4.3. Luồng xử lý</h4>
+                    <p>Client → POST /users → Service → Email đã tồn tại? → YES → DuplicateResourceException → Global Exception Handler → 409 Conflict → Response <code>{"status": 409, "message": "Email already exists", "data": null}</code>.</p>
+
+                    <h3>4.5. @ExceptionHandler</h3>
+                    <h4>4.5.1. @ExceptionHandler là gì?</h4>
+                    <p>Annotation của Spring MVC dùng để đánh dấu method chuyên xử lý một hoặc nhiều loại Exception.</p>
+                    <p>Ví dụ:</p>
+                    <div class="code-block">
+                        <span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;?&gt; handleResourceNotFound(ResourceNotFoundException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;...<br>
+                        }
+                    </div>
+                    <h4>4.5.2. Ví dụ cơ bản</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestController</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">MedicineController</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@GetMapping("/{id}")</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> MedicineResponse findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">throw new</span> ResourceNotFoundException(<span class="string">"Medicine not found"</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;String&gt; handleNotFound(ResourceNotFoundException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>4.5.3. Hạn chế của @ExceptionHandler trong Controller</h4>
+                    <p>Nếu có nhiều Controller, phải lặp lại <code>@ExceptionHandler</code> ở mỗi Controller → code trùng lặp, khó bảo trì. Giải pháp: <code>@RestControllerAdvice</code>.</p>
+
+                    <h3>4.6. @RestControllerAdvice</h3>
+                    <h4>4.6.1. @RestControllerAdvice là gì?</h4>
+                    <p>Cho phép tạo nơi xử lý Exception tập trung cho toàn bộ REST Controller. Có thể hiểu: <code>@RestControllerAdvice = Global Exception Handler cho REST API</code>.</p>
+                    <h4>4.6.2. Cấu trúc cơ bản</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestControllerAdvice</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">GlobalExceptionHandler</span> {<br>
+                        <br>
+                        }
+                    </div>
+                    <h4>4.6.3. Ví dụ ResourceNotFoundException</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestControllerAdvice</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">GlobalExceptionHandler</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(404, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+                    <h4>4.6.4. ApiResponse&lt;Void&gt; là gì?</h4>
+                    <p>ApiResponse với <code>Void</code> có nghĩa Response không có dữ liệu cụ thể trong <code>data</code>, do đó <code>data = null</code>. Ví dụ JSON: <code>{"status": 404, "message": "Medicine not found", "data": null}</code>.</p>
+
+                    <h3>4.7. Global Exception Handler</h3>
+                    <h4>4.7.1. Global Exception Handler là gì?</h4>
+                    <p>Class chịu trách nhiệm xử lý Exception tập trung cho toàn bộ ứng dụng. Thông thường: <code>@RestControllerAdvice public class GlobalExceptionHandler { }</code></p>
+                    <h4>4.7.2. Tại sao cần Global Exception Handler?</h4>
+                    <p>Thay vì mỗi Controller có ExceptionHandler riêng, tất cả Controller dùng chung một nơi xử lý lỗi.</p>
+                    <h4>4.7.3. Xử lý ResourceNotFoundException</h4>
+                    <div class="code-block">
+                        <span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(404, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);<br>
+                        }
+                    </div>
+                    <h4>4.7.4. Xử lý DuplicateResourceException</h4>
+                    <div class="code-block">
+                        <span class="annotation">@ExceptionHandler(DuplicateResourceException.class)</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleDuplicateResource(DuplicateResourceException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(409, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CONFLICT).body(response);<br>
+                        }
+                    </div>
+                    <h4>4.7.5. Global Handler hoàn chỉnh</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestControllerAdvice</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">GlobalExceptionHandler</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(404, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(DuplicateResourceException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleDuplicateResource(DuplicateResourceException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(409, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CONFLICT).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4.8. Xử lý Exception chung</h3>
+                    <p>Ngoài các Exception nghiệp vụ cụ thể, hệ thống còn có thể phát sinh nhiều Exception khác như <code>NullPointerException</code>, <code>IllegalArgumentException</code>, <code>DataAccessException</code>, <code>SQLException</code>, <code>RuntimeException</code>. Không thể tạo Handler riêng cho mọi Exception, do đó có thể tạo Handler chung.</p>
+                    <h4>4.8.1. Xử lý Exception</h4>
+                    <div class="code-block">
+                        <span class="annotation">@ExceptionHandler(Exception.class)</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleException(Exception ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(500, <span class="string">"Internal server error"</span>, <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);<br>
+                        }
+                    </div>
+                    <h4>4.8.2. Tại sao dùng Exception.class?</h4>
+                    <p><code>@ExceptionHandler(Exception.class)</code> nghĩa là nếu Exception không có Handler cụ thể, hãy sử dụng Handler này. Ví dụ ResourceNotFoundException → Handler riêng → 404. NullPointerException → không có Handler riêng → Exception.class → 500.</p>
+                    <h4>4.8.3. Thứ tự xử lý Exception</h4>
+                    <p>Exception xảy ra → Có phải ResourceNotFoundException? → YES → 404. NO → Có phải DuplicateResourceException? → YES → 409. NO → Exception chung → 500.</p>
+                    <h4>4.8.4. Không nên trả ex.getMessage() cho mọi Exception</h4>
+                    <p>Không nên làm <code>return ResponseEntity.status(500).body(ex.getMessage());</code> vì <code>ex.getMessage()</code> có thể chứa thông tin nội bộ (SQL, database connection, file path). Nên client nhận message an toàn, còn thông tin chi tiết được log ở server.</p>
+                    <h4>4.8.5. Log Exception</h4>
+                    <p>Có thể sử dụng Logger:</p>
+                    <div class="code-block">
+                        <span class="keyword">private static final</span> Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+                    </div>
+                    <p>Sau đó: <code>log.error("Unexpected error occurred", ex);</code> – client nhận message an toàn, server lưu thông tin Exception để debug.</p>
+
+                    <h3>4.9. Chuẩn hóa Error Response</h3>
+                    <h4>4.9.1. Error Response là gì?</h4>
+                    <p>Cấu trúc JSON được server trả về khi Request thất bại. Có thể sử dụng chính <code>ApiResponse<T></code> để chuẩn hóa cả Success và Error Response.</p>
+                    <h4>4.9.2. Success Response</h4>
+                    <div class="code-block">
+                        { "status": 200, "message": "Get medicine successfully", "data": { "id": 1, "name": "Paracetamol" } }
+                    </div>
+                    <h4>4.9.3. Not Found Response</h4>
+                    <div class="code-block">
+                        { "status": 404, "message": "Medicine not found", "data": null }
+                    </div>
+                    <h4>4.9.4. Duplicate Response</h4>
+                    <div class="code-block">
+                        { "status": 409, "message": "Email already exists", "data": null }
+                    </div>
+                    <h4>4.9.5. Server Error Response</h4>
+                    <div class="code-block">
+                        { "status": 500, "message": "Internal server error", "data": null }
+                    </div>
+                    <h4>4.9.6. Xử lý Validation Exception</h4>
+                    <p>Giả sử DTO có <code>@NotBlank</code>, <code>@NotNull</code>, <code>@Positive</code>. Controller dùng <code>@Valid</code>. Nếu validation thất bại, Spring phát sinh <code>MethodArgumentNotValidException</code>.</p>
+                    <div class="code-block">
+                        <span class="annotation">@ExceptionHandler(MethodArgumentNotValidException.class)</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Map&lt;String, String&gt;&gt;&gt; handleValidationException(MethodArgumentNotValidException ex) {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; errors = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ex.getBindingResult().getFieldErrors().forEach(error -><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;errors.put(error.getField(), error.getDefaultMessage())<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Map&lt;String, String&gt;&gt; response = <span class="keyword">new</span> ApiResponse<>(400, <span class="string">"Validation failed"</span>, errors);<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);<br>
+                        }
+                    </div>
+                    <h4>4.9.7. Response Validation</h4>
+                    <p>Client nhận: <code>{"status": 400, "message": "Validation failed", "data": {"name": "Name is required", "price": "Price must be greater than 0"}}</code> – frontend dễ dàng hiển thị lỗi tại từng field.</p>
+                    <h4>4.9.8. Global Exception Handler hoàn chỉnh</h4>
+                    <div class="code-block">
+                        <span class="annotation">@RestControllerAdvice</span><br>
+                        <span class="annotation">@Slf4j</span><br>
+                        <span class="keyword">public class</span> <span class="class-name">GlobalExceptionHandler</span> {<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(ResourceNotFoundException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleResourceNotFound(ResourceNotFoundException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(404, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(DuplicateResourceException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleDuplicateResource(DuplicateResourceException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(409, ex.getMessage(), <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.CONFLICT).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(MethodArgumentNotValidException.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Map&lt;String, String&gt;&gt;&gt; handleValidationException(MethodArgumentNotValidException ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map&lt;String, String&gt; errors = <span class="keyword">new</span> HashMap&lt;&gt;();<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Map&lt;String, String&gt;&gt; response = <span class="keyword">new</span> ApiResponse<>(400, <span class="string">"Validation failed"</span>, errors);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="annotation">@ExceptionHandler(Exception.class)</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;Void&gt;&gt; handleException(Exception ex) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log.error(<span class="string">"Unexpected error occurred"</span>, ex);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ApiResponse&lt;Void&gt; response = <span class="keyword">new</span> ApiResponse<>(500, <span class="string">"Internal server error"</span>, <span class="keyword">null</span>);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                        }
+                    </div>
+
+                    <h3>4.10. Toàn bộ luồng Exception</h3>
+                    <pre>                   CLIENT
+                       │
+                       │ HTTP Request
+                       ▼
+                 CONTROLLER
+                       │
+                       ▼
+                   SERVICE
+                       │
+            ┌──────────┴──────────┐
+            │                     │
+       Thành công              Exception
+            │                     │
+            ▼                     ▼
+          Mapper          Custom Exception
+            │                     │
+            ▼                     ▼
+       ApiResponse       GlobalExceptionHandler
+            │                     │
+            ▼                     ▼
+      ResponseEntity        Error Response
+            │                     │
+            └──────────┬──────────┘
+                       ▼
+                     CLIENT</pre>
+
+                    <h3>4.11. Ví dụ thực tế hoàn chỉnh</h3>
+                    <p>Giả sử API <code>GET /api/medicines/10</code></p>
+                    <p><strong>Bước 1: Controller</strong></p>
+                    <div class="code-block">
+                        <span class="annotation">@GetMapping("/{id}")</span><br>
+                        <span class="keyword">public</span> ResponseEntity&lt;ApiResponse&lt;MedicineResponse&gt;&gt; findById(<span class="annotation">@PathVariable</span> Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> ResponseEntity.ok(<span class="keyword">new</span> ApiResponse<>(200, <span class="string">"Get medicine successfully"</span>, medicineService.findById(id)));<br>
+                        }
+                    </div>
+                    <p><strong>Bước 2: Service</strong></p>
+                    <div class="code-block">
+                        <span class="keyword">public</span> MedicineResponse findById(Long id) {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;Medicine medicine = medicineRepository.findById(id)<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.orElseThrow(() -> <span class="keyword">new</span> ResourceNotFoundException(<span class="string">"Medicine not found with id: "</span> + id));<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> medicineMapper.toResponse(medicine);<br>
+                        }
+                    </div>
+                    <p><strong>Bước 3: Nếu tìm thấy</strong> – Repository → Medicine → Mapper → MedicineResponse → ApiResponse → 200 OK.</p>
+                    <p><strong>Bước 4: Nếu không tìm thấy</strong> – Service throw ResourceNotFoundException → Spring tìm @ExceptionHandler → Global Handler trả 404 Not Found với <code>{"status": 404, "message": "Medicine not found with id: 10", "data": null}</code>.</p>
+                    <p>Controller không cần try-catch – đây là ưu điểm của Global Exception Handler.</p>
+
+                    <h3>4.12. Cấu trúc package đề xuất</h3>
+                    <p>Sau khi hoàn thành các phần Lombok + Mapper + Response + Exception, project có thể tổ chức:</p>
+                    <pre>src/main/java/com/example/project
+│
+├── controller
+│   ├── MedicineController.java
+│   └── UserController.java
+│
+├── service
+│   ├── MedicineService.java
+│   └── UserService.java
+│
+├── repository
+│   ├── MedicineRepository.java
+│   └── UserRepository.java
+│
+├── entity
+│   ├── Medicine.java
+│   └── User.java
+│
+├── dto
+│   ├── request
+│   │   ├── MedicineRequest.java
+│   │   └── UserRequest.java
+│   │
+│   └── response
+│       ├── MedicineResponse.java
+│       └── UserResponse.java
+│
+├── mapper
+│   └── MedicineMapper.java
+│
+├── response
+│   └── ApiResponse.java
+│
+└── exception
+    ├── ResourceNotFoundException.java
+    ├── DuplicateResourceException.java
+    └── GlobalExceptionHandler.java</pre>
+
+                    <h3>4.13. Tổng kết kiến thức</h3>
+                    <p>Học viên cần hiểu mối quan hệ giữa các thành phần: DTO ↔ Mapper ↔ Entity ↔ Repository.</p>
+                    <p>Khi thành công: Entity → Mapper → DTO → ApiResponse<T> → ResponseEntity → Client.</p>
+                    <p>Khi xảy ra lỗi: Service throw Exception → GlobalExceptionHandler → ApiResponse → ResponseEntity → Client.</p>
+                    <p>Các Exception cần nhớ: ResourceNotFoundException (404), DuplicateResourceException (409), MethodArgumentNotValidException (400), Exception (500).</p>
+                    <p>Các annotation quan trọng: <code>@ExceptionHandler</code> – xử lý một loại Exception; <code>@RestControllerAdvice</code> – xử lý Exception tập trung cho REST Controller.</p>
+                    <p>Kiến thức cốt lõi: Một API Spring Boot được tổ chức tốt thường không xử lý lỗi bằng try-catch ở mọi Controller. Thay vào đó: Exception → Custom Exception → Global Exception Handler → Error Response → Client. Và Response được chuẩn hóa <code>{"status": 404, "message": "Medicine not found", "data": null}</code>.</p>
+                    <p>Như vậy, sau 4 phần Lombok → Mapper → Chuẩn hóa Response → Exception, học viên đã có nền tảng để xây dựng một REST API Spring Boot theo cấu trúc tương đối chuyên nghiệp, thay vì chỉ viết Controller trả Entity trực tiếp.</p>
+                </section>
+
+                <!-- PHẦN 5: KẾT HỢP TỔNG THỂ -->
+                <section id="phan5" class="section">
+                    <h2><i class="fas fa-sitemap"></i> 5. KẾT HỢP LOMBOK, MAPPER, RESPONSE VÀ EXCEPTION</h2>
+                    
+                    <div class="info-box">
+                        <h4>Mục tiêu bài học</h4>
+                        <p>Sau khi hoàn thành phần này, học viên có thể:</p>
+                        <ul>
+                            <li>Thiết kế cấu trúc một project Spring Boot có tổ chức.</li>
+                            <li>Sử dụng Lombok trong Entity, DTO và các class khác.</li>
+                            <li>Sử dụng Mapper để chuyển đổi giữa Entity và DTO.</li>
+                            <li>Sử dụng ApiResponse&lt;T&gt; để chuẩn hóa Response.</li>
+                            <li>Xử lý Exception tập trung bằng @RestControllerAdvice.</li>
+                            <li>Hiểu toàn bộ luồng xử lý của một REST API.</li>
+                            <li>Biết cách kết hợp các thành phần đã học thành một kiến trúc hoàn chỉnh.</li>
+                        </ul>
+                    </div>
+
+                    <h3>5.1. Thiết kế cấu trúc Project</h3>
+                    <h4>5.1.1. Tại sao cần tổ chức Project?</h4>
+                    <p>Khi mới học Spring Boot, học viên thường viết tất cả code trong một vài class: Controller → Repository hoặc thậm chí Controller → Repository → Database. Cách này có thể chạy được với project nhỏ nhưng sẽ trở nên khó quản lý khi hệ thống phát triển.</p>
+                    <p>Một project thực tế thường được chia thành nhiều tầng: Controller → Service → Repository → Database.</p>
+
+                    <h3>5.2. Cấu trúc chi tiết</h3>
+                    <ul>
+                        <li><strong>Controller</strong> – Nhận request từ client, gọi Service, trả về Response.</li>
+                        <li><strong>Service</strong> – Xử lý nghiệp vụ, gọi Repository, thực hiện logic.</li>
+                        <li><strong>Repository</strong> – Tương tác với database (JPA).</li>
+                        <li><strong>Entity</strong> – Ánh xạ với table trong database.</li>
+                        <li><strong>DTO</strong> – Data Transfer Object, dùng để truyền dữ liệu giữa các tầng hoặc với client.</li>
+                        <li><strong>Mapper</strong> – Chuyển đổi giữa Entity và DTO.</li>
+                        <li><strong>ApiResponse</strong> – Chuẩn hóa cấu trúc Response.</li>
+                        <li><strong>Exception Handling</strong> – Xử lý lỗi tập trung.</li>
+                    </ul>
+
+                    <h3>5.3. Luồng xử lý tổng thể</h3>
+                    <p><strong>Khi trả dữ liệu:</strong></p>
+                    <pre>Database → Repository → Entity → Mapper → Response DTO → ApiResponse → Controller → Client</pre>
+                    <p><strong>Khi nhận dữ liệu:</strong></p>
+                    <pre>Client → Request DTO → Controller → Service → Mapper → Entity → Repository → Database</pre>
+
+                    <h3>5.4. Ví dụ hoàn chỉnh</h3>
+                    <p>Xây dựng API CRUD cho Medicine với đầy đủ các thành phần.</p>
+                    <ul>
+                        <li><strong>Entity:</strong> Medicine (Lombok: @Getter, @Setter, @NoArgsConstructor)</li>
+                        <li><strong>Request DTO:</strong> MedicineRequest (Lombok: @Data)</li>
+                        <li><strong>Response DTO:</strong> MedicineResponse (Lombok: @Data, @Builder)</li>
+                        <li><strong>Mapper:</strong> MedicineMapper (MapStruct hoặc ModelMapper)</li>
+                        <li><strong>Service:</strong> MedicineService (@RequiredArgsConstructor, private final repository và mapper)</li>
+                        <li><strong>Controller:</strong> MedicineController (@RequiredArgsConstructor, private final service)</li>
+                        <li><strong>ApiResponse:</strong> generic</li>
+                        <li><strong>GlobalExceptionHandler:</strong> xử lý ResourceNotFoundException, DuplicateResourceException, Validation, Exception chung.</li>
+                    </ul>
+
+                    <h3>5.5. Tổng kết</h3>
+                    <p>Sau khi hoàn thành 4 phần Lombok → Mapper → Chuẩn hóa Response → Exception, học viên đã có nền tảng để xây dựng một REST API Spring Boot theo cấu trúc tương đối chuyên nghiệp, thay vì chỉ viết Controller trả Entity trực tiếp.</p>
+                    <p>Điểm quan trọng nhất: <strong>Entity ≠ DTO</strong>. Entity phục vụ persistence/database, DTO phục vụ trao đổi dữ liệu. Mapper đứng giữa để chuyển đổi.</p>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p>Giáo trình Lombok, Mapper, Response & Exception trong Spring Boot &copy; 2026 | Tổng hợp và biên soạn</p>
+        </footer>
+    </div>
+
+    <script>
+        // Xử lý điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            
+            // Kích hoạt section đầu tiên
+            sections[0].classList.add('active');
+            navLinks[0].classList.add('active');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // Xóa class active từ tất cả
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    // Thêm class active cho link được click
+                    this.classList.add('active');
+                    
+                    // Hiển thị section tương ứng
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                    
+                    // Cuộn lên đầu section
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+        
+        // Hàm copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                button.style.background = '#27ae60';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

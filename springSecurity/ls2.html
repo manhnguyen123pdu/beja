@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT</title>
+    <title> ENCODER</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
      <style>
         * {
@@ -29,7 +29,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
             line-height: 1.6;
-            min-height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
             padding: 20px;
         }
 
@@ -281,7 +282,7 @@
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 5px 20px;
             background: linear-gradient(135deg, var(--primary), var(--jpa));
             color: white;
         }
@@ -342,18 +343,18 @@
 <body>
 <div class="container">
     <header>
-        <h1><i class="fas fa-lock"></i> BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT</h1>
+        <h1><i class="fas fa-lock"></i> ENCODER</h1>
     </header>
 
     <div class="content-wrapper">
         <nav class="sidebar">
             <ul class="nav-list">
-                <li class="nav-item"><a href="#section1" class="nav-link active"><i class="fas fa-exclamation-triangle"></i> 1. Tại sao không lưu Plain Text?</a></li>
-                <li class="nav-item"><a href="#section2" class="nav-link"><i class="fas fa-calculator"></i> 2. Thuật toán BCrypt</a></li>
-                <li class="nav-item"><a href="#section3" class="nav-link"><i class="fas fa-code"></i> 3. PasswordEncoder</a></li>
-                <li class="nav-item"><a href="#section4" class="nav-link"><i class="fas fa-cog"></i> 4. BCryptPasswordEncoder</a></li>
-                <li class="nav-item"><a href="#section5" class="nav-link"><i class="fas fa-sync-alt"></i> 5. Cập nhật UserDetailsService</a></li>
-                <li class="nav-item"><a href="#section6" class="nav-link"><i class="fas fa-bug"></i> 6. Lỗi thường gặp</a></li>
+                <li class="nav-item"><a href="#section1" class="nav-link active"><i class="fas fa-exclamation-triangle"></i>Tại sao không lưu Plain Text?</a></li>
+                <li class="nav-item"><a href="#section2" class="nav-link"><i class="fas fa-calculator"></i> Thuật toán BCrypt</a></li>
+                <li class="nav-item"><a href="#section3" class="nav-link"><i class="fas fa-code"></i>PasswordEncoder</a></li>
+                <li class="nav-item"><a href="#section4" class="nav-link"><i class="fas fa-cog"></i> BCryptPasswordEncoder</a></li>
+                <li class="nav-item"><a href="#section5" class="nav-link"><i class="fas fa-sync-alt"></i> UserDetailsService</a></li>
+                <li class="nav-item"><a href="#section6" class="nav-link"><i class="fas fa-bug"></i> Lỗi thường gặp</a></li>
             </ul>
         </nav>
 
@@ -401,22 +402,11 @@
     loginSuccess();
 }</pre>
                 </div>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-User nhập password
-        |
-        |
-        v
-Server nhận password
-        |
-        |
-        v
-So sánh trực tiếp với database
-        |
-        |
-        v
-Đăng nhập thành công</pre>
-                </div>
+              
+                  <div style="display: flex; justify-content: center;">
+                      <img style="width: 50%; " src="./img/sp21.png" alt="">
+                  </div>
+                
                 <p>Cách này có thể hoạt động về mặt chức năng. Tuy nhiên, về mặt bảo mật thì rất nguy hiểm.</p>
 
                 <h3>1.3. Nguy cơ khi lưu mật khẩu dạng Plain Text</h3>
@@ -488,15 +478,8 @@ So sánh trực tiếp với database
                 <h3>1.6. Hash Password là gì?</h3>
                 <h4>1.6.1. Khái niệm Hash</h4>
                 <p>Hash là quá trình biến đổi dữ liệu đầu vào thành một chuỗi có độ dài cố định.</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Input
-   |
-   |
- Hash Algorithm
-   |
-   |
-Output</pre>
+                <div style="display: flex; justify-content: center;">
+                    <img style="width: 80%;" src="./img/sp22.PNG" alt="">
                 </div>
                 <p>Ví dụ:</p>
                 <ul>
@@ -506,22 +489,8 @@ Output</pre>
 
                 <h4>1.6.2. Đặc điểm của Hash</h4>
                 <p><strong>Đặc điểm 1: Một chiều</strong></p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password
-     |
-     v
-Hash</pre>
-                </div>
-                <p>Không thể:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Hash
-     |
-     X
-     |
-Password</pre>
-                </div>
+               
+                <img src="./img/sp23.png" style="width: 30%;" alt="">
                 <p>Ví dụ: Có <code>e10adc3949ba59abbe56e057f20f883e</code> không thể lấy lại <code>123456</code>.</p>
 
                 <p><strong>Đặc điểm 2: Cùng dữ liệu có thể tạo cùng kết quả</strong></p>
@@ -559,19 +528,7 @@ Password</pre>
                 <h3>1.8. Spring Security xử lý mật khẩu như thế nào?</h3>
                 <p>Trong Spring Security, mật khẩu không được kiểm tra bằng cách: <code>password nhập vào = password database</code>.</p>
                 <p>Mà:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password người dùng nhập
-          |
-          v
-PasswordEncoder
-          |
-          v
-Hash mới
-          |
-          v
-So sánh với hash database</pre>
-                </div>
+                <img src="./img/sp2.4.png" style="width: 30%;" alt="">
                 <p>Ví dụ: Database: <code>$2a$10$Xyz123...</code>, Người dùng nhập: <code>123456</code>.</p>
                 <p>Spring Security: <code>BCrypt("123456")</code> sau đó <code>matches()</code>. Nếu đúng: <code>Authentication Success</code>.</p>
 
@@ -590,9 +547,9 @@ So sánh với hash database</pre>
                 <div class="success-box">
                     <p><strong>Giải pháp:</strong> Không lưu Password thật → Hash Password → Sử dụng BCrypt → Spring Security xác thực bằng PasswordEncoder</p>
                 </div>
-                <div class="note">
+                <!-- <div class="note">
                     <p><strong>Ở mục tiếp theo chúng ta sẽ tìm hiểu chi tiết:</strong> 2. Thuật toán BCrypt, BCrypt là gì? Vì sao BCrypt phù hợp để lưu mật khẩu? Cấu trúc chuỗi BCrypt. Salt trong BCrypt. Work Factor (Cost). Cách BCrypt chống Brute Force Attack.</p>
-                </div>
+                </div> -->
             </section>
 
             <!-- SECTION 2: Thuật toán BCrypt -->
@@ -611,57 +568,13 @@ So sánh với hash database</pre>
 
                 <h4>2.2.1. Encryption (mã hóa)</h4>
                 <p>Mã hóa là quá trình biến dữ liệu ban đầu thành dữ liệu bị che giấu.</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Dữ liệu gốc
-     |
-     |
-     v
- Encryption + Key
-     |
-     |
-     v
- Dữ liệu đã mã hóa</pre>
-                </div>
-                <p>Có thể giải mã:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Encrypted Data
-       |
-       |
-       v
-     Key
-       |
-       |
-       v
-Original Data</pre>
-                </div>
+               <img src="./img/sp2.5.png" style="width: 60%;" alt="">
                 <p>Ví dụ: Message <code>Hello</code> → Encrypt <code>X7a9Pq2</code> → Decrypt <code>Hello</code>.</p>
                 <p>Mục đích: Bảo vệ dữ liệu khi truyền, Lưu trữ dữ liệu cần lấy lại (HTTPS, Mã hóa file, Token).</p>
 
                 <h4>2.2.2. Hashing (băm dữ liệu)</h4>
                 <p>Hashing hoạt động khác.</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password
-    |
-    |
-    v
- Hash Algorithm
-    |
-    |
-    v
-Hash Value</pre>
-                </div>
-                <p>Không có chiều ngược lại:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Hash Value
-      |
-      X
-      |
-Password</pre>
-                </div>
+                <img src="./img/sp2.6.png" style="width: 60%;" alt="">
                 <p>Ví dụ: Input <code>123456</code> → BCrypt <code>$2a$10$8Yd7Kp9L...</code> không thể lấy lại <code>123456</code>.</p>
 
                 <h3>2.3. Tại sao BCrypt được dùng để lưu mật khẩu?</h3>
@@ -691,26 +604,8 @@ Password</pre>
                 <p>Điều này làm cho việc dò mật khẩu trở nên khó khăn hơn.</p>
 
                 <h3>2.5. Cơ chế hoạt động của BCrypt</h3>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password người dùng nhập
-        |
-        |
-        v
-Thêm Salt ngẫu nhiên
-        |
-        |
-        v
-Thực hiện thuật toán BCrypt
-        |
-        |
-        v
-Sinh Password Hash
-        |
-        |
-        v
-Lưu Database</pre>
-                </div>
+                <img src="./img/sp2.7.png" style="width: 40%;" alt="">
+
                 <p>Ví dụ: Người dùng đăng ký Password: <code>123456</code>. BCrypt tạo Salt: <code>$2a$10$K8s9dP...</code>. Kết hợp: <code>123456 + Salt</code>. Sau đó tạo Hash: <code>$2a$10$K8s9dP8Hj...</code>. Database chỉ lưu: <code>$2a$10$K8s9dP8Hj...</code></p>
 
                 <h3>2.6. Cấu trúc của một chuỗi BCrypt</h3>
@@ -718,15 +613,7 @@ Lưu Database</pre>
                 <div class="code-block" style="background:#1e2a3a; color:#ecf0f1;">
                     <pre style="color:#ecf0f1;">$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy</pre>
                 </div>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy
- |   |                         |
- |   |                         |
- |   |                         |
- |   |                         |
-Version Cost                  Hash</pre>
-                </div>
+               <img src="./img/sp2.8.png" style="width: 80%;" alt="">
 
                 <h4>2.6.1. Version</h4>
                 <p>Phần đầu <code>$2a$</code> cho biết phiên bản BCrypt.</p>
@@ -788,18 +675,7 @@ Version Cost                  Hash</pre>
                 <p>Nếu BCrypt có Salt khác nhau, làm sao kiểm tra đăng nhập?</p>
                 <p>Ví dụ: Database <code>$2a$10$abc123xyz...</code>, người dùng nhập <code>123456</code>.</p>
                 <p>Spring không tạo hash mới rồi so sánh trực tiếp. Nó làm:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password nhập
-      +
-Salt được lưu trong hash
-      |
-      v
-BCrypt Verify
-      |
-      v
-True / False</pre>
-                </div>
+                <img src="./img/sp2.9.png" style="width: 60%;" alt="">
                 <p>Trong Spring Security:</p>
                 <div class="code-block">
                     <div class="code-header"><span><i class="fas fa-code"></i> Kiểm tra mật khẩu</span><button class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
@@ -849,22 +725,10 @@ True / False</pre>
                         </tbody>
                     </table>
                 </div>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-User Password
-       |
-       v
-BCrypt Encoder
-       |
-       v
-Password Hash
-       |
-       v
-Database</pre>
-                </div>
-                <div class="note">
+                
+                <!-- <div class="note">
                     <p><strong>Trong mục tiếp theo:</strong> 3. PasswordEncoder trong Spring Security</p>
-                </div>
+                </div> -->
             </section>
 
             <!-- SECTION 3: PasswordEncoder trong Spring Security -->
@@ -895,39 +759,7 @@ Database</pre>
                 <p>Mặc dù chạy được nhưng cực kỳ nguy hiểm. Vấn đề: Database chứa mật khẩu thật. Người có quyền truy cập database biết password. Nếu bị lộ dữ liệu, toàn bộ tài khoản bị mất.</p>
 
                 <h4>3.2.2. PasswordEncoder tạo lớp bảo vệ</h4>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password thật
-      |
-      |
-      v
-PasswordEncoder
-      |
-      |
-      v
-Password Hash
-      |
-      |
-      v
-Database</pre>
-                </div>
-                <p>Khi đăng nhập:</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Password người dùng nhập
-          |
-          |
-          v
-PasswordEncoder
-          |
-          |
-          v
-So sánh với hash database
-          |
-          |
-          v
-Authentication thành công</pre>
-                </div>
+               <img src="./img/sp2.10.png" style="width: 90%;" alt="">
 
                 <h3>3.3. Cấu trúc của PasswordEncoder</h3>
                 <p>PasswordEncoder là một interface:</p>
@@ -1043,28 +875,7 @@ passwordEncoder.encode(<span class="string">"123456"</span>);  <span class="comm
                 <p><strong>Bước 4:</strong> Lưu database: username: <code>manh</code>, password: <code>$2a$10$8Hs7K...</code></p>
 
                 <h3>3.10. PasswordEncoder trong quá trình đăng nhập</h3>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-HTTP Request
-      |
-      v
-UsernamePasswordAuthenticationFilter
-      |
-      v
-AuthenticationManager
-      |
-      v
-AuthenticationProvider
-      |
-      v
-UserDetailsService
-      |
-      v
-PasswordEncoder.matches()
-      |
-      v
-Authentication Success</pre>
-                </div>
+             <img src="./img/sp2.11.png" style="width: 60%;" alt="">
 
                 <h3>3.11. Các loại PasswordEncoder trong Spring Security</h3>
                 <p>Spring Security cung cấp nhiều loại:</p>
@@ -1102,36 +913,8 @@ PasswordEncoder passwordEncoder() {
                 </div>
 
                 <h3>3.13. Vai trò của PasswordEncoder trong hệ thống Authentication</h3>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-               User
-                 |
-                 |
-        Nhập username/password
-                 |
-                 |
-                 v
-        AuthenticationManager
-                 |
-                 |
-                 v
-        UserDetailsService
-                 |
-                 |
-                 v
-          Lấy User Database
-                 |
-                 |
-                 v
-       PasswordEncoder.matches()
-                 |
-          +------+------+
-          |             |
-        Đúng           Sai
-          |             |
-          v             v
-     Login OK      401 Error</pre>
-                </div>
+                     <img src="./img/sp2.12.png" style="width: 60%;" alt="">
+
 
                 <h3>3.14. Tổng kết mục 3</h3>
                 <div class="table-container">
@@ -1155,9 +938,9 @@ Password → encode() → Database
 Đăng nhập:
 Password nhập → matches() → Database Hash</pre>
                 </div>
-                <div class="note">
+                <!-- <div class="note">
                     <p><strong>Mục tiếp theo:</strong> 4. BCryptPasswordEncoder. Nội dung sẽ gồm: BCryptPasswordEncoder là gì? Cách Spring tạo Bean. Cấu hình Strength. encode() thực tế. matches() thực tế. Tích hợp vào Service. Ví dụ hoàn chỉnh với Spring Boot.</p>
-                </div>
+                </div> -->
             </section>
 
             <!-- SECTION 4: BCryptPasswordEncoder trong Spring Security -->
@@ -1167,41 +950,15 @@ Password nhập → matches() → Database Hash</pre>
                 <h3>4.1. Tổng quan về BCryptPasswordEncoder</h3>
                 <h4>4.1.1. BCryptPasswordEncoder là gì?</h4>
                 <p>BCryptPasswordEncoder là một class có sẵn trong Spring Security, được sử dụng để thực hiện việc mã hóa mật khẩu bằng thuật toán BCrypt. Nó là một implementation (lớp triển khai) của interface <strong>PasswordEncoder</strong>.</p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-PasswordEncoder
-       |
-       |
-+------+------+
-|             |
-|             |
-BCryptPasswordEncoder  NoOpPasswordEncoder</pre>
-                </div>
+                <img src="./img/sp2.13.png" style="width: 90%;" alt="">
                 <ul>
                     <li><strong>PasswordEncoder:</strong> Quy định các phương thức cần có</li>
                     <li><strong>BCryptPasswordEncoder:</strong> Thực hiện mã hóa bằng BCrypt</li>
                 </ul>
 
                 <h4>4.1.2. Vị trí của BCryptPasswordEncoder trong Spring Security</h4>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-User nhập password
-        |
-        v
-Spring Security
-        |
-        v
-PasswordEncoder
-        |
-        v
-BCryptPasswordEncoder
-        |
-        v
-Kiểm tra BCrypt Hash
-        |
-        v
-Authentication thành công</pre>
-                </div>
+                <img src="./img/sp2.14.png" style="width: 40%;" alt="">
+                
                 <p>Spring Security không tự biết cách mã hóa password. Chúng ta phải cung cấp <code>@Bean PasswordEncoder passwordEncoder()</code> để Spring sử dụng.</p>
 
                 <h3>4.2. Dependency cần thiết</h3>
@@ -1261,25 +1018,7 @@ Authentication thành công</pre>
                 <p>Mặc dù password = 123456.</p>
 
                 <h3>4.5. Phân tích kết quả BCrypt</h3>
-                <p>Ví dụ: <code>$2a$10$N9qo8uLOickgx2ZMRZoMye...</code></p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-$2a$10$N9qo8uLOickgx2ZMRZoMye
- |   |              |
- |   |              |
- |   |              |
-Version Cost       Salt + Hash</pre>
-                </div>
-
-                <h4>4.5.1. Version</h4>
-                <p><code>$2a$</code> cho biết phiên bản BCrypt (có thể là $2a$, $2b$, $2y$).</p>
-
-                <h4>4.5.2. Strength</h4>
-                <p><code>$10$</code> là độ khó của BCrypt. <code>new BCryptPasswordEncoder(10);</code> tương đương Cost = 10.</p>
-
-                <h4>4.5.3. Salt</h4>
-                <p>BCrypt tự sinh Salt. Ví dụ: Password: <code>123456</code>, Salt: <code>A7x9Kp</code>, Hash: <code>$2a$10$A7x9Kp....</code> Salt được lưu chung trong chuỗi BCrypt.</p>
-
+                <img src="./img/sp2.15.png" width="90%" alt="">
                 <h3>4.6. Cấu hình Strength cho BCryptPasswordEncoder</h3>
                 <h4>4.6.1. Constructor mặc định</h4>
                 <p><code>new BCryptPasswordEncoder();</code> → Strength = 10</p>
@@ -1418,9 +1157,9 @@ System.out.println(result);  <span class="comment">// true</span></pre>
                     <p>BCrypt hash dài khoảng 60 ký tự. Nên dùng <code>password VARCHAR(100)</code> hoặc <code>VARCHAR(255)</code>.</p>
                 </div>
 
-                <div class="note" style="margin-top:30px;">
+                <!-- <div class="note" style="margin-top:30px;">
                     <p><strong>Mục tiếp theo:</strong> 5. Cập nhật UserDetailsService sử dụng BCrypt</p>
-                </div>
+                </div> -->
             </section>
 
             <!-- SECTION 5: Cập nhật UserDetailsService sử dụng BCrypt -->
@@ -1516,19 +1255,7 @@ System.out.println(result);  <span class="comment">// true</span></pre>
     <span class="keyword">return new</span> InMemoryUserDetailsManager(user);
 }</pre>
                 </div>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-Ứng dụng khởi động
-        |
-        v
-encoder.encode("123456")
-        |
-        v
-$2a$10$abcxyz...
-        |
-        v
-InMemoryUserDetailsManager lưu UserDetails</pre>
-                </div>
+             <img src="./img/sp2.16.png" style="width: 40%;" alt="">
 
                 <h3>5.5. SecurityConfig hoàn chỉnh sau khi cập nhật</h3>
                 <div class="code-block">
@@ -1566,24 +1293,13 @@ InMemoryUserDetailsManager lưu UserDetails</pre>
 
                 <h3>5.6. Kiểm tra đăng nhập</h3>
                 <p>Request: username: <code>manh</code>, password: <code>123456</code></p>
-                <div class="architecture">
-                    <pre style="color: #ecf0f1; margin:0;">
-123456
-   |
-   |
-PasswordEncoder.matches()
-   |
-   |
-$2a$10$abcxyz...
-   |
-   |
-true</pre>
-                </div>
+                 <img src="./img/sp2.17.png" style="width: 40%;" alt="">
+
                 <p>Kết quả: <code>HTTP 200 OK</code></p>
 
-                <div class="note" style="margin-top:30px;">
+                <!-- <div class="note" style="margin-top:30px;">
                     <p><strong>Mục tiếp theo:</strong> 7. Lỗi thường gặp (đánh số 7 theo tài liệu gốc).</p>
-                </div>
+                </div> -->
             </section>
 
             <!-- SECTION 6: Lỗi thường gặp -->
@@ -1797,7 +1513,7 @@ encoder.encode(password);</pre>
     </div>
 
     <footer>
-        <p><i class="fas fa-lock"></i> BÀI 2: MÃ HÓA MẬT KHẨU VỚI BCRYPT - Giáo trình Spring Security</p>
+        <p><i class="fas fa-lock"></i> GV: Nguyễn Đình Mạnh</p>
     </footer>
 </div>
 

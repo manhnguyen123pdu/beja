@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Backend Java Roadmap</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <div class="container nav">
+
+            <div class="logo">
+
+                <img src="./img/logo.png">
+
+            </div>
+
+            <ul>
+
+                <li class="active">Roadmap</li>
+                <li>Lessons</li>
+                <li>Projects</li>
+                <li>Resources</li>
+                <li>About</li>
+
+            </ul>
+
+            <div class="user">
+
+                <i class="fa-solid fa-circle-user"></i>
+
+                <span>Student</span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="container hero-wrapper">
+
+            <div class="hero-left">
+
+                <h1>Backend Java Roadmap</h1>
+
+                <h3>
+
+                    Master Backend Development with Spring Boot
+
+                </h3>
+
+                <p>
+
+                    Learn SQL, Java Web, Spring Boot, Spring Security,
+                    JWT, Redis, Docker and build real-world enterprise
+                    applications through a structured 55-lesson roadmap.
+
+                </p>
+
+                <div class="hero-info">
+
+                    <div>
+
+                        <i class="fa-solid fa-book"></i>
+
+                        <div>
+
+                            <h4>55 Lessons</h4>
+
+                            <span>Structured Roadmap</span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <i class="fa-regular fa-clock"></i>
+
+                        <div>
+
+                            <h4>110+ Hours</h4>
+
+                            <span>Learning Content</span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <i class="fa-solid fa-code"></i>
+
+                        <div>
+
+                            <h4>180+ Exercises</h4>
+
+                            <span>Practice</span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <i class="fa-solid fa-diagram-project"></i>
+
+                        <div>
+
+                            <h4>4 Projects</h4>
+
+                            <span>Enterprise Projects</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="hero-btn">
+
+                    <button class="primary">
+
+                        <i class="fa-solid fa-play"></i>
+
+                        Continue Learning
+
+                    </button>
+
+                    <button class="secondary">
+
+                        <i class="fa-solid fa-road"></i>
+
+                        View Roadmap
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="hero-right">
+
+                <img src="./img/backend-banner.png">
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="dashboard">
+
+        <div class="container stats">
+
+            <div class="stat-card">
+
+                <h4>Overall Progress</h4>
+
+                <h2>12 / 55 Lessons</h2>
+
+                <p>22% Completed</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h4>Study Time</h4>
+
+                <h2>24h 30m</h2>
+
+                <p>Total Learning Time</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h4>Current Streak</h4>
+
+                <h2>10 Days</h2>
+
+                <p>Keep Learning!</p>
+
+            </div>
+
+            <div class="stat-card">
+
+                <h4>Next Lesson</h4>
+
+                <h2>Lesson 13</h2>
+
+                <p>Mini Project Servlet</p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= SEARCH ================= -->
+
+    <section class="container tools">
+
+        <div class="search">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                id="search"
+                type="text"
+                placeholder="Search lesson...">
+
+        </div>
+
+        <div class="filter">
+
+            <button class="active">All</button>
+
+            <button>SQL</button>
+
+            <button>Servlet</button>
+
+            <button>Spring Boot</button>
+
+            <button>Security</button>
+
+            <button>Advanced</button>
+
+            <button>Project</button>
+
+        </div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 1 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 1 · SQL & Database
+
+            </h2>
+
+            <span>
+
+                Lessons 1 → 6
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase1"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 2 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 2 · Java Web (Servlet & JSP)
+
+            </h2>
+
+            <span>
+
+                Lessons 7 → 13
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase2"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 3 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 3 · Spring Boot Foundation
+
+            </h2>
+
+            <span>
+
+                Lessons 14 → 37
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase3"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 4 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 4 · Spring Security & JWT
+
+            </h2>
+
+            <span>
+
+                Lessons 38 → 46
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase4"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 5 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 5 · Advanced Spring Boot
+
+            </h2>
+
+            <span>
+
+                Lessons 47 → 51
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase5"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= PHASE 6 ================= -->
+
+    <section class="container phase">
+
+        <div class="phase-title">
+
+            <h2>
+
+                Phase 6 · Enterprise Project
+
+            </h2>
+
+            <span>
+
+                Lessons 52 → 55
+
+            </span>
+
+        </div>
+
+        <div class="lesson-list" id="phase6"></div>
+
+    </section>
+
+
+
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="container footer">
+
+            <div>
+
+                <img src="./img/logo.png">
+
+                <p>
+
+                    Become a Professional Java Backend Developer
+                    through structured learning and real projects.
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3>Roadmap</h3>
+
+                <a href="#">SQL</a>
+                <a href="#">Servlet</a>
+                <a href="#">Spring Boot</a>
+                <a href="#">Security</a>
+
+            </div>
+
+            <div>
+
+                <h3>Resources</h3>
+
+                <a href="#">Exercises</a>
+                <a href="#">Projects</a>
+                <a href="#">Documentation</a>
+
+            </div>
+
+            <div>
+
+                <h3>Support</h3>
+
+                <a href="#">FAQ</a>
+                <a href="#">Community</a>
+                <a href="#">Contact</a>
+
+            </div>
+
+            <div>
+
+                <h3>Newsletter</h3>
+
+                <input
+                    type="email"
+                    placeholder="Enter your email">
+
+                <button>
+
+                    Subscribe
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
