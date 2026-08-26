@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lombok, Mapper</title>
+    <title>Lombok, Mapper, Response, Exception | Giáo trình Spring Boot</title>
     <style>
         * {
             margin: 0;
@@ -271,22 +271,22 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-leaf"></i> LOMBOK, MAPPER</h1>
+            <h1><i class="fas fa-leaf"></i> LOMBOK, MAPPER, RESPONSE & EXCEPTION</h1>
         </header>
 
         <div class="content-wrapper">
             <nav class="sidebar">
                 <ul class="nav-list">
                     <li class="nav-item"><a href="#chuong1" class="nav-link active"><i class="fas fa-info-circle"></i>
-                            Lombok</a></li>
-                    <li class="nav-item"><a href="#chuong2" class="nav-link"><i class="fas fa-magic"></i>
+                            PHẦN 1: Lombok</a></li>
+                    <li class="nav-item"><a href="#chuong2" class="nav-link"><i class="fas fa-magic"></i> PHẦN 2:
                             Mapper</a></li>
-                    <!-- <li class="nav-item"><a href="#chuong3" class="nav-link"><i class="fas fa-reply-all"></i> PHẦN 3: -->
-                            <!-- Chuẩn hóa Response</a></li> -->
-                    <!-- <li class="nav-item"><a href="#chuong4" class="nav-link"><i class="fas fa-exclamation-triangle"></i> -->
-                            <!-- PHẦN 4: Xử lý Exception</a></li> -->
-                    <!-- <li class="nav-item"><a href="#chuong5" class="nav-link"><i class="fas fa-project-diagram"></i> PHẦN -->
-                            <!-- 5: Kết hợp tổng thể</a></li> -->
+                    <li class="nav-item"><a href="#chuong3" class="nav-link"><i class="fas fa-reply-all"></i> PHẦN 3:
+                            Chuẩn hóa Response</a></li>
+                    <li class="nav-item"><a href="#chuong4" class="nav-link"><i class="fas fa-exclamation-triangle"></i>
+                            PHẦN 4: Xử lý Exception</a></li>
+                    <li class="nav-item"><a href="#chuong5" class="nav-link"><i class="fas fa-project-diagram"></i> PHẦN
+                            5: Kết hợp tổng thể</a></li>
                 </ul>
             </nav>
 
@@ -404,7 +404,7 @@ public class Student {
     private String name;
 }</pre>
                     </div>
-                    <p>Annotation: @Getter nói cho Lombok biết rằng class cần getter.<br>Về mặt tư duy, có thể
+                    <p>Annotation:<br>@Getter<br>nói cho Lombok biết rằng class cần getter.<br>Về mặt tư duy, có thể
                         hình dung:</p>
                     <div class="code-block">
                         <pre>Java Source Code
@@ -454,34 +454,12 @@ public class Student {
                     </p>
 
                     <h4>1.1.5. Khi nào nên sử dụng Lombok?</h4>
-                  <p>Lombok đặc biệt hữu ích trong các project:</p>
-
-<ul>
-    <li>Spring Boot.</li>
-    <li>Spring MVC.</li>
-    <li>Spring Data JPA.</li>
-    <li>REST API.</li>
-    <li>Các project có nhiều DTO.</li>
-    <li>Các project có nhiều Entity/Model.</li>
-</ul>
-
-<p>Ví dụ một project Spring Boot có:</p>
-
-<ul>
-    <li>User</li>
-    <li>Product</li>
-    <li>Order</li>
-    <li>Medicine</li>
-    <li>Invoice</li>
-    <li>Customer</li>
-    <li>Employee</li>
-    <li>...</li>
-</ul>
-
-<p>
-    Nếu mỗi class đều phải viết getter, setter, constructor thì lượng code sẽ rất lớn.
-    Lombok giúp giảm đáng kể phần code này.
-</p>
+                    <p>Lombok đặc biệt hữu ích trong các project:<br>Spring Boot.<br>Spring MVC.<br>Spring Data
+                        JPA.<br>REST API.<br>Các project có nhiều DTO.<br>Các project có nhiều Entity/model.<br>Ví dụ
+                        một project Spring Boot
+                        có:<br>User<br>Product<br>Order<br>Medicine<br>Invoice<br>Customer<br>Employee<br>...<br>Nếu mỗi
+                        class đều phải viết getter, setter, constructor thì lượng code sẽ rất lớn.<br>Lombok giúp giảm
+                        đáng kể phần code này.</p>
 
                     <h3>1.2. Cài đặt Lombok</h3>
                     <h4>1.2.1. Cài Lombok bằng Maven</h4>
@@ -497,7 +475,6 @@ public class Student {
                     </div>
 
                     <h4>1.2.2. Giải thích cú pháp</h4>
-                    <div class="code-block">
                     <p>&lt;dependency&gt;<br>Đây là phần khai báo một thư viện mà project cần sử
                         dụng.<br>&lt;dependency&gt;<br> ...<br>&lt;/dependency&gt;<br>Mỗi dependency Maven thường có các
                         thông tin xác định thư viện.</p>
@@ -506,7 +483,7 @@ public class Student {
                     <p>&lt;artifactId&gt;<br>&lt;artifactId&gt;lombok&lt;/artifactId&gt;<br>Xác định tên thư viện.</p>
                     <p>&lt;optional&gt;<br>&lt;optional&gt;true&lt;/optional&gt;<br>Đánh dấu Lombok là dependency hỗ trợ
                         cho project.</p>
-</div>
+
                     <h4>1.2.3. Import Lombok</h4>
                     <p>Sau khi cài đặt, trong Java có thể import annotation:</p>
                     <div class="code-block">
@@ -562,7 +539,7 @@ public class Student {
                     <h3>1.3. @Getter, @Setter</h3>
                     <h4>1.3.1. Lý thuyết về Getter</h4>
                     <p>Trong Java, thuộc tính thường được khai báo private.<br>Ví dụ:<br>private String name;<br>Do
-                        thuộc tính là private, class bên ngoài không nên truy cập trực tiếp:student.name;<br>Thay
+                        thuộc tính là private, class bên ngoài không nên truy cập trực tiếp:<br>student.name;<br>Thay
                         vào đó, sử dụng getter:</p>
                     <div class="code-block">
                         <div class="code-header"><span>Getter truyền thống</span><button class="copy-btn"
@@ -581,8 +558,8 @@ public class Student {
     return name;
 }</pre>
                     </div>
-                    <p>Giải thích:<br>public→ phương thức có thể được gọi từ bên ngoài class.<br>String→ kiểu dữ
-                        liệu trả về.<br>getName()→ tên phương thức getter.<br>return name;→ trả về giá trị của
+                    <p>Giải thích:<br>public<br>→ phương thức có thể được gọi từ bên ngoài class.<br>String<br>→ kiểu dữ
+                        liệu trả về.<br>getName()<br>→ tên phương thức getter.<br>return name;<br>→ trả về giá trị của
                         thuộc tính name.</p>
 
                     <h4>1.3.3. @Getter</h4>
