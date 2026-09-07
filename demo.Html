@@ -376,13 +376,13 @@
                     <li class="nav-item"><a href="#phan-quyen-mot" class="nav-link"><i class="fas fa-lock"></i> Phân quyền một Role</a></li>
                     <li class="nav-item"><a href="#phan-quyen-nhieu" class="nav-link"><i class="fas fa-users"></i> Phân quyền nhiều Role</a></li>
                     <li class="nav-item"><a href="#nhieu-role" class="nav-link"><i class="fas fa-user-plus"></i> Một User có nhiều Role</a></li>
-                    <li class="nav-item"><a href="#xay-dung" class="nav-link"><i class="fas fa-cogs"></i> Xây dựng phân quyền hoàn chỉnh</a></li>
-                    <li class="nav-item"><a href="#thuc-hanh" class="nav-link"><i class="fas fa-check-circle"></i> Thực hành kiểm tra 401 và 403</a></li>
-                    <li class="nav-item"><a href="#bai-tap" class="nav-link"><i class="fas fa-tasks"></i> Bài tập tổng hợp</a></li>
+                    <li class="nav-item"><a href="#tong-ket" class="nav-link"><i class="fas fa-cogs"></i> Xây dựng phân quyền hoàn chỉnh</a></li>
+                    <!-- <li class="nav-item"><a href="#thuc-hanh" class="nav-link"><i class="fas fa-check-circle"></i> Thực hành kiểm tra 401 và 403</a></li> -->
+                    <!-- <li class="nav-item"><a href="#bai-tap" class="nav-link"><i class="fas fa-tasks"></i> Bài tập tổng hợp</a></li> -->
                 </ul>
             </nav>
             <main class="main-content">
-<section id="jwt-intro" class="section active">
+<section id="jwt-claim" class="section active">
     <h2><i class="fas fa-lock"></i> 1. JWT Claim và Role</h2>
 
 
@@ -409,7 +409,7 @@
 
     <p>Ngoài các Claim có sẵn, ứng dụng có thể tự thêm các Claim riêng.</p>
 
-    <hr>
+    
 
     <h3>1.2. Custom Claim</h3>
 
@@ -449,7 +449,7 @@
 
     <p>Trong trường hợp này, <code>role</code> cũng có thể được thiết kế như một Custom Claim.</p>
 
-    <hr>
+    
 
     <h3>1.3. Claim <code>role</code></h3>
 
@@ -481,7 +481,7 @@ ROLE_USER</pre>
         <li>ROLE_MANAGER</li>
     </ul>
 
-    <hr>
+    
 
     <h3>1.4. Role dạng String</h3>
 
@@ -513,7 +513,7 @@ ROLE_USER</pre>
 
     <p>Đây là cách thiết kế đơn giản và dễ sử dụng khi mỗi User chỉ có một Role.</p>
 
-    <hr>
+    
 
     <h3>1.5. Role dạng nhiều giá trị</h3>
 
@@ -555,7 +555,7 @@ user2
 
     <p>Cách này phù hợp khi một User có thể đảm nhận nhiều Role.</p>
 
-    <hr>
+    
 
     <h3>1.6. Thiết kế JWT chứa Role</h3>
 
@@ -621,10 +621,9 @@ JWT
 
    
 </section>
-<section id="role-authority" class="section active">
+<section id="role-authority" class="section ">
     <h2><i class="fas fa-shield-alt"></i> 2. Role và GrantedAuthority</h2>
 
-    <p><strong>Được. Phần này mới là phần trọng tâm để hiểu Role trong Spring Security, nên có thể viết chi tiết hơn phần giới thiệu JWT Claim. Đặc biệt phải làm rõ mối quan hệ:</strong></p>
 
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 Role
@@ -671,7 +670,7 @@ GrantedAuthority
 
     <p>Sau đó Spring Security dùng các Authority này để quyết định User có được phép truy cập Resource hay không.</p>
 
-    <hr>
+    
 
     <h3>2.1. Role là gì?</h3>
 
@@ -708,7 +707,7 @@ id | username | role
 2  | user2    | USER
 3  | admin    | ADMIN</pre>
 
-    <hr>
+    
 
     <h4>2.1.2. Role trong Spring Security</h4>
 
@@ -753,7 +752,7 @@ ROLE_ADMIN</pre>
         <pre>.hasRole("ROLE_USER")</pre>
     </div>
 
-    <hr>
+    
 
     <h3>2.2. Authority là gì?</h3>
 
@@ -793,7 +792,7 @@ USER_CREATE</pre>
 
     <p>là các Authority cụ thể.</p>
 
-    <hr>
+    
 
     <h4>Role và Authority</h4>
 
@@ -815,7 +814,7 @@ Role
 
     <p>Đây là điểm rất quan trọng.</p>
 
-    <hr>
+    
 
     <h3>2.3. <code>GrantedAuthority</code></h3>
 
@@ -873,7 +872,7 @@ ROLE_USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_ADMIN</pre>
 
-    <hr>
+    
 
     <h4>2.3.2. <code>SimpleGrantedAuthority</code></h4>
 
@@ -930,7 +929,7 @@ GrantedAuthority
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h4>2.3.3. User có nhiều Authority</h4>
 
@@ -957,7 +956,7 @@ authorities
 
     <p>Đây chính là danh sách quyền mà Spring Security sử dụng để Authorization.</p>
 
-    <hr>
+    
 
     <h3>2.4. Quan hệ giữa Role và Authority</h3>
 
@@ -1011,7 +1010,7 @@ GrantedAuthority</pre>
 
     <p>chứ không trực tiếp kiểm tra một cột <code>role</code> trong Database.</p>
 
-    <hr>
+    
 
     <h4>Ví dụ</h4>
 
@@ -1045,7 +1044,7 @@ SimpleGrantedAuthority("ROLE_USER")</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h3>2.5. <code>ROLE_</code> Prefix</h3>
 
@@ -1073,7 +1072,7 @@ MANAGER
  ↓
 ROLE_MANAGER</pre>
 
-    <hr>
+    
 
     <h4>2.5.1. Tại sao có <code>ROLE_</code>?</h4>
 
@@ -1117,7 +1116,7 @@ ROLE_</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h3>2.6. <code>hasRole()</code> hoạt động như thế nào?</h3>
 
@@ -1152,7 +1151,7 @@ USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h4>2.6.1. Flow</h4>
 
@@ -1189,7 +1188,7 @@ Có
    ↓
 Cho phép</pre>
 
-    <hr>
+    
 
     <h4>2.6.2. Ví dụ</h4>
 
@@ -1222,7 +1221,7 @@ ROLE_ADMIN</pre>
 
     <p>→ Không cho phép.</p>
 
-    <hr>
+    
 
     <h3>2.7. <code>hasAuthority()</code> hoạt động như thế nào?</h3>
 
@@ -1252,7 +1251,7 @@ ROLE_USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_ROLE_USER</pre>
 
-    <hr>
+    
 
     <h4>2.7.1. Ví dụ</h4>
 
@@ -1283,7 +1282,7 @@ MATCH
        ↓
 Cho phép</pre>
 
-    <hr>
+    
 
     <h4>2.7.2. Với Permission</h4>
 
@@ -1321,7 +1320,7 @@ ROLE_</pre>
 
     <p>vì đây là Authority thông thường chứ không phải cách biểu diễn Role.</p>
 
-    <hr>
+    
 
     <h3>2.8. <code>hasRole("USER")</code> và <code>ROLE_USER</code></h3>
 
@@ -1359,7 +1358,7 @@ ROLE_USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h4>2.8.1. So sánh</h4>
 
@@ -1378,7 +1377,7 @@ ROLE_USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h5><code>hasAuthority()</code></h5>
 
@@ -1417,7 +1416,7 @@ ROLE_USER</pre>
 
     <p>có thể dẫn tới <strong>cùng một kết quả kiểm tra</strong>.</p>
 
-    <hr>
+    
 
     <h4>2.8.2. Không viết như thế này</h4>
 
@@ -1457,7 +1456,7 @@ ROLE_USER</pre>
 
     <p>→ Không match.</p>
 
-    <hr>
+    
 
     <h4>Cách đúng</h4>
 
@@ -1481,7 +1480,7 @@ ROLE_USER</pre>
         <pre>.hasAuthority("ROLE_USER")</pre>
     </div>
 
-    <hr>
+    
 
     <h4>2.8.3. Bảng ghi nhớ</h4>
 
@@ -1504,7 +1503,7 @@ ROLE_USER</pre>
         </table>
     </div>
 
-    <hr>
+    
 
     <h4>2.8.4. Ví dụ đầy đủ</h4>
 
@@ -1561,7 +1560,7 @@ User có ROLE_ADMIN
        ↓
 OK</pre>
 
-    <hr>
+    
 
     <h4>2.8.5. <code>hasAnyRole()</code></h4>
 
@@ -1604,7 +1603,7 @@ ROLE_ADMIN</pre>
 
     <p>→ Không được phép.</p>
 
-    <hr>
+    
 
     <h4>2.8.6. <code>hasAnyAuthority()</code></h4>
 
@@ -1628,7 +1627,7 @@ ROLE_USER
 hoặc
 ROLE_ADMIN</pre>
 
-    <hr>
+    
 
     <h4>2.8.7. Sơ đồ tổng quát</h4>
 
@@ -1665,7 +1664,7 @@ ROLE_ADMIN</pre>
        ▼
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h4>2.8.8. Công thức cần nhớ</h4>
 
@@ -1691,7 +1690,7 @@ ROLE_X</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 ROLE_USER</pre>
 
-    <hr>
+    
 
     <h5><code>hasAuthority()</code></h5>
 
@@ -1730,7 +1729,7 @@ ROLE_USER</pre>
     <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
 USER_READ</pre>
 
-    <hr>
+    
 
     <h4>2.8.9. Những lỗi rất hay gặp</h4>
 
@@ -1759,7 +1758,7 @@ ROLE_ROLE_USER</pre>
         <pre>.hasRole("USER")</pre>
     </div>
 
-    <hr>
+    
 
     <h5>❌ Sai</h5>
 
@@ -1786,7 +1785,7 @@ ROLE_USER</pre>
         <pre>.hasAuthority("ROLE_USER")</pre>
     </div>
 
-    <hr>
+    
 
     <h3>Tổng kết phần 2</h3>
 
@@ -1866,6 +1865,5050 @@ GrantedAuthority</pre>
         <p style="margin-top: 15px;"><strong>Tóm lại:</strong> <code>Role</code> là cách chúng ta gọi vai trò như <code>USER</code>, <code>ADMIN</code>; còn Spring Security biểu diễn nó dưới dạng <code>GrantedAuthority</code>, thường là <code>ROLE_USER</code>, <code>ROLE_ADMIN</code>. <code>hasRole("USER")</code> tự thêm prefix <code>ROLE_</code>, trong khi <code>hasAuthority()</code> kiểm tra chính xác chuỗi Authority được truyền vào.</p>
     </div>
 </section>
+<section id="mapping" class="section ">
+    <h2><i class="fas fa-exchange-alt"></i> 3. JWT Role Mapping</h2>
+
+    <p>Sau khi đã hiểu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Role
+GrantedAuthority
+hasRole()
+hasAuthority()</pre>
+
+    <p>chúng ta cần hiểu một vấn đề rất quan trọng khi sử dụng JWT:</p>
+
+    <blockquote style="border-left: 4px solid #e74c3c; padding-left: 15px; margin: 15px 0;">
+        <strong>JWT có chứa <code>role</code>, nhưng Spring Security không tự động biết <code>role</code> đó phải trở thành <code>GrantedAuthority</code> nào.</strong>
+    </blockquote>
+
+    <p>Đây chính là nhiệm vụ của <strong>JWT Role Mapping</strong>.</p>
+
+    
+
+    <h3>3.1. Tại sao JWT có <code>role</code> nhưng Spring Security không tự nhận?</h3>
+
+    <p>Giả sử JWT có Payload:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT Payload</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Nhìn vào JWT, chúng ta thấy:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+sub
+ ↓
+user2
+
+role
+ ↓
+ROLE_USER</pre>
+
+    <p>Tuy nhiên, Spring Security không mặc định hiểu rằng:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role = ROLE_USER</pre>
+
+    <p>phải trở thành:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SimpleGrantedAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>new SimpleGrantedAuthority("ROLE_USER")</pre>
+    </div>
+
+    <p>Đây là hai khái niệm khác nhau:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT Claim
+    ↓
+"role": "ROLE_USER"</pre>
+
+    <p>và:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Spring Security
+    ↓
+GrantedAuthority("ROLE_USER")</pre>
+
+    <p>JWT chỉ là dữ liệu.</p>
+
+    <p>Spring Security cần một đối tượng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>GrantedAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GrantedAuthority</pre>
+    </div>
+
+    <p>để thực hiện Authorization.</p>
+
+    
+
+    <h4>Ví dụ</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Nhưng Spring Security cần:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+    │
+    └── Authorities
+            │
+            └── ROLE_USER</pre>
+
+    <p>Nếu Role trong JWT không được mapping thành Authority thì:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>có thể không hoạt động như mong muốn.</p>
+
+    
+
+    <h3>3.2. JWT → Authentication</h3>
+
+    <p>Khi Client gửi JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Header</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>Authorization: Bearer eyJhbGciOi...</pre>
+    </div>
+
+    <p>Spring Security sẽ xử lý JWT.</p>
+
+    <p>Flow tổng quát:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Client
+  │
+  │ Bearer Token
+  ▼
+Spring Security
+  │
+  ▼
+JWT Decoder
+  │
+  ▼
+JWT
+  │
+  ├── sub
+  ├── role
+  └── exp</pre>
+
+    <p>Sau khi JWT được xác thực và decode, Spring Security cần tạo ra:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Authentication</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>Authentication</pre>
+    </div>
+
+    <p>Có thể hình dung:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ │ decode
+ ▼
+Jwt
+ │
+ │ convert
+ ▼
+Authentication</pre>
+
+    
+
+    <h3>3.3. Authentication → GrantedAuthority</h3>
+
+    <p><code>Authentication</code> là đối tượng đại diện cho thông tin xác thực của User trong Spring Security.</p>
+
+    <p>Bên trong <code>Authentication</code> có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Principal
+Authorities
+Authenticated</pre>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+│
+├── Principal
+│   └── user2
+│
+└── Authorities
+    └── ROLE_USER</pre>
+
+    <p>Trong đó:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>là:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>GrantedAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GrantedAuthority</pre>
+    </div>
+
+    
+
+    <h4>Flow</h4>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ │
+ ├── sub = user2
+ │
+ └── role = ROLE_USER
+          │
+          ▼
+JwtAuthenticationConverter
+          │
+          ▼
+Authentication
+          │
+          └── GrantedAuthority
+                  │
+                  └── ROLE_USER</pre>
+
+    <p>Sau đó Spring Security có thể kiểm tra:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    
+
+    <h3>3.4. <code>JwtAuthenticationConverter</code></h3>
+
+    <p><code>JwtAuthenticationConverter</code> là component dùng để chuyển:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Jwt
+ ↓
+Authentication</pre>
+
+    <p>Nói đơn giản:</p>
+
+    <blockquote style="border-left: 4px solid #3498db; padding-left: 15px; margin: 15px 0;">
+        <code>JwtAuthenticationConverter</code> lấy thông tin từ JWT và tạo ra <code>Authentication</code> cho Spring Security.
+    </blockquote>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+│
+├── sub = user2
+└── role = ROLE_USER
+        │
+        ▼
+JwtAuthenticationConverter
+        │
+        ▼
+Authentication</pre>
+
+    
+
+    <h4>3.4.1. Cấu hình cơ bản</h4>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Khởi tạo</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtAuthenticationConverter jwtAuthenticationConverter =
+        new JwtAuthenticationConverter();</pre>
+    </div>
+
+    <p>Sau đó có thể cấu hình cách lấy Authority:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>jwtAuthenticationConverter
+        .setJwtGrantedAuthoritiesConverter(authoritiesConverter);</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>authoritiesConverter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter</pre>
+    </div>
+
+    <p>thường là:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JwtGrantedAuthoritiesConverter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter</pre>
+    </div>
+
+    
+
+    <h3>3.5. <code>JwtGrantedAuthoritiesConverter</code></h3>
+
+    <p>Đây là class rất quan trọng trong phần JWT Role Mapping.</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Class</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter</pre>
+    </div>
+
+    <p>có nhiệm vụ:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        Lấy thông tin quyền từ Claim trong JWT và chuyển chúng thành <code>GrantedAuthority</code>.
+    </blockquote>
+
+    <p>Flow:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ └── Claim role
+       │
+       ▼
+JwtGrantedAuthoritiesConverter
+       │
+       ▼
+GrantedAuthority</pre>
+
+    <p>Ví dụ JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Converter sẽ lấy:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role
+ ↓
+ROLE_USER</pre>
+
+    <p>và chuyển thành:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>GrantedAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GrantedAuthority</pre>
+    </div>
+
+    <p>có giá trị:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    
+
+    <h4>3.5.1. Tạo Converter</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Tạo</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();</pre>
+    </div>
+
+    <p>Sau đó cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");</pre>
+    </div>
+
+    <p>Nghĩa là:</p>
+
+    <blockquote style="border-left: 4px solid #f39c12; padding-left: 15px; margin: 15px 0;">
+        Hãy lấy Authority từ Claim có tên <code>role</code>.
+    </blockquote>
+
+    
+
+    <h3>3.6. <code>setAuthoritiesClaimName()</code></h3>
+
+    <p>Mặc định, <code>JwtGrantedAuthoritiesConverter</code> thường tìm quyền trong Claim được cấu hình theo convention của Spring Security, phổ biến là:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+scope
+scp</pre>
+
+    <p>Nhưng JWT của chúng ta lại sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Spring Security cần được nói rõ:</p>
+
+    <blockquote style="border-left: 4px solid #e74c3c; padding-left: 15px; margin: 15px 0;">
+        "Hãy lấy quyền từ Claim <code>role</code>."
+    </blockquote>
+
+    <p>Ta cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");</pre>
+    </div>
+
+    
+
+    <h4>Trước khi cấu hình</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Spring Security mặc định có thể tìm:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+scope
+scp</pre>
+
+    <p>nhưng JWT lại có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role</pre>
+
+    <p>→ Không đúng Claim cần lấy.</p>
+
+    
+
+    <h4>Sau khi cấu hình</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");</pre>
+    </div>
+
+    <p>Flow:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ └── role
+      │
+      ▼
+"ROLE_USER"
+      │
+      ▼
+JwtGrantedAuthoritiesConverter</pre>
+
+    <p>Như vậy Converter biết chính xác Claim nào chứa quyền.</p>
+
+    
+
+    <h3>3.7. <code>setAuthorityPrefix()</code></h3>
+
+    <p>Đây là phần cực kỳ quan trọng.</p>
+
+    <p><code>JwtGrantedAuthoritiesConverter</code> có thể thêm một prefix vào Authority.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Thêm prefix</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthorityPrefix("SCOPE_");</pre>
+    </div>
+
+    <p>Nếu JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "role": "USER"
+}</pre>
+    </div>
+
+    <p>thì có thể tạo:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+SCOPE_USER</pre>
+
+    
+
+    <h4>Vấn đề với Role</h4>
+
+    <p>JWT của chúng ta đã chứa:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Nếu Converter lại tự thêm:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_</pre>
+
+    <p>thì có thể dẫn đến:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ROLE_USER</pre>
+
+    <p>Điều này sai với Authority mà chúng ta mong muốn.</p>
+
+    
+
+    <h4>3.7.1. Dùng <code>setAuthorityPrefix("")</code></h4>
+
+    <p>Chúng ta có thể nói với Converter:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        Không thêm prefix nào.
+    </blockquote>
+
+    <p>Code:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Khi đó:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role = ROLE_USER
+ ↓
+không thêm prefix
+ ↓
+ROLE_USER</pre>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GrantedAuthority
+        ↓
+ROLE_USER</pre>
+
+    
+
+    <h3>3.8. Map Claim <code>role</code> → Authority</h3>
+
+
+    <p>Giả sử JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Chúng ta muốn:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role = ROLE_USER
+ ↓
+GrantedAuthority
+ ↓
+ROLE_USER</pre>
+
+    <p>Cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình hoàn chỉnh</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
+
+authoritiesConverter.setAuthoritiesClaimName("role");
+
+authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    
+
+    <h4>3.8.1. Giải thích từng dòng</h4>
+
+    <h5>Dòng 1</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Dòng 1</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();</pre>
+    </div>
+
+    <p>Tạo Converter:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT Claim
+    ↓
+GrantedAuthority</pre>
+
+    
+
+    <h5>Dòng 2</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Dòng 2</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");</pre>
+    </div>
+
+    <p>Nói với Converter:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Hãy lấy quyền từ Claim:
+role</pre>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    
+
+    <h5>Dòng 3</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Dòng 3</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Nói với Converter:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Không thêm prefix nào.</pre>
+
+    <p>Do JWT đã chứa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>nên giữ nguyên:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    
+
+    <h4>3.8.2. Gắn vào <code>JwtAuthenticationConverter</code></h4>
+
+    <p>Sau khi tạo:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
+
+authoritiesConverter.setAuthoritiesClaimName("role");
+
+authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Tạo:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JwtAuthenticationConverter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtAuthenticationConverter jwtAuthenticationConverter =
+        new JwtAuthenticationConverter();</pre>
+    </div>
+
+    <p>Sau đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Gắn</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>jwtAuthenticationConverter
+        .setJwtGrantedAuthoritiesConverter(authoritiesConverter);</pre>
+    </div>
+
+    <p>Flow hoàn chỉnh:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ │
+ └── role = ROLE_USER
+          │
+          ▼
+JwtGrantedAuthoritiesConverter
+          │
+          │ Claim name = role
+          │ Prefix = ""
+          ▼
+GrantedAuthority
+          │
+          └── ROLE_USER
+                  │
+                  ▼
+       JwtAuthenticationConverter
+                  │
+                  ▼
+           Authentication</pre>
+
+    
+
+    <h4>3.8.3. Cấu hình hoàn chỉnh</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình hoàn chỉnh</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>
+  @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+
+        JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
+        // Lấy quyền từ claim "role"
+        authoritiesConverter.setAuthoritiesClaimName("role");
+
+        // JWT đã có ROLE_USER nên không thêm tiền tố
+        authoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter converter =
+                new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(
+                authoritiesConverter
+        );
+
+        return converter;
+    }
+        </pre>
+    </div>
+
+    <p>Sau đó đưa Converter vào Resource Server:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Resource Server config</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>http
+    .oauth2ResourceServer(oauth2 ->
+        oauth2.jwt(jwt ->
+            jwt.jwtAuthenticationConverter(
+                jwtAuthenticationConverter
+            )
+        )
+    );</pre>
+    </div>
+
+    
+
+    <h4>3.8.4. Flow thực tế</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <h5>Bước 1 — JWT được decode</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+Jwt</pre>
+
+    
+
+    <h5>Bước 2 — Converter tìm Claim</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>setAuthoritiesClaimName</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>setAuthoritiesClaimName("role")</pre>
+    </div>
+
+    <p>→ tìm:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role</pre>
+
+    
+
+    <h5>Bước 3 — Lấy giá trị</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role
+ ↓
+ROLE_USER</pre>
+
+    
+
+    <h5>Bước 4 — Không thêm prefix</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>setAuthorityPrefix</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>setAuthorityPrefix("")</pre>
+    </div>
+
+    <p>nên:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>vẫn là:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    
+
+    <h5>Bước 5 — Tạo GrantedAuthority</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ ↓
+GrantedAuthority</pre>
+
+    <p>Tương đương về mặt ý tưởng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SimpleGrantedAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>new SimpleGrantedAuthority("ROLE_USER");</pre>
+    </div>
+
+    
+
+    <h5>Bước 6 — Đưa vào Authentication</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+│
+├── Principal
+│   └── user2
+│
+└── Authorities
+    └── ROLE_USER</pre>
+
+    
+
+    <h5>Bước 7 — Authorization</h5>
+
+    <p>SecurityConfig:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityConfig</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/user")
+.hasRole("USER")</pre>
+    </div>
+
+    <p>Spring Security xử lý:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+hasRole("USER")
+      ↓
+ROLE_USER
+      ↓
+Authentication Authorities
+      ↓
+ROLE_USER
+      ↓
+MATCH
+      ↓
+Cho phép</pre>
+
+    
+
+    <h4>3.8.5. Toàn bộ Flow cần nhớ</h4>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+┌─────────────────────────────┐
+│            JWT              │
+│                             │
+│ sub  = user2                │
+│ role = ROLE_USER            │
+└──────────────┬──────────────┘
+               │
+               ▼
+        JwtGrantedAuthoritiesConverter
+               │
+               │ Claim = "role"
+               │ Prefix = ""
+               ▼
+        GrantedAuthority
+               │
+               │ ROLE_USER
+               ▼
+     JwtAuthenticationConverter
+               │
+               ▼
+        Authentication
+               │
+               │ Authorities
+               │
+               ▼
+          ROLE_USER
+               │
+               ▼
+       Authorization
+               │
+               ▼
+       hasRole("USER")
+               │
+               ▼
+          ROLE_USER
+               │
+               ▼
+             MATCH
+               │
+               ▼
+          200 OK</pre>
+
+    
+
+    <h4>3.8.6. Trường hợp JWT chứa <code>USER</code></h4>
+
+    <p>Một trường hợp khác:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "USER"
+}</pre>
+    </div>
+
+    <p>Nếu muốn Spring Security tạo:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>thì có thể cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");
+
+authoritiesConverter.setAuthorityPrefix("ROLE_");</pre>
+    </div>
+
+    <p>Flow:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role = USER
+ ↓
+Prefix ROLE_
+ ↓
+ROLE_USER
+ ↓
+GrantedAuthority</pre>
+
+    <p>Khi đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>vẫn hoạt động.</p>
+
+    
+
+    <h4>3.8.7. Hai cách thiết kế cần phân biệt</h4>
+
+    <h5>Cách 1 — JWT đã có <code>ROLE_</code></h5>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Converter:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");
+authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    
+
+    <h5>Cách 2 — JWT chỉ có <code>USER</code></h5>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "role": "USER"
+}</pre>
+    </div>
+
+    <p>Converter:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");
+authoritiesConverter.setAuthorityPrefix("ROLE_");</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER
+ ↓
+ROLE_
+ ↓
+ROLE_USER</pre>
+
+    
+
+    <h4>3.8.8. Bảng so sánh</h4>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>JWT</th>
+                    <th>Prefix</th>
+                    <th>Authority cuối cùng</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>ROLE_USER</code></td><td><code>""</code></td><td><code>ROLE_USER</code></td></tr>
+                <tr><td><code>USER</code></td><td><code>"ROLE_"</code></td><td><code>ROLE_USER</code></td></tr>
+                <tr><td><code>ROLE_ADMIN</code></td><td><code>""</code></td><td><code>ROLE_ADMIN</code></td></tr>
+                <tr><td><code>ADMIN</code></td><td><code>"ROLE_"</code></td><td><code>ROLE_ADMIN</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Điều quan trọng là <strong>không được để prefix bị thêm hai lần</strong>.</p>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT:
+ROLE_USER
+
+Prefix:
+ROLE_
+
+Kết quả:
+ROLE_ROLE_USER</pre>
+
+    <p>→ Sai nếu bạn muốn Authority là <code>ROLE_USER</code>.</p>
+
+    
+
+    <h4>3.8.9. Nhiều Role</h4>
+
+    <p>JWT có thể chứa:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Với:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthoritiesClaimName("role");
+authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Converter có thể map thành:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GrantedAuthority
+    │
+    ├── ROLE_USER
+    └── ROLE_ADMIN</pre>
+
+    <p>Sau đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>và:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("ADMIN")</pre>
+    </div>
+
+    <p>kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ADMIN</pre>
+
+    
+
+    <h4>3.8.10. Tóm tắt toàn bộ bài</h4>
+
+    <p>Điều quan trọng nhất là hiểu <strong>JWT Claim không tự động trở thành Spring Security Authority</strong>.</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+│
+└── role = ROLE_USER
+          │
+          │
+          ▼
+JwtGrantedAuthoritiesConverter
+          │
+          │ setAuthoritiesClaimName("role")
+          │
+          │ setAuthorityPrefix("")
+          │
+          ▼
+GrantedAuthority
+          │
+          └── ROLE_USER
+                  │
+                  ▼
+          Authentication
+                  │
+                  ▼
+          SecurityContext
+                  │
+                  ▼
+          Authorization
+                  │
+                  ▼
+          hasRole("USER")
+                  │
+                  ▼
+             ROLE_USER</pre>
+
+    <div class="info-box" style="border-left-color: #e74c3c;">
+        <h4><i class="fas fa-star"></i> 4 dòng cần nhớ</h4>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();</pre>
+        </div>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">authoritiesConverter.setAuthoritiesClaimName("role");</pre>
+        </div>
+
+        <p>→ Lấy quyền từ Claim <code>role</code>.</p>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">authoritiesConverter.setAuthorityPrefix("");</pre>
+        </div>
+
+        <p>→ Không thêm prefix.</p>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">jwtAuthenticationConverter
+        .setJwtGrantedAuthoritiesConverter(authoritiesConverter);</pre>
+        </div>
+
+        <p>→ Gắn Authority Converter vào <code>JwtAuthenticationConverter</code>.</p>
+
+        <p style="margin-top: 15px;"><strong>Kết quả cuối cùng:</strong></p>
+        <pre style=" padding: 10px; border-radius: 4px;">
+JWT
+ ↓
+role = ROLE_USER
+ ↓
+JwtGrantedAuthoritiesConverter
+ ↓
+GrantedAuthority("ROLE_USER")
+ ↓
+Authentication
+ ↓
+hasRole("USER")
+ ↓
+ROLE_USER
+ ↓
+Cho phép</pre>
+
+        <p>Đây chính là <strong>cầu nối giữa <code>role</code> trong JWT và <code>hasRole()</code> của Spring Security</strong>.</p>
+    </div>
+</section>
+<section id="phan-quyen-mot" class="section ">
+    <h2><i class="fas fa-user-shield"></i> 4. Phân quyền một Role</h2>
+
+    <p>Sau khi đã hiểu:</p>
+    <ul>
+        <li>JWT chứa <code>role</code></li>
+        <li><code>role</code> được Mapping thành <code>GrantedAuthority</code></li>
+        <li><code>GrantedAuthority</code> được đưa vào <code>Authentication</code></li>
+        <li><code>hasRole()</code> và <code>hasAuthority()</code> dùng Authority để kiểm tra quyền</li>
+    </ul>
+
+    <p>thì bước tiếp theo là <strong>bảo vệ API bằng Role</strong>.</p>
+
+    <p>Mục tiêu của phần này là xây dựng được cơ chế:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+User đăng nhập
+      ↓
+JWT
+      ↓
+role = ROLE_USER
+      ↓
+Spring Security
+      ↓
+Authentication
+      ↓
+Kiểm tra API
+      ↓
+Có ROLE_USER?
+   ↙        ↘
+ Có          Không
+ ↓             ↓
+200 OK       403 Forbidden</pre>
+
+    
+
+    <h3>4.1. <code>hasRole()</code></h3>
+
+    <p><code>hasRole()</code> được sử dụng để kiểm tra User có một <strong>Role cụ thể</strong> hay không.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>Spring Security mặc định sẽ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>Nhớ quy tắc:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+hasRole("USER")
+       ↓
+ROLE_USER</pre>
+
+    <p>Ví dụ SecurityConfig:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityConfig</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.authorizeHttpRequests(auth -> auth
+
+    .requestMatchers("/api/demo/user")
+    .hasRole("USER")
+
+)</pre>
+    </div>
+
+    <p>Điều này có nghĩa:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        Chỉ User có <code>ROLE_USER</code> mới được phép truy cập <code>/api/demo/user</code>.
+    </blockquote>
+
+    
+
+    <h4>Ví dụ User</h4>
+
+    <p>Authentication của User có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authorities:
+    ROLE_USER</pre>
+
+    <p>Khi gọi:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Request</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GET /api/demo/user</pre>
+    </div>
+
+    <p>Spring Security kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+hasRole("USER")
+       ↓
+ROLE_USER
+       ↓
+Authentication
+       ↓
+ROLE_USER
+       ↓
+Có</pre>
+
+    <p>→ Cho phép truy cập.</p>
+
+    
+
+    <h3>4.2. <code>hasAuthority()</code></h3>
+
+    <p><code>hasAuthority()</code> kiểm tra <strong>chính xác Authority</strong> được truyền vào.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAuthority("ROLE_USER")</pre>
+    </div>
+
+    <p>Spring Security kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>không tự thêm <code>ROLE_</code>.</p>
+
+    
+
+    <h4>So sánh</h4>
+
+    <h5><code>hasRole()</code></h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>→ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <h5><code>hasAuthority()</code></h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAuthority("ROLE_USER")</pre>
+    </div>
+
+    <p>→ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>Vì vậy trong trường hợp Role:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>và:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAuthority("ROLE_USER")</pre>
+    </div>
+
+    <p>có thể cho cùng kết quả.</p>
+
+    
+
+    <h4>Khi nào dùng <code>hasRole()</code>?</h4>
+
+    <p>Khi đang làm việc với Role:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER
+ADMIN
+MANAGER</pre>
+
+    <p>thường dùng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")
+.hasRole("ADMIN")
+.hasRole("MANAGER")</pre>
+    </div>
+
+    
+
+    <h4>Khi nào dùng <code>hasAuthority()</code>?</h4>
+
+    <p>Khi muốn kiểm tra Authority cụ thể:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER_READ
+USER_CREATE
+USER_DELETE</pre>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAuthority("USER_DELETE")</pre>
+    </div>
+
+    
+
+    <h3>4.3. <code>requestMatchers()</code></h3>
+
+    <p><code>requestMatchers()</code> dùng để xác định <strong>API/URL nào cần áp dụng luật phân quyền</strong>.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>requestMatchers</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    <p>Có thể đọc thành:</p>
+
+    <blockquote style="border-left: 4px solid #3498db; padding-left: 15px; margin: 15px 0;">
+        Với request đến <code>/api/demo/user</code>, yêu cầu User phải có Role <code>USER</code>.
+    </blockquote>
+
+    <p>Cấu trúc:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+requestMatchers()
+       ↓
+Xác định API
+       ↓
+hasRole()
+       ↓
+Xác định Role cần có</pre>
+
+    
+
+    <h4>Ví dụ</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Ví dụ</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.authorizeHttpRequests(auth -> auth
+
+    .requestMatchers("/api/demo/user")
+    .hasRole("USER")
+
+)</pre>
+    </div>
+
+    <p>Có thể hiểu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+       ↓
+Cần ROLE_USER</pre>
+
+    
+
+    <h4>Có thể bảo vệ nhiều API</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Nhiều API</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.authorizeHttpRequests(auth -> auth
+
+    .requestMatchers("/api/demo/user")
+    .hasRole("USER")
+
+    .requestMatchers("/api/demo/admin")
+    .hasRole("ADMIN")
+
+    .requestMatchers("/api/demo/manager")
+    .hasRole("MANAGER")
+
+)</pre>
+    </div>
+
+    <p>Khi đó:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+    ↓
+ROLE_USER
+
+/api/demo/admin
+    ↓
+ROLE_ADMIN
+
+/api/demo/manager
+    ↓
+ROLE_MANAGER</pre>
+
+    
+
+    <h3>4.4. Bảo vệ API bằng Role</h3>
+
+    <p>Đây là ví dụ cơ bản nhất.</p>
+
+    <p>Giả sử có API:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Controller</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@GetMapping("/api/demo/user")
+public String user() {
+    return "Hello User";
+}</pre>
+    </div>
+
+    <p>Nếu muốn chỉ User có Role <code>USER</code> được truy cập:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Security</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    
+
+    <h4>SecurityConfig hoàn chỉnh</h4>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityConfig hoàn chỉnh</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@Bean
+public SecurityFilterChain securityFilterChain(
+        HttpSecurity http
+) throws Exception {
+
+    http
+        .csrf(csrf -> csrf.disable())
+
+        .authorizeHttpRequests(auth -> auth
+
+            .requestMatchers("/api/auth/**")
+            .permitAll()
+
+            .requestMatchers("/api/demo/user")
+            .hasRole("USER")
+
+            .anyRequest()
+            .authenticated()
+        )
+
+        .oauth2ResourceServer(oauth2 ->
+            oauth2.jwt(jwt ->
+                jwt.jwtAuthenticationConverter(
+                    jwtAuthenticationConverter()
+                )
+            )
+        );
+
+    return http.build();
+}</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Luật phân quyền</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    <p>là luật phân quyền.</p>
+
+    
+
+    <h4>Ý nghĩa</h4>
+
+    <p>API:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user</pre>
+
+    <p>yêu cầu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>User có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>→ được truy cập.</p>
+
+    <p>User không có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>→ bị từ chối.</p>
+
+    
+
+    <h4>4.4.1. Controller</h4>
+
+    <p>Ví dụ Controller:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>DemoController</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@RestController
+@RequestMapping("/api/demo")
+public class DemoController {
+
+    @GetMapping("/user")
+    public String user() {
+        return "Hello User";
+    }
+}</pre>
+    </div>
+
+    <p>Endpoint thực tế:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GET /api/demo/user</pre>
+
+    <p>Security:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Security</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    
+
+    <h4>4.4.2. Request từ Client</h4>
+
+    <p>Client gửi:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Request</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GET /api/demo/user
+Authorization: Bearer &lt;JWT&gt;</pre>
+    </div>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Sau JWT Role Mapping:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+      ↓
+GrantedAuthority
+      ↓
+Authentication</pre>
+
+    <p>Sau đó Authorization kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+       ↓
+hasRole("USER")
+       ↓
+ROLE_USER
+       ↓
+Authentication có ROLE_USER?</pre>
+
+    <p>→ Có.</p>
+
+    
+
+    <h3>4.5. User có Role → <code>200 OK</code></h3>
+
+    <p>Giả sử User:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+username: user2</pre>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Sau khi Mapping:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+    │
+    └── Authorities
+            │
+            └── ROLE_USER</pre>
+
+    <p>Security:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Security</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    <p>Request:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Request</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GET /api/demo/user
+Authorization: Bearer &lt;JWT&gt;</pre>
+    </div>
+
+    
+
+    <h4>Spring Security xử lý</h4>
+
+    <h5>Bước 1</h5>
+
+    <p>JWT được xác thực:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+Valid</pre>
+
+    <h5>Bước 2</h5>
+
+    <p>Role được Mapping:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role = ROLE_USER
+       ↓
+GrantedAuthority
+       ↓
+ROLE_USER</pre>
+
+    <h5>Bước 3</h5>
+
+    <p>Authentication được tạo:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+    ↓
+Authorities:
+    ROLE_USER</pre>
+
+    <h5>Bước 4</h5>
+
+    <p>Kiểm tra API:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+       ↓
+hasRole("USER")
+       ↓
+ROLE_USER</pre>
+
+    <h5>Bước 5</h5>
+
+    <p>So sánh:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Required:
+ROLE_USER
+
+Actual:
+ROLE_USER</pre>
+
+    <p>→ Match.</p>
+
+    <h5>Kết quả:</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Response</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>200 OK</pre>
+    </div>
+
+    <p>Response:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Hello User</pre>
+
+    
+
+    <h3>4.6. User không có Role → <code>403 Forbidden</code></h3>
+
+    <p>Đây là trường hợp rất quan trọng.</p>
+
+    <p>Giả sử API yêu cầu:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>API yêu cầu</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>tức là:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>Nhưng User có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ADMIN</pre>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "admin",
+    "role": "ROLE_ADMIN"
+}</pre>
+    </div>
+
+    <p>Sau Mapping:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+    │
+    └── Authorities
+            │
+            └── ROLE_ADMIN</pre>
+
+    <p>User gọi:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Request</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>GET /api/demo/user</pre>
+    </div>
+
+    
+
+    <h4>Spring Security kiểm tra</h4>
+
+    <p>API yêu cầu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>User đang có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ADMIN</pre>
+
+    <p>So sánh:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Required:
+ROLE_USER
+
+Actual:
+ROLE_ADMIN</pre>
+
+    <p>→ Không match.</p>
+
+    <p>Kết quả:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Response</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>403 Forbidden</pre>
+    </div>
+
+    
+
+    <h4>4.6.1. Tại sao là <code>403</code>?</h4>
+
+    <p>Cần phân biệt:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+401 Unauthorized</pre>
+
+    <p>và:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+403 Forbidden</pre>
+
+    <h5><code>401 Unauthorized</code></h5>
+
+    <p>Thường xảy ra khi User <strong>chưa được xác thực hợp lệ</strong>.</p>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Không có JWT
+JWT không hợp lệ
+JWT hết hạn
+Signature không đúng</pre>
+
+    <p>Flow:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Request
+ ↓
+Không xác thực được
+ ↓
+401 Unauthorized</pre>
+
+    
+
+    <h5><code>403 Forbidden</code></h5>
+
+    <p>User <strong>đã xác thực</strong>, nhưng <strong>không đủ quyền</strong>.</p>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT hợp lệ
+      ↓
+Authentication thành công
+      ↓
+ROLE_ADMIN
+      ↓
+API yêu cầu ROLE_USER
+      ↓
+Không có ROLE_USER
+      ↓
+403 Forbidden</pre>
+
+    <p>Đây là điểm cực kỳ quan trọng:</p>
+
+    <blockquote style="border-left: 4px solid #e74c3c; padding-left: 15px; margin: 15px 0;">
+        <strong>403 không có nghĩa là đăng nhập thất bại.</strong>
+    </blockquote>
+
+    <p>User đã đăng nhập thành công, nhưng không có quyền truy cập Resource.</p>
+
+    
+
+    <h4>4.6.2. So sánh hai trường hợp</h4>
+
+    <h5>Trường hợp 1 — Có Role</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+ROLE_USER
+ ↓
+Authentication
+ ↓
+GET /api/demo/user
+ ↓
+hasRole("USER")
+ ↓
+ROLE_USER == ROLE_USER
+ ↓
+200 OK</pre>
+
+    
+
+    <h5>Trường hợp 2 — Không có Role</h5>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+ROLE_ADMIN
+ ↓
+Authentication
+ ↓
+GET /api/demo/user
+ ↓
+hasRole("USER")
+ ↓
+ROLE_ADMIN != ROLE_USER
+ ↓
+403 Forbidden</pre>
+
+    
+
+    <h4>4.6.3. Sơ đồ tổng quát</h4>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+                 Client
+                   │
+                   │ Bearer JWT
+                   ▼
+             Spring Security
+                   │
+                   ▼
+              JWT Validate
+                   │
+                   ▼
+          JWT Role Mapping
+                   │
+                   ▼
+            Authentication
+                   │
+                   │
+          GrantedAuthority
+                   │
+                   ▼
+             API Request
+                   │
+                   ▼
+           requestMatchers()
+                   │
+                   ▼
+             hasRole("USER")
+                   │
+                   ▼
+             ROLE_USER?
+              /       \
+            Có         Không
+            │            │
+            ▼            ▼
+        200 OK        403</pre>
+
+    
+
+    <h4>4.6.4. Ví dụ thực tế</h4>
+
+    <p>Giả sử Database:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+username    role
+----------------------
+user1       USER
+admin       ADMIN</pre>
+
+    <p>JWT của <code>user1</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT user1</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user1",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>JWT của <code>admin</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT admin</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "admin",
+    "role": "ROLE_ADMIN"
+}</pre>
+    </div>
+
+    <p>Security:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Security</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.authorizeHttpRequests(auth -> auth
+
+    .requestMatchers("/api/demo/user")
+    .hasRole("USER")
+
+    .requestMatchers("/api/demo/admin")
+    .hasRole("ADMIN")
+
+)</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Authority</th>
+                    <th><code>/api/demo/user</code></th>
+                    <th><code>/api/demo/admin</code></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>user1</code></td>
+                    <td><code>ROLE_USER</code></td>
+                    <td>✅ 200</td>
+                    <td>❌ 403</td>
+                </tr>
+                <tr>
+                    <td><code>admin</code></td>
+                    <td><code>ROLE_ADMIN</code></td>
+                    <td>❌ 403</td>
+                    <td>✅ 200</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+    <h4>4.6.5. Điều cần nhớ về <code>requestMatchers()</code></h4>
+
+    <p>Có thể đọc:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>requestMatchers</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+.hasRole("USER")</pre>
+    </div>
+
+    <p>theo cách rất đơn giản:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+API nào?
+     ↓
+/api/demo/user
+
+Cần quyền gì?
+     ↓
+ROLE_USER</pre>
+
+    <p>Và:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>requestMatchers</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/admin")
+.hasRole("ADMIN")</pre>
+    </div>
+
+    <p>là:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+API nào?
+     ↓
+/api/demo/admin
+
+Cần quyền gì?
+     ↓
+ROLE_ADMIN</pre>
+
+    
+
+    <h3>Tổng kết phần 4</h3>
+
+    <p>Sau phần này cần hiểu được toàn bộ quá trình:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role = ROLE_USER
+ ↓
+JWT Role Mapping
+ ↓
+GrantedAuthority
+ ↓
+Authentication
+ ↓
+requestMatchers("/api/demo/user")
+ ↓
+hasRole("USER")
+ ↓
+Spring Security kiểm tra ROLE_USER</pre>
+
+    <h4>Có quyền</h4>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+     ↓
+ROLE_USER
+     ↓
+API yêu cầu ROLE_USER
+     ↓
+MATCH
+     ↓
+200 OK</pre>
+
+    <h4>Không có quyền</h4>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+     ↓
+ROLE_ADMIN
+     ↓
+API yêu cầu ROLE_USER
+     ↓
+KHÔNG MATCH
+     ↓
+403 Forbidden</pre>
+
+    <div class="info-box" style="border-left-color: #e74c3c;">
+        <h4><i class="fas fa-star"></i> Ba dòng quan trọng nhất</h4>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">.requestMatchers("/api/demo/user")
+    .hasRole("USER")</pre>
+        </div>
+
+        <p>có nghĩa:</p>
+
+        <pre style=" padding: 10px; border-radius: 4px;">
+/api/demo/user
+       ↓
+yêu cầu
+       ↓
+ROLE_USER</pre>
+
+        <p>Và:</p>
+
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">.hasRole("USER")</pre>
+        </div>
+
+        <p><strong>thực chất kiểm tra <code>ROLE_USER</code></strong>.</p>
+
+        <p style="margin-top: 15px;">Cuối cùng cần phân biệt thật chắc:</p>
+
+        <pre style=" padding: 10px; border-radius: 4px;">
+401
+ ↓
+Chưa xác thực / JWT không hợp lệ
+
+403
+ ↓
+Đã xác thực
+nhưng không đủ quyền</pre>
+
+        <p>Đây là nền tảng để sang phần tiếp theo: <strong>phân quyền nhiều Role (<code>hasAnyRole</code>) và cách xử lý User có <code>ROLE_USER</code> + <code>ROLE_ADMIN</code> cùng lúc</strong>.</p>
+    </div>
+</section>
+<section id="phan-quyen-nhieu" class="section active">
+    <h2><i class="fas fa-users-cog"></i> 5. Phân quyền nhiều Role</h2>
+
+    <p>Trong phần trước, ta đã biết cách bảo vệ một API bằng <strong>một Role</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasRole("USER")</pre>
+    </div>
+
+    <p>Điều này có nghĩa:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        Chỉ user có <code>ROLE_USER</code> mới được truy cập <code>/api/demo/user</code>.
+    </blockquote>
+
+    <p>Nhưng trong thực tế, một API có thể cho phép <strong>nhiều Role khác nhau</strong> truy cập.</p>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+        ↓
+   USER hoặc ADMIN
+        ↓
+      Cho phép</pre>
+
+    <p>Spring Security cung cấp hai nhóm phương thức quan trọng:</p>
+    <ul>
+        <li><code>hasAnyRole()</code></li>
+        <li><code>hasAnyAuthority()</code></li>
+    </ul>
+
+    
+
+    <h3>5.1. <code>hasAnyRole()</code></h3>
+
+    <h4>5.1.1. <code>hasAnyRole()</code> là gì?</h4>
+
+    <p><code>hasAnyRole()</code> dùng để kiểm tra:</p>
+
+    <blockquote style="border-left: 4px solid #3498db; padding-left: 15px; margin: 15px 0;">
+        User có <strong>ít nhất một trong nhiều Role</strong> được yêu cầu hay không?
+    </blockquote>
+
+    <p>Cú pháp:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cú pháp</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("ROLE1", "ROLE2", ...)</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Ví dụ</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Có nghĩa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER OR ADMIN</pre>
+
+    <p>Chỉ cần user có <strong>một trong hai Role</strong> là được phép truy cập.</p>
+
+    
+
+    <h4>5.1.2. Ví dụ</h4>
+
+    <p>Giả sử hệ thống có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER
+ADMIN
+MANAGER</pre>
+
+    <p>Ta muốn <code>/api/demo/user</code> cho phép cả <code>USER</code> và <code>ADMIN</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Spring Security sẽ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+User có ROLE_USER ?
+       ↓
+      Có → Cho phép
+
+      Không
+       ↓
+User có ROLE_ADMIN ?
+       ↓
+      Có → Cho phép
+
+      Không
+       ↓
+    403 Forbidden</pre>
+
+    
+
+    <h4>5.1.3. Lưu ý về <code>ROLE_</code></h4>
+
+    <p>Đây là điểm rất quan trọng.</p>
+
+    <p>Khi viết:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Spring Security mặc định sẽ hiểu tương đương với:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>Tức là:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>tương đương về mặt kiểm tra với:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Trong trường hợp cấu hình Role mặc định.</p>
+
+    <h5>Không viết:</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Sai</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>vì Spring Security có thể thêm prefix <code>ROLE_</code> một lần nữa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+      ↓
+thêm ROLE_
+      ↓
+ROLE_ROLE_USER</pre>
+
+    <p>Do đó cách thông thường là:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Đúng</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    
+
+    <h3>5.2. <code>hasAnyAuthority()</code></h3>
+
+    <h4>5.2.1. <code>hasAnyAuthority()</code> là gì?</h4>
+
+    <p><code>hasAnyAuthority()</code> cũng dùng để kiểm tra nhiều quyền.</p>
+
+    <p>Cú pháp:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cú pháp</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("AUTHORITY1", "AUTHORITY2", ...)</pre>
+    </div>
+
+    <p>Điểm quan trọng:</p>
+
+    <blockquote style="border-left: 4px solid #e74c3c; padding-left: 15px; margin: 15px 0;">
+        <code>hasAnyAuthority()</code> kiểm tra <strong>đúng chính xác tên Authority</strong>.
+    </blockquote>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Ví dụ</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Spring Security sẽ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+OR
+ROLE_ADMIN</pre>
+
+    <p>Không tự hiểu <code>"USER"</code> thành <code>"ROLE_USER"</code> như <code>hasRole()</code>.</p>
+
+    
+
+    <h4>5.2.2. Ví dụ</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Ví dụ</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Có nghĩa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+User có ROLE_USER ?
+       ↓
+      Có → 200 OK
+
+      Không
+       ↓
+User có ROLE_ADMIN ?
+       ↓
+      Có → 200 OK
+
+      Không
+       ↓
+    403 Forbidden</pre>
+
+    
+
+    <h3>5.3. Cho phép <code>USER</code> hoặc <code>ADMIN</code></h3>
+
+    <p>Đây là trường hợp rất phổ biến trong thực tế.</p>
+
+    <p>Giả sử có API:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GET /api/demo/user</pre>
+
+    <p>Ta muốn:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER  → được phép
+ADMIN → được phép
+GUEST → không được phép</pre>
+
+    
+
+    <h4>Cách 1: sử dụng <code>hasAnyRole()</code></h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cách 1</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Ý nghĩa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER
+  ↓
+ROLE_USER
+  ↓
+ALLOW
+
+ADMIN
+  ↓
+ROLE_ADMIN
+  ↓
+ALLOW
+
+GUEST
+  ↓
+ROLE_GUEST
+  ↓
+DENY</pre>
+
+    
+
+    <h4>Cách 2: sử dụng <code>hasAnyAuthority()</code></h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cách 2</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Kết quả cũng tương tự:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER  → ALLOW
+ROLE_ADMIN → ALLOW
+ROLE_GUEST  → DENY</pre>
+
+    
+
+    <h4>5.3.1. Đưa vào <code>SecurityFilterChain</code></h4>
+
+    <p>Ví dụ đầy đủ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityFilterChain</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http)
+        throws Exception {
+
+    http
+        .authorizeHttpRequests(auth -> auth
+
+            .requestMatchers("/api/auth/**")
+                .permitAll()
+
+            .requestMatchers("/api/demo/user")
+                .hasAnyRole("USER", "ADMIN")
+
+            .requestMatchers("/api/demo/admin")
+                .hasRole("ADMIN")
+
+            .anyRequest()
+                .authenticated()
+        );
+
+    return http.build();
+}</pre>
+    </div>
+
+    <p>Ở đây:</p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>API</th>
+                    <th>Role được phép</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>/api/auth/**</code></td>
+                    <td>Tất cả</td>
+                </tr>
+                <tr>
+                    <td><code>/api/demo/user</code></td>
+                    <td><code>USER</code> hoặc <code>ADMIN</code></td>
+                </tr>
+                <tr>
+                    <td><code>/api/demo/admin</code></td>
+                    <td>Chỉ <code>ADMIN</code></td>
+                </tr>
+                <tr>
+                    <td>API khác</td>
+                    <td>Phải đăng nhập</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+    <h4>5.3.2. Phân tích từng API</h4>
+
+    <h5>API <code>/api/demo/user</code></h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>API user</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Cho phép:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER  → ✅
+ROLE_ADMIN → ✅
+ROLE_GUEST → ❌</pre>
+
+    
+
+    <h5>API <code>/api/demo/admin</code></h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>API admin</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/admin")
+    .hasRole("ADMIN")</pre>
+    </div>
+
+    <p>Chỉ cho phép:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ADMIN → ✅
+ROLE_USER  → ❌
+ROLE_GUEST → ❌</pre>
+
+    
+
+    <h4>5.3.3. Ví dụ với nhiều User</h4>
+
+    <p>Giả sử hệ thống có:</p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>user1</code></td><td><code>ROLE_USER</code></td></tr>
+                <tr><td><code>user2</code></td><td><code>ROLE_USER</code></td></tr>
+                <tr><td><code>admin</code></td><td><code>ROLE_ADMIN</code></td></tr>
+                <tr><td><code>guest</code></td><td><code>ROLE_GUEST</code></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Authority</th>
+                    <th><code>/api/demo/user</code></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>user1</td>
+                    <td><code>ROLE_USER</code></td>
+                    <td>✅ 200</td>
+                </tr>
+                <tr>
+                    <td>user2</td>
+                    <td><code>ROLE_USER</code></td>
+                    <td>✅ 200</td>
+                </tr>
+                <tr>
+                    <td>admin</td>
+                    <td><code>ROLE_ADMIN</code></td>
+                    <td>✅ 200</td>
+                </tr>
+                <tr>
+                    <td>guest</td>
+                    <td><code>ROLE_GUEST</code></td>
+                    <td>❌ 403</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+    <h3>5.4. Phân biệt <code>hasAnyRole()</code> và <code>hasAnyAuthority()</code></h3>
+
+    <p>Đây là phần rất quan trọng vì hai phương thức nhìn khá giống nhau.</p>
+
+    <h4>5.4.1. <code>hasAnyRole()</code></h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Spring Security mặc định thêm:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_</pre>
+
+    <p>Do đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>được hiểu là kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    
+
+    <h4>5.4.2. <code>hasAnyAuthority()</code></h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Spring Security kiểm tra <strong>đúng tên Authority được truyền vào</strong>.</p>
+
+    <p>Không tự thêm:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_</pre>
+
+    <p>Do đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    
+
+    <h4>5.4.3. So sánh trực tiếp</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>so với:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</pre>
+    </div>
+
+    <p>Trong cấu hình Role mặc định:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+hasAnyRole("USER", "ADMIN")
+             ↓
+     thêm ROLE_ prefix
+             ↓
+ROLE_USER hoặc ROLE_ADMIN</pre>
+
+    <p>Còn:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+             ↓
+       kiểm tra trực tiếp
+             ↓
+ROLE_USER hoặc ROLE_ADMIN</pre>
+
+    <p>Vì vậy hai cách trên có thể cho <strong>kết quả phân quyền giống nhau</strong>.</p>
+
+    
+
+    <h4>5.4.4. Bảng tổng hợp</h4>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Method</th>
+                    <th>Code</th>
+                    <th>Authority được kiểm tra</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>hasRole()</code></td>
+                    <td><code>hasRole("USER")</code></td>
+                    <td><code>ROLE_USER</code></td>
+                </tr>
+                <tr>
+                    <td><code>hasAnyRole()</code></td>
+                    <td><code>hasAnyRole("USER", "ADMIN")</code></td>
+                    <td><code>ROLE_USER</code>, <code>ROLE_ADMIN</code></td>
+                </tr>
+                <tr>
+                    <td><code>hasAuthority()</code></td>
+                    <td><code>hasAuthority("ROLE_USER")</code></td>
+                    <td><code>ROLE_USER</code></td>
+                </tr>
+                <tr>
+                    <td><code>hasAnyAuthority()</code></td>
+                    <td><code>hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")</code></td>
+                    <td><code>ROLE_USER</code>, <code>ROLE_ADMIN</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
+
+    <h4>5.4.5. Khi nào dùng cái nào?</h4>
+
+    <h5>Nếu hệ thống đang tổ chức quyền theo Role</h5>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER
+ADMIN
+MANAGER</pre>
+
+    <p>Nên sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>hoặc:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Cách này dễ đọc và phù hợp khi dạy/thiết kế authorization theo Role.</p>
+
+    
+
+    <h5>Nếu hệ thống sử dụng Authority cụ thể</h5>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+USER_READ
+USER_CREATE
+USER_UPDATE
+USER_DELETE</pre>
+
+    <p>thì sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAuthority("USER_READ")</pre>
+    </div>
+
+    <p>hoặc:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyAuthority</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyAuthority("USER_READ", "USER_CREATE")</pre>
+    </div>
+
+    <p>Lúc này ta đang kiểm tra <strong>quyền cụ thể</strong>, không đơn thuần là Role.</p>
+
+    
+
+    <h4>5.4.6. Sơ đồ tổng quát</h4>
+
+    <p>Toàn bộ quá trình khi sử dụng nhiều Role:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+                    JWT
+                     │
+                     ↓
+              role = ROLE_USER
+                     │
+                     ↓
+          JWT Role Mapping
+                     │
+                     ↓
+          GrantedAuthority
+                     │
+                     ↓
+              ROLE_USER
+                     │
+                     ↓
+        /api/demo/user
+                     │
+                     ↓
+     hasAnyRole("USER", "ADMIN")
+                     │
+              ┌──────┴──────┐
+              ↓             ↓
+        ROLE_USER       ROLE_ADMIN
+              ↓             ↓
+            ALLOW         ALLOW
+              ↓             ↓
+           200 OK        200 OK</pre>
+
+    
+
+    <div class="info-box" style="border-left-color: #e74c3c;">
+        <h4><i class="fas fa-star"></i> Tóm tắt phần 5</h4>
+        <ul>
+            <li><code>hasAnyRole()</code> kiểm tra ít nhất một Role trong danh sách (tự thêm <code>ROLE_</code>).</li>
+            <li><code>hasAnyAuthority()</code> kiểm tra chính xác Authority được truyền vào (không thêm prefix).</li>
+            <li>Khi cho phép <code>USER</code> hoặc <code>ADMIN</code>, cả hai cách đều có thể dùng.</li>
+            <li>Nên ưu tiên <code>hasAnyRole()</code> khi tổ chức theo Role, và <code>hasAnyAuthority()</code> khi làm việc với Permission cụ thể.</li>
+            <li><strong>Quan trọng:</strong> không viết <code>hasAnyRole("ROLE_USER", "ROLE_ADMIN")</code> vì sẽ bị thêm <code>ROLE_</code> hai lần.</li>
+        </ul>
+    </div>
+
+</section>
+<section id="nhieu-role" class="section active">
+    <h2><i class="fas fa-user-tag"></i> 6. Một User có nhiều Role</h2>
+
+    <p>Ở phần 5, ta đã biết cách <strong>một API cho phép nhiều Role</strong>:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Nhưng có một khái niệm khác cần phân biệt:</p>
+
+    <blockquote style="border-left: 4px solid #e74c3c; padding-left: 15px; margin: 15px 0;">
+        <strong>Một User có thể đồng thời sở hữu nhiều Role.</strong>
+    </blockquote>
+
+    <p>Ví dụ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+user2
+ ├── ROLE_USER
+ └── ROLE_ADMIN</pre>
+
+    <p>Khi đó User <code>user2</code> vừa có quyền của <code>USER</code>, vừa có quyền của <code>ADMIN</code>.</p>
+
+    <p>Để làm được điều này với JWT, JWT cần chứa <strong>nhiều Role</strong> và Spring Security phải chuyển các Role đó thành nhiều <code>GrantedAuthority</code>.</p>
+
+    
+
+    <h3>6.1. JWT chứa nhiều Role</h3>
+
+    <p>Thông thường JWT có thể chứa một Role:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Một Role</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user1",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Khi đó User chỉ có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>Nhưng nếu User có nhiều Role:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>thì JWT cần biểu diễn được cả hai Role.</p>
+
+    <p>Một cách phổ biến là sử dụng <strong>Array</strong>.</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Nhiều Role</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Khi đó có thể hiểu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+user2
+   │
+   ├── ROLE_USER
+   │
+   └── ROLE_ADMIN</pre>
+
+    
+
+    <h3>6.2. Role dạng Array</h3>
+
+    <p>JWT Payload:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT Payload</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+sub
+ ↓
+user2</pre>
+
+    <p>là username/subject.</p>
+
+    <p>Còn:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role
+ ↓
+[
+    "ROLE_USER",
+    "ROLE_ADMIN"
+]</pre>
+
+    <p>là danh sách Role của User.</p>
+
+    <p>Có thể biểu diễn:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+│
+├── sub: user2
+│
+└── role:
+      ├── ROLE_USER
+      └── ROLE_ADMIN</pre>
+
+    <p>Điều này có nghĩa:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        User <code>user2</code> đồng thời có <code>ROLE_USER</code> và <code>ROLE_ADMIN</code>.
+    </blockquote>
+
+    
+
+    <h4>6.2.1. So sánh một Role và nhiều Role</h4>
+
+    <h5>Một Role</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Một Role</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user1",
+    "role": "ROLE_USER"
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    
+
+    <h5>Nhiều Role</h5>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Nhiều Role</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    
+
+    <h3>6.3. Mapping nhiều Role thành nhiều <code>GrantedAuthority</code></h3>
+
+    <p>Đây là phần quan trọng nhất.</p>
+
+    <p>JWT chỉ là dữ liệu:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>"role": [
+    "ROLE_USER",
+    "ROLE_ADMIN"
+]</pre>
+    </div>
+
+    <p>Spring Security <strong>không tự động biến mọi custom claim thành <code>GrantedAuthority</code></strong>.</p>
+
+    <p>Ta cần có quá trình mapping:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ │
+ │ role
+ ↓
+["ROLE_USER", "ROLE_ADMIN"]
+ │
+ ↓
+JwtGrantedAuthoritiesConverter
+ │
+ ↓
+GrantedAuthority
+ │
+ ├── ROLE_USER
+ └── ROLE_ADMIN
+ │
+ ↓
+Authentication</pre>
+
+    <p>Sau khi mapping xong, Authentication của User có thể được hình dung:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+│
+├── Principal
+│      └── user2
+│
+└── Authorities
+       ├── ROLE_USER
+       └── ROLE_ADMIN</pre>
+
+    
+
+    <h4>6.3.1. <code>JwtGrantedAuthoritiesConverter</code></h4>
+
+    <p>Ta có thể cấu hình converter để đọc claim <code>role</code>.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Cấu hình converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
+
+authoritiesConverter.setAuthoritiesClaimName("role");
+authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>Ở đây:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>setAuthoritiesClaimName</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>setAuthoritiesClaimName("role")</pre>
+    </div>
+
+    <p>nói cho Spring Security:</p>
+
+    <blockquote style="border-left: 4px solid #3498db; padding-left: 15px; margin: 15px 0;">
+        Hãy lấy danh sách authority từ claim có tên <code>role</code>.
+    </blockquote>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Spring Security lấy:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+role
+ ↓
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    
+
+    <h5>Tại sao <code>setAuthorityPrefix("")</code>?</h5>
+
+    <p>Bởi vì JWT của chúng ta đã chứa:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>Nếu để Spring Security tự thêm prefix:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_</pre>
+
+    <p>thì có thể dẫn tới:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_ROLE_USER
+ROLE_ROLE_ADMIN</pre>
+
+    <p>Do đó:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>setAuthorityPrefix</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>authoritiesConverter.setAuthorityPrefix("");</pre>
+    </div>
+
+    <p>có nghĩa:</p>
+
+    <blockquote style="border-left: 4px solid #27ae60; padding-left: 15px; margin: 15px 0;">
+        Không thêm prefix nào nữa.
+    </blockquote>
+
+    
+
+    <h4>6.3.2. Kết nối với <code>JwtAuthenticationConverter</code></h4>
+
+    <p>Tiếp theo:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Kết nối</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtAuthenticationConverter jwtAuthenticationConverter =
+        new JwtAuthenticationConverter();
+
+jwtAuthenticationConverter
+        .setJwtGrantedAuthoritiesConverter(authoritiesConverter);</pre>
+    </div>
+
+    <p>Toàn bộ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Toàn bộ cấu hình</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>JwtGrantedAuthoritiesConverter authoritiesConverter =
+        new JwtGrantedAuthoritiesConverter();
+
+authoritiesConverter.setAuthoritiesClaimName("role");
+authoritiesConverter.setAuthorityPrefix("");
+
+JwtAuthenticationConverter jwtAuthenticationConverter =
+        new JwtAuthenticationConverter();
+
+jwtAuthenticationConverter
+        .setJwtGrantedAuthoritiesConverter(authoritiesConverter);</pre>
+    </div>
+
+    <p>Sau đó cấu hình vào Resource Server:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Resource Server</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>http.oauth2ResourceServer(oauth2 ->
+    oauth2.jwt(jwt ->
+        jwt.jwtAuthenticationConverter(jwtAuthenticationConverter)
+    )
+);</pre>
+    </div>
+
+    
+
+    <h4>6.3.3. Kết quả mapping</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Sau khi converter xử lý:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role[]
+ ↓
+JwtGrantedAuthoritiesConverter
+ ↓
+GrantedAuthority
+ ↓
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>Authentication cuối cùng:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+Authentication
+│
+├── username: user2
+│
+└── authorities:
+      ├── ROLE_USER
+      └── ROLE_ADMIN</pre>
+
+    
+
+    <h3>6.4. User có <code>ROLE_USER</code> và <code>ROLE_ADMIN</code></h3>
+
+    <p>Giả sử:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+User: user2
+
+Roles:
+- ROLE_USER
+- ROLE_ADMIN</pre>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Sau khi Spring Security xác thực JWT:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+user2
+ │
+ ├── ROLE_USER
+ └── ROLE_ADMIN</pre>
+
+    <p>User này có thể truy cập những API yêu cầu:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole USER</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("USER")</pre>
+    </div>
+
+    <p>và:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole ADMIN</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.hasRole("ADMIN")</pre>
+    </div>
+
+    
+
+    <h4>6.4.1. Ví dụ</h4>
+
+    <p>SecurityConfig:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityConfig</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.authorizeHttpRequests(auth -> auth
+
+    .requestMatchers("/api/demo/user")
+        .hasRole("USER")
+
+    .requestMatchers("/api/demo/admin")
+        .hasRole("ADMIN")
+
+    .anyRequest()
+        .authenticated()
+)</pre>
+    </div>
+
+    <p>User <code>user2</code> có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>nên:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GET /api/demo/user
+        ↓
+ROLE_USER ?
+        ↓
+Có
+        ↓
+200 OK</pre>
+
+    <p>và:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+GET /api/demo/admin
+        ↓
+ROLE_ADMIN ?
+        ↓
+Có
+        ↓
+200 OK</pre>
+
+    
+
+    <h4>6.4.2. User chỉ có <code>ROLE_USER</code></h4>
+
+    <p>Nếu JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user1",
+    "role": [
+        "ROLE_USER"
+    ]
+}</pre>
+    </div>
+
+    <p>thì:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>được phép:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user  → 200 OK</pre>
+
+    <p>nhưng:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/admin → 403 Forbidden</pre>
+
+    
+
+    <h4>6.4.3. User chỉ có <code>ROLE_ADMIN</code></h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "admin",
+    "role": [
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user  → 403 Forbidden
+/api/demo/admin → 200 OK</pre>
+
+    
+
+    <h4>6.4.4. User có cả hai Role</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+        ↓
+ROLE_USER
+        ↓
+200 OK</pre>
+
+    <p>và:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/admin
+        ↓
+ROLE_ADMIN
+        ↓
+200 OK</pre>
+
+    
+
+    <h3>6.5. Kiểm tra nhiều Role trong <code>SecurityFilterChain</code></h3>
+
+    <p>Khi User có nhiều Role, ta có thể sử dụng cả:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>hasRole()</pre>
+    </div>
+
+    <p>và:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>hasAnyRole()</pre>
+    </div>
+
+    
+
+    <h4>6.5.1. Kiểm tra một Role</h4>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole USER</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasRole("USER")</pre>
+    </div>
+
+    <p>API yêu cầu:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER</pre>
+
+    <p>User có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>vẫn được phép.</p>
+
+    <p>Điểm quan trọng:</p>
+
+    <blockquote style="border-left: 4px solid #e67e22; padding-left: 15px; margin: 15px 0;">
+        <code>hasRole("USER")</code> không yêu cầu User <strong>chỉ có USER</strong>.
+    </blockquote>
+
+    <p>Nó chỉ kiểm tra:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+User có ROLE_USER không?</pre>
+
+    <p>Nếu có thì cho phép.</p>
+
+    
+
+    <h4>6.5.2. Kiểm tra Role ADMIN</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasRole ADMIN</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/admin")
+    .hasRole("ADMIN")</pre>
+    </div>
+
+    <p>User:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>→ Có <code>ROLE_ADMIN</code> → <strong>200 OK</strong>.</p>
+
+    
+
+    <h4>6.5.3. Cho phép USER hoặc ADMIN</h4>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>hasAnyRole</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>.requestMatchers("/api/demo/user")
+    .hasAnyRole("USER", "ADMIN")</pre>
+    </div>
+
+    <p>Điều kiện:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER OR ROLE_ADMIN</pre>
+
+    <p>User có:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+    <p>→ chắc chắn được phép.</p>
+
+    
+
+    <h4>6.5.4. SecurityConfig hoàn chỉnh</h4>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>SecurityConfig hoàn chỉnh</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http)
+        throws Exception {
+
+    http
+        .csrf(csrf -> csrf.disable())
+
+        .authorizeHttpRequests(auth -> auth
+
+            .requestMatchers("/api/auth/**")
+                .permitAll()
+
+            .requestMatchers("/api/demo/user")
+                .hasRole("USER")
+
+            .requestMatchers("/api/demo/admin")
+                .hasRole("ADMIN")
+
+            .requestMatchers("/api/demo/user-admin")
+                .hasAnyRole("USER", "ADMIN")
+
+            .anyRequest()
+                .authenticated()
+        )
+
+        .oauth2ResourceServer(oauth2 ->
+            oauth2.jwt(jwt ->
+                jwt.jwtAuthenticationConverter(
+                    jwtAuthenticationConverter()
+                )
+            )
+        );
+
+    return http.build();
+}</pre>
+    </div>
+
+    <p>Converter:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>Converter</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>@Bean
+public JwtAuthenticationConverter jwtAuthenticationConverter() {
+
+    JwtGrantedAuthoritiesConverter authoritiesConverter =
+            new JwtGrantedAuthoritiesConverter();
+
+    authoritiesConverter.setAuthoritiesClaimName("role");
+    authoritiesConverter.setAuthorityPrefix("");
+
+    JwtAuthenticationConverter converter =
+            new JwtAuthenticationConverter();
+
+    converter.setJwtGrantedAuthoritiesConverter(
+            authoritiesConverter
+    );
+
+    return converter;
+}</pre>
+    </div>
+
+    
+
+    <h4>6.5.5. Kết quả với User có hai Role</h4>
+
+    <p>JWT:</p>
+
+    <div class="code-block">
+        <div class="code-header">
+            <span>JWT</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        </div>
+        <pre>{
+    "sub": "user2",
+    "role": [
+        "ROLE_USER",
+        "ROLE_ADMIN"
+    ]
+}</pre>
+    </div>
+
+    <p>Spring Security:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+JWT
+ ↓
+role[]
+ ↓
+JwtGrantedAuthoritiesConverter
+ ↓
+┌──────────────────┐
+│ ROLE_USER        │
+│ ROLE_ADMIN       │
+└──────────────────┘
+ ↓
+Authentication</pre>
+
+    <p>SecurityFilterChain:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+/api/demo/user
+      ↓
+hasRole("USER")
+      ↓
+ROLE_USER
+      ↓
+✅ 200
+
+
+/api/demo/admin
+      ↓
+hasRole("ADMIN")
+      ↓
+ROLE_ADMIN
+      ↓
+✅ 200
+
+
+/api/demo/user-admin
+      ↓
+hasAnyRole("USER", "ADMIN")
+      ↓
+ROLE_USER OR ROLE_ADMIN
+      ↓
+✅ 200</pre>
+
+    
+
+    <h4>6.5.6. Tổng kết phần 6</h4>
+
+    <p>Có thể nhớ toàn bộ cơ chế bằng sơ đồ:</p>
+
+    <pre style=" padding: 15px; border-radius: 8px; font-family: monospace;">
+                    USER
+                     │
+          ┌──────────┴──────────┐
+          ↓                     ↓
+      ROLE_USER             ROLE_ADMIN
+          │                     │
+          └──────────┬──────────┘
+                     ↓
+                    JWT
+                     │
+                     ↓
+          "role": [
+             "ROLE_USER",
+             "ROLE_ADMIN"
+          ]
+                     │
+                     ↓
+   JwtGrantedAuthoritiesConverter
+                     │
+                     ↓
+          GrantedAuthority
+             ├── ROLE_USER
+             └── ROLE_ADMIN
+                     │
+                     ↓
+              Authentication
+                     │
+                     ↓
+           SecurityFilterChain
+              │             │
+              ↓             ↓
+         hasRole()      hasAnyRole()</pre>
+
+    <div class="info-box" style="border-left-color: #e74c3c;">
+        <h4><i class="fas fa-star"></i> Ba điểm cần nhớ</h4>
+
+        <p><strong>1. Một User có thể có nhiều Role</strong></p>
+        <pre style=" padding: 10px; border-radius: 4px;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+        <p><strong>2. JWT có thể chứa Role dạng Array</strong></p>
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">"role": [
+    "ROLE_USER",
+    "ROLE_ADMIN"
+]</pre>
+        </div>
+
+        <p><strong>3. Spring Security phải mapping Array Role thành nhiều <code>GrantedAuthority</code></strong></p>
+        <pre style=" padding: 10px; border-radius: 4px;">
+ROLE_USER
+ROLE_ADMIN</pre>
+
+        <p>Sau đó <code>SecurityFilterChain</code> mới có thể kiểm tra:</p>
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">.hasRole("USER")</pre>
+        </div>
+        <p>hoặc:</p>
+        <div class="code-block" style="background: #2c3e50; color: white;">
+            <pre style="color: white;">.hasAnyRole("USER", "ADMIN")</pre>
+        </div>
+
+        <p style="margin-top: 15px;"><strong>Điểm mấu chốt:</strong> <code>role</code> trong JWT chỉ là dữ liệu. Muốn Spring Security thực sự dùng được nhiều Role để phân quyền, phải có bước <strong>JWT → GrantedAuthority</strong>.</p>
+    </div>
+</section>
+
+  <section id="tong-ket" class="section">
+                    <h2><i class="fas fa-shield-alt"></i> SPRING BOOT JWT AUTHENTICATION</h2>
+
+                   
+                    <h3>1. Cấu trúc project</h3>
+
+                    <pre style="line-height: 1.3;" class="diagram-box">
+src/main/java/com/example/project
+│
+├── config
+│   └── SecurityConfig.java
+│
+├── controller
+│   └── AuthController.java
+│
+├── dto
+│   └── auth
+│       ├── LoginRequest.java
+│       └── LoginResponse.java
+│
+├── entity
+│   └── User.java
+│
+├── repository
+│   └── UserRepository.java
+│
+├── security
+│   └── CustomUserDetailsService.java
+│
+└── service
+    ├── AuthService.java
+    └── JwtService.java</pre>
+
+                    <h3>2. Dependencies (pom.xml)</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> pom.xml</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>&lt;!-- Spring Web --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Spring Security --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Spring Data JPA --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MySQL --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;!-- Lombok --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.projectlombok&lt;/groupId&gt;
+    &lt;artifactId&gt;lombok&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;
+
+&lt;!-- ModelMapper --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.modelmapper&lt;/groupId&gt;
+    &lt;artifactId&gt;modelmapper&lt;/artifactId&gt;
+    &lt;version&gt;3.2.4&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- JJWT --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+    &lt;version&gt;0.13.0&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-impl&lt;/artifactId&gt;
+    &lt;version&gt;0.13.0&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+    &lt;artifactId&gt;jjwt-jackson&lt;/artifactId&gt;
+    &lt;version&gt;0.13.0&lt;/version&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MapStruct --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mapstruct&lt;/groupId&gt;
+    &lt;artifactId&gt;mapstruct&lt;/artifactId&gt;
+    &lt;version&gt;1.6.3&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;!-- MapStruct --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-oauth2-resource-server&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+</pre>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Dependency</th>
+                                    <th>Mục đích</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>spring-boot-starter-web</code></td>
+                                    <td>Xây dựng REST API</td>
+                                </tr>
+                                <tr>
+                                    <td><code>spring-boot-starter-security</code></td>
+                                    <td>Bảo mật ứng dụng</td>
+                                </tr>
+                                <tr>
+                                    <td><code>spring-boot-starter-data-jpa</code></td>
+                                    <td>Làm việc với Database</td>
+                                </tr>
+                                <tr>
+                                    <td><code>mysql-connector-j</code></td>
+                                    <td>Driver kết nối MySQL</td>
+                                </tr>
+                                <tr>
+                                    <td><code>lombok</code></td>
+                                    <td>Giảm boilerplate code</td>
+                                </tr>
+                                <tr>
+                                    <td><code>modelmapper</code></td>
+                                    <td>Mapping Entity ↔ DTO</td>
+                                </tr>
+                                <tr>
+                                    <td><code>jjwt-api / jjwt-impl / jjwt-jackson</code></td>
+                                    <td>Tạo và xác thực JWT</td>
+                                </tr>
+                                <tr>
+                                    <td><code>mapstruct</code></td>
+                                    <td>Mapping object (compile-time)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3. Database User</h3>
+
+                    <p><strong>Ví dụ bảng:</strong></p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SQL</span><button class="copy-btn"
+                                onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL
+);</pre>
+                    </div>
+
+                    <p><strong>Ví dụ dữ liệu:</strong></p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> Insert</span><button class="copy-btn"
+                                onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button></div>
+                        <pre>
+('admin',   '$2a$10$D7PlPL.TX2mCeimb7qNdS./OJXqw6vew5quGQIJx6nwNm5UiMVj12', 'ADMIN'),  -- 1234
+('user1',   '$2a$10$IYOZyHBkab.bdLOBPuJTvOa9wIMTgK6D/w4XyvIUD1QHYzEDdrQCq', 'USER'),
+('user2',   '$2a$10$3DBhpJMoSVz6o5V.u97kl.l2hv409zO/WJAav5wVWK9/sSaQMLHvu', 'USER'),
+('manager', '$2a$10$XoYuSDgn3qdNuJhqcAw8WuqTpeqEFd63GRRyaeEg4CkG1bfjBaaVa', 'MANAGER');
+                        </pre>
+                    </div>
+
+                    <div class="warning-box">
+                        <p><strong>Lưu ý:</strong> Password không bao giờ lưu 123456 trực tiếp.</p>
+                    </div>
+
+                    <h3>4. Entity</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> User.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String role;
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li><code>@Entity</code> – Đánh dấu class là JPA Entity</li>
+                            <li><code>@Table(name = "users")</code> – Ánh xạ tới bảng <strong>users</strong> trong
+                                Database</li>
+                            <li><code>@Id</code> – Khóa chính</li>
+                            <li><code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code> – Tự động tăng</li>
+                            <li><code>@Column(nullable = false, unique = true)</code> – Không null, duy nhất</li>
+                            <li>Lombok: <code>@Getter</code>, <code>@Setter</code>, <code>@NoArgsConstructor</code>,
+                                <code>@AllArgsConstructor</code>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <h3>5. Repository</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> UserRepository.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import com.example.security2.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository&lt;User, Integer&gt; {
+    Optional&lt;User&gt; findByUsername(String username);
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li><code>JpaRepository&lt;User, Integer&gt;</code> – Quản lý Entity User với khóa chính
+                                kiểu <code>Integer</code></li>
+                            <li><code>findByUsername(String username)</code> – Tìm User theo username</li>
+                            <li>Trả về <code>Optional&lt;User&gt;</code> – Có thể có hoặc không có User</li>
+                        </ul>
+                    </div>
+
+                    <h3>6. CustomUserDetailsService</h3>
+                    <p>Đây là class để Spring Security biết cách lấy User từ DB.</p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i>
+                                CustomUserDetailsService.java</span><button class="copy-btn" onclick="copyCode(this)"><i
+                                    class="far fa-copy"></i> Copy</button></div>
+                        <pre>import com.example.security2.entity.User;
+import com.example.security2.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService
+        implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
+        User user = userRepository
+                .findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException(
+                                "User not found"
+                        )
+                );
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .roles(user.getRole())
+                .build();
+    }
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li><code>implements UserDetailsService</code> – Interface của Spring Security để tải User
+                            </li>
+                            <li><code>loadUserByUsername(String username)</code> – Phương thức được Spring Security gọi
+                            </li>
+                            <li><code>findByUsername(username).orElseThrow(...)</code> – Nếu không tìm thấy User, ném
+                                <code>UsernameNotFoundException</code>
+                            </li>
+                            <li><code>User.withUsername()</code> – Tạo đối tượng <code>UserDetails</code> từ User trong
+                                DB</li>
+                            <li><code>.roles(user.getRole())</code> – Gán Role cho User</li>
+                        </ul>
+                        <p><strong>Class này không cần gọi trực tiếp. Spring Security tự gọi nó khi:
+                                <code>authenticationManager.authenticate(...)</code> được thực hiện.</strong></p>
+                    </div>
+
+                    <h3>7. LoginRequest</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> LoginRequest.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class LoginRequest {
+
+    private String username;
+
+    private String password;
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li>DTO nhận dữ liệu từ Client</li>
+                            <li><code>@Getter</code> và <code>@Setter</code> từ Lombok</li>
+                            <li>Client gửi: <code>{"username": "...", "password": "..."}</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>8. LoginResponse</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> LoginResponse.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class LoginResponse {
+
+    private String accessToken;
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li>DTO trả về cho Client sau khi Login thành công</li>
+                            <li><code>accessToken</code> – JWT Token để Client sử dụng</li>
+                            <li>Response: <code>{"accessToken": "eyJhbGciOiJIUzI1NiJ9..."}</code></li>
+                        </ul>
+                    </div>
+
+                    <h3>9. application.property</h3>
+
+                    <p><strong>Secret không viết trực tiếp trong Java. Trên Windows PowerShell, chạy:</strong></p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> PowerShell</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))</pre>
+                    </div>
+
+                    <p><strong>Sau đó lấy kết quả và đưa vào <code>application.yml</code>:</strong></p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> application.yml</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>
+ spring.application.name=demo1111111
+
+# ===============================
+# SERVER
+# ===============================
+
+server.port=8080
+
+# ===============================
+# DATABASE
+# ===============================
+
+spring.datasource.url=jdbc:mysql://localhost:3306/spring_security
+spring.datasource.username=root
+spring.datasource.password=1234
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ===============================
+# JPA
+# ===============================
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# ===============================
+# JWT
+# ===============================
+
+jwt.secret-key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+jwt.expiration=3600000
+        </pre>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Giải thích:</strong></p>
+                        <ul>
+                            <li><code>jwt.secret-key</code> – Secret Key dạng Base64 để ký JWT</li>
+                            <li><code>jwt.expiration</code> – 3600000 ms = 1 giờ</li>
+                            <li><code>spring.datasource</code> – Cấu hình kết nối MySQL</li>
+                        </ul>
+                    </div>
+
+                    <h3>10. JwtService</h3>
+                    <p>Đây là class chuyên tạo JWT.</p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> JwtService.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+@Service
+public class JwtService {
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
+
+    public String generateToken(UserDetails userDetails) {
+
+        return Jwts.builder()
+
+                // Subject
+                .subject(userDetails.getUsername())
+
+                // Custom Claim
+                .claim(
+                        "role",
+                        userDetails.getAuthorities()
+                                .stream()
+                                .findFirst()
+                                .map(GrantedAuthority::getAuthority)
+                                .orElse("")
+                )
+
+                // Thời điểm tạo Token
+                .issuedAt(new Date())
+
+                // Thời điểm hết hạn
+                .expiration(
+                        new Date(
+                                System.currentTimeMillis()
+                                        + expiration
+                        )
+                )
+
+                // Ký JWT
+                .signWith(getKey())
+
+                // Tạo JWT String
+                .compact();
+    }
+
+    private SecretKey getKey() {
+
+        return Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(secretKey)
+        );
+    }
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Giải thích JwtService:</h5>
+                        <ul>
+                            <li><code>@Value("${jwt.secret-key}")</code> – Lấy Secret Key từ
+                                <code>application.yml</code>
+                            </li>
+                            <li><code>@Value("${jwt.expiration}")</code> – Lấy thời gian hết hạn từ
+                                <code>application.yml</code>
+                            </li>
+                            <li><code>subject(userDetails.getUsername())</code> – Đặt username vào Subject của JWT</li>
+                            <li><code>claim("role", ...)</code> – Thêm Role vào Custom Claim</li>
+                            <li><code>issuedAt(new Date())</code> – Thời gian tạo Token</li>
+                            <li><code>expiration(...)</code> – Thời gian hết hạn = hiện tại + expiration</li>
+                            <li><code>signWith(getKey())</code> – Ký JWT bằng Secret Key</li>
+                            <li><code>compact()</code> – Tạo JWT String</li>
+                            <li><code>getKey()</code> – Chuyển Secret Key từ Base64 String → SecretKey</li>
+                        </ul>
+                    </div>
+
+                    <h3>11. AuthService</h3>
+                    <p>Đây là phần quan trọng nhất.</p>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> AuthService.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import com.example.security2.DTO.repquert.LoginRequest;
+import com.example.security2.DTO.response.LoginResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AuthService {
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
+
+    public LoginResponse login(LoginRequest request) {
+
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getUsername(),
+                                request.getPassword()
+                        )
+                );
+
+        UserDetails userDetails =
+                (UserDetails) authentication.getPrincipal();
+
+        String token = jwtService.generateToken(userDetails);
+
+        return new LoginResponse(token);
+    }
+}</pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Giải thích AuthService:</h5>
+                        <ul>
+                            <li><code>AuthenticationManager</code> – Thực hiện xác thực</li>
+                            <li><code>UsernamePasswordAuthenticationToken</code> – Đóng gói username và password</li>
+                            <li><code>authenticationManager.authenticate(...)</code> – Gọi Spring Security để xác thực
+                            </li>
+                            <li><code>authentication.getPrincipal()</code> – Lấy UserDetails đã được xác thực</li>
+                            <li><code>jwtService.generateToken(userDetails)</code> – Tạo JWT</li>
+                            <li>Trả về <code>LoginResponse</code> chứa Access Token</li>
+                        </ul>
+                    </div>
+
+                    <h3>12. SecurityConfig</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> SecurityConfig.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                    <pre>
+package com.example.demosecurity.config;
+
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+
+import org.springframework.security.web.SecurityFilterChain;
+
+import javax.crypto.SecretKey;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    @Value("${jwt.secret-key}")
+    private String secretKeyValue;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http
+    ) throws Exception {
+
+        http
+                .csrf(csrf -> csrf.disable())
+
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS
+                        )
+                )
+
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers(
+                                "/api/auth/login"
+                        ).permitAll()
+
+                        .requestMatchers(
+                                "/api/demo/user"
+                        ).hasAnyRole("USER", "ADMIN")
+
+                        .anyRequest()
+                        .authenticated()
+                )
+
+                .oauth2ResourceServer(oauth2 ->
+                        oauth2.jwt(jwt ->
+                                jwt.jwtAuthenticationConverter(
+                                        jwtAuthenticationConverter()
+                                )
+                        )
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+
+        SecretKey secretKey = Keys.hmacShaKeyFor(
+                Decoders.BASE64.decode(secretKeyValue)
+        );
+
+        return NimbusJwtDecoder
+                .withSecretKey(secretKey)
+                .build();
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+
+        JwtGrantedAuthoritiesConverter authoritiesConverter =
+                new JwtGrantedAuthoritiesConverter();
+
+        // Lấy quyền từ claim "role"
+        authoritiesConverter.setAuthoritiesClaimName("role");
+
+        // JWT đã có ROLE_USER nên không thêm tiền tố
+        authoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter converter =
+                new JwtAuthenticationConverter();
+
+        converter.setJwtGrantedAuthoritiesConverter(
+                authoritiesConverter
+        );
+
+        return converter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
+
+        return configuration.getAuthenticationManager();
+    }
+}
+                    </pre>
+                    </div>
+
+                    <div class="info-box">
+                        <h5>Giải thích SecurityConfig:</h5>
+                        <ul>
+                            <li><code>@EnableWebSecurity</code> – Kích hoạt Spring Security</li>
+                            <li><code>csrf().disable()</code> – Tắt CSRF (phù hợp với REST API)</li>
+                            <li><code>sessionCreationPolicy(SessionCreationPolicy.STATELESS)</code> – Không tạo Session
+                                (Stateless)</li>
+                            <li><code>requestMatchers("/api/auth/login").permitAll()</code> – Cho phép truy cập login
+                                không cần xác thực</li>
+                            <li><code>anyRequest().authenticated()</code> – Tất cả API khác cần xác thực</li>
+                            <li><code>BCryptPasswordEncoder</code> – Mã hóa password</li>
+                            <li><code>authenticationManager</code> – Bean để xác thực</li>
+                        </ul>
+                    </div>
+
+                    <h3>13. Controller</h3>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> AuthController.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>import com.example.security2.DTO.repquert.LoginRequest;
+import com.example.security2.DTO.response.LoginResponse;
+import com.example.security2.service.AuthService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    @PostMapping("/login")
+    public LoginResponse login(
+            @RequestBody LoginRequest request
+    ) {
+        return authService.login(request);
+    }
+}</pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> DemoController.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>
+package com.example.demosecurity.controller;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/demo")
+public class DemoController {
+
+    @GetMapping("/user")
+    public String user(Authentication authentication) {
+        return "USER: " + authentication.getName();
+    }
+
+    @GetMapping("/admin")
+    public String admin(Authentication authentication) {
+        return "ADMIN: " + authentication.getName();
+    }
+}
+                        </pre>
+                    </div>
+
+            
+                </section>
+
             </main>
         </div>
         <footer>

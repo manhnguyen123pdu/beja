@@ -5711,9 +5711,9 @@ public class SecurityConfig {
                         </ul>
                     </div>
 
-                    <h3>13. AuthController</h3>
+                    <h3>13. controller</h3>
 
-                    <div class="code-block">
+       <div class="code-block">
                         <div class="code-header"><span><i class="fas fa-code"></i> AuthController.java</span><button
                                 class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
                         </div>
@@ -5740,6 +5740,35 @@ public class AuthController {
         return authService.login(request);
     }
 }</pre>
+                    </div>
+
+                    <div class="code-block">
+                        <div class="code-header"><span><i class="fas fa-code"></i> DemoController.java</span><button
+                                class="copy-btn" onclick="copyCode(this)"><i class="far fa-copy"></i> Copy</button>
+                        </div>
+                        <pre>
+package com.example.demosecurity.controller;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/demo")
+public class DemoController {
+
+    @GetMapping("/user")
+    public String user(Authentication authentication) {
+        return "USER: " + authentication.getName();
+    }
+
+    @GetMapping("/admin")
+    public String admin(Authentication authentication) {
+        return "ADMIN: " + authentication.getName();
+    }
+}
+                        </pre>
                     </div>
 
                     <div class="info-box">
