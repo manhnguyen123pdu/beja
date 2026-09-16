@@ -369,8 +369,8 @@
             <nav class="sidebar">
                 <ul class="nav-list">
                     <h3>Basic auth</h3>
-                    <li class="nav-item"><a href="#jwt-claim" class="nav-link"><i class="fas fa-user-tag"></i> JWT Claim
-                            và Role</a></li>
+                    <li class="nav-item"><a href="#jwt-claim" class="nav-link"><i class="fas fa-user-tag"></i> Giới thiệu
+                            </a></li>
                     <li class="nav-item"><a href="#role-authority" class="nav-link"><i class="fas fa-shield-alt"></i>
                             Role và GrantedAuthority</a></li>
                     <li class="nav-item"><a href="#mapping" class="nav-link"><i class="fas fa-exchange-alt"></i> JWT
@@ -404,7 +404,7 @@
                 </ul>
             </nav>
             <main class="main-content">
-                <section id="jwt-claim" class="section active">
+                <!-- <section id="jwt-claim" class="section active">
                     <h2><i class="fas fa-lock"></i> 1. JWT Claim và Role</h2>
 
 
@@ -646,7 +646,292 @@ JWT
            └── Array</pre>
 
 
-                </section>
+                </section> -->
+                
+<section id="jwt-claim" class="section">
+    <h2><i class="fas fa-user-lock"></i> 1. Authentication và Authorization</h2>
+
+    <p>Hai khái niệm này thường đi cùng nhau nhưng <strong>không giống nhau</strong>.</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Khái niệm</th>
+                    <th>Câu hỏi</th>
+                    <th>Ví dụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Authentication</strong></td>
+                    <td>Bạn là ai?</td>
+                    <td><code>nguyenan</code> đăng nhập thành công</td>
+                </tr>
+                <tr>
+                    <td><strong>Authorization</strong></td>
+                    <td>Bạn được làm gì?</td>
+                    <td><code>nguyenan</code> có quyền <code>DOCTOR</code> nên được truy cập API bác sĩ</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ Đăng nhập
+   ▼
+Authentication
+   │
+   │ Xác định user
+   ▼
+User: nguyenan
+Role: DOCTOR
+   │
+   ▼
+Authorization
+   │
+   ├── /api/doctors       → Được phép
+   ├── /api/patients      → Có thể được phép
+   └── /api/admin/users   → Không được phép</pre>
+    </div>
+
+    <h3>2. Phân quyền nằm ở đâu trong Spring Security?</h3>
+
+    <p>Ở bài JWT trước, chúng ta đã có flow:</p>
+    <div class="info-box">
+        <pre>POST /api/auth/login
+        │
+        ▼
+AuthenticationManager
+        │
+        ▼
+Kiểm tra username/password
+        │
+        ▼
+Tạo JWT
+        │
+        ▼
+Client nhận Access Token</pre>
+    </div>
+
+    <p>Sau khi login, client gửi token:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...</pre>
+    </div>
+
+    <p>Spring Security sẽ:</p>
+    <div class="info-box">
+        <pre>JWT
+ │
+ ▼
+Xác thực token
+ │
+ ▼
+Lấy thông tin User
+ │
+ ▼
+Lấy Role / Authority
+ │
+ ▼
+Kiểm tra quyền
+ │
+ ├── Có quyền  → Cho phép
+ │
+ └── Không có  → 403 Forbidden</pre>
+    </div>
+
+    <p>Vì vậy bài <strong>Phân quyền</strong> sẽ tập trung vào phần:</p>
+    <div class="info-box">
+        <pre>User
+ ↓
+Role
+ ↓
+Authority
+ ↓
+Authorization</pre>
+    </div>
+
+    <h3>3. Ví dụ đơn giản</h3>
+
+    <p>Giả sử database có:</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>username</th>
+                    <th>role</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>admin</td><td>ADMIN</td></tr>
+                <tr><td>doctor01</td><td>DOCTOR</td></tr>
+                <tr><td>user01</td><td>USER</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Ta có các API:</p>
+    <div class="info-box">
+        <pre>GET /api/products
+POST /api/products
+DELETE /api/products/{id}</pre>
+    </div>
+
+    <p>Quy định:</p>
+    <div class="info-box">
+        <pre>USER
+ └── GET /api/products
+
+ADMIN
+ ├── GET /api/products
+ ├── POST /api/products
+ └── DELETE /api/products/{id}</pre>
+    </div>
+
+    <p>Khi <code>user01</code> gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /api/products/10
+Authorization: Bearer ...</pre>
+    </div>
+
+    <p>Spring Security kiểm tra:</p>
+    <div class="info-box">
+        <pre>user01
+  ↓
+ROLE_USER
+  ↓
+DELETE /api/products/10
+  ↓
+Cần ROLE_ADMIN
+  ↓
+Không có quyền
+  ↓
+403 Forbidden</pre>
+    </div>
+
+    <p>Đây chính là <strong>Authorization</strong>.</p>
+
+    <h3>4. Những nội dung chính của bài</h3>
+
+    <p>Nếu xây dựng bài này tiếp sau bài JWT, cấu trúc đề xuất:</p>
+
+    <div class="info-box">
+        <pre>Bài — Phân quyền trong Spring Boot
+
+1. Tổng quan về Authorization
+   - Authentication vs Authorization
+   - Role là gì?
+   - Authority là gì?
+   - User – Role – Authority
+   - Quy trình kiểm tra quyền
+
+2. Role trong Spring Security
+   - ROLE_ADMIN
+   - ROLE_USER
+   - hasRole()
+   - hasAuthority()
+   - Sự khác nhau giữa Role và Authority
+
+3. Phân quyền API
+   - .requestMatchers("/api/admin/**")
+     .hasRole("ADMIN")
+   - .requestMatchers("/api/users/**")
+     .hasAnyRole("USER", "ADMIN")
+
+4. Phân quyền theo HTTP Method
+   - GET     → USER
+   - POST    → ADMIN
+   - PUT     → ADMIN
+   - DELETE  → ADMIN
+
+5. Phân quyền nhiều Role
+   - ADMIN
+   - DOCTOR
+   - RECEPTIONIST
+   - PATIENT
+
+6. Method Security
+   - @PreAuthorize("hasRole('ADMIN')")
+   - @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+
+7. JWT chứa Role
+   - Ví dụ JWT:
+     {
+       "sub": "doctor01",
+       "role": "ROLE_DOCTOR"
+     }
+   - Spring Security lấy thông tin này để xây dựng GrantedAuthority
+
+8. JWT Role Mapping
+   JWT
+    │
+    │ role = ROLE_DOCTOR
+    ▼
+   GrantedAuthority
+    │
+    ▼
+   ROLE_DOCTOR
+    │
+    ▼
+   hasRole("DOCTOR")
+
+9. Phân quyền thực tế trong project
+   - ADMIN
+       ├── quản lý user
+       ├── quản lý doctor
+       ├── quản lý medicine
+       └── quản lý invoice
+   - DOCTOR
+       ├── xem patient
+       ├── quản lý appointment
+       └── xem medical record
+   - PATIENT
+       ├── xem thông tin cá nhân
+       └── xem appointment của mình</pre>
+    </div>
+
+    <h3>5. Điểm quan trọng nhất của bài</h3>
+
+    <p>Học viên cần hiểu được chuỗi này:</p>
+    <div class="info-box">
+        <pre>LOGIN
+  ↓
+Authentication
+  ↓
+JWT
+  ↓
+JWT chứa thông tin Role
+  ↓
+JWT Authentication Filter
+  ↓
+SecurityContext
+  ↓
+GrantedAuthority
+  ↓
+Authorization
+  ↓
+hasRole() / hasAuthority()
+  ↓
+Cho phép hoặc 403</pre>
+    </div>
+
+    <div class="warning-box">
+        <p>Bài JWT trước chủ yếu giải quyết:</p>
+        <div class="info-box">
+            <pre>"Token này có hợp lệ không và user là ai?"</pre>
+        </div>
+        <p>Bài Phân quyền giải quyết:</p>
+        <div class="info-box">
+            <pre>"User này có được phép thực hiện hành động này không?"</pre>
+        </div>
+    </div>
+</section>
+
                 <section id="role-authority" class="section ">
                     <h2><i class="fas fa-shield-alt"></i> 2. Role và GrantedAuthority</h2>
 
