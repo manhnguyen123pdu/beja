@@ -1,0 +1,6102 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspect-Oriented Programming</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            /* padding: 30px; */
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 85vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #666;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .method {
+            color: #dcdcaa;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {}
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        pre {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .syntax {
+
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid var(--info);
+        }
+
+        .diagram {
+
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+        }
+
+        .original-content {
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i>Aspect-Oriented Programming</h1>
+        </header>
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+                    <li class="nav-item"><a href="#aop-p1" class="nav-link"><i class="fas fa-info-circle"></i> Phần 1. Tổng quan về AOP</a></li>
+<li class="nav-item"><a href="#aop-p2" class="nav-link"><i class="fas fa-cubes"></i> Phần 2. Các khái niệm cốt lõi của AOP</a></li>
+<li class="nav-item"><a href="#aop-p3" class="nav-link"><i class="fas fa-tools"></i> Phần 3. Cài đặt và xây dựng AOP trong Spring Boot</a></li>
+<li class="nav-item"><a href="#aop-p4" class="nav-link"><i class="fas fa-crosshairs"></i> Phần 4. Advice và Pointcut</a></li>
+<li class="nav-item"><a href="#aop-p5" class="nav-link"><i class="fas fa-project-diagram"></i> Phần 5. Xây dựng ứng dụng AOP thực tế</a></li>                </ul>
+            </nav>
+            <main class="main-content">
+<section id="aop-p1" class="section">
+    <h2><i class="fas fa-project-diagram"></i> PHẦN 1. Tổng quan về AOP</h2>
+
+   
+    <h3>1.1. AOP là gì?</h3>
+
+    <h4>1.1.1. Khái niệm AOP</h4>
+    <p><strong>AOP (Aspect-Oriented Programming)</strong>, hay lập trình hướng khía cạnh, là một phương pháp lập trình cho phép chúng ta tách những <strong>logic dùng chung</strong> ra khỏi <strong>logic nghiệp vụ chính</strong> của chương trình.</p>
+
+    <p>Trong các ứng dụng Backend, có rất nhiều chức năng xuất hiện ở nhiều nơi khác nhau.</p>
+    <p>Ví dụ:</p>
+    <ul>
+        <li>Ghi log.</li>
+        <li>Kiểm tra thời gian thực thi.</li>
+        <li>Ghi lịch sử thao tác.</li>
+        <li>Theo dõi exception.</li>
+        <li>Kiểm tra quyền.</li>
+        <li>Quản lý transaction.</li>
+        <li>Theo dõi hoạt động của người dùng.</li>
+    </ul>
+
+    <p>Những chức năng này thường <strong>không phải là nhiệm vụ chính</strong> của một method nghiệp vụ, nhưng chúng lại có thể xuất hiện trong rất nhiều method.</p>
+
+    <p>Ví dụ một ứng dụng quản lý người dùng có:</p>
+    <div class="info-box">
+        <pre>UserService
+    ├── getUserById()
+    ├── createUser()
+    ├── updateUser()
+    └── deleteUser()</pre>
+    </div>
+
+    <p>Ứng dụng lại yêu cầu ghi log cho tất cả các method:</p>
+    <div class="info-box">
+        <pre>getUserById()
+    → ghi log
+
+createUser()
+    → ghi log
+
+updateUser()
+    → ghi log
+
+deleteUser()
+    → ghi log</pre>
+    </div>
+
+    <p>Nếu viết code logging trực tiếp trong từng method, chúng ta sẽ phải lặp lại cùng một loại code rất nhiều lần.</p>
+
+    <p>AOP cung cấp một cách tiếp cận khác:</p>
+    <div class="info-box">
+        <pre>                   Logging
+                       │
+                       │
+              ┌────────┼────────┐
+              │        │        │
+              ▼        ▼        ▼
+          getUser   createUser updateUser
+              │        │        │
+              └────────┼────────┘
+                       │
+                    deleteUser</pre>
+    </div>
+
+    <p>Thay vì đưa code logging vào từng method, chúng ta có thể đặt logic logging vào một thành phần riêng và để Spring tự động áp dụng nó cho những method phù hợp.</p>
+
+    <h4>1.1.2. Ý tưởng cốt lõi của AOP</h4>
+    <p>Có thể hiểu AOP thông qua một nguyên tắc đơn giản:</p>
+    <div class="warning-box">
+        <p><strong>Tách những logic dùng chung ra khỏi logic nghiệp vụ chính.</strong></p>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    // Logic nghiệp vụ
+    return userRepository.findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+
+    <p>Nhiệm vụ của method trên là: <strong>Tìm User theo ID</strong>. Đó là logic nghiệp vụ.</p>
+
+    <p>Nếu chúng ta muốn đo thời gian thực thi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>long start = System.currentTimeMillis();
+
+User user = userRepository.findById(id)
+        .orElseThrow();
+
+long end = System.currentTimeMillis();
+
+System.out.println(
+        "Time: " + (end - start) + " ms"
+);
+
+return user;</pre>
+    </div>
+
+    <p>Phần đo thời gian <strong>không phải nhiệm vụ chính</strong> của <code>getUserById()</code>. Nó chỉ là một logic bổ sung.</p>
+
+    <p>AOP cho phép chúng ta đưa phần logic này ra khỏi method:</p>
+    <div class="info-box">
+        <pre>┌──────────────────────────────┐
+│        PerformanceAspect     │
+│                              │
+│  Đo thời gian thực thi       │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│        UserService           │
+│                              │
+│  getUserById()               │
+│                              │
+│  Logic nghiệp vụ             │
+└──────────────────────────────┘</pre>
+    </div>
+
+    <p>Kết quả là code nghiệp vụ trở nên tập trung hơn vào đúng nhiệm vụ của nó.</p>
+
+    <h3>1.2. Tại sao cần AOP?</h3>
+    <p>Để hiểu AOP, trước hết cần hiểu vấn đề mà AOP muốn giải quyết.</p>
+
+    <h4>1.2.1. Ví dụ không sử dụng AOP</h4>
+    <p>Giả sử chúng ta có <code>UserService</code>:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public User getUserById(Integer id) {
+
+        System.out.println("START getUserById");
+
+        User user = userRepository.findById(id)
+                .orElseThrow();
+
+        System.out.println("END getUserById");
+
+        return user;
+    }
+}</pre>
+    </div>
+
+    <p>Method này thực hiện ba nhóm công việc:</p>
+    <ol>
+        <li>Ghi log bắt đầu</li>
+        <li>Tìm User</li>
+        <li>Ghi log kết thúc</li>
+    </ol>
+
+    <p>Trong đó chỉ có <code>userRepository.findById(id)</code> là logic chính của method.</p>
+
+    <p>Hai đoạn:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>System.out.println("START getUserById");</pre>
+    </div>
+
+    <p>và:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>System.out.println("END getUserById");</pre>
+    </div>
+
+    <p>là logic logging.</p>
+
+    <h4>1.2.2. Vấn đề khi số lượng method tăng</h4>
+    <p>Giả sử Service có 10 method:</p>
+    <div class="info-box">
+        <pre>getUserById()
+getUsers()
+createUser()
+updateUser()
+deleteUser()
+searchUser()
+changePassword()
+enableUser()
+disableUser()
+resetPassword()</pre>
+    </div>
+
+    <p>Nếu tất cả đều cần logging, chúng ta sẽ phải viết:</p>
+    <div class="info-box">
+        <pre>START
+Business Logic
+END</pre>
+    </div>
+
+    <p>cho từng method.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    System.out.println("START");
+
+    // Business Logic
+
+    System.out.println("END");
+
+    return user;
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User createUser(User user) {
+
+    System.out.println("START");
+
+    // Business Logic
+
+    System.out.println("END");
+
+    return result;
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void deleteUser(Integer id) {
+
+    System.out.println("START");
+
+    // Business Logic
+
+    System.out.println("END");
+}</pre>
+    </div>
+
+    <p>Khi số lượng method tăng lên, code logging cũng tăng theo.</p>
+    <div class="warning-box">
+        <p>Đây chính là vấn đề mà AOP có thể giải quyết.</p>
+    </div>
+
+    <h3>1.3. Code Duplication</h3>
+
+    <h4>1.3.1. Code Duplication là gì?</h4>
+    <p><strong>Code Duplication</strong> là tình trạng cùng một đoạn logic hoặc cùng một cách xử lý được viết lặp lại ở nhiều vị trí.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>System.out.println("START");</pre>
+    </div>
+
+    <p>xuất hiện trong rất nhiều method.</p>
+
+    <p>Hoặc:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>long start = System.currentTimeMillis();</pre>
+    </div>
+
+    <p>được viết trong nhiều Service khác nhau.</p>
+
+    <p>Khi đó chúng ta có:</p>
+    <div class="info-box">
+        <pre>UserService
+    └── Logging code
+
+ProductService
+    └── Logging code
+
+OrderService
+    └── Logging code
+
+PaymentService
+    └── Logging code</pre>
+    </div>
+
+    <h4>1.3.2. Tại sao code lặp lại là vấn đề?</h4>
+    <p>Code duplication gây ra nhiều khó khăn.</p>
+
+    <p><strong>Vấn đề 1: Code dài hơn</strong></p>
+    <p>Một Service đáng lẽ chỉ cần tập trung vào nghiệp vụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    return userRepository.findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+
+    <p>lại chứa thêm:</p>
+    <div class="info-box">
+        <pre>Logging
+Timing
+Audit
+Exception handling
+...</pre>
+    </div>
+
+    <p>Code trở nên dài và khó đọc hơn.</p>
+
+    <p><strong>Vấn đề 2: Khó bảo trì</strong></p>
+    <p>Giả sử cách ghi log thay đổi.</p>
+    <p>Trước đây:</p>
+    <div class="info-box">
+        <pre>START
+END</pre>
+    </div>
+
+    <p>Sau này muốn chuyển thành:</p>
+    <div class="info-box">
+        <pre>[INFO] Start method: getUserById
+[INFO] End method: getUserById</pre>
+    </div>
+
+    <p>Nếu logging được viết trong 50 method, chúng ta có thể phải sửa 50 nơi.</p>
+    <p>Nếu logging được tập trung trong một Aspect, việc thay đổi sẽ được thực hiện tại một nơi.</p>
+
+    <p><strong>Vấn đề 3: Dễ thiếu sót</strong></p>
+    <p>Giả sử có 20 Service nhưng lập trình viên chỉ thêm logging vào 18 Service.</p>
+    <p>Khi đó hệ thống có thể xảy ra tình trạng:</p>
+    <div class="info-box">
+        <pre>UserService      → có log
+ProductService   → có log
+OrderService     → có log
+PaymentService   → quên log</pre>
+    </div>
+
+    <p>Nếu sử dụng AOP với Pointcut phù hợp, chúng ta có thể áp dụng một quy tắc chung cho cả nhóm method.</p>
+
+    <h3>1.4. Cross-cutting Concerns</h3>
+    <p>Đây là một khái niệm rất quan trọng trong AOP.</p>
+
+    <h4>1.4.1. Cross-cutting Concern là gì?</h4>
+    <p>Cross-cutting Concern có thể hiểu là:</p>
+    <div class="warning-box">
+        <p><strong>Một chức năng có liên quan đến nhiều phần khác nhau của ứng dụng và thường cắt ngang nhiều module hoặc nhiều method.</strong></p>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>                   Logging
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+        ▼              ▼              ▼
+     UserService   ProductService   OrderService</pre>
+    </div>
+
+    <p>Logging không chỉ thuộc riêng <code>UserService</code>.</p>
+    <p>Nó có thể được sử dụng ở:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService
+PaymentService
+...</pre>
+    </div>
+
+    <p>Vì vậy Logging là một ví dụ điển hình của Cross-cutting Concern.</p>
+
+    <h4>1.4.2. Những Cross-cutting Concern thường gặp</h4>
+    <p>Trong Backend Java/Spring Boot, một số Cross-cutting Concern phổ biến là:</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Chức năng</th>
+                    <th>Mục đích</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Logging</td><td>Ghi nhận quá trình thực thi</td></tr>
+                <tr><td>Performance Monitoring</td><td>Đo thời gian xử lý</td></tr>
+                <tr><td>Auditing</td><td>Ghi lịch sử thao tác</td></tr>
+                <tr><td>Security</td><td>Kiểm tra quyền hoặc điều kiện truy cập</td></tr>
+                <tr><td>Exception Monitoring</td><td>Theo dõi lỗi</td></tr>
+                <tr><td>Transaction</td><td>Quản lý transaction</td></tr>
+                <tr><td>Tracing</td><td>Theo dõi request qua nhiều service</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>                Cross-cutting Concerns
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+      Logging           Audit           Security
+        │                 │                 │
+        └─────────────────┼─────────────────┘
+                          │
+             ┌────────────┼────────────┐
+             ▼            ▼            ▼
+           User         Product       Order
+         Service        Service      Service</pre>
+    </div>
+
+    <h3>1.5. Logic nghiệp vụ và Logic dùng chung</h3>
+    <p>Để hiểu AOP tốt, học viên cần phân biệt hai loại logic này.</p>
+
+    <h4>1.5.1. Logic nghiệp vụ</h4>
+    <p><strong>Business Logic</strong> là phần logic trực tiếp thực hiện yêu cầu nghiệp vụ của hệ thống.</p>
+    <p>Ví dụ hệ thống quản lý User có chức năng: Tìm User theo ID.</p>
+
+    <p>Code:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    return userRepository.findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+
+    <p>Logic chính là:</p>
+    <div class="info-box">
+        <pre>Nhận ID
+   ↓
+Tìm User
+   ↓
+Trả về User</pre>
+    </div>
+    <p>Đây là Business Logic.</p>
+
+    <h4>1.5.2. Logic dùng chung</h4>
+    <p>Bây giờ hệ thống yêu cầu:</p>
+    <div class="info-box">
+        <pre>Mỗi khi Service được gọi phải ghi lại thời gian bắt đầu và kết thúc.</pre>
+    </div>
+
+    <p>Logic này không liên quan trực tiếp đến việc tìm User. Nó chỉ là logic hỗ trợ:</p>
+    <div class="info-box">
+        <pre>Ghi log
+Đo thời gian
+Theo dõi exception
+Audit</pre>
+    </div>
+    <p>Đây là những logic có thể được tách thành các Aspect.</p>
+
+    <h4>1.5.3. So sánh</h4>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Logic nghiệp vụ</th>
+                    <th>Logic dùng chung</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Tạo User</td><td>Logging</td></tr>
+                <tr><td>Tìm User</td><td>Đo thời gian</td></tr>
+                <tr><td>Cập nhật Product</td><td>Audit</td></tr>
+                <tr><td>Xóa Order</td><td>Theo dõi exception</td></tr>
+                <tr><td>Tính tổng tiền</td><td>Tracing</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>                Application
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+    Business Logic       Cross-cutting Logic
+          │                       │
+     ┌────┼────┐          ┌───────┼───────┐
+     │    │    │          │       │       │
+    User Product Order   Log     Audit   Timing</pre>
+    </div>
+    <p>AOP chủ yếu hỗ trợ xử lý nhóm logic thứ hai.</p>
+
+    <h3>1.6. Ví dụ thực tế trong Spring Boot</h3>
+    <p>Giả sử chúng ta xây dựng một hệ thống quản lý sản phẩm.</p>
+
+    <p>Cấu trúc:</p>
+    <div class="info-box">
+        <pre>Controller
+     │
+     ▼
+ProductService
+     │
+     ▼
+ProductRepository
+     │
+     ▼
+Database</pre>
+    </div>
+
+    <p>API: <code>GET /api/products/10</code></p>
+    <p>Thông thường request sẽ đi theo luồng:</p>
+    <div class="info-box">
+        <pre>Client
+  │
+  ▼
+Controller
+  │
+  ▼
+Service
+  │
+  ▼
+Repository
+  │
+  ▼
+Database</pre>
+    </div>
+
+    <p>Bây giờ doanh nghiệp yêu cầu: Mỗi lần gọi Service phải ghi log.</p>
+
+    <p>Nếu không dùng AOP:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public Product getProductById(Integer id) {
+
+    System.out.println("START");
+
+    Product product = productRepository
+            .findById(id)
+            .orElseThrow();
+
+    System.out.println("END");
+
+    return product;
+}</pre>
+    </div>
+
+    <p>Nếu có thêm:</p>
+    <div class="info-box">
+        <pre>createProduct()
+updateProduct()
+deleteProduct()
+searchProduct()</pre>
+    </div>
+    <p>tất cả đều phải viết logging.</p>
+
+    <h4>1.6.1. Khi sử dụng AOP</h4>
+    <p>Ta có thể tách logging thành một thành phần riêng:</p>
+    <div class="info-box">
+        <pre>            LoggingAspect
+                   │
+                   │
+          ┌────────┼────────┐
+          │        │        │
+          ▼        ▼        ▼
+       create    update    delete
+       Product   Product   Product</pre>
+    </div>
+
+    <p>Khi đó Service tập trung vào nghiệp vụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public Product getProductById(Integer id) {
+
+    return productRepository
+            .findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+
+    <p>Còn việc logging được Aspect xử lý.</p>
+
+    <h3>1.7. AOP và OOP khác nhau như thế nào?</h3>
+    <p>Spring Boot chủ yếu được xây dựng dựa trên tư duy hướng đối tượng.</p>
+    <p>Vì vậy học viên đã quen với:</p>
+    <div class="info-box">
+        <pre>Class
+Object
+Encapsulation
+Inheritance
+Polymorphism
+Abstraction</pre>
+    </div>
+    <p>Đây là những khái niệm thuộc OOP.</p>
+
+    <p><strong>AOP không thay thế OOP.</strong> Hai cách tiếp cận giải quyết những vấn đề khác nhau.</p>
+
+    <h4>1.7.1. OOP tập trung vào đối tượng</h4>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>User
+Product
+Order
+Customer
+Payment</pre>
+    </div>
+    <p>Mỗi class đại diện cho một đối tượng hoặc một thành phần trong hệ thống.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public class User {
+
+    private Integer id;
+    private String username;
+    private String email;
+}</pre>
+    </div>
+
+    <h4>1.7.2. AOP tập trung vào các logic cắt ngang</h4>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Logging
+Audit
+Performance
+Exception Monitoring
+Security</pre>
+    </div>
+    <p>Những logic này có thể liên quan đến nhiều class.</p>
+
+    <div class="info-box">
+        <pre>                   Logging
+                       │
+         ┌─────────────┼─────────────┐
+         │             │             │
+         ▼             ▼             ▼
+       User         Product         Order</pre>
+    </div>
+
+    <p>Vì vậy:</p>
+    <div class="info-box">
+        <pre>OOP
+→ Tổ chức chương trình theo đối tượng.
+
+AOP
+→ Tách và xử lý các logic cắt ngang.</pre>
+    </div>
+
+    <h3>1.8. AOP hoạt động như thế nào ở mức khái niệm?</h3>
+    <p>Trước khi học code, học viên cần hình dung được cơ chế tổng quát.</p>
+
+    <p>Giả sử có:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>userService.getUserById(10);</pre>
+    </div>
+
+    <p>Nếu không có AOP:</p>
+    <div class="info-box">
+        <pre>Controller
+    │
+    ▼
+UserService
+    │
+    ▼
+getUserById()</pre>
+    </div>
+
+    <p>Khi có AOP:</p>
+    <div class="info-box">
+        <pre>Controller
+    │
+    ▼
+Spring Proxy
+    │
+    ├── AOP Logic
+    │
+    ▼
+UserService
+    │
+    ▼
+getUserById()</pre>
+    </div>
+
+    <p>Có thể hình dung chi tiết hơn:</p>
+    <div class="info-box">
+        <pre>Client
+  │
+  ▼
+Controller
+  │
+  ▼
+Spring Proxy
+  │
+  ├── Before logic
+  │
+  ▼
+Business Method
+  │
+  ├── Business Logic
+  │
+  ▼
+Spring Proxy
+  │
+  ├── After logic
+  │
+  ▼
+Client</pre>
+    </div>
+    <p>Đây chính là ý tưởng quan trọng mà học viên sẽ tìm hiểu sâu hơn ở các phần sau.</p>
+
+    <h3>1.9. Khi nào nên sử dụng AOP?</h3>
+    <p>AOP thường phù hợp với những trường hợp có đặc điểm:</p>
+
+    <p><strong>Điều kiện 1: Logic xuất hiện ở nhiều nơi</strong></p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>10 Service
+×
+nhiều method
+đều cần logging.</pre>
+    </div>
+
+    <p><strong>Điều kiện 2: Logic không phải nghiệp vụ chính</strong></p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Đo thời gian
+Logging
+Audit</pre>
+    </div>
+    <p>không phải nhiệm vụ chính của <code>getUserById()</code>.</p>
+
+    <p><strong>Điều kiện 3: Muốn áp dụng quy tắc thống nhất</strong></p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Tất cả Service đều phải ghi log.</pre>
+    </div>
+    <p>Thay vì tự nhớ thêm logging vào từng method, có thể định nghĩa một quy tắc bằng AOP.</p>
+
+    <h3>1.10. Khi nào không nên sử dụng AOP?</h3>
+    <p>Không phải logic nào cũng nên đưa vào AOP.</p>
+
+    <p>Nếu một logic:</p>
+    <ul>
+        <li>chỉ sử dụng ở một method;</li>
+        <li>rất đơn giản;</li>
+        <li>thuộc trực tiếp vào nghiệp vụ;</li>
+        <li>cần người đọc nhìn thấy ngay trong method;</li>
+    </ul>
+    <p>thì việc viết trực tiếp có thể dễ hiểu hơn.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public BigDecimal calculateTotal(
+        BigDecimal price,
+        Integer quantity
+) {
+
+    return price.multiply(
+            BigDecimal.valueOf(quantity)
+    );
+}</pre>
+    </div>
+
+    <p>Đây là logic nghiệp vụ.</p>
+    <div class="warning-box">
+        <p>Không nên cố đưa phép tính này vào AOP.</p>
+    </div>
+
+    <h3>1.11. Ưu điểm của AOP</h3>
+
+    <h4>1.11.1. Giảm code lặp</h4>
+    <p>Logic dùng chung được đặt ở một nơi.</p>
+    <div class="info-box">
+        <pre>       LoggingAspect
+              │
+       ┌──────┼──────┐
+       ▼      ▼      ▼
+      User  Product  Order</pre>
+    </div>
+
+    <h4>1.11.2. Tách biệt trách nhiệm</h4>
+    <p>Service tập trung vào nghiệp vụ. Aspect tập trung vào logic dùng chung.</p>
+    <div class="info-box">
+        <pre>UserService
+→ Business Logic
+
+LoggingAspect
+→ Logging
+
+PerformanceAspect
+→ Performance
+
+AuditAspect
+→ Audit</pre>
+    </div>
+
+    <h4>1.11.3. Dễ bảo trì</h4>
+    <p>Khi thay đổi cách logging, có thể thay đổi Aspect thay vì sửa từng Service.</p>
+
+    <h4>1.11.4. Có thể áp dụng đồng nhất</h4>
+    <p>Một Pointcut có thể xác định một nhóm method cần áp dụng Aspect.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Tất cả method trong service package</pre>
+    </div>
+
+    <h3>1.12. Hạn chế của AOP</h3>
+    <p>AOP cũng có những điểm cần lưu ý.</p>
+
+    <h4>1.12.1. Code có thể khó theo dõi</h4>
+    <p>Khi nhìn vào:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    return userRepository.findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+    <p>học viên có thể không nhìn thấy ngay:</p>
+    <div class="info-box">
+        <pre>Logging
+Performance
+Audit
+...</pre>
+    </div>
+    <p>đang được áp dụng từ Aspect bên ngoài.</p>
+    <p>Do đó nếu sử dụng AOP quá nhiều, chương trình có thể trở nên khó hiểu.</p>
+
+    <h4>1.12.2. Pointcut viết không chính xác</h4>
+    <p>Nếu Pointcut quá rộng:</p>
+    <div class="info-box">
+        <pre>Áp dụng cho quá nhiều method</pre>
+    </div>
+    <p>có thể dẫn đến hành vi ngoài mong muốn.</p>
+
+    <p>Nếu Pointcut quá hẹp:</p>
+    <div class="info-box">
+        <pre>Một số method không được áp dụng</pre>
+    </div>
+    <p>Vì vậy Pointcut là phần rất quan trọng khi học Spring AOP.</p>
+
+    <h4>1.12.3. Không nên lạm dụng AOP</h4>
+    <p>AOP nên được sử dụng cho những logic phù hợp với bản chất của AOP.</p>
+    <p>Không nên biến toàn bộ business logic thành Aspect.</p>
+
+    <div class="success-box">
+        <h5>Nguyên tắc đơn giản</h5>
+        <p><strong>Business Logic nên nằm ở Business Layer; Cross-cutting Logic có thể được tách bằng AOP.</strong></p>
+    </div>
+</section>
+<section id="aop-p2" class="section">
+    <h2><i class="fas fa-puzzle-piece"></i> PHẦN 2. Các khái niệm cốt lõi của AOP</h2>
+
+   
+    <h3>2.1. Tổng quan các thành phần trong AOP</h3>
+    <p>Ở phần trước, chúng ta đã biết AOP được sử dụng để tách những logic dùng chung như: Logging, Performance, Audit, Exception Monitoring, Security ra khỏi Business Logic.</p>
+
+    <p>Để thực hiện điều đó, AOP sử dụng một số khái niệm quan trọng.</p>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>                      AOP
+                        │
+        ┌───────────────┼────────────────┐
+        │               │                │
+     Aspect           Advice          Pointcut
+        │               │                │
+        │               │                │
+        └───────────────┼────────────────┘
+                        │
+                        ▼
+                   Join Point
+                        │
+                        ▼
+                 Business Method</pre>
+    </div>
+
+    <p>Ngoài ra còn có: <strong>Weaving</strong> – là cơ chế kết hợp Aspect với đối tượng mục tiêu.</p>
+
+    <p>Năm khái niệm quan trọng:</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Khái niệm</th>
+                    <th>Ý nghĩa đơn giản</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Aspect</td><td>Chứa logic AOP</td></tr>
+                <tr><td>Advice</td><td>Quy định logic AOP chạy khi nào</td></tr>
+                <tr><td>Join Point</td><td>Điểm có thể áp dụng AOP</td></tr>
+                <tr><td>Pointcut</td><td>Xác định Join Point nào được chọn</td></tr>
+                <tr><td>Weaving</td><td>Kết hợp Aspect với đối tượng mục tiêu</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Đây là 5 khái niệm học viên cần nắm chắc trước khi chuyển sang phần thực hành.</p>
+
+    <h3>2.2. Aspect</h3>
+
+    <h4>2.2.1. Aspect là gì?</h4>
+    <p>Aspect là thành phần chứa một hoặc nhiều logic liên quan đến một <strong>Cross-cutting Concern</strong>.</p>
+
+    <p>Ví dụ: <strong>Logging</strong> là một Cross-cutting Concern.</p>
+    <p>Chúng ta có thể tạo: <code>LoggingAspect</code> để xử lý tất cả logic liên quan đến Logging.</p>
+    <p>Tương tự: <code>PerformanceAspect</code>, <code>AuditAspect</code>, <code>ExceptionAspect</code>, <code>SecurityAspect</code>.</p>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>                 ASPECT
+                     │
+       ┌─────────────┼─────────────┐
+       │             │             │
+     Logging      Performance     Audit
+       │             │             │
+       ▼             ▼             ▼
+   LoggingAspect PerformanceAspect AuditAspect</pre>
+    </div>
+
+    <h4>2.2.2. Ví dụ về Aspect</h4>
+    <p>Giả sử ứng dụng có yêu cầu: Ghi log trước và sau khi Service được thực hiện.</p>
+
+    <p>Chúng ta có thể tạo <code>LoggingAspect</code>. Aspect này chịu trách nhiệm:</p>
+    <ol>
+        <li>Ghi log trước method.</li>
+        <li>Ghi log sau method.</li>
+        <li>Có thể ghi tên method.</li>
+        <li>Có thể ghi tham số.</li>
+        <li>Có thể ghi kết quả.</li>
+    </ol>
+
+    <p>Trong Spring Boot, một Aspect thường được khai báo bằng <code>@Aspect</code>.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+public class LoggingAspect {
+
+}</pre>
+    </div>
+
+    <p>Ở giai đoạn này, học viên chưa cần quan tâm chi tiết về cách cấu hình. Phần code sẽ được thực hiện ở các phần sau.</p>
+
+    <h3>2.3. Advice</h3>
+
+    <h4>2.3.1. Advice là gì?</h4>
+    <p>Nếu Aspect là nơi chứa logic AOP thì Advice xác định: <strong>Logic đó sẽ được thực hiện vào thời điểm nào.</strong></p>
+
+    <p>Ví dụ chúng ta có method <code>getUserById()</code>.</p>
+
+    <p>Chúng ta muốn ghi log:</p>
+    <ul>
+        <li><strong>Trước khi method chạy</strong> → sử dụng <code>@Before</code></li>
+        <li><strong>Sau khi method chạy</strong> → sử dụng <code>@After</code></li>
+        <li><strong>Sau khi method chạy thành công</strong> → sử dụng <code>@AfterReturning</code></li>
+        <li><strong>Khi method xảy ra exception</strong> → sử dụng <code>@AfterThrowing</code></li>
+        <li><strong>Kiểm soát cả trước và sau method</strong> → sử dụng <code>@Around</code></li>
+    </ul>
+
+    <h3>2.4. Các loại Advice</h3>
+    <p>Spring AOP cung cấp các loại Advice phổ biến:</p>
+    <div class="info-box">
+        <pre>@Before
+@After
+@AfterReturning
+@AfterThrowing
+@Around</pre>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>                   Method
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+      Before         Method        After
+        │             │             │
+        │             │             │
+        └─────────────┼─────────────┘
+                      │
+              Returning / Throwing</pre>
+    </div>
+    <p>Trong đó <code>@Around</code> có khả năng bao quanh toàn bộ quá trình.</p>
+
+    <h3>2.5. <code>@Before</code></h3>
+
+    <h4>2.5.1. Khái niệm</h4>
+    <p><code>@Before</code> là Advice được thực hiện <strong>trước khi method mục tiêu được thực thi</strong>.</p>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Client
+  │
+  ▼
+@Before
+  │
+  ▼
+Business Method</pre>
+    </div>
+
+    <p>Nếu method <code>getUserById()</code> được gọi thì:</p>
+    <div class="info-box">
+        <pre>@Before
+   ↓
+getUserById()</pre>
+    </div>
+
+    <h4>2.5.2. Ví dụ thực tế</h4>
+    <p>Giả sử chúng ta muốn ghi <code>START: getUserById</code> trước khi method chạy.</p>
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Request
+   ↓
+@Before
+   ↓
+START: getUserById
+   ↓
+getUserById()
+   ↓
+Response</pre>
+    </div>
+
+    <h4>2.5.3. Khi nào sử dụng <code>@Before</code>?</h4>
+    <p>Một số trường hợp:</p>
+    <ul>
+        <li>Ghi log bắt đầu.</li>
+        <li>Kiểm tra một điều kiện.</li>
+        <li>Ghi nhận thông tin request.</li>
+        <li>Theo dõi method được gọi.</li>
+        <li>Ghi audit trước khi thực hiện.</li>
+    </ul>
+
+    <div class="warning-box">
+        <p>Tuy nhiên, nếu cần ngăn method chạy hoặc thay đổi luồng xử lý, cần hiểu rõ cơ chế AOP và lựa chọn Advice phù hợp thay vì mặc định dùng <code>@Before</code>.</p>
+    </div>
+
+    <h3>2.6. <code>@After</code></h3>
+
+    <h4>2.6.1. Khái niệm</h4>
+    <p><code>@After</code> được thực hiện <strong>sau khi method kết thúc</strong>.</p>
+
+    <p>Điểm quan trọng:</p>
+    <div class="warning-box">
+        <p><code>@After</code> <strong>không chỉ dành cho trường hợp method chạy thành công</strong>. Nó có thể được thực hiện khi method:</p>
+        <div class="info-box">
+            <pre>Thành công
+
+hoặc:
+
+Xảy ra Exception</pre>
+        </div>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>            Method
+             /    \
+            /      \
+       Success    Exception
+          │           │
+          └─────┬─────┘
+                ▼
+             @After</pre>
+    </div>
+
+    <h4>2.6.2. Ví dụ</h4>
+    <div class="info-box">
+        <pre>getUserById()
+      │
+      ▼
+Business Logic
+      │
+      ▼
+Method kết thúc
+      │
+      ▼
+@After</pre>
+    </div>
+
+    <p>Nếu xảy ra lỗi:</p>
+    <div class="info-box">
+        <pre>getUserById()
+      │
+      ▼
+Exception
+      │
+      ▼
+@After</pre>
+    </div>
+
+    <h3>2.7. <code>@AfterReturning</code></h3>
+
+    <h4>2.7.1. Khái niệm</h4>
+    <p><code>@AfterReturning</code> được thực hiện khi method <strong>kết thúc thành công và trả về kết quả</strong>.</p>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>getUserById()
+      │
+      ▼
+Business Logic
+      │
+      ▼
+return User
+      │
+      ▼
+@AfterReturning</pre>
+    </div>
+
+    <p>Nếu method xảy ra exception:</p>
+    <div class="info-box">
+        <pre>getUserById()
+      │
+      ▼
+Exception
+      │
+      X
+@AfterReturning không chạy</pre>
+    </div>
+
+    <h4>2.7.2. Khi nào sử dụng?</h4>
+    <p><code>@AfterReturning</code> phù hợp khi muốn xử lý kết quả trả về.</p>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Service trả về User
+        ↓
+@AfterReturning
+        ↓
+Ghi log User</pre>
+    </div>
+
+    <p>Hoặc:</p>
+    <div class="info-box">
+        <pre>Service trả về Order
+        ↓
+@AfterReturning
+        ↓
+Ghi audit</pre>
+    </div>
+
+    <h3>2.8. <code>@AfterThrowing</code></h3>
+
+    <h4>2.8.1. Khái niệm</h4>
+    <p><code>@AfterThrowing</code> được thực hiện khi method <strong>xảy ra exception</strong>.</p>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Method
+   │
+   ▼
+Exception
+   │
+   ▼
+@AfterThrowing</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>getUserById(100)
+        │
+        ▼
+User không tồn tại
+        │
+        ▼
+Exception
+        │
+        ▼
+@AfterThrowing</pre>
+    </div>
+
+    <h4>2.8.2. Ứng dụng thực tế</h4>
+    <p>Có thể dùng để:</p>
+    <ul>
+        <li>Ghi log lỗi.</li>
+        <li>Ghi nhận exception.</li>
+        <li>Theo dõi lỗi hệ thống.</li>
+        <li>Gửi thông tin lỗi đến hệ thống monitoring.</li>
+        <li>Audit các thao tác thất bại.</li>
+    </ul>
+
+    <p>Ví dụ log:</p>
+    <div class="info-box">
+        <pre>ERROR
+Method: getUserById
+Message: User not found</pre>
+    </div>
+
+    <h3>2.9. <code>@Around</code></h3>
+
+    <h4>2.9.1. Khái niệm</h4>
+    <p><code>@Around</code> là loại Advice <strong>mạnh nhất</strong> trong các Advice cơ bản.</p>
+    <p>Nó cho phép chúng ta thực hiện logic:</p>
+    <div class="info-box">
+        <pre>Trước method
+       ↓
+Method
+       ↓
+Sau method</pre>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>               @Around
+                   │
+         ┌─────────┴─────────┐
+         │                   │
+      Before                After
+         │                   │
+         ▼                   │
+      Method ────────────────┘</pre>
+    </div>
+
+    <h4>2.9.2. Ví dụ đo thời gian</h4>
+    <p>Đây là một ứng dụng rất phổ biến.</p>
+    <p>Ta muốn đo:</p>
+    <div class="info-box">
+        <pre>Method bắt đầu
+       ↓
+   thực thi
+       ↓
+Method kết thúc</pre>
+    </div>
+
+    <p>Logic:</p>
+    <div class="info-box">
+        <pre>start = currentTime
+
+       ↓
+
+Business Method
+
+       ↓
+
+end = currentTime
+
+       ↓
+
+end - start</pre>
+    </div>
+
+    <p>Vì cần thực hiện logic ở cả trước và sau method nên <code>@Around</code> rất phù hợp.</p>
+
+    <h3>2.10. Join Point</h3>
+
+    <h4>2.10.1. Join Point là gì?</h4>
+    <p>Join Point là <strong>một điểm trong quá trình thực thi chương trình mà Aspect có thể can thiệp</strong>.</p>
+
+    <p>Trong Spring AOP, Join Point chủ yếu liên quan đến việc <strong>thực thi method</strong>.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>userService.getUserById(10);</pre>
+    </div>
+
+    <p>Việc thực thi <code>getUserById()</code> có thể được xem là một Join Point mà Aspect can thiệp.</p>
+
+    <h4>2.10.2. Ví dụ</h4>
+    <p>Giả sử có:</p>
+    <div class="info-box">
+        <pre>UserService
+    │
+    ├── getUserById()
+    ├── createUser()
+    ├── updateUser()
+    └── deleteUser()</pre>
+    </div>
+
+    <p>Mỗi method execution có thể là một điểm mà AOP có thể áp dụng.</p>
+    <div class="info-box">
+        <pre>getUserById()  ← Join Point
+createUser()   ← Join Point
+updateUser()   ← Join Point
+deleteUser()   ← Join Point</pre>
+    </div>
+
+    <div class="warning-box">
+        <p>Tuy nhiên, việc một Join Point có được Aspect áp dụng hay không còn phụ thuộc vào <strong>Pointcut</strong>. Đây là điểm rất quan trọng.</p>
+    </div>
+
+    <h3>2.11. Pointcut</h3>
+
+    <h4>2.11.1. Pointcut là gì?</h4>
+    <p>Nếu Join Point là: <strong>Điểm có thể can thiệp.</strong></p>
+    <p>thì Pointcut là: <strong>Điều kiện dùng để lựa chọn những Join Point nào sẽ được áp dụng Aspect.</strong></p>
+
+    <p>Ví dụ ứng dụng có:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService
+PaymentService</pre>
+    </div>
+
+    <p>Chúng ta muốn logging cho tất cả Service.</p>
+    <p>Khi đó cần một quy tắc:</p>
+    <div class="info-box">
+        <pre>Chọn tất cả method trong Service</pre>
+    </div>
+    <p>Quy tắc đó chính là Pointcut.</p>
+
+    <h3>2.12. Join Point và Pointcut khác nhau như thế nào?</h3>
+    <p>Đây là phần học viên rất dễ nhầm.</p>
+
+    <p>Có thể nhớ:</p>
+    <div class="info-box">
+        <pre>Join Point
+→ "Điểm nào có thể can thiệp?"
+
+Pointcut
+→ "Tôi muốn chọn điểm nào?"</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>UserService
+    ├── getUserById()
+    ├── createUser()
+    └── deleteUser()</pre>
+    </div>
+
+    <p>Các method có thể là Join Point.</p>
+    <p>Nhưng Pointcut có thể chỉ chọn: <code>getUserById()</code></p>
+
+    <p>Khi đó:</p>
+    <div class="info-box">
+        <pre>Join Points
+    │
+    ├── getUserById()   ← được chọn
+    ├── createUser()    ← không chọn
+    └── deleteUser()    ← không chọn</pre>
+    </div>
+
+    <h3>2.13. Ví dụ thực tế về Pointcut</h3>
+    <p>Giả sử chúng ta có:</p>
+    <div class="info-box">
+        <pre>com.example.demo.service</pre>
+    </div>
+    <p>và bên trong:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService</pre>
+    </div>
+
+    <p>Mỗi class có nhiều method.</p>
+    <p>Chúng ta muốn: <strong>Áp dụng Logging cho tất cả method trong Service.</strong></p>
+
+    <p>Pointcut sẽ mô tả quy tắc:</p>
+    <div class="info-box">
+        <pre>Tất cả method
++
+trong các class Service
++
+thuộc package service</pre>
+    </div>
+
+    <p>Sau này chúng ta có thể biểu diễn quy tắc này bằng biểu thức như:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Pointcut Expression</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(* com.example.demo.service.*.*(..))</pre>
+    </div>
+
+    <p>Ở phần này chỉ cần hiểu ý nghĩa. Phần tiếp theo sẽ phân tích cú pháp Pointcut chi tiết.</p>
+
+    <h3>2.14. Weaving</h3>
+
+    <h4>2.14.1. Weaving là gì?</h4>
+    <p>Weaving là quá trình <strong>kết hợp Aspect với đối tượng hoặc code mục tiêu</strong> để Aspect có thể được thực thi.</p>
+
+    <p>Có thể hiểu đơn giản:</p>
+    <div class="info-box">
+        <pre>Weaving là quá trình "đưa" logic của Aspect vào luồng thực thi của đối tượng mục tiêu.</pre>
+    </div>
+
+    <p>Trong Spring AOP, cơ chế <strong>Proxy</strong> đóng vai trò rất quan trọng.</p>
+
+    <h3>2.15. Spring AOP Proxy</h3>
+    <p>Khi một Bean được Spring quản lý và có Aspect áp dụng, Spring có thể tạo một Proxy để đứng trước object thật.</p>
+
+    <p>Ví dụ chúng ta có <code>UserService</code>.</p>
+    <p>Thay vì request đi trực tiếp:</p>
+    <div class="info-box">
+        <pre>Controller
+    ↓
+UserService</pre>
+    </div>
+
+    <p>có thể hình dung:</p>
+    <div class="info-box">
+        <pre>Controller
+    ↓
+Spring Proxy
+    ↓
+UserService</pre>
+    </div>
+
+    <p>Proxy có thể thực hiện logic AOP trước khi gọi object thật.</p>
+
+    <h4>2.15.1. Luồng thực thi</h4>
+    <p>Ví dụ có <code>@Before</code>. Luồng có thể hình dung:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   ▼
+Controller
+   │
+   ▼
+Spring Proxy
+   │
+   ▼
+@Before
+   │
+   ▼
+UserService
+   │
+   ▼
+getUserById()</pre>
+    </div>
+
+    <p>Nếu có <code>@After</code>:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   ▼
+Controller
+   │
+   ▼
+Spring Proxy
+   │
+   ├── @Before
+   │
+   ▼
+UserService
+   │
+   ├── getUserById()
+   │
+   ▼
+Spring Proxy
+   │
+   └── @After
+   │
+   ▼
+Response</pre>
+    </div>
+
+    <p>Đây là cách hình dung rất quan trọng để hiểu Spring AOP.</p>
+
+    <h3>2.16. Mối quan hệ giữa Aspect, Advice, Pointcut và Join Point</h3>
+    <p>Bây giờ chúng ta có thể ghép các khái niệm lại.</p>
+
+    <p>Giả sử yêu cầu: <strong>Ghi log trước tất cả method trong UserService.</strong></p>
+
+    <p>Chúng ta có:</p>
+
+    <p><strong>Aspect</strong></p>
+    <div class="info-box">
+        <pre>LoggingAspect</pre>
+    </div>
+    <p>Nó chứa logic Logging.</p>
+
+    <p><strong>Advice</strong></p>
+    <div class="info-box">
+        <pre>@Before</pre>
+    </div>
+    <p>Quy định Logging chạy trước method.</p>
+
+    <p><strong>Pointcut</strong></p>
+    <div class="info-box">
+        <pre>UserService methods</pre>
+    </div>
+    <p>Quy định method nào được áp dụng.</p>
+
+    <p><strong>Join Point</strong></p>
+    <div class="info-box">
+        <pre>getUserById()
+createUser()
+updateUser()
+deleteUser()</pre>
+    </div>
+    <p>Đây là các điểm thực thi method có thể được áp dụng.</p>
+
+    <p><strong>Weaving</strong></p>
+    <p>Spring kết hợp Aspect với object thông qua cơ chế AOP của Spring, thường thông qua Proxy.</p>
+
+    <h3>2.17. Sơ đồ tổng hợp</h3>
+    <p>Có thể hình dung toàn bộ quá trình:</p>
+    <div class="info-box">
+        <pre>                   LoggingAspect
+                         │
+                         │
+                    @Before
+                         │
+                         ▼
+                    Pointcut
+                         │
+             Chọn method phù hợp
+                         │
+                         ▼
+                    Join Point
+                         │
+                         ▼
+                  Spring Proxy
+                         │
+                         ▼
+                  UserService
+                         │
+                         ▼
+                  getUserById()</pre>
+    </div>
+
+    <p>Trong đó:</p>
+    <div class="info-box">
+        <pre>Aspect
+→ Tôi muốn thực hiện logic gì?
+
+Advice
+→ Tôi muốn thực hiện lúc nào?
+
+Pointcut
+→ Tôi muốn áp dụng cho method nào?
+
+Join Point
+→ Điểm thực thi nào có thể được áp dụng?
+
+Weaving
+→ Làm thế nào Aspect được kết hợp vào luồng thực thi?</pre>
+    </div>
+
+    <h3>2.18. So sánh các loại Advice</h3>
+    <p>Đây là bảng học viên nên ghi nhớ.</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Advice</th>
+                    <th>Thời điểm thực hiện</th>
+                    <th>Method thành công</th>
+                    <th>Method lỗi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>@Before</code></td><td>Trước method</td><td>Có</td><td>Có, trước khi lỗi xảy ra</td></tr>
+                <tr><td><code>@After</code></td><td>Sau khi method kết thúc</td><td>Có</td><td>Có</td></tr>
+                <tr><td><code>@AfterReturning</code></td><td>Sau khi method trả về thành công</td><td>Có</td><td>Không</td></tr>
+                <tr><td><code>@AfterThrowing</code></td><td>Khi method ném exception</td><td>Không</td><td>Có</td></tr>
+                <tr><td><code>@Around</code></td><td>Bao quanh method</td><td>Có</td><td>Có</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Có thể ghi nhớ bằng sơ đồ:</p>
+    <div class="info-box">
+        <pre>                @Around
+                    │
+                    ▼
+                @Before
+                    │
+                    ▼
+              Business Method
+                 /       \
+                /         \
+          Success       Exception
+             │              │
+             ▼              ▼
+      @AfterReturning   @AfterThrowing
+             │              │
+             └──────┬───────┘
+                    ▼
+                  @After</pre>
+    </div>
+
+    <div class="warning-box">
+        <p><strong>Lưu ý:</strong> sơ đồ trên dùng để hình dung vai trò; thứ tự thực tế giữa nhiều Aspect/Advice còn phụ thuộc cấu hình và thứ tự Aspect.</p>
+    </div>
+
+    <h3>2.19. Ví dụ tổng hợp</h3>
+    <p>Giả sử có method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    return userRepository.findById(id)
+            .orElseThrow();
+}</pre>
+    </div>
+
+    <p>Chúng ta muốn:</p>
+    <ol>
+        <li>Ghi log trước khi chạy.</li>
+        <li>Ghi log sau khi chạy.</li>
+        <li>Ghi kết quả nếu thành công.</li>
+        <li>Ghi exception nếu xảy ra lỗi.</li>
+        <li>Đo thời gian thực thi.</li>
+    </ol>
+
+    <p>Có thể phân chia:</p>
+    <div class="info-box">
+        <pre>Yêu cầu
+   │
+   ├── Ghi log trước
+   │       ↓
+   │    @Before
+   │
+   ├── Ghi log sau
+   │       ↓
+   │     @After
+   │
+   ├── Ghi kết quả
+   │       ↓
+   │ @AfterReturning
+   │
+   ├── Ghi exception
+   │       ↓
+   │ @AfterThrowing
+   │
+   └── Đo thời gian
+           ↓
+        @Around</pre>
+    </div>
+
+    <p>Như vậy, mỗi loại Advice có một vai trò phù hợp.</p>
+
+    <h3>2.20. Một ví dụ để phân biệt toàn bộ khái niệm</h3>
+    <p>Giả sử hệ thống có <code>UserService</code> với:</p>
+    <div class="info-box">
+        <pre>getUserById()
+createUser()
+deleteUser()</pre>
+    </div>
+
+    <p>Yêu cầu: <strong>Ghi log trước tất cả method trong UserService.</strong></p>
+
+    <p>Ta có:</p>
+
+    <p><strong>Aspect</strong></p>
+    <div class="info-box">
+        <pre>LoggingAspect</pre>
+    </div>
+
+    <p><strong>Advice</strong></p>
+    <div class="info-box">
+        <pre>@Before</pre>
+    </div>
+
+    <p><strong>Pointcut</strong></p>
+    <div class="info-box">
+        <pre>Tất cả method trong UserService</pre>
+    </div>
+
+    <p><strong>Join Point</strong></p>
+    <div class="info-box">
+        <pre>getUserById()
+createUser()
+deleteUser()</pre>
+    </div>
+
+    <p><strong>Weaving</strong></p>
+    <p>Spring kết hợp Aspect với Bean thông qua cơ chế Proxy.</p>
+
+    <p>Sơ đồ:</p>
+    <div class="info-box">
+        <pre>                    LoggingAspect
+                          │
+                       @Before
+                          │
+                          ▼
+                      Pointcut
+                          │
+                          ▼
+                  UserService methods
+                          │
+            ┌─────────────┼─────────────┐
+            ▼             ▼             ▼
+       getUserById()  createUser()  deleteUser()
+            │             │             │
+            └─────────────┼─────────────┘
+                          ▼
+                     Spring Proxy
+                          │
+                          ▼
+                   Business Logic</pre>
+    </div>
+
+    <h3>2.21. Những nhầm lẫn thường gặp</h3>
+
+    <h4>Nhầm lẫn 1: Aspect và Advice giống nhau</h4>
+    <p>Không giống nhau.</p>
+    <div class="info-box">
+        <pre>Aspect
+→ Thành phần chứa logic AOP.
+
+Advice
+→ Cách/thời điểm logic AOP được thực hiện.</pre>
+    </div>
+
+    <h4>Nhầm lẫn 2: Join Point và Pointcut giống nhau</h4>
+    <p>Không giống nhau.</p>
+    <div class="info-box">
+        <pre>Join Point
+→ Điểm có thể áp dụng.
+
+Pointcut
+→ Quy tắc chọn điểm nào được áp dụng.</pre>
+    </div>
+
+    <h4>Nhầm lẫn 3: <code>@After</code> chỉ chạy khi thành công</h4>
+    <p>Không đúng.</p>
+    <p><code>@After</code> được thực hiện sau khi method kết thúc, kể cả trường hợp method kết thúc do exception.</p>
+
+    <p>Nếu chỉ muốn xử lý khi thành công thì dùng: <code>@AfterReturning</code></p>
+    <p>Nếu muốn xử lý khi có exception thì dùng: <code>@AfterThrowing</code></p>
+
+    <h4>Nhầm lẫn 4: <code>@Around</code> chỉ dùng để logging</h4>
+    <p>Không đúng.</p>
+    <p><code>@Around</code> có thể được sử dụng cho nhiều mục đích:</p>
+    <ul>
+        <li>Logging</li>
+        <li>Performance</li>
+        <li>Kiểm soát execution</li>
+        <li>Thay đổi kết quả</li>
+        <li>Xử lý trước/sau method</li>
+    </ul>
+    <p>Trong đó một ứng dụng rất phổ biến là <strong>đo thời gian thực thi</strong>.</p>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>Aspect</strong> = nơi chứa logic AOP.</li>
+            <li><strong>Advice</strong> = thời điểm logic AOP chạy.</li>
+            <li><strong>Join Point</strong> = điểm có thể can thiệp.</li>
+            <li><strong>Pointcut</strong> = quy tắc chọn Join Point.</li>
+            <li><strong>Weaving</strong> = cơ chế kết hợp Aspect vào đối tượng.</li>
+        </ul>
+    </div>
+</section>
+<section id="aop-p3" class="section">
+    <h2><i class="fas fa-tools"></i> PHẦN 3. Cài đặt và xây dựng AOP trong Spring Boot</h2>
+
+    <h3>3.1. Mục tiêu của phần học</h3>
+    <p>Sau khi hoàn thành phần này, học viên có thể:</p>
+    <ul>
+        <li>Tạo một project Spring Boot có sử dụng AOP.</li>
+        <li>Cài đặt dependency cần thiết cho Spring AOP.</li>
+        <li>Hiểu vị trí của AOP trong cấu trúc project Spring Boot.</li>
+        <li>Tạo một Service làm đối tượng cần áp dụng AOP.</li>
+        <li>Tạo một Aspect.</li>
+        <li>Sử dụng <code>@Aspect</code>.</li>
+        <li>Sử dụng <code>@Component</code> để Spring quản lý Aspect.</li>
+        <li>Tạo một Pointcut đơn giản.</li>
+        <li>Sử dụng <code>@Before</code> để thực hiện logic trước khi method chạy.</li>
+        <li>Quan sát được quá trình Spring tạo Proxy và thực thi Aspect.</li>
+        <li>Hiểu được luồng xử lý từ Controller → Service → Aspect → Service.</li>
+        <li>Tự xây dựng được ví dụ AOP đầu tiên.</li>
+    </ul>
+
+    <h3>3.2. Chuẩn bị project Spring Boot</h3>
+    <p>Để thực hành AOP, chúng ta tạo một project Spring Boot đơn giản.</p>
+
+    <p>Project có thể sử dụng:</p>
+    <div class="info-box">
+        <pre>Java 25
+Spring Boot
+Maven
+Spring Web
+Spring AOP</pre>
+    </div>
+
+    <p>Trong bài này chúng ta chưa cần:</p>
+    <div class="info-box">
+        <pre>Database
+JPA
+Spring Security
+Lombok</pre>
+    </div>
+
+    <p>Mục đích của project chỉ là giúp học viên tập trung vào cơ chế hoạt động của AOP.</p>
+
+    <h3>3.3. Dependency Spring AOP</h3>
+    <p>Để sử dụng AOP trong Spring Boot, project cần dependency:</p>
+    <div class="code-block">
+        <div class="code-header"><span>XML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+    </div>
+
+    <h4>3.3.1. <code>spring-boot-starter-aop</code> là gì?</h4>
+    <p>Đây là starter cung cấp các thành phần cần thiết để sử dụng Spring AOP.</p>
+    <p>Khi thêm dependency này, project có thể sử dụng các annotation như:</p>
+    <div class="info-box">
+        <pre>@Aspect
+@Before
+@After
+@AfterReturning
+@AfterThrowing
+@Around</pre>
+    </div>
+
+    <p>Trong đó:</p>
+    <ul>
+        <li><code>@Aspect</code>: đánh dấu một class là Aspect.</li>
+        <li><code>@Before</code>: chạy trước method được chọn.</li>
+        <li><code>@After</code>: chạy sau method.</li>
+        <li><code>@AfterReturning</code>: chạy khi method thực hiện thành công.</li>
+        <li><code>@AfterThrowing</code>: chạy khi method phát sinh exception.</li>
+        <li><code>@Around</code>: bao quanh toàn bộ quá trình thực thi method.</li>
+    </ul>
+
+    <h3>3.4. Cấu trúc project</h3>
+    <p>Sau khi tạo project, chúng ta xây dựng cấu trúc đơn giản như sau:</p>
+    <div class="info-box">
+        <pre>src
+└── main
+    └── java
+        └── com.example.aop
+            │
+            ├── AopApplication.java
+            │
+            ├── controller
+            │   └── UserController.java
+            │
+            ├── service
+            │   └── UserService.java
+            │
+            └── aspect
+                └── LoggingAspect.java</pre>
+    </div>
+
+    <p>Có thể hiểu các package như sau:</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Package</th>
+                    <th>Vai trò</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>controller</td><td>Nhận request từ client</td></tr>
+                <tr><td>service</td><td>Xử lý nghiệp vụ</td></tr>
+                <tr><td>aspect</td><td>Chứa logic AOP</td></tr>
+                <tr><td>AopApplication</td><td>Class khởi động Spring Boot</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Luồng hoạt động:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   │ HTTP Request
+   ▼
+Controller
+   │
+   ▼
+Service
+   │
+   ▼
+Business Logic</pre>
+    </div>
+
+    <p>Sau khi áp dụng AOP:</p>
+    <div class="info-box">
+        <pre>Client
+   │
+   ▼
+Controller
+   │
+   ▼
+AOP Proxy
+   │
+   ├──── Aspect
+   │       │
+   │       ▼
+   │    @Before
+   │
+   ▼
+Service
+   │
+   ▼
+Business Logic</pre>
+    </div>
+
+    <p>Đây là một trong những luồng quan trọng nhất cần ghi nhớ trong phần này.</p>
+
+    <h3>3.5. Tạo class <code>UserService</code></h3>
+    <p>Đầu tiên chúng ta tạo một Service đơn giản.</p>
+    <p>File: <code>service/UserService.java</code></p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    public void getUser() {
+        System.out.println("Đang thực hiện lấy thông tin User");
+    }
+}</pre>
+    </div>
+
+    <h4>3.5.1. Giải thích</h4>
+    <p>Annotation <code>@Service</code> cho Spring biết rằng <code>UserService</code> là một Spring Bean.</p>
+    <p>Spring sẽ quản lý object này.</p>
+
+    <p>Thông thường nếu không có AOP, khi Controller gọi <code>userService.getUser();</code> thì method <code>getUser()</code> sẽ được thực thi trực tiếp.</p>
+
+    <p>Nhưng khi AOP được áp dụng, Spring có thể tạo một Proxy bao quanh Bean này.</p>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>UserService
+    ▲
+    │
+    │ được Spring quản lý
+    │
+AOP Proxy</pre>
+    </div>
+
+    <p>Controller thực tế sẽ làm việc thông qua Bean mà Spring cung cấp.</p>
+
+    <h3>3.6. Tạo Controller</h3>
+    <p>Tiếp theo tạo <code>controller/UserController.java</code></p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.controller;
+
+import com.example.aop.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/users")
+    public String getUser() {
+
+        userService.getUser();
+
+        return "Get user successfully";
+    }
+}</pre>
+    </div>
+
+    <h4>3.6.1. Giải thích Constructor Injection</h4>
+    <p>Đoạn <code>private final UserService userService;</code> khai báo dependency.</p>
+    <p>Constructor:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public UserController(UserService userService) {
+    this.userService = userService;
+}</pre>
+    </div>
+
+    <p>cho phép Spring inject <code>UserService</code> vào <code>UserController</code>.</p>
+    <p>Khi request <code>GET /users</code> được gửi tới server, method <code>getUser()</code> của Controller được thực thi.</p>
+    <p>Sau đó Controller gọi <code>userService.getUser();</code></p>
+
+    <h3>3.7. Chạy thử project trước khi sử dụng AOP</h3>
+    <p>Trước khi thêm Aspect, hãy chạy project.</p>
+    <p>Gửi request:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET http://localhost:8080/users</pre>
+    </div>
+
+    <p>Controller gọi <code>userService.getUser();</code></p>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>Đang thực hiện lấy thông tin User</pre>
+    </div>
+
+    <p>Response:</p>
+    <div class="info-box">
+        <pre>Get user successfully</pre>
+    </div>
+
+    <p>Luồng lúc này:</p>
+    <div class="info-box">
+        <pre>GET /users
+      │
+      ▼
+UserController
+      │
+      │ userService.getUser()
+      ▼
+UserService
+      │
+      ▼
+Đang thực hiện lấy thông tin User</pre>
+    </div>
+
+    <p>Đây là luồng xử lý thông thường của ứng dụng Spring Boot.</p>
+
+    <h3>3.8. Tạo Aspect đầu tiên</h3>
+    <p>Bây giờ chúng ta bắt đầu sử dụng AOP.</p>
+    <p>Tạo package <code>aspect</code></p>
+    <p>Sau đó tạo class <code>LoggingAspect.java</code></p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.aspect;
+
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.aop.service.UserService.getUser())")
+    public void beforeGetUser() {
+
+        System.out.println("AOP: Chuẩn bị gọi getUser()");
+    }
+}</pre>
+    </div>
+
+    <p>Đây là Aspect đầu tiên của chúng ta.</p>
+
+    <h3>3.9. Annotation <code>@Aspect</code></h3>
+    <p>Annotation <code>@Aspect</code> cho Spring biết rằng class này chứa logic AOP.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+public class LoggingAspect {
+
+}</pre>
+    </div>
+
+    <p>Có thể hiểu:</p>
+    <div class="info-box">
+        <pre>LoggingAspect
+       │
+       ▼
+    @Aspect
+       │
+       ▼
+Đây là class chứa logic AOP</pre>
+    </div>
+
+    <p>Tuy nhiên chỉ sử dụng <code>@Aspect</code> thì chưa đủ.</p>
+    <p>Spring cũng cần quản lý class này như một Bean.</p>
+
+    <h3>3.10. Annotation <code>@Component</code></h3>
+    <p>Chúng ta sử dụng <code>@Component</code></p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+}</pre>
+    </div>
+
+    <p><code>@Component</code> giúp Spring phát hiện và quản lý <code>LoggingAspect</code>.</p>
+
+    <p>Có thể hiểu:</p>
+    <div class="info-box">
+        <pre>@Component
+      │
+      ▼
+Spring quản lý object
+      │
+      ▼
+LoggingAspect trở thành Bean</pre>
+    </div>
+
+    <p>Vì vậy trong ví dụ này:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+}</pre>
+    </div>
+
+    <p>hai annotation có vai trò khác nhau:</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Annotation</th>
+                    <th>Vai trò</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>@Aspect</code></td><td>Cho biết class chứa logic AOP</td></tr>
+                <tr><td><code>@Component</code></td><td>Để Spring quản lý class này</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Không nên hiểu hai annotation này là một.</p>
+
+    <h3>3.11. Tạo Advice với <code>@Before</code></h3>
+    <p>Trong Aspect chúng ta có:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.aop.service.UserService.getUser())")
+public void beforeGetUser() {
+
+    System.out.println("AOP: Chuẩn bị gọi getUser()");
+}</pre>
+    </div>
+
+    <p><code>@Before</code> có nghĩa: Thực hiện method Advice trước khi method mục tiêu được chạy.</p>
+
+    <p>Ở đây <code>beforeGetUser()</code> sẽ được thực hiện trước <code>UserService.getUser()</code>.</p>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Controller
+    │
+    ▼
+userService.getUser()
+    │
+    ▼
+@Before
+    │
+    ▼
+beforeGetUser()
+    │
+    ▼
+UserService.getUser()</pre>
+    </div>
+
+    <h3>3.12. Giải thích Pointcut</h3>
+    <p>Đoạn:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Pointcut Expression</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(* com.example.aop.service.UserService.getUser())</pre>
+    </div>
+
+    <p>là Pointcut Expression.</p>
+    <p>Nó cho Spring biết: Hãy áp dụng Advice này vào method <code>getUser()</code> của class <code>UserService</code>.</p>
+
+    <p>Phân tích:</p>
+    <div class="info-box">
+        <pre>execution(
+    * 
+    com.example.aop.service.UserService
+    .getUser()
+)</pre>
+    </div>
+
+    <p>Trong đó:</p>
+    <div class="info-box">
+        <pre>execution(...)
+cho biết chúng ta đang chọn method execution.</pre>
+    </div>
+
+    <p>Ký hiệu <code>*</code> đại diện cho kiểu trả về bất kỳ.</p>
+
+    <p>Phần <code>com.example.aop.service.UserService</code> là package + class.</p>
+    <p>Phần <code>getUser()</code> là method cần chọn.</p>
+
+    <h3>3.13. Chạy lại chương trình</h3>
+    <p>Bây giờ gửi <code>GET /users</code></p>
+    <p>Controller thực hiện <code>userService.getUser();</code></p>
+    <p>Nhưng trước khi <code>getUser()</code> chạy, Aspect được kích hoạt.</p>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>AOP: Chuẩn bị gọi getUser()
+Đang thực hiện lấy thông tin User</pre>
+    </div>
+
+    <p>Có thể biểu diễn:</p>
+    <div class="info-box">
+        <pre>GET /users
+      │
+      ▼
+UserController
+      │
+      ▼
+AOP Proxy
+      │
+      ▼
+@Before
+      │
+      │ AOP: Chuẩn bị gọi getUser()
+      ▼
+UserService.getUser()
+      │
+      ▼
+Đang thực hiện lấy thông tin User</pre>
+    </div>
+
+    <p>Đây chính là ví dụ AOP đầu tiên.</p>
+
+    <h3>3.14. AOP đã giải quyết vấn đề gì?</h3>
+    <p>Giả sử chúng ta có 10 Service:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService
+PaymentService
+CategoryService
+CustomerService
+...</pre>
+    </div>
+
+    <p>Mỗi method đều cần in log <code>System.out.println("Start method");</code></p>
+
+    <p>Nếu viết trực tiếp vào từng Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getUser() {
+
+    System.out.println("Start method");
+
+    // business logic
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getProduct() {
+
+    System.out.println("Start method");
+
+    // business logic
+}</pre>
+    </div>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void createOrder() {
+
+    System.out.println("Start method");
+
+    // business logic
+}</pre>
+    </div>
+
+    <p>sẽ xuất hiện rất nhiều code lặp.</p>
+
+    <p>AOP cho phép đưa phần logic dùng chung ra ngoài:</p>
+    <div class="info-box">
+        <pre>                LoggingAspect
+                      │
+        ┌─────────────┼─────────────┐
+        ▼             ▼             ▼
+ UserService   ProductService   OrderService</pre>
+    </div>
+
+    <p>Nhờ vậy Service tập trung vào nghiệp vụ.</p>
+
+    <h3>3.15. So sánh trước và sau khi sử dụng AOP</h3>
+
+    <h4>Trước AOP</h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public void getUser() {
+
+        System.out.println("Start");
+
+        // business logic
+
+        System.out.println("End");
+    }
+}</pre>
+    </div>
+
+    <p>Service vừa xử lý <strong>Business Logic</strong> vừa xử lý <strong>Logging</strong>. Hai trách nhiệm bị trộn lẫn.</p>
+
+    <h4>Sau AOP</h4>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public void getUser() {
+
+        // business logic
+
+    }
+}</pre>
+    </div>
+
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.aop.service.UserService.getUser())")
+    public void beforeGetUser() {
+
+        System.out.println("Start");
+    }
+}</pre>
+    </div>
+
+    <p>Bây giờ:</p>
+    <div class="info-box">
+        <pre>UserService
+     │
+     └── Business Logic
+
+LoggingAspect
+     │
+     └── Logging</pre>
+    </div>
+
+    <p>Mỗi thành phần có trách nhiệm rõ ràng hơn.</p>
+
+    <h3>3.16. Spring AOP Proxy hoạt động như thế nào?</h3>
+    <p>Đây là phần rất quan trọng.</p>
+
+    <p>Khi sử dụng Spring AOP, Spring thường không trực tiếp thay đổi code bên trong <code>UserService</code>.</p>
+    <p>Thay vào đó, Spring tạo một Proxy để bao quanh Bean.</p>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>              Client
+                 │
+                 ▼
+            AOP Proxy
+                 │
+        ┌────────┴────────┐
+        │                 │
+        ▼                 ▼
+     Advice          Target Object
+                         │
+                         ▼
+                    UserService</pre>
+    </div>
+
+    <p>Khi Controller gọi <code>userService.getUser();</code> request có thể đi qua Proxy trước.</p>
+    <p>Proxy kiểm tra: Có Aspect nào áp dụng cho <code>getUser()</code> không?</p>
+
+    <p>Nếu có <code>@Before</code> được thực hiện.</p>
+    <p>Sau đó method thực tế được gọi <code>UserService.getUser()</code></p>
+
+    <h3>3.17. Toàn bộ luồng thực thi</h3>
+    <p>Hãy xem toàn bộ quá trình.</p>
+
+    <p>Client gửi: <code>GET /users</code></p>
+
+    <p><strong>Bước 1</strong>: Request tới <code>UserController</code></p>
+    <p><strong>Bước 2</strong>: Controller gọi <code>userService.getUser();</code></p>
+    <p><strong>Bước 3</strong>: Spring AOP Proxy nhận lời gọi.</p>
+    <p><strong>Bước 4</strong>: Proxy kiểm tra Pointcut: <code>execution(* com.example.aop.service.UserService.getUser())</code></p>
+    <p><strong>Bước 5</strong>: Pointcut khớp với method <code>getUser()</code></p>
+    <p><strong>Bước 6</strong>: Spring thực hiện <code>@Before</code></p>
+    <p><strong>Bước 7</strong>: Method Aspect <code>beforeGetUser()</code> được thực hiện.</p>
+    <p><strong>Bước 8</strong>: Method nghiệp vụ <code>UserService.getUser()</code> được thực hiện.</p>
+
+    <p>Luồng tổng quát:</p>
+    <div class="info-box">
+        <pre>Client
+  │
+  ▼
+Controller
+  │
+  ▼
+AOP Proxy
+  │
+  ▼
+Pointcut kiểm tra
+  │
+  ▼
+@Before
+  │
+  ▼
+UserService
+  │
+  ▼
+Business Logic</pre>
+    </div>
+
+    <h3>3.18. Ví dụ hoàn chỉnh</h3>
+    <p>Sau đây là toàn bộ project tối giản.</p>
+
+    <h4>3.18.1. <code>AopApplication.java</code></h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class AopApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(AopApplication.class, args);
+    }
+}</pre>
+    </div>
+
+    <h4>3.18.2. <code>UserService.java</code></h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    public void getUser() {
+
+        System.out.println("Đang thực hiện lấy thông tin User");
+    }
+}</pre>
+    </div>
+
+    <h4>3.18.3. <code>UserController.java</code></h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.controller;
+
+import com.example.aop.service.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/users")
+    public String getUser() {
+
+        userService.getUser();
+
+        return "Get user successfully";
+    }
+}</pre>
+    </div>
+
+    <h4>3.18.4. <code>LoggingAspect.java</code></h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.aspect;
+
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.aop.service.UserService.getUser())")
+    public void beforeGetUser() {
+
+        System.out.println("AOP: Chuẩn bị gọi getUser()");
+    }
+}</pre>
+    </div>
+
+    <h3>3.19. Kết quả khi chạy</h3>
+    <p>Gửi request:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET http://localhost:8080/users</pre>
+    </div>
+
+    <p>Response:</p>
+    <div class="info-box">
+        <pre>Get user successfully</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>AOP: Chuẩn bị gọi getUser()
+Đang thực hiện lấy thông tin User</pre>
+    </div>
+
+    <p>Điều này chứng minh <code>@Before</code> đã được thực hiện trước <code>UserService.getUser()</code></p>
+
+    <h3>3.20. Sơ đồ tổng kết</h3>
+    <p>Toàn bộ kiến thức của phần này có thể ghi nhớ bằng sơ đồ:</p>
+    <div class="info-box">
+        <pre>                 Spring Boot
+                       │
+                       ▼
+                Spring Container
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+          ▼                         ▼
+    UserService               LoggingAspect
+          │                         │
+          │                         │
+          └──────────┬──────────────┘
+                     │
+                     ▼
+                 AOP Proxy
+                     │
+                     ▼
+                Pointcut
+                     │
+                     ▼
+                  @Before
+                     │
+                     ▼
+              UserService
+                     │
+                     ▼
+              Business Logic</pre>
+    </div>
+
+    <h3>3.21. Những kiến thức cần ghi nhớ</h3>
+
+    <h4>1. Muốn sử dụng AOP</h4>
+    <p>Thêm dependency:</p>
+    <div class="code-block">
+        <div class="code-header"><span>XML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+    </div>
+
+    <h4>2. Tạo Aspect</h4>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+}</pre>
+    </div>
+
+    <h4>3. Tạo Advice</h4>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before(...)
+public void before() {
+
+}</pre>
+    </div>
+
+    <h4>4. Xác định method cần áp dụng</h4>
+    <p>Sử dụng Pointcut Expression:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Pointcut</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(...)</pre>
+    </div>
+
+    <h4>5. Spring sử dụng Proxy</h4>
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>Client
+  ↓
+Proxy
+  ↓
+Aspect
+  ↓
+Target Method</pre>
+    </div>
+
+    <h3>3.22. Những lỗi người mới thường gặp</h3>
+
+    <h4>Lỗi 1: Quên <code>@Component</code></h4>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+public class LoggingAspect {
+}</pre>
+    </div>
+    <p>Aspect có thể không được Spring quản lý như một Bean.</p>
+    <p>Nên sử dụng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+}</pre>
+    </div>
+
+    <h4>Lỗi 2: Quên dependency</h4>
+    <p>Nếu chưa thêm <code>spring-boot-starter-aop</code> thì các thành phần AOP cần thiết có thể không được cấu hình đầy đủ.</p>
+
+    <h4>Lỗi 3: Viết sai package</h4>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.service.UserService.getUser())")</pre>
+    </div>
+    <p>trong khi class thực tế nằm ở:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Package</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>com.example.aop.service.UserService</pre>
+    </div>
+    <p>Pointcut sẽ không khớp với method mong muốn.</p>
+
+    <h4>Lỗi 4: Nhầm <code>@Aspect</code> với <code>@Component</code></h4>
+    <p>Không nên nghĩ <code>@Aspect</code> đã đồng nghĩa với <code>@Component</code></p>
+    <p>Trong ví dụ này:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+}</pre>
+    </div>
+    <p>hai annotation đảm nhiệm hai vai trò khác nhau.</p>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>Thêm</strong> <code>spring-boot-starter-aop</code> để dùng AOP.</li>
+            <li><strong>Aspect</strong> cần cả <code>@Aspect</code> (đánh dấu AOP) và <code>@Component</code> (Spring quản lý).</li>
+            <li><strong>Pointcut</strong> dùng <code>execution(...)</code> để chọn method.</li>
+            <li><strong>@Before</strong> chạy trước method mục tiêu.</li>
+            <li><strong>Spring Proxy</strong> là cơ chế chèn Aspect vào luồng gọi method.</li>
+        </ul>
+    </div>
+</section>
+<section id="aop-p4" class="section">
+    <h2><i class="fas fa-crosshairs"></i> PHẦN 4. ADVICE VÀ POINTCUT TRONG SPRING AOP</h2>
+
+    <h3>4.1. Mục tiêu của phần học</h3>
+    <p>Sau khi hoàn thành phần này, học viên có thể:</p>
+    <ul>
+        <li>Hiểu chính xác Advice là gì.</li>
+        <li>Phân biệt các loại Advice trong Spring AOP.</li>
+        <li>Sử dụng <code>@Before</code>.</li>
+        <li>Sử dụng <code>@After</code>.</li>
+        <li>Sử dụng <code>@AfterReturning</code>.</li>
+        <li>Sử dụng <code>@AfterThrowing</code>.</li>
+        <li>Sử dụng <code>@Around</code>.</li>
+        <li>Hiểu <code>ProceedingJoinPoint</code>.</li>
+        <li>Hiểu vai trò của <code>proceed()</code>.</li>
+        <li>Hiểu Pointcut Expression.</li>
+        <li>Viết Pointcut cho một method.</li>
+        <li>Viết Pointcut cho nhiều method.</li>
+        <li>Chọn method theo package.</li>
+        <li>Chọn method theo class.</li>
+        <li>Chọn method theo tên.</li>
+        <li>Chọn method theo annotation.</li>
+        <li>Hiểu sự khác nhau giữa <code>execution()</code> và các biểu thức Pointcut khác.</li>
+        <li>Biết khi nào nên sử dụng từng loại Advice.</li>
+    </ul>
+
+    <h3>4.2. Nhắc lại Advice và Pointcut</h3>
+    <p>Trước khi đi sâu vào từng loại Advice, cần nhắc lại hai khái niệm quan trọng.</p>
+
+    <h4>4.2.1. Advice là gì?</h4>
+    <p>Advice là phần logic mà Aspect muốn thực hiện tại một thời điểm xác định trong quá trình thực thi method.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Method bắt đầu
+     │
+     ▼
+@Before
+     │
+     ▼
+Method thực thi
+     │
+     ▼
+@After</pre>
+    </div>
+
+    <p>Hoặc:</p>
+    <div class="info-box">
+        <pre>Method
+   │
+   ├── Thành công
+   │       │
+   │       ▼
+   │   @AfterReturning
+   │
+   └── Exception
+           │
+           ▼
+      @AfterThrowing</pre>
+    </div>
+
+    <h4>4.2.2. Pointcut là gì?</h4>
+    <p>Pointcut dùng để xác định:</p>
+    <div class="info-box">
+        <pre>Advice sẽ được áp dụng vào những method nào.</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.aop.service.UserService.getUser())")</pre>
+    </div>
+
+    <p>Trong đó:</p>
+    <div class="info-box">
+        <pre>@Before
+   │
+   ▼
+Advice</pre>
+    </div>
+
+    <p>còn:</p>
+    <div class="info-box">
+        <pre>execution(...)</pre>
+    </div>
+
+    <p>là:</p>
+    <div class="info-box">
+        <pre>Pointcut</pre>
+    </div>
+
+    <p>Có thể ghi nhớ:</p>
+    <div class="info-box">
+        <pre>Advice
+  =
+Khi nào và làm gì?
+
+Pointcut
+  =
+Áp dụng cho đâu?</pre>
+    </div>
+
+    <h3>4.3. Các loại Advice trong Spring AOP</h3>
+    <p>Spring AOP cung cấp các loại Advice thường dùng:</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Advice</th>
+                    <th>Thời điểm chạy</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>@Before</code></td><td>Trước method</td></tr>
+                <tr><td><code>@After</code></td><td>Sau method, dù thành công hay exception</td></tr>
+                <tr><td><code>@AfterReturning</code></td><td>Sau khi method chạy thành công</td></tr>
+                <tr><td><code>@AfterThrowing</code></td><td>Khi method phát sinh exception</td></tr>
+                <tr><td><code>@Around</code></td><td>Bao quanh toàn bộ method</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Có thể hình dung:</p>
+    <div class="info-box">
+        <pre>                 Method
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+       Thành công           Exception
+          │                   │
+          ▼                   ▼
+@AfterReturning          @AfterThrowing
+          │                   │
+          └─────────┬─────────┘
+                    ▼
+                  @After</pre>
+    </div>
+
+    <p>Riêng <code>@Around</code> có thể bao quanh toàn bộ quá trình:</p>
+    <div class="info-box">
+        <pre>@Around
+   │
+   ├── Before
+   │
+   ├── Method
+   │
+   └── After</pre>
+    </div>
+
+    <h3>4.4. <code>@Before</code></h3>
+
+    <h4>4.4.1. Khái niệm</h4>
+    <p><code>@Before</code> dùng để thực hiện một Advice trước khi method mục tiêu được thực thi.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.aop.service.UserService.getUser())")
+public void beforeGetUser() {
+
+    System.out.println("Before getUser");
+}</pre>
+    </div>
+
+    <p>Khi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>userService.getUser();</pre>
+    </div>
+
+    <p>được gọi, Spring sẽ thực hiện:</p>
+    <div class="info-box">
+        <pre>@Before
+   ↓
+getUser()</pre>
+    </div>
+
+    <h4>4.4.2. Ví dụ</h4>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public void getUser() {
+
+        System.out.println("Đang lấy User");
+    }
+}</pre>
+    </div>
+
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.aop.service.UserService.getUser())")
+    public void beforeGetUser() {
+
+        System.out.println("Before getUser");
+    }
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Before getUser
+Đang lấy User</pre>
+    </div>
+
+    <h4>4.4.3. Khi nào sử dụng <code>@Before</code>?</h4>
+    <p><code>@Before</code> thường phù hợp với:</p>
+    <ul>
+        <li>Logging.</li>
+        <li>Kiểm tra điều kiện.</li>
+        <li>Kiểm tra quyền.</li>
+        <li>Ghi nhận thông tin request.</li>
+        <li>Ghi nhận tên method.</li>
+        <li>Theo dõi thao tác của người dùng.</li>
+    </ul>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Request
+   ↓
+@Before
+   ↓
+Service</pre>
+    </div>
+
+    <h3>4.5. <code>@After</code></h3>
+
+    <h4>4.5.1. Khái niệm</h4>
+    <p><code>@After</code> chạy sau khi method mục tiêu kết thúc.</p>
+    <p>Điểm quan trọng:</p>
+    <div class="info-box">
+        <pre>@After được thực hiện bất kể method kết thúc bình thường hay phát sinh exception.</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@After("execution(* com.example.aop.service.UserService.getUser())")
+public void afterGetUser() {
+
+    System.out.println("Method đã kết thúc");
+}</pre>
+    </div>
+
+    <h4>4.5.2. Trường hợp method thành công</h4>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getUser() {
+
+    System.out.println("Đang lấy User");
+}</pre>
+    </div>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>@Before
+   ↓
+getUser()
+   ↓
+@After</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>Đang lấy User
+Method đã kết thúc</pre>
+    </div>
+
+    <h4>4.5.3. Trường hợp method phát sinh exception</h4>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getUser() {
+
+    System.out.println("Đang lấy User");
+
+    throw new RuntimeException("User không tồn tại");
+}</pre>
+    </div>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>getUser()
+   │
+   ▼
+Exception
+   │
+   ▼
+@After</pre>
+    </div>
+
+    <p><code>@After</code> vẫn được thực hiện.</p>
+    <p>Đây là điểm khác biệt quan trọng giữa:</p>
+    <div class="info-box">
+        <pre>@After</pre>
+    </div>
+
+    <p>và:</p>
+    <div class="info-box">
+        <pre>@AfterReturning</pre>
+    </div>
+
+    <h3>4.6. <code>@AfterReturning</code></h3>
+
+    <h4>4.6.1. Khái niệm</h4>
+    <p><code>@AfterReturning</code> được thực hiện sau khi method chạy thành công.</p>
+    <p>Nếu method phát sinh exception thì <code>@AfterReturning</code> không chạy.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterReturning(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())"
+)
+public void afterReturning() {
+
+    System.out.println("Method thực hiện thành công");
+}</pre>
+    </div>
+
+    <h4>4.6.2. Ví dụ method trả về dữ liệu</h4>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser() {
+
+    return "Nguyen Van An";
+}</pre>
+    </div>
+
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterReturning(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())"
+)
+public void afterReturning() {
+
+    System.out.println("Lấy User thành công");
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Lấy User thành công</pre>
+    </div>
+
+    <h4>4.6.3. Lấy giá trị trả về</h4>
+    <p>Một ưu điểm của <code>@AfterReturning</code> là có thể lấy được giá trị mà method trả về.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterReturning(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())",
+    returning = "result"
+)
+public void afterReturning(Object result) {
+
+    System.out.println("Kết quả: " + result);
+}</pre>
+    </div>
+
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser() {
+
+    return "Nguyen Van An";
+}</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>Kết quả: Nguyen Van An</pre>
+    </div>
+
+    <p>Ở đây:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>returning = "result"</pre>
+    </div>
+
+    <p>liên kết giá trị trả về với parameter:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result</pre>
+    </div>
+
+    <h3>4.7. <code>@AfterThrowing</code></h3>
+
+    <h4>4.7.1. Khái niệm</h4>
+    <p><code>@AfterThrowing</code> được thực hiện khi method phát sinh exception.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterThrowing(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())"
+)
+public void afterThrowing() {
+
+    System.out.println("Method xảy ra lỗi");
+}</pre>
+    </div>
+
+    <h4>4.7.2. Ví dụ</h4>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getUser() {
+
+    System.out.println("Đang lấy User");
+
+    throw new RuntimeException("Không tìm thấy User");
+}</pre>
+    </div>
+
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterThrowing(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())"
+)
+public void afterThrowing() {
+
+    System.out.println("Có exception xảy ra");
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Đang lấy User
+Có exception xảy ra</pre>
+    </div>
+
+    <h4>4.7.3. Lấy exception</h4>
+    <p>Chúng ta có thể lấy exception phát sinh:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterThrowing(
+    pointcut = "execution(* com.example.aop.service.UserService.getUser())",
+    throwing = "exception"
+)
+public void afterThrowing(Exception exception) {
+
+    System.out.println("Lỗi: " + exception.getMessage());
+}</pre>
+    </div>
+
+    <p>Nếu Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>throw new RuntimeException("User không tồn tại");</pre>
+    </div>
+
+    <p>thì console:</p>
+    <div class="info-box">
+        <pre>Lỗi: User không tồn tại</pre>
+    </div>
+
+    <h3>4.8. So sánh <code>@AfterReturning</code> và <code>@AfterThrowing</code></h3>
+    <p>Đây là hai annotation rất dễ nhầm.</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Trường hợp</th>
+                    <th><code>@AfterReturning</code></th>
+                    <th><code>@AfterThrowing</code></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Method thành công</td><td>Có</td><td>Không</td></tr>
+                <tr><td>Method throw exception</td><td>Không</td><td>Có</td></tr>
+                <tr><td>Lấy kết quả trả về</td><td>Có</td><td>Không</td></tr>
+                <tr><td>Lấy exception</td><td>Không</td><td>Có</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Có thể ghi nhớ:</p>
+    <div class="info-box">
+        <pre>SUCCESS
+   ↓
+@AfterReturning
+
+
+ERROR
+   ↓
+@AfterThrowing</pre>
+    </div>
+
+    <h3>4.9. <code>@After</code> khác gì <code>@AfterReturning</code>?</h3>
+    <p>Đây cũng là một điểm học viên thường nhầm.</p>
+
+    <h4><code>@After</code></h4>
+    <p>Chạy trong cả hai trường hợp:</p>
+    <div class="info-box">
+        <pre>Success
+   ↓
+@After</pre>
+    </div>
+
+    <p>và:</p>
+    <div class="info-box">
+        <pre>Exception
+   ↓
+@After</pre>
+    </div>
+
+    <h4><code>@AfterReturning</code></h4>
+    <p>Chỉ chạy khi:</p>
+    <div class="info-box">
+        <pre>Success
+   ↓
+@AfterReturning</pre>
+    </div>
+
+    <p>Do đó:</p>
+    <div class="info-box">
+        <pre>@After
+=
+Method kết thúc
+
+@AfterReturning
+=
+Method kết thúc thành công</pre>
+    </div>
+
+    <h3>4.10. <code>@Around</code></h3>
+
+    <h4>4.10.1. Khái niệm</h4>
+    <p><code>@Around</code> là loại Advice mạnh nhất trong các loại Advice cơ bản.</p>
+    <p>Nó có thể:</p>
+    <ul>
+        <li>Chạy code trước method.</li>
+        <li>Quyết định có gọi method hay không.</li>
+        <li>Gọi method.</li>
+        <li>Lấy kết quả trả về.</li>
+        <li>Thay đổi kết quả.</li>
+        <li>Bắt exception.</li>
+        <li>Chạy code sau method.</li>
+    </ul>
+
+    <p>Cấu trúc:</p>
+    <div class="info-box">
+        <pre>@Around
+   │
+   ├── Code trước
+   │
+   ├── proceed()
+   │
+   └── Code sau</pre>
+    </div>
+
+    <h3>4.11. <code>ProceedingJoinPoint</code></h3>
+    <p>Khi sử dụng <code>@Around</code>, chúng ta thường nhận:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>ProceedingJoinPoint joinPoint</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("execution(* com.example.aop.service.UserService.getUser())")
+public Object aroundGetUser(ProceedingJoinPoint joinPoint) throws Throwable {
+
+    System.out.println("Before");
+
+    Object result = joinPoint.proceed();
+
+    System.out.println("After");
+
+    return result;
+}</pre>
+    </div>
+
+    <h3>4.12. <code>proceed()</code> là gì?</h3>
+    <p>Đây là phần rất quan trọng.</p>
+    <p>Dòng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.proceed();</pre>
+    </div>
+
+    <p>có ý nghĩa:</p>
+    <div class="info-box">
+        <pre>Cho phép method mục tiêu tiếp tục được thực thi.</pre>
+    </div>
+
+    <p>Nếu có:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();</pre>
+    </div>
+
+    <p>thì method Service sẽ được gọi.</p>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>@Around
+   │
+   ▼
+Before
+   │
+   ▼
+proceed()
+   │
+   ▼
+Service Method
+   │
+   ▼
+After</pre>
+    </div>
+
+    <h3>4.13. Nếu không gọi <code>proceed()</code> thì sao?</h3>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("execution(* com.example.aop.service.UserService.getUser())")
+public Object aroundGetUser(ProceedingJoinPoint joinPoint) {
+
+    System.out.println("AOP");
+
+    return null;
+}</pre>
+    </div>
+
+    <p>Không có:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.proceed();</pre>
+    </div>
+
+    <p>thì method mục tiêu có thể không được thực thi.</p>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Controller
+   ↓
+@Around
+   ↓
+return null</pre>
+    </div>
+
+    <p>Method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>UserService.getUser()</pre>
+    </div>
+
+    <p>không được tiếp tục.</p>
+    <p>Do đó cần đặc biệt ghi nhớ:</p>
+    <div class="info-box">
+        <pre>joinPoint.proceed();</pre>
+    </div>
+
+    <p>là lệnh rất quan trọng khi sử dụng <code>@Around</code>.</p>
+
+    <h3>4.14. Ví dụ hoàn chỉnh với <code>@Around</code></h3>
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public String getUser() {
+
+        System.out.println("Đang lấy User");
+
+        return "Nguyen Van An";
+    }
+}</pre>
+    </div>
+
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Around("execution(* com.example.aop.service.UserService.getUser())")
+    public Object aroundGetUser(ProceedingJoinPoint joinPoint)
+            throws Throwable {
+
+        System.out.println("Before method");
+
+        Object result = joinPoint.proceed();
+
+        System.out.println("After method");
+
+        return result;
+    }
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Before method
+Đang lấy User
+After method</pre>
+    </div>
+
+    <h3>4.15. Lấy tên method bằng <code>JoinPoint</code></h3>
+    <p>Trong AOP, chúng ta thường muốn biết method nào đang được gọi.</p>
+    <p>Có thể sử dụng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getSignature().getName()</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.aop.service.*.*(..))")
+public void before(JoinPoint joinPoint) {
+
+    System.out.println(
+        "Method: " + joinPoint.getSignature().getName()
+    );
+}</pre>
+    </div>
+
+    <p>Nếu gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>getUser()</pre>
+    </div>
+
+    <p>console:</p>
+    <div class="info-box">
+        <pre>Method: getUser</pre>
+    </div>
+
+    <p>Nếu gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>createUser()</pre>
+    </div>
+
+    <p>console:</p>
+    <div class="info-box">
+        <pre>Method: createUser</pre>
+    </div>
+
+    <h3>4.16. Pointcut Expression</h3>
+    <p>Pointcut Expression là cách mô tả những method mà Aspect sẽ áp dụng.</p>
+    <p>Một dạng rất phổ biến:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(...)</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(* com.example.aop.service.UserService.getUser())</pre>
+    </div>
+
+    <p>Có thể đọc:</p>
+    <div class="info-box">
+        <pre>Chọn method getUser() của class UserService.</pre>
+    </div>
+
+    <h3>4.17. Cấu trúc <code>execution()</code></h3>
+    <p>Cấu trúc tổng quát:</p>
+    <div class="info-box">
+        <pre>execution(
+    modifiers-pattern?
+    return-type-pattern
+    declaring-type-pattern?
+    method-name-pattern
+    parameter-pattern
+    throws-pattern?
+)</pre>
+    </div>
+
+    <p>Đối với người mới, trước tiên cần nắm dạng đơn giản:</p>
+    <div class="info-box">
+        <pre>execution(
+    return-type
+    package.class.method(parameter)
+)</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.UserService.getUser()
+)</pre>
+    </div>
+
+    <h3>4.18. Ký hiệu <code>*</code></h3>
+    <p>Ký hiệu:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>*</pre>
+    </div>
+
+    <p>thường mang ý nghĩa:</p>
+    <div class="info-box">
+        <pre>Bất kỳ.</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(* com.example.aop.service.UserService.getUser())</pre>
+    </div>
+
+    <p>Dấu <code>*</code> đầu tiên đại diện cho kiểu trả về bất kỳ.</p>
+
+    <p>Ví dụ method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser()</pre>
+    </div>
+
+    <p>hoặc:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUser()</pre>
+    </div>
+
+    <p>đều có thể phù hợp với phần return type <code>*</code>.</p>
+
+    <h3>4.19. Ký hiệu <code>..</code></h3>
+    <p>Ký hiệu:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>..</pre>
+    </div>
+
+    <p>thường dùng để đại diện cho nhiều thành phần.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(* com.example.aop.service..*(..))</pre>
+    </div>
+
+    <p>Có thể hiểu đơn giản:</p>
+    <div class="info-box">
+        <pre>Chọn các method trong package service và các package con,
+với tham số bất kỳ.</pre>
+    </div>
+
+    <h3>4.20. Chọn một method cụ thể</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.UserService.getUser()
+)</pre>
+    </div>
+
+    <p>Chỉ áp dụng cho:</p>
+    <div class="info-box">
+        <pre>UserService.getUser()</pre>
+    </div>
+
+    <p>Không áp dụng cho:</p>
+    <div class="info-box">
+        <pre>UserService.createUser()</pre>
+    </div>
+
+    <p>hoặc:</p>
+    <div class="info-box">
+        <pre>ProductService.getProduct()</pre>
+    </div>
+
+    <h3>4.21. Chọn tất cả method của một class</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.UserService.*(..)
+)</pre>
+    </div>
+
+    <p>Điều này cho phép Aspect áp dụng cho nhiều method của <code>UserService</code>.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>getUser()
+createUser()
+updateUser()
+deleteUser()</pre>
+    </div>
+
+    <p>đều có thể được chọn.</p>
+
+    <p>Sơ đồ:</p>
+    <div class="info-box">
+        <pre>UserService
+   │
+   ├── getUser()
+   ├── createUser()
+   ├── updateUser()
+   └── deleteUser()
+          │
+          ▼
+       Pointcut</pre>
+    </div>
+
+    <h3>4.22. Chọn tất cả method trong package Service</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.*.*(..)
+)</pre>
+    </div>
+
+    <p>Có thể áp dụng cho:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService
+CustomerService</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>UserService
+   ├── getUser()
+   └── createUser()
+
+ProductService
+   ├── getProduct()
+   └── createProduct()
+
+OrderService
+   └── createOrder()</pre>
+    </div>
+
+    <p>Aspect có thể áp dụng cho toàn bộ các method phù hợp.</p>
+
+    <h3>4.23. Chọn method theo kiểu trả về</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    String com.example.aop.service.*.*(..)
+)</pre>
+    </div>
+
+    <p>Pointcut này chọn các method có kiểu trả về:</p>
+    <div class="info-box">
+        <pre>String</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser()</pre>
+    </div>
+
+    <p>có thể được chọn.</p>
+    <p>Trong khi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public int getAge()</pre>
+    </div>
+
+    <p>không phù hợp với <code>String</code>.</p>
+
+    <h3>4.24. Chọn method theo tham số</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.UserService.getUser(String)
+)</pre>
+    </div>
+
+    <p>Pointcut chọn method:</p>
+    <div class="info-box">
+        <pre>getUser(String)</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUser(String username)</pre>
+    </div>
+
+    <p>phù hợp.</p>
+    <p>Nhưng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUser(Integer id)</pre>
+    </div>
+
+    <p>không phù hợp với Pointcut trên.</p>
+
+    <h3>4.25. Tham số bất kỳ với <code>(..)</code></h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service.UserService.getUser(..)
+)</pre>
+    </div>
+
+    <p>Có thể chọn:</p>
+    <div class="info-box">
+        <pre>getUser()
+getUser(1)
+getUser("admin")
+getUser(1, "admin")</pre>
+    </div>
+
+    <p>miễn là method có tên <code>getUser</code> và phù hợp với phạm vi được chỉ định.</p>
+
+    <h3>4.26. Pointcut theo package</h3>
+    <p>Một ví dụ rất thường gặp:</p>
+    <div class="info-box">
+        <pre>execution(
+    * com.example.aop.service..*(..)
+)</pre>
+    </div>
+
+    <p>Mục đích là áp dụng Aspect cho các method trong package Service.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>service
+├── UserService
+├── ProductService
+├── OrderService
+└── CustomerService</pre>
+    </div>
+
+    <p>Thay vì viết:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("...")</pre>
+    </div>
+
+    <p>cho từng Service, có thể sử dụng một Pointcut rộng hơn.</p>
+
+    <h3>4.27. Đặt Pointcut thành method riêng</h3>
+    <p>Khi project lớn, không nên lặp lại Pointcut quá nhiều lần.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Pointcut("execution(* com.example.aop.service..*(..))")
+public void serviceMethods() {
+}</pre>
+    </div>
+
+    <p>Sau đó:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("serviceMethods()")
+public void before(JoinPoint joinPoint) {
+
+    System.out.println(
+        "Before: " + joinPoint.getSignature().getName()
+    );
+}</pre>
+    </div>
+
+    <p>Cách này giúp code dễ đọc hơn.</p>
+    <p>Có thể hiểu:</p>
+    <div class="info-box">
+        <pre>serviceMethods()
+       │
+       ▼
+Pointcut
+       │
+       ├── @Before
+       ├── @After
+       └── @Around</pre>
+    </div>
+
+    <h3>4.28. Ví dụ sử dụng nhiều Advice</h3>
+    <p>Có thể tạo một Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Before("execution(* com.example.aop.service..*(..))")
+    public void before(JoinPoint joinPoint) {
+
+        System.out.println(
+            "Before: " + joinPoint.getSignature().getName()
+        );
+    }
+
+    @After("execution(* com.example.aop.service..*(..))")
+    public void after(JoinPoint joinPoint) {
+
+        System.out.println(
+            "After: " + joinPoint.getSignature().getName()
+        );
+    }
+}</pre>
+    </div>
+
+    <p>Khi gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>userService.getUser();</pre>
+    </div>
+
+    <p>có thể hình dung:</p>
+    <div class="info-box">
+        <pre>Before: getUser
+Đang lấy User
+After: getUser</pre>
+    </div>
+
+    <h3>4.29. Ví dụ <code>@AfterReturning</code> + <code>@AfterThrowing</code></h3>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @AfterReturning(
+        pointcut = "execution(* com.example.aop.service..*(..))",
+        returning = "result"
+    )
+    public void afterReturning(Object result) {
+
+        System.out.println("Kết quả: " + result);
+    }
+
+    @AfterThrowing(
+        pointcut = "execution(* com.example.aop.service..*(..))",
+        throwing = "exception"
+    )
+    public void afterThrowing(Exception exception) {
+
+        System.out.println(
+            "Lỗi: " + exception.getMessage()
+        );
+    }
+}</pre>
+    </div>
+
+    <p>Luồng thành công:</p>
+    <div class="info-box">
+        <pre>Service
+   ↓
+Success
+   ↓
+@AfterReturning</pre>
+    </div>
+
+    <p>Luồng lỗi:</p>
+    <div class="info-box">
+        <pre>Service
+   ↓
+Exception
+   ↓
+@AfterThrowing</pre>
+    </div>
+
+    <h3>4.30. Ví dụ thực tế: đo thời gian thực thi</h3>
+    <p>Một trong những ứng dụng phổ biến của <code>@Around</code> là đo thời gian chạy method.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("execution(* com.example.aop.service..*(..))")
+public Object measureTime(ProceedingJoinPoint joinPoint)
+        throws Throwable {
+
+    long start = System.currentTimeMillis();
+
+    Object result = joinPoint.proceed();
+
+    long end = System.currentTimeMillis();
+
+    System.out.println(
+        "Method " +
+        joinPoint.getSignature().getName() +
+        " chạy mất " +
+        (end - start) +
+        " ms"
+    );
+
+    return result;
+}</pre>
+    </div>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Start Time
+    │
+    ▼
+proceed()
+    │
+    ▼
+Service Method
+    │
+    ▼
+End Time
+    │
+    ▼
+Tính thời gian</pre>
+    </div>
+
+    <p>Ví dụ console:</p>
+    <div class="info-box">
+        <pre>Method getUser chạy mất 15 ms</pre>
+    </div>
+
+    <p>Đây là một ví dụ rất điển hình của AOP.</p>
+
+    <h3>4.31. Ví dụ thực tế: Logging request</h3>
+    <p>Aspect:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("execution(* com.example.aop.service..*(..))")
+public Object log(ProceedingJoinPoint joinPoint)
+        throws Throwable {
+
+    System.out.println(
+        "START: " + joinPoint.getSignature().getName()
+    );
+
+    Object result = joinPoint.proceed();
+
+    System.out.println(
+        "END: " + joinPoint.getSignature().getName()
+    );
+
+    return result;
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>START: getUser
+Đang lấy User
+END: getUser</pre>
+    </div>
+
+    <h3>4.32. So sánh các loại Advice</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Loại</th>
+                    <th>Chạy khi nào</th>
+                    <th>Có gọi method mục tiêu không?</th>
+                    <th>Có lấy kết quả?</th>
+                    <th>Có lấy exception?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>@Before</code></td><td>Trước method</td><td>Method vẫn được thực thi</td><td>Không trực tiếp</td><td>Không</td></tr>
+                <tr><td><code>@After</code></td><td>Sau method</td><td>Có</td><td>Không trực tiếp</td><td>Không trực tiếp</td></tr>
+                <tr><td><code>@AfterReturning</code></td><td>Sau khi thành công</td><td>Có</td><td>Có</td><td>Không</td></tr>
+                <tr><td><code>@AfterThrowing</code></td><td>Khi exception</td><td>Method đã phát sinh lỗi</td><td>Không</td><td>Có</td></tr>
+                <tr><td><code>@Around</code></td><td>Bao quanh method</td><td>Thông qua <code>proceed()</code></td><td>Có</td><td>Có thể xử lý</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Điểm quan trọng nhất:</p>
+    <div class="info-box">
+        <pre>@Before
+   ↓
+Trước
+
+@After
+   ↓
+Sau
+
+@AfterReturning
+   ↓
+Sau + Thành công
+
+@AfterThrowing
+   ↓
+Sau + Exception
+
+@Around
+   ↓
+Bao quanh toàn bộ</pre>
+    </div>
+
+    <h3>4.33. Khi nào nên sử dụng Advice nào?</h3>
+
+    <h4><code>@Before</code></h4>
+    <p>Dùng khi chỉ cần thực hiện logic trước method.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Logging
+Authorization check
+Input check</pre>
+    </div>
+
+    <h4><code>@After</code></h4>
+    <p>Dùng khi cần thực hiện logic sau khi method kết thúc, bất kể thành công hay lỗi.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Cleanup
+Ghi nhận trạng thái kết thúc</pre>
+    </div>
+
+    <h4><code>@AfterReturning</code></h4>
+    <p>Dùng khi chỉ quan tâm tới kết quả thành công.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Logging kết quả
+Ghi nhận kết quả xử lý</pre>
+    </div>
+
+    <h4><code>@AfterThrowing</code></h4>
+    <p>Dùng khi quan tâm tới lỗi.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Logging exception
+Ghi nhận lỗi</pre>
+    </div>
+
+    <h4><code>@Around</code></h4>
+    <p>Dùng khi cần kiểm soát toàn bộ quá trình thực thi.</p>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Đo thời gian
+Logging trước/sau
+Kiểm soát việc gọi method
+Xử lý kết quả
+Xử lý exception</pre>
+    </div>
+
+    <h3>4.34. Bài tập 1 – Sử dụng <code>@Before</code></h3>
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>ProductService</pre>
+    </div>
+
+    <p>có method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public void getProduct()</pre>
+    </div>
+
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>LoggingAspect</pre>
+    </div>
+
+    <p>Yêu cầu:</p>
+    <div class="info-box">
+        <pre>@Before
+   ↓
+getProduct()</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>Before getProduct
+Đang lấy Product</pre>
+    </div>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>Advice</strong> trả lời câu hỏi "Khi nào và làm gì?".</li>
+            <li><strong>Pointcut</strong> trả lời câu hỏi "Áp dụng cho đâu?".</li>
+            <li><strong>@Before</strong> chạy trước method, method vẫn được thực thi.</li>
+            <li><strong>@After</strong> chạy sau method trong mọi trường hợp.</li>
+            <li><strong>@AfterReturning</strong> chỉ chạy khi thành công, lấy được kết quả trả về.</li>
+            <li><strong>@AfterThrowing</strong> chỉ chạy khi có exception, lấy được exception.</li>
+            <li><strong>@Around</strong> bao quanh toàn bộ, <strong>bắt buộc gọi <code>proceed()</code></strong> để method mục tiêu chạy.</li>
+            <li><strong>Pointcut</strong> dùng <code>execution(...)</code>, ký hiệu <code>*</code> = bất kỳ, <code>..</code> = nhiều thành phần.</li>
+            <li>Có thể tách <strong>Pointcut thành method riêng</strong> với <code>@Pointcut</code> để tái sử dụng.</li>
+        </ul>
+    </div>
+</section>
+<section id="aop-p5" class="section">
+    <h2><i class="fas fa-cubes"></i> PHẦN 5. XÂY DỰNG ỨNG DỤNG AOP THỰC TẾ TRONG SPRING BOOT</h2>
+
+    <h3>5.1. Mục tiêu của phần học</h3>
+    <p>Sau khi hoàn thành phần này, học viên có thể:</p>
+    <ul>
+        <li>Xây dựng một ứng dụng Spring Boot có sử dụng AOP.</li>
+        <li>Tổ chức Aspect theo cấu trúc project thực tế.</li>
+        <li>Xây dựng Aspect chuyên xử lý Logging.</li>
+        <li>Ghi nhận tên method đang được thực thi.</li>
+        <li>Ghi nhận thời điểm bắt đầu và kết thúc method.</li>
+        <li>Đo thời gian thực thi của Service.</li>
+        <li>Theo dõi kết quả trả về.</li>
+        <li>Theo dõi exception.</li>
+        <li>Sử dụng <code>@Around</code> trong tình huống thực tế.</li>
+        <li>Sử dụng <code>@Pointcut</code> để quản lý Pointcut.</li>
+        <li>Hiểu cách AOP hỗ trợ tách các logic dùng chung khỏi Business Logic.</li>
+        <li>Phân biệt phần nào nên đặt trong Service và phần nào nên đặt trong Aspect.</li>
+        <li>Xây dựng một project AOP hoàn chỉnh có Controller → Service → Aspect.</li>
+    </ul>
+
+    <h3>5.2. Bài toán thực tế</h3>
+    <p>Giả sử chúng ta xây dựng một hệ thống quản lý User.</p>
+    <p>Ứng dụng có các API:</p>
+    <div class="info-box">
+        <pre>GET     /users
+GET     /users/{id}
+POST    /users
+DELETE  /users/{id}</pre>
+    </div>
+
+    <p>Business Logic nằm trong:</p>
+    <div class="info-box">
+        <pre>UserService</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+    // Business Logic
+}</pre>
+    </div>
+
+    <p>Trong quá trình chạy ứng dụng, chúng ta muốn biết:</p>
+    <div class="info-box">
+        <pre>1. Method nào đang được gọi?
+2. Method bắt đầu lúc nào?
+3. Method kết thúc lúc nào?
+4. Method chạy mất bao nhiêu ms?
+5. Method có thành công không?
+6. Method có phát sinh exception không?
+7. Kết quả trả về là gì?</pre>
+    </div>
+
+    <p>Nếu viết trực tiếp vào Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User getUserById(Integer id) {
+
+    long start = System.currentTimeMillis();
+
+    System.out.println("Start getUserById");
+
+    // Business Logic
+
+    long end = System.currentTimeMillis();
+
+    System.out.println(
+        "Time: " + (end - start) + " ms"
+    );
+
+    return user;
+}</pre>
+    </div>
+
+    <p>Service bắt đầu chứa rất nhiều logic không thuộc Business Logic.</p>
+    <p>Đây chính là lúc AOP phát huy tác dụng.</p>
+
+    <h3>5.3. Tách Business Logic và Cross-Cutting Concern</h3>
+    <p>Chúng ta muốn Service chỉ tập trung vào nghiệp vụ.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class UserService {
+
+    public String getUser(Integer id) {
+
+        return "Nguyen Van An";
+    }
+}</pre>
+    </div>
+
+    <p>Không cần:</p>
+    <div class="info-box">
+        <pre>System.out.println("Start");
+System.out.println("End");
+System.currentTimeMillis();</pre>
+    </div>
+
+    <p>Các logic như:</p>
+    <div class="info-box">
+        <pre>Logging
+Time measurement
+Exception logging
+Audit</pre>
+    </div>
+
+    <p>được đưa sang Aspect.</p>
+
+    <p>Mô hình:</p>
+    <div class="info-box">
+        <pre>                  Application
+                        │
+             ┌──────────┴──────────┐
+             │                     │
+        Business Logic       Cross-Cutting
+             │                     │
+             ▼                     ▼
+        UserService             Aspect</pre>
+    </div>
+
+    <p>Đây chính là tư tưởng quan trọng của AOP.</p>
+
+    <h3>5.4. Cấu trúc project</h3>
+    <p>Trong bài thực hành này, chúng ta xây dựng:</p>
+    <div class="info-box">
+        <pre>src
+└── main
+    └── java
+        └── com.example.aop
+            │
+            ├── AopApplication.java
+            │
+            ├── controller
+            │   └── UserController.java
+            │
+            ├── service
+            │   └── UserService.java
+            │
+            └── aspect
+                └── LoggingAspect.java</pre>
+    </div>
+
+    <p>Có thể mở rộng thành:</p>
+    <div class="info-box">
+        <pre>com.example.aop
+│
+├── controller
+│   └── UserController.java
+│
+├── service
+│   └── UserService.java
+│
+└── aspect
+    └── LoggingAspect.java</pre>
+    </div>
+
+    <p>Trong bài này chúng ta chưa cần Database để tập trung vào AOP.</p>
+
+    <h3>5.5. Dependency</h3>
+    <p>Trong <code>pom.xml</code> cần có:</p>
+    <div class="code-block">
+        <div class="code-header"><span>XML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-aop&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre>
+    </div>
+
+    <p>Trong đó:</p>
+    <div class="info-box">
+        <pre>spring-boot-starter-web
+        ↓
+REST API
+
+spring-boot-starter-aop
+        ↓
+Spring AOP</pre>
+    </div>
+
+    <h3>5.6. Tạo <code>UserService</code></h3>
+    <p>File: <code>service/UserService.java</code></p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    public String getUser(Integer id) {
+
+        System.out.println("Đang xử lý nghiệp vụ getUser");
+
+        return "Nguyen Van An";
+    }
+
+    public String createUser(String username) {
+
+        System.out.println("Đang xử lý nghiệp vụ createUser");
+
+        return "Created user: " + username;
+    }
+
+    public String deleteUser(Integer id) {
+
+        System.out.println("Đang xử lý nghiệp vụ deleteUser");
+
+        if (id <= 0) {
+            throw new RuntimeException("User không tồn tại");
+        }
+
+        return "Delete user successfully";
+    }
+}</pre>
+    </div>
+
+    <p>Service hiện tại chỉ chứa Business Logic.</p>
+    <p>Không có:</p>
+    <div class="info-box">
+        <pre>Logging
+Time measurement
+Exception logging</pre>
+    </div>
+
+    <h3>5.7. Tạo Controller</h3>
+    <p>File: <code>controller/UserController.java</code></p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.controller;
+
+import com.example.aop.service.UserService;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/{id}")
+    public String getUser(@PathVariable Integer id) {
+
+        return userService.getUser(id);
+    }
+
+    @PostMapping
+    public String createUser(@RequestParam String username) {
+
+        return userService.createUser(username);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteUser(@PathVariable Integer id) {
+
+        return userService.deleteUser(id);
+    }
+}</pre>
+    </div>
+
+    <h3>5.8. Kiểm tra API trước khi sử dụng AOP</h3>
+
+    <h4>API 1</h4>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /users/1</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Nguyen Van An</pre>
+    </div>
+
+    <h4>API 2</h4>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>POST /users?username=admin</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Created user: admin</pre>
+    </div>
+
+    <h4>API 3</h4>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /users/1</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>Delete user successfully</pre>
+    </div>
+
+    <h4>API 4</h4>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /users/0</pre>
+    </div>
+
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>if (id <= 0) {
+    throw new RuntimeException("User không tồn tại");
+}</pre>
+    </div>
+
+    <p>Kết quả:</p>
+    <div class="info-box">
+        <pre>User không tồn tại</pre>
+    </div>
+
+    <p>Đây là các tình huống chúng ta sẽ theo dõi bằng AOP.</p>
+
+    <h3>5.9. Tạo Logging Aspect</h3>
+    <p>Tạo: <code>aspect/LoggingAspect.java</code></p>
+
+    <p>Ban đầu:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.aspect;
+
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+}</pre>
+    </div>
+
+    <p>Đây là Aspect.</p>
+    <p>Nhưng hiện tại Aspect chưa có Advice.</p>
+
+    <h3>5.10. Tạo Pointcut cho Service</h3>
+    <p>Chúng ta không muốn viết:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>execution(...)</pre>
+    </div>
+
+    <p>lặp đi lặp lại.</p>
+    <p>Có thể tạo một Pointcut riêng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Pointcut("execution(* com.example.aop.service..*(..))")
+public void serviceMethods() {
+}</pre>
+    </div>
+
+    <p>Toàn bộ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Pointcut("execution(* com.example.aop.service..*(..))")
+    public void serviceMethods() {
+    }
+
+}</pre>
+    </div>
+
+    <p>Bây giờ:</p>
+    <div class="info-box">
+        <pre>serviceMethods()</pre>
+    </div>
+
+    <p>đại diện cho:</p>
+    <div class="info-box">
+        <pre>Tất cả method trong package service
+và các package con</pre>
+    </div>
+
+    <h3>5.11. Vì sao nên tạo <code>@Pointcut</code> riêng?</h3>
+    <p>Nếu không tạo Pointcut riêng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("execution(* com.example.aop.service..*(..))")
+
+@After("execution(* com.example.aop.service..*(..))")
+
+@Around("execution(* com.example.aop.service..*(..))")</pre>
+    </div>
+
+    <p>Chúng ta phải lặp lại expression.</p>
+    <p>Điều này làm code:</p>
+    <div class="info-box">
+        <pre>Dài.
+Khó đọc.
+Khó thay đổi.
+Dễ viết sai.</pre>
+    </div>
+
+    <p>Thay vào đó:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Pointcut("execution(* com.example.aop.service..*(..))")
+public void serviceMethods() {
+}</pre>
+    </div>
+
+    <p>Sau đó:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("serviceMethods()")
+
+@After("serviceMethods()")
+
+@Around("serviceMethods()")</pre>
+    </div>
+
+    <p>Code dễ đọc hơn.</p>
+
+    <h3>5.12. Logging trước khi method chạy</h3>
+    <p>Thêm:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("serviceMethods()")
+public void before(JoinPoint joinPoint) {
+
+    System.out.println(
+        "START METHOD: " +
+        joinPoint.getSignature().getName()
+    );
+}</pre>
+    </div>
+
+    <p>Toàn bộ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Aspect
+@Component
+public class LoggingAspect {
+
+    @Pointcut("execution(* com.example.aop.service..*(..))")
+    public void serviceMethods() {
+    }
+
+    @Before("serviceMethods()")
+    public void before(JoinPoint joinPoint) {
+
+        System.out.println(
+            "START METHOD: " +
+            joinPoint.getSignature().getName()
+        );
+    }
+}</pre>
+    </div>
+
+    <h3>5.13. Chạy thử</h3>
+    <p>Gửi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /users/1</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>START METHOD: getUser
+Đang xử lý nghiệp vụ getUser</pre>
+    </div>
+
+    <p>Như vậy Aspect đã can thiệp trước Service.</p>
+
+    <h3>5.14. Lấy tên class</h3>
+    <p>Không chỉ lấy tên method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getSignature().getName()</pre>
+    </div>
+
+    <p>chúng ta có thể lấy thông tin đầy đủ hơn.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getSignature().toShortString()</pre>
+    </div>
+
+    <p>Có thể cho kết quả tương tự:</p>
+    <div class="info-box">
+        <pre>execution(String com.example.aop.service.UserService.getUser(Integer))</pre>
+    </div>
+
+    <p>Điều này hữu ích khi Logging cần nhiều thông tin hơn.</p>
+
+    <h3>5.15. Logging thời gian thực thi bằng <code>@Around</code></h3>
+    <p>Bây giờ chúng ta xây dựng chức năng quan trọng: Đo thời gian thực thi của Service.</p>
+
+    <p>Code:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("serviceMethods()")
+public Object measureTime(ProceedingJoinPoint joinPoint)
+        throws Throwable {
+
+    long start = System.currentTimeMillis();
+
+    Object result = joinPoint.proceed();
+
+    long end = System.currentTimeMillis();
+
+    System.out.println(
+        "METHOD: " +
+        joinPoint.getSignature().getName()
+        + " | TIME: "
+        + (end - start)
+        + " ms"
+    );
+
+    return result;
+}</pre>
+    </div>
+
+    <h3>5.16. Phân tích <code>@Around</code></h3>
+    <p>Đoạn code:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>long start = System.currentTimeMillis();</pre>
+    </div>
+
+    <p>ghi lại thời điểm bắt đầu.</p>
+    <p>Sau đó:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();</pre>
+    </div>
+
+    <p>cho phép Service thực sự được thực thi.</p>
+    <p>Sau khi Service kết thúc:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>long end = System.currentTimeMillis();</pre>
+    </div>
+
+    <p>ghi lại thời điểm kết thúc.</p>
+    <p>Cuối cùng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>end - start</pre>
+    </div>
+
+    <p>tính thời gian.</p>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>START
+  │
+  ▼
+System.currentTimeMillis()
+  │
+  ▼
+proceed()
+  │
+  ▼
+UserService
+  │
+  ▼
+END
+  │
+  ▼
+Tính thời gian</pre>
+    </div>
+
+    <h3>5.17. Tại sao phải trả về <code>result</code>?</h3>
+    <p>Giả sử Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser(Integer id) {
+
+    return "Nguyen Van An";
+}</pre>
+    </div>
+
+    <p>Khi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();</pre>
+    </div>
+
+    <p>thực hiện, <code>result</code> chứa:</p>
+    <div class="info-box">
+        <pre>Nguyen Van An</pre>
+    </div>
+
+    <p>Nếu Aspect không:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>return result;</pre>
+    </div>
+
+    <p>thì kết quả trả về Controller có thể bị thay đổi.</p>
+    <p>Do đó với <code>@Around</code>, khi muốn giữ nguyên kết quả của method, thông thường cần:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();
+
+return result;</pre>
+    </div>
+
+    <h3>5.18. Logging sau khi method thành công</h3>
+    <p>Có thể sử dụng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterReturning(
+    pointcut = "serviceMethods()",
+    returning = "result"
+)
+public void afterReturning(Object result) {
+
+    System.out.println(
+        "METHOD SUCCESS | RESULT: " + result
+    );
+}</pre>
+    </div>
+
+    <p>Nếu gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /users/1</pre>
+    </div>
+
+    <p>Console có thể:</p>
+    <div class="info-box">
+        <pre>START METHOD: getUser
+Đang xử lý nghiệp vụ getUser
+METHOD SUCCESS | RESULT: Nguyen Van An</pre>
+    </div>
+
+    <h3>5.19. Logging exception</h3>
+    <p>Thêm:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@AfterThrowing(
+    pointcut = "serviceMethods()",
+    throwing = "exception"
+)
+public void afterThrowing(Exception exception) {
+
+    System.out.println(
+        "METHOD ERROR | " +
+        exception.getMessage()
+    );
+}</pre>
+    </div>
+
+    <p>Nếu gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /users/0</pre>
+    </div>
+
+    <p>Service phát sinh:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>throw new RuntimeException("User không tồn tại");</pre>
+    </div>
+
+    <p>Aspect sẽ ghi nhận:</p>
+    <div class="info-box">
+        <pre>METHOD ERROR | User không tồn tại</pre>
+    </div>
+
+    <h3>5.20. Aspect hoàn chỉnh</h3>
+    <p>Bây giờ chúng ta có:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.aop.aspect;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Pointcut("execution(* com.example.aop.service..*(..))")
+    public void serviceMethods() {
+    }
+
+    @Before("serviceMethods()")
+    public void before(JoinPoint joinPoint) {
+
+        System.out.println(
+            "START METHOD: " +
+            joinPoint.getSignature().getName()
+        );
+    }
+
+    @AfterReturning(
+        pointcut = "serviceMethods()",
+        returning = "result"
+    )
+    public void afterReturning(Object result) {
+
+        System.out.println(
+            "METHOD SUCCESS | RESULT: " + result
+        );
+    }
+
+    @AfterThrowing(
+        pointcut = "serviceMethods()",
+        throwing = "exception"
+    )
+    public void afterThrowing(Exception exception) {
+
+        System.out.println(
+            "METHOD ERROR | " +
+            exception.getMessage()
+        );
+    }
+
+    @Around("serviceMethods()")
+    public Object measureTime(
+            ProceedingJoinPoint joinPoint)
+            throws Throwable {
+
+        long start = System.currentTimeMillis();
+
+        Object result = joinPoint.proceed();
+
+        long end = System.currentTimeMillis();
+
+        System.out.println(
+            "METHOD: " +
+            joinPoint.getSignature().getName()
+            + " | TIME: "
+            + (end - start)
+            + " ms"
+        );
+
+        return result;
+    }
+}</pre>
+    </div>
+
+    <h3>5.21. Phân tích Aspect hoàn chỉnh</h3>
+    <p>Aspect hiện có bốn thành phần:</p>
+    <div class="info-box">
+        <pre>LoggingAspect
+      │
+      ├── @Pointcut
+      │
+      ├── @Before
+      │
+      ├── @AfterReturning
+      │
+      ├── @AfterThrowing
+      │
+      └── @Around</pre>
+    </div>
+
+    <p>Mỗi thành phần đảm nhận một nhiệm vụ.</p>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Nhiệm vụ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>@Pointcut</code></td><td>Xác định Service cần áp dụng</td></tr>
+                <tr><td><code>@Before</code></td><td>Log trước khi chạy</td></tr>
+                <tr><td><code>@AfterReturning</code></td><td>Log khi thành công</td></tr>
+                <tr><td><code>@AfterThrowing</code></td><td>Log khi lỗi</td></tr>
+                <tr><td><code>@Around</code></td><td>Đo thời gian</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>5.22. Chạy API thành công</h3>
+    <p>Gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /users/1</pre>
+    </div>
+
+    <p>Luồng có thể được hình dung:</p>
+    <div class="info-box">
+        <pre>Controller
+    │
+    ▼
+@Before
+    │
+    ▼
+@Around - Start Time
+    │
+    ▼
+UserService.getUser()
+    │
+    ▼
+@Around - End Time
+    │
+    ▼
+@AfterReturning</pre>
+    </div>
+
+    <p>Console:</p>
+    <div class="info-box">
+        <pre>START METHOD: getUser
+Đang xử lý nghiệp vụ getUser
+METHOD: getUser | TIME: 5 ms
+METHOD SUCCESS | RESULT: Nguyen Van An</pre>
+    </div>
+
+    <div class="info-box">
+        <pre>Thứ tự cụ thể giữa các Advice có thể phụ thuộc cấu hình/thứ tự Aspect;
+vì vậy trong giáo trình không nên coi một thứ tự giữa nhiều Advice là
+tuyệt đối nếu chưa cấu hình @Order.</pre>
+    </div>
+
+    <h3>5.23. Chạy API xảy ra lỗi</h3>
+    <p>Gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /users/0</pre>
+    </div>
+
+    <p>Service:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>if (id <= 0) {
+    throw new RuntimeException("User không tồn tại");
+}</pre>
+    </div>
+
+    <p>Luồng:</p>
+    <div class="info-box">
+        <pre>Controller
+    │
+    ▼
+@Before
+    │
+    ▼
+@Around
+    │
+    ▼
+UserService
+    │
+    ▼
+Exception
+    │
+    ▼
+@AfterThrowing</pre>
+    </div>
+
+    <p>Console có thể:</p>
+    <div class="info-box">
+        <pre>START METHOD: deleteUser
+Đang xử lý nghiệp vụ deleteUser
+METHOD ERROR | User không tồn tại</pre>
+    </div>
+
+    <h3>5.24. Một vấn đề quan trọng với <code>@Around</code></h3>
+    <p>Ở ví dụ trước:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();
+
+long end = System.currentTimeMillis();</pre>
+    </div>
+
+    <p>Nếu:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.proceed();</pre>
+    </div>
+
+    <p>phát sinh exception, code phía sau có thể không được chạy.</p>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object result = joinPoint.proceed();
+
+System.out.println("END");</pre>
+    </div>
+
+    <p>Nếu <code>proceed()</code> throw exception:</p>
+    <div class="info-box">
+        <pre>proceed()
+   │
+   ▼
+Exception</pre>
+    </div>
+
+    <p>thì:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>System.out.println("END");</pre>
+    </div>
+
+    <p>không được thực hiện theo luồng thông thường.</p>
+
+    <h3>5.25. Sử dụng try-finally trong <code>@Around</code></h3>
+    <p>Nếu muốn chắc chắn phần tính thời gian kết thúc được thực hiện cả khi có exception, có thể viết:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around("serviceMethods()")
+public Object measureTime(
+        ProceedingJoinPoint joinPoint)
+        throws Throwable {
+
+    long start = System.currentTimeMillis();
+
+    try {
+
+        return joinPoint.proceed();
+
+    } finally {
+
+        long end = System.currentTimeMillis();
+
+        System.out.println(
+            "METHOD: "
+            + joinPoint.getSignature().getName()
+            + " | TIME: "
+            + (end - start)
+            + " ms"
+        );
+    }
+}</pre>
+    </div>
+
+    <p>Đây là cách viết phù hợp hơn cho mục đích đo thời gian.</p>
+
+    <h3>5.26. Vì sao dùng <code>finally</code>?</h3>
+    <p>Cấu trúc:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>try {
+
+    // Method
+
+} finally {
+
+    // Cleanup
+}</pre>
+    </div>
+
+    <p>phần <code>finally</code> được thực hiện khi luồng rời khỏi <code>try</code>, kể cả khi có exception.</p>
+
+    <p>Trong AOP:</p>
+    <div class="info-box">
+        <pre>            proceed()
+                │
+        ┌───────┴────────┐
+        │                │
+      Success          Exception
+        │                │
+        └───────┬────────┘
+                ▼
+             finally</pre>
+    </div>
+
+    <p>Do đó rất phù hợp cho:</p>
+    <div class="info-box">
+        <pre>Đo thời gian.
+Cleanup.
+Đóng resource trong các trường hợp thích hợp.
+Ghi nhận method kết thúc.</pre>
+    </div>
+
+    <h3>5.27. Lấy tham số truyền vào method</h3>
+    <p>AOP cũng có thể lấy các argument của method.</p>
+    <p>Sử dụng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getArgs()</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Before("serviceMethods()")
+public void before(JoinPoint joinPoint) {
+
+    Object[] args = joinPoint.getArgs();
+
+    System.out.println(
+        "Method: " +
+        joinPoint.getSignature().getName()
+    );
+
+    for (Object arg : args) {
+
+        System.out.println(
+            "Argument: " + arg
+        );
+    }
+}</pre>
+    </div>
+
+    <p>Nếu gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>userService.getUser(10);</pre>
+    </div>
+
+    <p>có thể log:</p>
+    <div class="info-box">
+        <pre>Method: getUser
+Argument: 10</pre>
+    </div>
+
+    <h3>5.28. Lấy nhiều tham số</h3>
+    <p>Nếu method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String createUser(
+        String username,
+        String email
+) {
+    ...
+}</pre>
+    </div>
+
+    <p>và gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>createUser("admin", "admin@gmail.com");</pre>
+    </div>
+
+    <p>thì:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getArgs()</pre>
+    </div>
+
+    <p>có thể chứa:</p>
+    <div class="info-box">
+        <pre>args[0] = admin
+args[1] = admin@gmail.com</pre>
+    </div>
+
+    <p>Có thể log:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Object[] args = joinPoint.getArgs();
+
+for (Object arg : args) {
+    System.out.println("Argument: " + arg);
+}</pre>
+    </div>
+
+    <h3>5.29. Cẩn thận khi Logging dữ liệu</h3>
+    <p>Việc log toàn bộ tham số là hữu ích cho Debugging nhưng trong ứng dụng thực tế cần cẩn thận.</p>
+
+    <p>Không nên tùy tiện log:</p>
+    <div class="info-box">
+        <pre>Password
+Access Token
+Refresh Token
+Thông tin thanh toán
+Thông tin cá nhân nhạy cảm</pre>
+    </div>
+
+    <p>Ví dụ không nên:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>System.out.println(password);</pre>
+    </div>
+
+    <p>trong hệ thống thật.</p>
+    <p>AOP giúp Logging dễ dàng hơn nhưng cũng khiến việc log quá nhiều dữ liệu trở nên dễ xảy ra hơn.</p>
+
+    <h3>5.30. Tách Aspect theo trách nhiệm</h3>
+    <p>Trong project lớn, không nhất thiết đưa tất cả logic vào:</p>
+    <div class="info-box">
+        <pre>LoggingAspect</pre>
+    </div>
+
+    <p>Ví dụ có thể chia:</p>
+    <div class="info-box">
+        <pre>aspect
+│
+├── LoggingAspect.java
+├── PerformanceAspect.java
+├── ExceptionAspect.java
+└── SecurityAspect.java</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>LoggingAspect
+      ↓
+Logging
+
+PerformanceAspect
+      ↓
+Đo thời gian
+
+ExceptionAspect
+      ↓
+Theo dõi exception
+
+SecurityAspect
+      ↓
+Logic liên quan đến quyền</pre>
+    </div>
+
+    <p>Cách này giúp project dễ quản lý hơn.</p>
+
+    <h3>5.31. Khi nào nên tạo Aspect riêng?</h3>
+    <p>Nếu hai logic có mục đích khác nhau, nên cân nhắc tách riêng.</p>
+
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Logging</pre>
+    </div>
+
+    <p>và:</p>
+    <div class="info-box">
+        <pre>Performance Monitoring</pre>
+    </div>
+
+    <p>không nhất thiết phải nằm cùng một class.</p>
+
+    <p>Thay vì:</p>
+    <div class="info-box">
+        <pre>LoggingAspect
+├── Logging
+├── Time
+├── Exception
+├── Security
+├── Cache
+└── Audit</pre>
+    </div>
+
+    <p>có thể tổ chức:</p>
+    <div class="info-box">
+        <pre>aspect
+├── LoggingAspect
+├── PerformanceAspect
+├── ExceptionAspect
+└── AuditAspect</pre>
+    </div>
+
+    <p>Điều này phù hợp hơn khi project phát triển lớn.</p>
+
+    <h3>5.32. AOP và Service Layer</h3>
+    <p>Một câu hỏi quan trọng:</p>
+    <div class="info-box">
+        <pre>Có phải tất cả logic đều nên đưa vào Aspect?</pre>
+    </div>
+
+    <p>Câu trả lời là không.</p>
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public User createUser(User user) {
+
+    if (user.getUsername() == null) {
+        throw new RuntimeException();
+    }
+
+    return userRepository.save(user);
+}</pre>
+    </div>
+
+    <p>Đây là Business Logic.</p>
+    <p>Nó nên nằm trong:</p>
+    <div class="info-box">
+        <pre>Service</pre>
+    </div>
+
+    <p>Không nên đưa tùy tiện sang Aspect.</p>
+
+    <h3>5.33. Những logic phù hợp với AOP</h3>
+    <p>Các logic thường phù hợp:</p>
+    <div class="info-box">
+        <pre>Logging
+Performance Monitoring
+Auditing
+Security-related cross-cutting checks
+Transaction management
+Caching
+Exception monitoring
+Tracing</pre>
+    </div>
+
+    <p>Điểm chung:</p>
+    <div class="info-box">
+        <pre>Những logic này có thể xuất hiện ở nhiều method hoặc nhiều module.</pre>
+    </div>
+
+    <h3>5.34. Những logic không nên tùy tiện đưa vào AOP</h3>
+    <p>Ví dụ:</p>
+    <div class="info-box">
+        <pre>Tính tổng tiền đơn hàng
+Tính giảm giá
+Kiểm tra tồn kho
+Tạo Order
+Tính phí vận chuyển
+Tính điểm khách hàng</pre>
+    </div>
+
+    <p>Đây là Business Logic.</p>
+    <p>Nên đặt ở:</p>
+    <div class="info-box">
+        <pre>Service</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Service
+public class OrderService {
+
+    public Order createOrder(OrderRequest request) {
+
+        // Business Logic
+
+    }
+}</pre>
+    </div>
+
+    <p>Không nên biến Business Logic thành:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Around(...)
+public Object orderLogic(...) {
+}</pre>
+    </div>
+
+    <p>nếu không có lý do kiến trúc rõ ràng.</p>
+
+    <h3>5.35. AOP giúp Service "sạch" hơn</h3>
+    <p>Không sử dụng AOP:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser(Integer id) {
+
+    logStart();
+
+    long start = System.currentTimeMillis();
+
+    // Business Logic
+
+    long end = System.currentTimeMillis();
+
+    logEnd();
+
+    return result;
+}</pre>
+    </div>
+
+    <p>Service phải biết rất nhiều thứ.</p>
+
+    <p>Sử dụng AOP:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public String getUser(Integer id) {
+
+    // Business Logic
+
+    return result;
+}</pre>
+    </div>
+
+    <p>Aspect xử lý:</p>
+    <div class="info-box">
+        <pre>Logging
+Time
+Exception</pre>
+    </div>
+
+    <p>Mô hình:</p>
+    <div class="info-box">
+        <pre>            Service
+                │
+        Business Logic
+                │
+                │
+       ┌────────┴────────┐
+       │                 │
+     Aspect            Aspect
+       │                 │
+    Logging          Performance</pre>
+    </div>
+
+    <h3>5.36. Bài tập thực hành 1 – Logging Service</h3>
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>ProductService</pre>
+    </div>
+
+    <p>có:</p>
+    <div class="info-box">
+        <pre>getProduct()
+createProduct()
+deleteProduct()</pre>
+    </div>
+
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>LoggingAspect</pre>
+    </div>
+
+    <p>Yêu cầu:</p>
+    <div class="info-box">
+        <pre>START: methodName
+END: methodName</pre>
+    </div>
+
+    <p>Không được viết Logging trực tiếp vào Service.</p>
+
+    <h3>5.37. Bài tập thực hành 2 – Đo thời gian</h3>
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>PerformanceAspect</pre>
+    </div>
+
+    <p>Áp dụng cho toàn bộ Service.</p>
+    <p>Yêu cầu:</p>
+    <div class="info-box">
+        <pre>Method: getProduct
+Time: 20 ms</pre>
+    </div>
+
+    <p>Sử dụng:</p>
+    <div class="info-box">
+        <pre>@Around</pre>
+    </div>
+
+    <p>và:</p>
+    <div class="info-box">
+        <pre>ProceedingJoinPoint</pre>
+    </div>
+
+    <h3>5.38. Bài tập thực hành 3 – Theo dõi exception</h3>
+    <p>Tạo:</p>
+    <div class="info-box">
+        <pre>ExceptionAspect</pre>
+    </div>
+
+    <p>Sử dụng:</p>
+    <div class="info-box">
+        <pre>@AfterThrowing</pre>
+    </div>
+
+    <p>Khi Service phát sinh exception:</p>
+    <div class="info-box">
+        <pre>METHOD ERROR
+Method: deleteProduct
+Message: Product not found</pre>
+    </div>
+
+    <h3>5.39. Bài tập thực hành 4 – Logging arguments</h3>
+    <p>Tạo method:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>createUser(
+    String username,
+    String email
+)</pre>
+    </div>
+
+    <p>Aspect phải lấy được:</p>
+    <div class="info-box">
+        <pre>username
+email</pre>
+    </div>
+
+    <p>sử dụng:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>joinPoint.getArgs()</pre>
+    </div>
+
+    <p>Không được truy cập trực tiếp vào Controller để lấy dữ liệu.</p>
+
+    <h3>5.40. Bài tập tổng hợp cuối phần</h3>
+    <p>Xây dựng project:</p>
+    <div class="info-box">
+        <pre>AOP Management</pre>
+    </div>
+
+    <p>Cấu trúc:</p>
+    <div class="info-box">
+        <pre>com.example.aop
+│
+├── controller
+│   └── UserController.java
+│
+├── service
+│   └── UserService.java
+│
+└── aspect
+    ├── LoggingAspect.java
+    ├── PerformanceAspect.java
+    └── ExceptionAspect.java</pre>
+    </div>
+
+    <h4>UserService</h4>
+    <p>Có:</p>
+    <div class="info-box">
+        <pre>getUser()
+createUser()
+updateUser()
+deleteUser()</pre>
+    </div>
+
+    <h4>LoggingAspect</h4>
+    <p>Thực hiện:</p>
+    <div class="info-box">
+        <pre>START METHOD
+END METHOD</pre>
+    </div>
+
+    <h4>PerformanceAspect</h4>
+    <p>Thực hiện:</p>
+    <div class="info-box">
+        <pre>METHOD
+TIME</pre>
+    </div>
+
+    <h4>ExceptionAspect</h4>
+    <p>Thực hiện:</p>
+    <div class="info-box">
+        <pre>METHOD ERROR
+EXCEPTION MESSAGE</pre>
+    </div>
+
+    <h3>5.41. Kết quả mong muốn</h3>
+    <p>Khi gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /users/1</pre>
+    </div>
+
+    <p>Console có thể tương tự:</p>
+    <div class="info-box">
+        <pre>START METHOD: getUser
+
+Đang xử lý nghiệp vụ getUser
+
+METHOD: getUser | TIME: 5 ms
+
+METHOD SUCCESS | RESULT: Nguyen Van An</pre>
+    </div>
+
+    <p>Khi gọi:</p>
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>DELETE /users/0</pre>
+    </div>
+
+    <p>Console có thể:</p>
+    <div class="info-box">
+        <pre>START METHOD: deleteUser
+
+Đang xử lý nghiệp vụ deleteUser
+
+METHOD ERROR | User không tồn tại
+
+METHOD: deleteUser | TIME: 2 ms</pre>
+    </div>
+
+    <div class="info-box">
+        <pre>Thứ tự chính xác giữa các Aspect khác nhau nên được kiểm soát
+bằng @Order nếu ứng dụng yêu cầu một thứ tự xác định.</pre>
+    </div>
+
+    <h3>5.42. Câu hỏi tự kiểm tra</h3>
+    <div class="info-box">
+        <pre>Câu 1
+Tại sao Logging là một Cross-Cutting Concern?
+
+Câu 2
+Tại sao đo thời gian thực thi phù hợp với AOP?
+
+Câu 3
+Tại sao không nên đưa toàn bộ Business Logic vào Aspect?
+
+Câu 4
+@Around có vai trò gì trong việc đo thời gian?
+
+Câu 5
+joinPoint.proceed() có tác dụng gì?
+
+Câu 6
+Tại sao cần return result trong một số @Around Advice?
+
+Câu 7
+joinPoint.getSignature() dùng để làm gì?
+
+Câu 8
+joinPoint.getArgs() dùng để làm gì?
+
+Câu 9
+Tại sao nên tạo @Pointcut riêng thay vì lặp lại execution(...)?
+
+Câu 10
+Khi project lớn, tại sao có thể tách LoggingAspect, PerformanceAspect,
+ExceptionAspect?</pre>
+    </div>
+
+    <h3>5.43. Bài tập tư duy</h3>
+    <p>Giả sử có:</p>
+    <div class="info-box">
+        <pre>UserService
+ProductService
+OrderService
+PaymentService</pre>
+    </div>
+
+    <p>Tất cả đều cần:</p>
+    <div class="info-box">
+        <pre>Logging
+Performance Monitoring
+Exception Monitoring</pre>
+    </div>
+
+    <p>Hãy thiết kế:</p>
+    <div class="info-box">
+        <pre>aspect
+│
+├── LoggingAspect
+├── PerformanceAspect
+└── ExceptionAspect</pre>
+    </div>
+
+    <p>và xác định:</p>
+    <div class="info-box">
+        <pre>LoggingAspect
+    ↓
+@Before / @After
+
+PerformanceAspect
+    ↓
+@Around
+
+ExceptionAspect
+    ↓
+@AfterThrowing</pre>
+    </div>
+
+    <p>Sau đó xác định Pointcut dùng chung:</p>
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Pointcut("execution(* com.example.aop.service..*(..))")
+public void serviceMethods() {
+}</pre>
+    </div>
+
+    <h3>5.44. Kiến thức cần ghi nhớ</h3>
+    <p>Sau phần này, học viên cần hiểu rõ:</p>
+    <div class="info-box">
+        <pre>Business Logic
+      ↓
+Service
+
+Cross-Cutting Concern
+      ↓
+Aspect</pre>
+    </div>
+
+    <p>Các ví dụ:</p>
+    <div class="info-box">
+        <pre>Service
+├── createUser()
+├── updateUser()
+└── deleteUser()
+
+Aspect
+├── Logging
+├── Performance
+└── Exception Monitoring</pre>
+    </div>
+
+    <p>Và đặc biệt:</p>
+    <div class="info-box">
+        <pre>@Pointcut
+     ↓
+Xác định phạm vi
+
+@Before
+     ↓
+Trước method
+
+@AfterReturning
+     ↓
+Sau khi thành công
+
+@AfterThrowing
+     ↓
+Khi có exception
+
+@Around
+     ↓
+Bao quanh method</pre>
+    </div>
+
+    <h3>5.45. Tổng kết Phần 5</h3>
+    <p>Trong phần này, chúng ta đã chuyển từ ví dụ AOP đơn giản sang một tình huống gần với ứng dụng Backend thực tế.</p>
+
+    <p>Project đã có:</p>
+    <div class="info-box">
+        <pre>Controller
+    ↓
+Service
+    ↓
+Business Logic</pre>
+    </div>
+
+    <p>và AOP bổ sung:</p>
+    <div class="info-box">
+        <pre>       Aspect
+          │
+   ┌──────┼──────┐
+   ▼      ▼      ▼
+Logging  Time  Exception</pre>
+    </div>
+
+    <p>Điều quan trọng nhất cần ghi nhớ không phải là việc sử dụng nhiều annotation, mà là tư duy thiết kế:</p>
+
+    <div class="info-box">
+        <pre>Service tập trung xử lý nghiệp vụ,
+còn Aspect xử lý những logic dùng chung
+có tính chất Cross-Cutting Concern.</pre>
+    </div>
+
+    <p>Khi hiểu được nguyên tắc này, học viên sẽ biết khi nào AOP thực sự có ích thay vì sử dụng AOP cho mọi tình huống.</p>
+
+    <p>Ở phần cuối, chúng ta sẽ tổng hợp toàn bộ kiến thức AOP, xây dựng bài tập lớn, đồng thời tìm hiểu thêm các nội dung nâng cao như <code>@Order</code>, Pointcut theo annotation, giới hạn của Spring AOP, self-invocation và một số lỗi thường gặp trong dự án thực tế.</p>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>Business Logic</strong> → đặt trong <strong>Service</strong>.</li>
+            <li><strong>Cross-Cutting Concern</strong> (Logging, Performance, Exception, Audit, Security…) → đặt trong <strong>Aspect</strong>.</li>
+            <li><strong>@Pointcut riêng</strong> giúp tái sử dụng Pointcut, tránh lặp <code>execution(...)</code>.</li>
+            <li><strong>@Around</strong> cần <code>proceed()</code> và thường nên dùng <code>try-finally</code> khi đo thời gian.</li>
+            <li><strong>Luôn trả về <code>result</code></strong> trong <code>@Around</code> để không làm mất kết quả của method.</li>
+            <li><strong>joinPoint.getSignature()</strong> lấy tên method/class; <strong>joinPoint.getArgs()</strong> lấy tham số.</li>
+            <li><strong>Không log dữ liệu nhạy cảm</strong> (password, token, thông tin thanh toán…).</li>
+            <li><strong>Tách Aspect theo trách nhiệm</strong>: LoggingAspect, PerformanceAspect, ExceptionAspect… khi project lớn.</li>
+            <li><strong>Không lạm dụng AOP</strong> cho Business Logic.</li>
+        </ul>
+    </div>
+</section>
+            </main>
+        </div>
+        <footer>
+            <p>GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            sections[0].classList.add('active');
+            navLinks[0].classList.add('active');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+        // Copy code (nếu có)
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                button.style.background = '#27ae60';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
