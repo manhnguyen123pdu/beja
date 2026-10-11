@@ -368,14 +368,14 @@
         <div class="content-wrapper">
             <nav class="sidebar">
                 <ul class="nav-list">
-                    <li class="nav-item"><a href="#redis-p1" class="nav-link"><i class="fas fa-info-circle"></i> Phần 1. Tổng quan về Redis và Caching</a></li>
-                    <li class="nav-item"><a href="#redis-p2" class="nav-link"><i class="fas fa-server"></i> Phần 2. Cài đặt và làm quen với Redis</a></li>
-                    <li class="nav-item"><a href="#redis-p3" class="nav-link"><i class="fas fa-plug"></i> Phần 3. Redis Cache trong Spring Boot</a></li>
-                    <li class="nav-item"><a href="#redis-p4" class="nav-link"><i class="fas fa-database"></i> Phần 4. Sử dụng Redis Cache với Spring Cache</a></li>
-                    <li class="nav-item"><a href="#redis-p5" class="nav-link"><i class="fas fa-sliders-h"></i> Phần 5. Cấu hình Redis Cache nâng cao</a></li>
-                    <li class="nav-item"><a href="#redis-p6" class="nav-link"><i class="fas fa-cloud"></i> Phần 6. Redis Cache trong REST API thực tế</a></li>
-                    <li class="nav-item"><a href="#redis-p7" class="nav-link"><i class="fas fa-exclamation-triangle"></i> Phần 7. Các vấn đề thực tế khi sử dụng Redis Cache</a></li>
-                    <li class="nav-item"><a href="#redis-p8" class="nav-link"><i class="fas fa-project-diagram"></i> Phần 8. Dự án tổng hợp Redis Cache với Spring Boot</a></li>
+                    <li class="nav-item"><a href="#redis-p1" class="nav-link"><i class="fas fa-info-circle"></i>  1. Tổng quan về Redis và Caching</a></li>
+                    <li class="nav-item"><a href="#redis-p2" class="nav-link"><i class="fas fa-server"></i>  2. Cài đặt và làm quen với Redis</a></li>
+                    <li class="nav-item"><a href="#redis-p3" class="nav-link"><i class="fas fa-plug"></i>  3. Redis Cache trong Spring Boot</a></li>
+                    <li class="nav-item"><a href="#redis-p4" class="nav-link"><i class="fas fa-database"></i>  4. Sử dụng Redis Cache với Spring Cache</a></li>
+                    <li class="nav-item"><a href="#redis-p5" class="nav-link"><i class="fas fa-sliders-h"></i>  5. Cấu hình Redis Cache nâng cao</a></li>
+                    <li class="nav-item"><a href="#redis-p6" class="nav-link"><i class="fas fa-cloud"></i>  6. Redis Cache trong REST API thực tế</a></li>
+                    <li class="nav-item"><a href="#redis-p7" class="nav-link"><i class="fas fa-exclamation-triangle"></i>  7. Các vấn đề thực tế khi sử dụng Redis Cache</a></li>
+                    <li class="nav-item"><a href="#redis-p8" class="nav-link"><i class="fas fa-project-diagram"></i>  8. Dự án tổng hợp Redis Cache với Spring Boot</a></li>
                 </ul>
             </nav>
              <main class="main-content">
@@ -2012,25 +2012,6 @@ MySQL</pre>
 <section id="redis-p2" class="section">
     <h2><i class="fas fa-server"></i> PHẦN 2. CÀI ĐẶT VÀ LÀM QUEN VỚI REDIS</h2>
 
-    <p>Ở Phần 1, chúng ta đã tìm hiểu Redis là gì, Cache là gì và tại sao Redis thường được sử dụng để xây dựng Cache.</p>
-    <p>Trong phần này, chúng ta sẽ bắt đầu làm việc trực tiếp với Redis.</p>
-
-    <p>Mục tiêu của phần này là giúp học viên:</p>
-    <ul>
-        <li>Hiểu kiến trúc hoạt động cơ bản của Redis.</li>
-        <li>Phân biệt Redis Server và Redis Client.</li>
-        <li>Cài đặt Redis.</li>
-        <li>Kiểm tra Redis Server.</li>
-        <li>Sử dụng Redis CLI.</li>
-        <li>Kết nối tới Redis.</li>
-        <li>Hiểu Key và Value.</li>
-        <li>Làm việc với các kiểu dữ liệu phổ biến.</li>
-        <li>Thực hiện các lệnh Redis cơ bản.</li>
-        <li>Thiết lập thời gian hết hạn cho dữ liệu.</li>
-        <li>Kiểm tra và xóa dữ liệu trong Redis.</li>
-    </ul>
-
-    <p>Sau phần này, học viên có thể sử dụng Redis ở mức cơ bản mà chưa cần Spring Boot.</p>
 
     <h3>2.1. Kiến trúc hoạt động của Redis</h3>
 
@@ -2278,14 +2259,15 @@ Redis Cloud hoặc dịch vụ Redis tương thích trên Cloud.</pre>
 
     <p>Ví dụ: <code>Docker version 28.x.x</code></p>
     <p>Nếu Docker chưa được cài đặt thì cần cài Docker Desktop trước.</p>
-
+    <h4>Các lỗi docker khi mới cài </h4>
+    <b>Lỗi Docker Desktop - Virtual Machine Platform not enabled</b>
+Trong powershell chạy lại lệnh : Enable-WindowsOptionalFeature -Online -FeatureName VirtualMachinePlatform <br>
+Khi được hỏi, gõ Y và nhấn Enter để xác nhận khởi động lại máy.
     <h4>2.3.2. Chạy Redis bằng Docker</h4>
     <p>Có thể chạy Redis bằng:</p>
     <div class="code-block">
         <div class="code-header"><span>Shell</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>docker run --name redis \
--p 6379:6379 \
--d redis</pre>
+        <pre>docker run --name redis -p 6379:6379 -d redis</pre>
     </div>
 
     <p>Giải thích:</p>
@@ -4667,17 +4649,13 @@ spring.data.redis.port=6379</pre>
     <p>Ví dụ:</p>
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Service
-public class RedisTestService {
-
-    private final RedisConnectionFactory connectionFactory;
-
-    public RedisTestService(
-            RedisConnectionFactory connectionFactory
-    ) {
-        this.connectionFactory = connectionFactory;
-    }
-}</pre>
+        <pre>
+            
+    @Autowired
+    private  RedisConnectionFactory connectionFactory;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+        </pre>
     </div>
 
     <p>Spring sẽ cung cấp Bean tương ứng nếu cấu hình Redis hợp lệ.</p>
@@ -6889,7 +6867,7 @@ MySQL</pre>
         </ul>
     </div>
 </section>
-<section id="redis-p5" class="section">
+<!-- <section id="redis-p5" class="section">
     <h2><i class="fas fa-cogs"></i> PHẦN 5. CẤU HÌNH REDIS CACHE NÂNG CAO</h2>
 
     <p>Ở phần 4, chúng ta đã sử dụng các annotation:</p>
@@ -8262,7 +8240,1834 @@ GET key</pre>
             <li>Serializer sai có thể khiến dữ liệu khó đọc trong Redis — điều này không nhất thiết là lỗi.</li>
         </ul>
     </div>
+</section> -->
+
+<section id="redis-p5" class="section">
+    <h2><i class="fas fa-cogs"></i> PHẦN 5. CẤU HÌNH REDIS CACHE NÂNG CAO</h2>
+
+    <p>Ở phần 4, chúng ta đã sử dụng các annotation:</p>
+
+    <ul>
+        <li><code>@Cacheable</code></li>
+        <li><code>@CachePut</code></li>
+        <li><code>@CacheEvict</code></li>
+        <li><code>@Caching</code></li>
+    </ul>
+
+    <p>để làm việc với Redis Cache trong Spring Boot.</p>
+
+    <p>Tuy nhiên, trong project thực tế, chỉ sử dụng annotation là chưa đủ.</p>
+
+    <p>Chúng ta cần kiểm soát:</p>
+
+    <ul>
+        <li>Cache tồn tại trong bao lâu?</li>
+        <li>Key được lưu như thế nào?</li>
+        <li>Object được chuyển thành dữ liệu Redis ra sao?</li>
+        <li>Redis lưu JSON hay Java Serialization?</li>
+        <li>Cache nào có TTL khác nhau?</li>
+        <li>Có lưu giá trị <code>null</code> vào Cache hay không?</li>
+        <li>Prefix của Cache là gì?</li>
+        <li>Có thể cấu hình nhiều Cache khác nhau như thế nào?</li>
+        <li>Làm thế nào để deserialize dữ liệu về đúng kiểu DTO?</li>
+        <li>Làm thế nào để hạn chế những kiểu dữ liệu được phép deserialize?</li>
+    </ul>
+
+    <p>Các vấn đề này được giải quyết thông qua:</p>
+
+    <ul>
+        <li><code>RedisCacheManager</code></li>
+        <li><code>RedisCacheConfiguration</code></li>
+        <li><code>RedisSerializer</code></li>
+        <li>TTL</li>
+        <li>Serialization</li>
+        <li>Deserialization</li>
+        <li>Cache Configuration</li>
+        <li><code>PolymorphicTypeValidator</code></li>
+    </ul>
+
+    <p>Trong phần này, chúng ta sẽ sử dụng dự án quản lý bệnh viện <code>com.example.hospitalProject</code> làm ví dụ. Cấu hình chính sẽ sử dụng <code>GenericJacksonJsonRedisSerializer</code> với Jackson 3, thay vì sử dụng <code>GenericJackson2JsonRedisSerializer</code> đã được đánh dấu deprecated trong môi trường dự án của bạn.</p>
+
+    <h3>5.1. Redis Cache Configuration</h3>
+
+    <h4>5.1.1. Redis Cache Configuration là gì?</h4>
+    <p>Redis Cache Configuration là phần cấu hình quyết định Spring Cache sử dụng Redis như thế nào.</p>
+
+    <p>Thay vì để Spring sử dụng toàn bộ cấu hình mặc định, chúng ta có thể tạo một class cấu hình riêng để kiểm soát cách lưu trữ dữ liệu.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>Spring Cache
+     |
+     v
+RedisCacheManager
+     |
+     v
+RedisCacheConfiguration
+     |
+     +-- TTL
+     |
+     +-- Key Serializer
+     |
+     +-- Value Serializer
+     |
+     +-- Key Prefix
+     |
+     +-- Cache Name
+     |
+     +-- Null Value
+     |
+     v
+Redis</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <ul>
+        <li><strong>TTL:</strong> Thời gian tồn tại của dữ liệu trong Cache.</li>
+        <li><strong>Key Serializer:</strong> Cách chuyển Cache Key thành dữ liệu Redis.</li>
+        <li><strong>Value Serializer:</strong> Cách chuyển giá trị Cache thành dữ liệu Redis.</li>
+        <li><strong>Key Prefix:</strong> Tiền tố được thêm vào Cache Key.</li>
+        <li><strong>Cache Name:</strong> Tên của Cache được sử dụng trong các annotation.</li>
+        <li><strong>Null Value:</strong> Quy định việc xử lý giá trị <code>null</code>.</li>
+    </ul>
+
+    <h4>5.1.2. Vì sao cần cấu hình Redis Cache?</h4>
+    <p>Ví dụ, chúng ta có phương thức lấy thông tin lịch khám:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")
+public AppointmentDTO getAppointmentById(Long id) {
+    // Lấy thông tin lịch khám
+}</pre>
+    </div>
+
+    <p>Khi phương thức được gọi, Spring Cache sẽ kiểm tra Cache có tên <code>appointment</code>.</p>
+
+    <p>Tuy nhiên, trong project thực tế, chúng ta còn cần quan tâm:</p>
+
+    <ul>
+        <li>Dữ liệu được lưu trong Redis bao lâu?</li>
+        <li>Key có dạng gì?</li>
+        <li><code>AppointmentDTO</code> được chuyển thành JSON như thế nào?</li>
+        <li>Khi đọc dữ liệu, Jackson có thể khôi phục đúng kiểu DTO không?</li>
+        <li>Nếu dữ liệu không tồn tại, có lưu <code>null</code> không?</li>
+        <li>Nếu Cache có nhiều loại dữ liệu, chúng ta quản lý cấu hình như thế nào?</li>
+    </ul>
+
+    <p>Đó là lý do cần xây dựng <code>RedisCacheConfig</code>.</p>
+
+    <h3>5.2. RedisCacheManager</h3>
+
+    <h4>5.2.1. RedisCacheManager là gì?</h4>
+    <p><code>RedisCacheManager</code> là thành phần quản lý các Cache sử dụng Redis trong Spring Cache.</p>
+
+    <p>Có thể hiểu đơn giản: Đây là thành phần mà Spring Cache sử dụng để tạo và quản lý các Cache tương ứng.</p>
+
+    <p>Luồng hoạt động:</p>
+
+    <div class="info-box">
+        <pre>@Cacheable("appointment")
+          |
+          v
+   RedisCacheManager
+          |
+          v
+     Redis Cache
+          |
+          v
+        Redis</pre>
+    </div>
+
+    <h4>5.2.2. Tạo RedisCacheManager</h4>
+    <p>Ví dụ cấu hình cơ bản:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Configuration
+@EnableCaching
+public class RedisCacheConfig {
+
+    @Bean
+    public RedisCacheManager redisCacheManager(
+            RedisConnectionFactory connectionFactory) {
+
+        return RedisCacheManager.builder(connectionFactory)
+                .build();
+    }
+}</pre>
+    </div>
+
+    <p>Ở đây:</p>
+
+    <ul>
+        <li><code>@Configuration</code> đánh dấu lớp cấu hình.</li>
+        <li><code>@EnableCaching</code> kích hoạt cơ chế Cache của Spring.</li>
+        <li><code>@Bean</code> đăng ký <code>RedisCacheManager</code> vào Spring Container.</li>
+        <li><code>RedisConnectionFactory</code> cung cấp kết nối đến Redis.</li>
+        <li><code>RedisCacheManager.builder()</code> tạo đối tượng quản lý Cache.</li>
+    </ul>
+
+    <p>Đây chỉ là cấu hình cơ bản để minh họa cách tạo <code>RedisCacheManager</code>. Trong project bệnh viện, chúng ta sẽ cấu hình thêm TTL, serializer và các thuộc tính khác.</p>
+
+    <h4>5.2.3. Vai trò của RedisCacheManager</h4>
+    <p>Một ứng dụng có thể có nhiều Cache khác nhau.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>                RedisCacheManager
+                         |
+             +-----------+-----------+
+             |           |           |
+             v           v           v
+       appointment   patientList   doctorList
+             |           |           |
+             +-----------+-----------+
+                         |
+                         v
+                       Redis</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <ul>
+        <li><code>appointment</code>: Cache thông tin lịch khám.</li>
+        <li><code>patientList</code>: Cache danh sách bệnh nhân.</li>
+        <li><code>doctorList</code>: Cache danh sách bác sĩ.</li>
+    </ul>
+
+    <p>Một <code>RedisCacheManager</code> có thể quản lý nhiều Cache và áp dụng cấu hình tương ứng cho từng Cache.</p>
+
+    <h3>5.3. RedisCacheConfiguration</h3>
+
+    <h4>5.3.1. RedisCacheConfiguration là gì?</h4>
+    <p><code>RedisCacheConfiguration</code> dùng để cấu hình chi tiết cách Redis Cache hoạt động.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig();</pre>
+    </div>
+
+    <p>Phương thức <code>defaultCacheConfig()</code> tạo một cấu hình mặc định.</p>
+
+    <p>Sau đó, chúng ta có thể cấu hình thêm:</p>
+
+    <ul>
+        <li>TTL.</li>
+        <li>Key Prefix.</li>
+        <li>Key Serializer.</li>
+        <li>Value Serializer.</li>
+        <li>Có cho phép Cache giá trị <code>null</code> hay không.</li>
+    </ul>
+
+    <h4>5.3.2. Cấu hình RedisCacheConfiguration</h4>
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))
+                .disableCachingNullValues();</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.entryTtl(Duration.ofMinutes(10))</pre>
+    </div>
+
+    <p>Thiết lập TTL mặc định là 10 phút.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.disableCachingNullValues()</pre>
+    </div>
+
+    <p>Không cho phép Spring Cache lưu giá trị <code>null</code>.</p>
+
+    <p>Sau khi tạo cấu hình, chúng ta truyền nó vào <code>RedisCacheManager</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>return RedisCacheManager.builder(connectionFactory)
+        .cacheDefaults(configuration)
+        .build();</pre>
+    </div>
+
+    <p>Lúc này, các Cache sử dụng cấu hình mặc định sẽ áp dụng TTL và chính sách xử lý <code>null</code> đã khai báo.</p>
+
+    <h3>5.4. TTL của Cache</h3>
+
+    <h4>5.4.1. TTL là gì?</h4>
+    <p>TTL là viết tắt của:</p>
+
+    <p><strong>Time To Live</strong></p>
+
+    <p>TTL xác định thời gian một mục dữ liệu được phép tồn tại trong Cache trước khi hết hạn.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>Cache được tạo lúc 10:00
+          |
+          v
+TTL = 10 phút
+          |
+          v
+Dữ liệu hết hạn khoảng 10:10</pre>
+    </div>
+
+    <p>Nếu một mục Cache được ghi lúc 10:00 và có TTL 10 phút, mục đó sẽ hết hạn khoảng 10:10.</p>
+
+    <p>TTL được áp dụng cho từng mục Cache, không phải cứ hết 10 phút là toàn bộ Redis bị xóa.</p>
+
+    <h4>5.4.2. Vì sao cần TTL?</h4>
+    <p>Giả sử hệ thống bệnh viện lưu thông tin lịch khám:</p>
+
+    <div class="info-box">
+        <pre>Appointment ID: 10
+Status: SCHEDULED</pre>
+    </div>
+
+    <p>Thông tin này được lưu trong Redis.</p>
+
+    <p>Sau đó, trạng thái lịch khám trong database thay đổi thành:</p>
+
+    <div class="info-box">
+        <pre>Appointment ID: 10
+Status: COMPLETED</pre>
+    </div>
+
+    <p>Nếu Cache không được cập nhật hoặc xóa, API có thể tiếp tục trả về trạng thái cũ.</p>
+
+    <p>TTL giúp dữ liệu Cache tự động hết hạn sau một khoảng thời gian nhất định.</p>
+
+    <p>Tuy nhiên, TTL không đảm bảo dữ liệu luôn mới nhất. Nếu cần dữ liệu được cập nhật ngay sau thao tác thay đổi, chúng ta cần kết hợp TTL với <code>@CachePut</code> hoặc <code>@CacheEvict</code>.</p>
+
+    <h4>5.4.3. Kiểm tra TTL bằng Redis CLI</h4>
+    <p>Có thể sử dụng lệnh:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>TTL appointment::10</pre>
+    </div>
+
+    <p>Nếu kết quả là:</p>
+
+    <div class="info-box">
+        <pre>(integer) 299</pre>
+    </div>
+
+    <p>Điều đó có nghĩa mục dữ liệu còn khoảng 299 giây trước khi hết hạn.</p>
+
+    <p>Một số kết quả đặc biệt:</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kết quả</th>
+                    <th>Ý nghĩa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Số nguyên dương</td><td>Số giây còn lại</td></tr>
+                <tr><td><code>-1</code></td><td>Key tồn tại nhưng không có thời gian hết hạn</td></tr>
+                <tr><td><code>-2</code></td><td>Key không tồn tại</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Lưu ý: <code>appointment::10</code> chỉ là ví dụ. Key thực tế phụ thuộc vào cache name, key expression và cấu hình prefix của ứng dụng.</p>
+
+    <h3>5.5. Thiết lập TTL mặc định</h3>
+
+    <h4>5.5.1. TTL cho toàn bộ Cache</h4>
+    <p>Có thể thiết lập TTL mặc định bằng <code>entryTtl()</code>.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Configuration
+@EnableCaching
+public class RedisCacheConfig {
+
+    @Bean
+    public RedisCacheManager redisCacheManager(
+            RedisConnectionFactory connectionFactory) {
+
+        RedisCacheConfiguration configuration =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(10));
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(configuration)
+                .build();
+    }
+}</pre>
+    </div>
+
+    <p>Ở đây:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Duration.ofMinutes(10)</pre>
+    </div>
+
+    <p>có nghĩa là 10 phút.</p>
+
+    <p>Các đơn vị thời gian thường sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>Duration.ofSeconds(30);
+Duration.ofMinutes(1);
+Duration.ofMinutes(10);
+Duration.ofMinutes(30);
+Duration.ofHours(1);
+Duration.ofDays(1);</pre>
+    </div>
+
+    <h4>5.5.2. Luồng hoạt động</h4>
+
+    <div class="info-box">
+        <pre>Request
+   |
+   v
+@Cacheable
+   |
+   v
+Kiểm tra Cache
+   |
+   +---- Cache HIT ----> Trả dữ liệu từ Cache
+   |
+   +---- Cache MISS ---> Thực thi Method
+                              |
+                              v
+                         Lưu Cache
+                              |
+                              v
+                          TTL 10 phút
+                              |
+                              v
+                          Hết hạn
+                              |
+                              v
+                         Cache MISS</pre>
+    </div>
+
+    <p>Sau khi mục Cache hết hạn, request tiếp theo có thể trở thành Cache Miss. Khi đó, Spring sẽ thực thi phương thức để lấy dữ liệu mới và lưu Cache lại nếu phương thức trả về kết quả phù hợp với chính sách Cache.</p>
+
+    <h3>5.6. TTL riêng cho từng Cache</h3>
+    <p>Không phải tất cả Cache đều cần cùng một TTL.</p>
+
+    <p>Ví dụ trong hệ thống bệnh viện:</p>
+
+    <div class="info-box">
+        <pre>appointment
+    TTL = 10 phút
+
+patientList
+    TTL = 5 phút
+
+doctorList
+    TTL = 30 phút</pre>
+    </div>
+
+    <p>Các thời gian trên là ví dụ minh họa. TTL thực tế nên dựa trên tần suất thay đổi dữ liệu và yêu cầu cập nhật của ứng dụng.</p>
+
+    <h4>5.6.1. Tạo nhiều Cache Configuration</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Configuration
+@EnableCaching
+public class RedisCacheConfig {
+
+    @Bean
+    public RedisCacheManager redisCacheManager(
+            RedisConnectionFactory connectionFactory) {
+
+        RedisCacheConfiguration defaultConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(10));
+
+        RedisCacheConfiguration patientListConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(5));
+
+        RedisCacheConfiguration doctorListConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(30));
+
+        Map&lt;String, RedisCacheConfiguration&gt; configurations =
+                new HashMap&lt;&gt;();
+
+        configurations.put("appointment", defaultConfig);
+        configurations.put("patientList", patientListConfig);
+        configurations.put("doctorList", doctorListConfig);
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(configurations)
+                .build();
+    }
+}</pre>
+    </div>
+
+    <p>Trong ví dụ này:</p>
+
+    <ul>
+        <li><code>appointment</code> sử dụng TTL 10 phút.</li>
+        <li><code>patientList</code> sử dụng TTL 5 phút.</li>
+        <li><code>doctorList</code> sử dụng TTL 30 phút.</li>
+    </ul>
+
+    <h4>5.6.2. Sử dụng Cache theo cấu hình</h4>
+    <p>Trong Service:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")
+public AppointmentDTO getAppointmentById(Long id) {
+    // Lấy thông tin lịch khám
+}</pre>
+    </div>
+
+    <p>Spring sẽ sử dụng cấu hình tương ứng với Cache có tên <code>appointment</code>.</p>
+
+    <p>Nếu phương thức sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "patientList")</pre>
+    </div>
+
+    <p>thì Cache <code>patientList</code> sẽ sử dụng cấu hình TTL 5 phút đã khai báo.</p>
+
+    <h4>5.6.3. Mô hình</h4>
+
+    <div class="info-box">
+        <pre>RedisCacheManager
+       |
+       +-- appointment
+       |       TTL 10 phút
+       |
+       +-- patientList
+       |       TTL 5 phút
+       |
+       +-- doctorList
+               TTL 30 phút</pre>
+    </div>
+
+    <p>Đây là một trong những ưu điểm của <code>RedisCacheManager</code>: mỗi Cache có thể có cấu hình riêng.</p>
+
+    <h3>5.7. Serialization là gì?</h3>
+
+    <h4>5.7.1. Serialization</h4>
+    <p>Serialization là quá trình chuyển một đối tượng Java thành dạng dữ liệu phù hợp để lưu trữ hoặc truyền đi.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>AppointmentDTO appointment = new AppointmentDTO();
+
+appointment.setId(10L);
+appointment.setPatientName("Nguyen Van A");</pre>
+    </div>
+
+    <p>Đối tượng <code>appointment</code> đang tồn tại trong bộ nhớ của JVM.</p>
+
+    <p>Redis không lưu trực tiếp đối tượng Java theo cách đối tượng đang tồn tại trong bộ nhớ JVM. Dữ liệu cần được chuyển thành một dạng phù hợp, thường là mảng byte.</p>
+
+    <h4>5.7.2. Quá trình Serialization</h4>
+
+    <div class="info-box">
+        <pre>Java Object
+     |
+     v
+RedisSerializer
+     |
+     v
+Bytes / JSON
+     |
+     v
+Redis</pre>
+    </div>
+
+    <p>Khi đọc dữ liệu:</p>
+
+    <div class="info-box">
+        <pre>Redis
+  |
+  v
+Bytes / JSON
+  |
+  v
+RedisSerializer
+  |
+  v
+Java Object</pre>
+    </div>
+
+    <h4>5.7.3. Hai khái niệm cần nhớ</h4>
+    <p><strong>Serialize:</strong></p>
+
+    <div class="info-box">
+        <pre>Java Object → Redis Data</pre>
+    </div>
+
+    <p><strong>Deserialize:</strong></p>
+
+    <div class="info-box">
+        <pre>Redis Data → Java Object</pre>
+    </div>
+
+    <p>Serializer phải phù hợp với kiểu dữ liệu được lưu và cách dữ liệu được khôi phục.</p>
+
+    <p>Nếu ghi bằng một serializer nhưng đọc bằng serializer không tương thích, quá trình deserialize có thể thất bại.</p>
+
+    <h3>5.8. JSON Serialization</h3>
+
+    <h4>5.8.1. JSON Serialization là gì?</h4>
+    <p>JSON Serialization là quá trình chuyển đối tượng Java thành dữ liệu JSON.</p>
+
+    <p>Ví dụ, một đối tượng lịch khám có các trường:</p>
+
+    <div class="info-box">
+        <pre>id = 10
+patientName = Nguyen Van A
+status = SCHEDULED</pre>
+    </div>
+
+    <p>Dữ liệu JSON có thể có dạng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>JSON</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>{
+  "id": 10,
+  "patientName": "Nguyen Van A",
+  "status": "SCHEDULED"
+}</pre>
+    </div>
+
+    <p>JSON có cấu trúc rõ ràng, dễ đọc và thuận tiện khi kiểm tra dữ liệu trong quá trình phát triển.</p>
+
+    <p>Tuy nhiên, dữ liệu JSON thực tế được tạo bởi serializer có thể chứa thêm thông tin kiểu dữ liệu, tùy cách cấu hình.</p>
+
+    <h4>5.8.2. Vì sao thường sử dụng JSON?</h4>
+    <p>JSON có một số ưu điểm:</p>
+
+    <ul>
+        <li>Dễ đọc và kiểm tra.</li>
+        <li>Dễ debug.</li>
+        <li>Có cấu trúc rõ ràng.</li>
+        <li>Phù hợp để lưu các đối tượng DTO.</li>
+        <li>Không phụ thuộc vào định dạng Java Native Serialization.</li>
+    </ul>
+
+    <p>Ví dụ, khi kiểm tra một giá trị Cache được lưu dưới dạng JSON, chúng ta có thể hiểu được các trường dữ liệu đang được lưu.</p>
+
+    <p>Tuy nhiên, sử dụng JSON không tự động đảm bảo dữ liệu tương thích giữa mọi phiên bản của ứng dụng. Cấu trúc DTO và cách cấu hình serializer vẫn cần được quản lý cẩn thận.</p>
+
+    <h3>5.9. RedisSerializer</h3>
+
+    <h4>5.9.1. RedisSerializer là gì?</h4>
+    <p><code>RedisSerializer</code> xác định cách Spring chuyển dữ liệu Java thành dữ liệu có thể lưu trong Redis và ngược lại.</p>
+
+    <div class="info-box">
+        <pre>Java Object
+     |
+     v
+RedisSerializer
+     |
+     v
+Redis Data</pre>
+    </div>
+
+    <p>Trong Redis Cache, chúng ta thường quan tâm đến hai thành phần:</p>
+
+    <ul>
+        <li>Key.</li>
+        <li>Value.</li>
+    </ul>
+
+    <p>Vì vậy, có thể cấu hình serializer riêng cho Key và Value.</p>
+
+    <h4>5.9.2. Serializer cho Key và Value</h4>
+    <p>Một mô hình thường gặp:</p>
+
+    <div class="info-box">
+        <pre>Key
+ |
+ v
+StringRedisSerializer
+ |
+ v
+Redis Key</pre>
+    </div>
+
+    <p>Đối với Value:</p>
+
+    <div class="info-box">
+        <pre>Java DTO
+    |
+    v
+JSON Serializer
+    |
+    v
+Redis Value</pre>
+    </div>
+
+    <p>Trong cấu hình của dự án bệnh viện:</p>
+
+    <ul>
+        <li>Key sử dụng <code>StringRedisSerializer</code>.</li>
+        <li>Value sử dụng <code>GenericJacksonJsonRedisSerializer</code>.</li>
+    </ul>
+
+    <p>Hai serializer này có nhiệm vụ khác nhau và không nên nhầm lẫn với nhau.</p>
+
+    <h3>5.10. StringRedisSerializer</h3>
+
+    <h4>5.10.1. StringRedisSerializer là gì?</h4>
+    <p><code>StringRedisSerializer</code> được sử dụng để chuyển đổi dữ liệu chuỗi giữa Java và Redis.</p>
+
+    <p>Ví dụ, Cache Key có thể là:</p>
+
+    <div class="info-box">
+        <pre>appointment::10
+appointment::20
+appointment::30</pre>
+    </div>
+
+    <p>Các Key này dễ đọc, dễ kiểm tra và thuận tiện khi sử dụng Redis CLI.</p>
+
+    <h4>5.10.2. Cấu hình Key Serializer</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.serializeKeysWith(
+        RedisSerializationContext.SerializationPair
+                .fromSerializer(new StringRedisSerializer())
+)</pre>
+    </div>
+
+    <p>Ý nghĩa:</p>
+
+    <ol>
+        <li>Tạo <code>StringRedisSerializer</code>.</li>
+        <li>Đóng gói serializer bằng <code>SerializationPair</code>.</li>
+        <li>Thiết lập serializer đó cho Key của Redis Cache.</li>
+    </ol>
+
+    <p>Khi kết hợp với cấu hình Cache mặc định, Spring có thể tạo Key theo dạng:</p>
+
+    <div class="info-box">
+        <pre>appointment::10</pre>
+    </div>
+
+    <p>Trong đó, <code>appointment</code> là tên Cache và <code>10</code> là giá trị Key được tạo từ biểu thức <code>key = "#id"</code>.</p>
+
+    <h4>5.10.3. Ví dụ đầy đủ</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(
+                                        new StringRedisSerializer()
+                                )
+                );</pre>
+    </div>
+
+    <p>Đây là cấu hình riêng cho Key Serializer. Chúng ta sẽ kết hợp nó với Value Serializer trong phần tiếp theo.</p>
+
+    <h3>5.11. JSON Serializer với Jackson 3</h3>
+
+    <h4>5.11.1. Vì sao cần thay đổi serializer cũ?</h4>
+    <p>Trong tài liệu cũ, chúng ta sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GenericJackson2JsonRedisSerializer</pre>
+    </div>
+
+    <p>Tuy nhiên, trong môi trường dự án hiện tại, lớp này đã được đánh dấu <code>@Deprecated</code> và dự kiến bị loại bỏ trong phiên bản tương lai.</p>
+
+    <p>Dự án của bạn đang sử dụng API Jackson 3 thông qua các package:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+tools.jackson.databind.jsontype.PolymorphicTypeValidator;</pre>
+    </div>
+
+    <p>Vì vậy, chúng ta sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GenericJacksonJsonRedisSerializer</pre>
+    </div>
+
+    <p>Đây là serializer đang được sử dụng trong cấu hình đã chạy thành công của dự án.</p>
+
+    <p>Không nên thay thế máy móc bằng API Jackson 2 hoặc tự ý thay đổi package import nếu mục tiêu là giữ nguyên cấu hình hiện tại.</p>
+
+    <h4>5.11.2. Cấu hình GenericJacksonJsonRedisSerializer</h4>
+    <p>Trước tiên, import các lớp cần thiết:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
+
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;</pre>
+    </div>
+
+    <p>Sau đó, tạo <code>PolymorphicTypeValidator</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>PolymorphicTypeValidator typeValidator =
+        BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("com.example.hospitalProject.dto.")
+                .allowIfSubType("java.util.")
+                .build();</pre>
+    </div>
+
+    <p>Tiếp theo, tạo JSON Serializer:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GenericJacksonJsonRedisSerializer jsonSerializer =
+        GenericJacksonJsonRedisSerializer.builder()
+                .enableDefaultTyping(typeValidator)
+                .build();</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <ul>
+        <li><code>GenericJacksonJsonRedisSerializer</code> xử lý dữ liệu JSON cho Redis.</li>
+        <li><code>builder()</code> tạo cấu hình cho serializer.</li>
+        <li><code>enableDefaultTyping(typeValidator)</code> bật cơ chế thông tin kiểu dữ liệu với bộ kiểm tra kiểu đã khai báo.</li>
+        <li><code>build()</code> tạo serializer hoàn chỉnh.</li>
+    </ul>
+
+    <h4>5.11.3. Vì sao cần PolymorphicTypeValidator?</h4>
+    <p>Khi deserialize dữ liệu có thông tin kiểu, Jackson cần xác định kiểu Java phù hợp để khôi phục đối tượng.</p>
+
+    <p><code>PolymorphicTypeValidator</code> giúp kiểm soát những kiểu nào được phép sử dụng trong quá trình này.</p>
+
+    <p>Trong cấu hình hiện tại:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.allowIfSubType("com.example.hospitalProject.dto.")</pre>
+    </div>
+
+    <p>Cho phép các kiểu thuộc package DTO của dự án.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>com.example.hospitalProject.dto.AppointmentDTO
+com.example.hospitalProject.dto.PatientDTO
+com.example.hospitalProject.dto.DoctorDTO</pre>
+    </div>
+
+    <p>Điều kiện là các lớp trên thực sự nằm trong package đã khai báo.</p>
+
+    <p>Tiếp theo:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.allowIfSubType("java.util.")</pre>
+    </div>
+
+    <p>Cho phép các kiểu thuộc package <code>java.util</code>, phục vụ những trường hợp cần sử dụng kiểu tiện ích hoặc collection phù hợp.</p>
+
+    <p><strong>Lưu ý bảo mật:</strong> Whitelist cần được giới hạn theo nhu cầu thực tế. <code>java.util.</code> là phạm vi tương đối rộng; chỉ nên cho phép các package cần thiết. Ngoài ra, việc bật thông tin kiểu không thay thế cho việc bảo vệ Redis khỏi truy cập trái phép.</p>
+
+    <h4>5.11.4. Cấu hình Value Serializer</h4>
+    <p>Sau khi tạo <code>jsonSerializer</code>, chúng ta cấu hình Value:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(
+                                        new StringRedisSerializer()
+                                )
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(jsonSerializer)
+                );</pre>
+    </div>
+
+    <p>Mô hình:</p>
+
+    <div class="info-box">
+        <pre>Key
+ |
+ v
+StringRedisSerializer
+ |
+ v
+Redis Key
+
+
+Value
+ |
+ v
+GenericJacksonJsonRedisSerializer
+ |
+ v
+JSON Data</pre>
+    </div>
+
+    <p>Đây là cách cấu hình phù hợp với serializer Jackson 3 đang sử dụng trong dự án của bạn.</p>
+
+    <h3>5.12. Serialize Entity và DTO</h3>
+
+    <h4>5.12.1. Cache Entity</h4>
+    <p>Giả sử dự án có một Entity:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Entity
+public class Appointment {
+
+    @Id
+    private Long id;
+
+    private String status;
+}</pre>
+    </div>
+
+    <p>Khi sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")
+public Appointment getAppointmentById(Long id) {
+    // Truy vấn database
+}</pre>
+    </div>
+
+    <p>Spring cần chuyển đối tượng <code>Appointment</code> thành dữ liệu có thể lưu trong Redis.</p>
+
+    <p>Tuy nhiên, với Entity JPA, chúng ta cần chú ý đến quan hệ giữa các Entity và trạng thái của Hibernate.</p>
+
+    <h4>5.12.2. Vấn đề khi Cache Entity</h4>
+    <p>Entity có thể chứa:</p>
+
+    <ul>
+        <li><code>@OneToMany</code></li>
+        <li><code>@ManyToOne</code></li>
+        <li><code>@OneToOne</code></li>
+        <li><code>@ManyToMany</code></li>
+    </ul>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Entity
+public class Appointment {
+
+    @Id
+    private Long id;
+
+    @ManyToOne
+    private Patient patient;
+}</pre>
+    </div>
+
+    <p>Nếu Cache trực tiếp Entity, có thể phát sinh vấn đề liên quan đến:</p>
+
+    <ul>
+        <li>Quan hệ Entity.</li>
+        <li>Lazy Loading.</li>
+        <li>Hibernate Proxy.</li>
+        <li>Vòng tham chiếu.</li>
+        <li>Kích thước dữ liệu.</li>
+        <li>Thay đổi cấu trúc Entity.</li>
+    </ul>
+
+    <p>Không phải mọi Entity đều gặp các vấn đề này, nhưng chúng cần được xem xét khi thiết kế Cache.</p>
+
+    <h4>5.12.3. Cache DTO</h4>
+    <p>Trong nhiều trường hợp, chúng ta có thể chuyển dữ liệu Entity thành DTO trước khi Cache.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>public class AppointmentDTO {
+
+    private Long id;
+
+    private String patientName;
+
+    private String status;
+
+    // Getter và Setter
+}</pre>
+    </div>
+
+    <p>Trong Service:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")
+public AppointmentDTO getAppointmentById(Long id) {
+
+    Appointment appointment = appointmentRepository
+            .findById(id)
+            .orElse(null);
+
+    if (appointment == null) {
+        return null;
+    }
+
+    AppointmentDTO dto = new AppointmentDTO();
+
+    dto.setId(appointment.getId());
+    dto.setPatientName(
+            appointment.getPatient().getName()
+    );
+    dto.setStatus(appointment.getStatus());
+
+    return dto;
+}</pre>
+    </div>
+
+    <p>Đây là ví dụ minh họa. Tên trường và phương thức cần được điều chỉnh theo Entity thực tế của dự án.</p>
+
+    <p>Lưu ý rằng việc truy cập <code>appointment.getPatient()</code> cần phù hợp với cách tải quan hệ của JPA và trạng thái của persistence context.</p>
+
+    <h4>5.12.4. Vì sao DTO thường dễ Cache hơn?</h4>
+    <p>DTO thường chỉ chứa dữ liệu cần thiết để trả về cho client.</p>
+
+    <div class="info-box">
+        <pre>Appointment Entity
+       |
+       +-- Database Mapping
+       |
+       +-- Relationship
+       |
+       +-- Hibernate Proxy
+       |
+       v
+AppointmentDTO
+       |
+       +-- id
+       |
+       +-- patientName
+       |
+       +-- status
+       |
+       v
+Redis Cache</pre>
+    </div>
+
+    <p>DTO giúp kiểm soát dữ liệu được Cache rõ ràng hơn, giảm việc lưu những thông tin không cần thiết.</p>
+
+    <p>Trong cấu hình serializer hiện tại, DTO cũng phải nằm trong phạm vi kiểu được phép deserialize và tương thích với dữ liệu đã lưu.</p>
+
+    <h3>5.13. Cấu hình Key Prefix</h3>
+
+    <h4>5.13.1. Key Prefix là gì?</h4>
+    <p>Key Prefix là phần tiền tố được thêm vào trước Cache Key.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>appointment::10
+appointment::20</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <ul>
+        <li><code>appointment</code> là Cache Name.</li>
+        <li><code>10</code>, <code>20</code> là các Cache Key.</li>
+        <li><code>::</code> là dấu phân cách mặc định thường được sử dụng bởi Spring Cache.</li>
+    </ul>
+
+    <h4>5.13.2. Vì sao cần Prefix?</h4>
+    <p>Redis có thể được sử dụng cho nhiều mục đích:</p>
+
+    <div class="info-box">
+        <pre>Cache
+Session
+OTP
+Rate Limit
+Queue</pre>
+    </div>
+
+    <p>Nếu không tổ chức Key rõ ràng, việc kiểm tra và quản lý dữ liệu sẽ khó khăn hơn.</p>
+
+    <p>Có thể tổ chức theo quy ước:</p>
+
+    <div class="info-box">
+        <pre>cache:appointment::10
+cache:patientList
+session:user:10
+otp:email:example</pre>
+    </div>
+
+    <p>Các tên trên là ví dụ minh họa cho cách tổ chức Key.</p>
+
+    <h4>5.13.3. Cấu hình Prefix</h4>
+    <p>Có thể sử dụng <code>computePrefixWith()</code>:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig()
+                .computePrefixWith(
+                        cacheName -> "hospital:" + cacheName + "::"
+                );</pre>
+    </div>
+
+    <p>Khi sử dụng Cache <code>appointment</code>, Key có thể có dạng:</p>
+
+    <div class="info-box">
+        <pre>hospital:appointment::10</pre>
+    </div>
+
+    <p>Trong trường hợp này, Prefix giúp phân biệt dữ liệu Cache của ứng dụng bệnh viện với những dữ liệu khác trong Redis.</p>
+
+    <p>Lưu ý: Nếu thay đổi Prefix, các lệnh kiểm tra Redis CLI cũng phải sử dụng Key mới.</p>
+
+    <h3>5.14. Cấu hình Cache Name</h3>
+    <p>Cache Name là tên được sử dụng trong các annotation Cache.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")</pre>
+    </div>
+
+    <p>Tên Cache là:</p>
+
+    <div class="info-box">
+        <pre>appointment</pre>
+    </div>
+
+    <h4>5.14.1. Khai báo Cache</h4>
+    <p>Một ứng dụng có thể sử dụng:</p>
+
+    <div class="info-box">
+        <pre>appointment
+patientList
+doctorList
+departmentList</pre>
+    </div>
+
+    <p>Khi phương thức sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment")</pre>
+    </div>
+
+    <p>Spring sẽ tìm Cache có tên <code>appointment</code>.</p>
+
+    <p>Tên Cache trong annotation phải thống nhất với tên được cấu hình khi cần thiết lập TTL hoặc các thuộc tính riêng.</p>
+
+    <h4>5.14.2. Nên đặt tên như thế nào?</h4>
+    <p>Nên sử dụng các tên có ý nghĩa:</p>
+
+    <div class="info-box">
+        <pre>appointment
+patientList
+doctorList
+departmentList</pre>
+    </div>
+
+    <p>Tránh các tên khó hiểu:</p>
+
+    <div class="info-box">
+        <pre>cache1
+cache2
+data
+test
+abc</pre>
+    </div>
+
+    <p>Đặt tên rõ ràng giúp việc theo dõi, debug và quản lý Cache dễ dàng hơn khi dự án phát triển.</p>
+
+    <h4>5.14.3. Quản lý nhiều Cache</h4>
+
+    <div class="info-box">
+        <pre>RedisCacheManager
+       |
+       +-- appointment
+       |
+       +-- patientList
+       |
+       +-- doctorList
+       |
+       +-- departmentList</pre>
+    </div>
+
+    <p>Mỗi Cache có thể sử dụng TTL, serializer và Prefix khác nhau tùy theo thiết kế.</p>
+
+    <h3>5.15. Xử lý dữ liệu Null</h3>
+
+    <h4>5.15.1. Vì sao Null là vấn đề?</h4>
+    <p>Giả sử chúng ta có phương thức:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(value = "appointment", key = "#id")
+public AppointmentDTO getAppointmentById(Long id) {
+
+    return appointmentRepository
+            .findById(id)
+            .map(this::toDTO)
+            .orElse(null);
+}</pre>
+    </div>
+
+    <p>Nếu lịch khám không tồn tại, phương thức trả về <code>null</code>.</p>
+
+    <p>Khi đó, chúng ta cần quyết định có nên Cache kết quả này hay không.</p>
+
+    <p>Nếu Cache kết quả rỗng, các request tiếp theo có thể không cần truy vấn database ngay lập tức.</p>
+
+    <p>Tuy nhiên, nếu dữ liệu vừa được tạo sau đó, việc Cache kết quả rỗng có thể khiến ứng dụng tiếp tục trả về kết quả không mong muốn cho đến khi Cache được làm mới hoặc hết hạn.</p>
+
+    <h4>5.15.2. Không lưu Null bằng RedisCacheConfiguration</h4>
+    <p>Trong cấu hình:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>RedisCacheConfiguration configuration =
+        RedisCacheConfiguration.defaultCacheConfig()
+                .disableCachingNullValues();</pre>
+    </div>
+
+    <p>Phương thức:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>.disableCachingNullValues()</pre>
+    </div>
+
+    <p>không cho phép Spring Cache lưu giá trị <code>null</code>.</p>
+
+    <p>Nếu phương thức được Cache trả về <code>null</code>, Spring không thể lưu giá trị đó như một mục Cache hợp lệ với cấu hình này; thao tác Cache có thể phát sinh lỗi thay vì âm thầm lưu <code>null</code>.</p>
+
+    <h4>5.15.3. Kết hợp với unless</h4>
+    <p>Có thể khai báo thêm:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(
+        value = "appointment",
+        key = "#id",
+        unless = "#result == null"
+)</pre>
+    </div>
+
+    <p>Ý nghĩa:</p>
+
+    <div class="info-box">
+        <pre>Method chạy
+     |
+     v
+Kết quả null?
+     |
+     +-- Có ----> Không lưu Cache
+     |
+     +-- Không -> Lưu Cache</pre>
+    </div>
+
+    <p><code>unless = "#result == null"</code> thể hiện rõ ý định không Cache kết quả rỗng.</p>
+
+    <p>Khi đã sử dụng <code>disableCachingNullValues()</code>, điều kiện này có thể đóng vai trò bổ sung để biểu đạt ý định trong annotation.</p>
+
+    <h3>5.16. Cấu hình nhiều Cache trong project thực tế</h3>
+    <p>Trong project thực tế, ứng dụng thường không chỉ có một Cache.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>appointment
+patientList
+doctorList
+departmentList</pre>
+    </div>
+
+    <p>Mỗi loại dữ liệu có thể có tần suất thay đổi khác nhau.</p>
+
+    <h4>5.16.1. Ví dụ cấu hình</h4>
+    <p>Dưới đây là ví dụ cấu hình nhiều Cache với TTL khác nhau, đồng thời sử dụng serializer Jackson 3 theo hướng cấu hình của dự án.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>package com.example.hospitalProject.config;
+
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
+@EnableCaching
+public class RedisCacheConfig {
+
+    @Bean
+    public RedisCacheManager redisCacheManager(
+            RedisConnectionFactory connectionFactory) {
+
+        PolymorphicTypeValidator typeValidator =
+                BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType(
+                                "com.example.hospitalProject.dto.")
+                        .allowIfSubType("java.util.")
+                        .build();
+
+        GenericJacksonJsonRedisSerializer jsonSerializer =
+                GenericJacksonJsonRedisSerializer.builder()
+                        .enableDefaultTyping(typeValidator)
+                        .build();
+
+        RedisCacheConfiguration defaultConfig =
+                RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofMinutes(10))
+                        .disableCachingNullValues()
+                        .serializeKeysWith(
+                                RedisSerializationContext.SerializationPair
+                                        .fromSerializer(
+                                                new StringRedisSerializer()))
+                        .serializeValuesWith(
+                                RedisSerializationContext.SerializationPair
+                                        .fromSerializer(jsonSerializer));
+
+        RedisCacheConfiguration patientListConfig =
+                defaultConfig.entryTtl(Duration.ofMinutes(5));
+
+        RedisCacheConfiguration doctorListConfig =
+                defaultConfig.entryTtl(Duration.ofMinutes(30));
+
+        Map&lt;String, RedisCacheConfiguration&gt; configurations =
+                new HashMap&lt;&gt;();
+
+        configurations.put("appointment", defaultConfig);
+        configurations.put("patientList", patientListConfig);
+        configurations.put("doctorList", doctorListConfig);
+
+        return RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(configurations)
+                .build();
+    }
+}</pre>
+    </div>
+
+    <p>Trong ví dụ này:</p>
+
+    <ul>
+        <li><code>appointment</code>: TTL 10 phút.</li>
+        <li><code>patientList</code>: TTL 5 phút.</li>
+        <li><code>doctorList</code>: TTL 30 phút.</li>
+        <li>Key sử dụng <code>StringRedisSerializer</code>.</li>
+        <li>Value sử dụng <code>GenericJacksonJsonRedisSerializer</code>.</li>
+        <li>Các kiểu DTO được giới hạn theo <code>PolymorphicTypeValidator</code>.</li>
+        <li>Không cho phép Cache giá trị <code>null</code>.</li>
+    </ul>
+
+    <p>Các TTL trên chỉ là ví dụ để minh họa. Có thể thay đổi chúng theo yêu cầu của ứng dụng.</p>
+
+    <h4>5.16.2. Mô hình</h4>
+
+    <div class="info-box">
+        <pre>                    RedisCacheManager
+                           |
+             +-------------+-------------+
+             |             |             |
+             v             v             v
+        appointment   patientList    doctorList
+          10 phút       5 phút        30 phút
+             |             |             |
+             +-------------+-------------+
+                           |
+                           v
+                         Redis</pre>
+    </div>
+
+    <h4>5.16.3. Ý nghĩa</h4>
+    <p>Chúng ta không cần áp dụng cùng một TTL cho toàn bộ hệ thống.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>appointment
+    -> 10 phút
+
+patientList
+    -> 5 phút
+
+doctorList
+    -> 30 phút</pre>
+    </div>
+
+    <p>Đây là cách tổ chức Cache linh hoạt hơn.</p>
+
+    <p>Trong thực tế, việc chọn TTL cần dựa trên mức độ thay đổi của dữ liệu. Với dữ liệu có yêu cầu cập nhật tức thời, TTL cần được kết hợp với chiến lược cập nhật hoặc xóa Cache phù hợp.</p>
+
+    <h3>5.17. Kiểm tra dữ liệu thực tế trong Redis</h3>
+    <p>Sau khi cấu hình Redis Cache, chúng ta cần kiểm tra dữ liệu thực tế để biết:</p>
+
+    <ul>
+        <li>Key là gì?</li>
+        <li>Value là gì?</li>
+        <li>TTL bao nhiêu?</li>
+        <li>Dữ liệu có tồn tại không?</li>
+        <li>Value có được lưu dưới dạng JSON không?</li>
+        <li>Cache có hoạt động đúng không?</li>
+    </ul>
+
+    <h4>5.17.1. Kết nối Redis CLI</h4>
+    <p>Mở terminal và thực thi:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>redis-cli</pre>
+    </div>
+
+    <p>Sau đó kiểm tra:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>PING</pre>
+    </div>
+
+    <p>Nếu Redis hoạt động bình thường, kết quả sẽ là:</p>
+
+    <div class="info-box">
+        <pre>PONG</pre>
+    </div>
+
+    <p>Nếu Redis yêu cầu xác thực hoặc sử dụng địa chỉ, cổng khác mặc định, cần kết nối với thông tin phù hợp.</p>
+
+    <h4>5.17.2. Xem Key</h4>
+    <p>Có thể sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>KEYS *</pre>
+    </div>
+
+    <p>Ví dụ kết quả:</p>
+
+    <div class="info-box">
+        <pre>1) "appointment::10"
+2) "appointment::20"
+3) "patientList"</pre>
+    </div>
+
+    <p>Đây là kết quả minh họa. Key thực tế phụ thuộc vào dữ liệu Cache đã được tạo và cấu hình Prefix của ứng dụng.</p>
+
+    <p>Trong môi trường production, không nên thường xuyên sử dụng <code>KEYS *</code> trên Redis có lượng dữ liệu lớn vì lệnh này có thể ảnh hưởng đến hiệu năng. Có thể sử dụng <code>SCAN</code> để duyệt Key theo từng phần.</p>
+
+    <h4>5.17.3. Kiểm tra Key cụ thể</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>EXISTS "appointment::10"</pre>
+    </div>
+
+    <p>Nếu trả về:</p>
+
+    <div class="info-box">
+        <pre>(integer) 1</pre>
+    </div>
+
+    <p>Key tồn tại.</p>
+
+    <p>Nếu trả về:</p>
+
+    <div class="info-box">
+        <pre>(integer) 0</pre>
+    </div>
+
+    <p>Key không tồn tại.</p>
+
+    <h4>5.17.4. Kiểm tra TTL</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>TTL "appointment::10"</pre>
+    </div>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>(integer) 523</pre>
+    </div>
+
+    <p>Có nghĩa là mục dữ liệu còn khoảng 523 giây trước khi hết hạn.</p>
+
+    <h4>5.17.5. Kiểm tra kiểu dữ liệu</h4>
+    <p>Sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>TYPE "appointment::10"</pre>
+    </div>
+
+    <p>Spring Cache thường lưu mỗi mục Cache dưới dạng một Redis key có kiểu <code>string</code>, trong đó value là dữ liệu đã được serializer chuyển thành byte.</p>
+
+    <p>Điều này không có nghĩa rằng value bên trong nhất thiết là một chuỗi JSON thuần không có thông tin bổ sung.</p>
+
+    <h4>5.17.6. Kiểm tra Value</h4>
+    <p>Nếu Key tồn tại và có kiểu <code>string</code>, có thể dùng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET "appointment::10"</pre>
+    </div>
+
+    <p>Với JSON Serializer, dữ liệu có thể hiển thị dưới dạng JSON.</p>
+
+    <p>Tuy nhiên, khi bật thông tin kiểu dữ liệu như trong cấu hình <code>GenericJacksonJsonRedisSerializer</code>, dữ liệu được lưu có thể chứa metadata về kiểu Java. Vì vậy, cấu trúc thực tế có thể khác JSON minh họa đơn giản trong tài liệu.</p>
+
+    <p>Nếu kết quả không giống JSON thông thường, chưa thể kết luận rằng Cache bị lỗi. Cần kiểm tra serializer đang sử dụng và dữ liệu thực tế.</p>
+
+    <h4>5.17.7. Kiểm tra toàn bộ quy trình</h4>
+    <p>Ví dụ Service:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>@Cacheable(
+        value = "appointment",
+        key = "#id",
+        unless = "#result == null"
+)
+public AppointmentDTO getAppointmentById(Long id) {
+
+    System.out.println("DATABASE QUERY");
+
+    Appointment appointment = appointmentRepository
+            .findById(id)
+            .orElse(null);
+
+    if (appointment == null) {
+        return null;
+    }
+
+    return toDTO(appointment);
+}</pre>
+    </div>
+
+    <p>Phương thức <code>toDTO()</code> đại diện cho logic chuyển Entity thành DTO và cần được triển khai theo cấu trúc dự án.</p>
+
+    <p>Gọi API hai lần với cùng một ID.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET /api/appointments/10</pre>
+    </div>
+
+    <p><strong>Lần gọi đầu tiên:</strong></p>
+
+    <ol>
+        <li>Spring kiểm tra Cache <code>appointment</code> với Key tương ứng.</li>
+        <li>Nếu chưa có dữ liệu, xảy ra Cache Miss.</li>
+        <li>Service truy vấn database.</li>
+        <li>Service trả về <code>AppointmentDTO</code>.</li>
+        <li>Spring sử dụng <code>GenericJacksonJsonRedisSerializer</code> để serialize dữ liệu.</li>
+        <li>Redis lưu mục Cache với TTL đã cấu hình.</li>
+    </ol>
+
+    <p><strong>Lần gọi thứ hai:</strong></p>
+
+    <ol>
+        <li>Spring kiểm tra Cache.</li>
+        <li>Nếu mục Cache vẫn tồn tại và còn hạn, xảy ra Cache Hit.</li>
+        <li>Spring lấy dữ liệu từ Redis.</li>
+        <li>Serializer deserialize dữ liệu về đối tượng Java tương ứng.</li>
+        <li>Spring trả kết quả mà không cần thực thi lại phần thân phương thức được Cache.</li>
+    </ol>
+
+    <p>Nếu bạn thấy dòng:</p>
+
+    <div class="info-box">
+        <pre>DATABASE QUERY</pre>
+    </div>
+
+    <p>chỉ xuất hiện trong lần gọi đầu tiên, đó là dấu hiệu cho thấy Cache có thể đang hoạt động đúng. Cần kiểm tra thêm TTL, Key và kết quả API để xác nhận toàn bộ quy trình.</p>
+
+    <h4>5.17.8. Toàn bộ luồng Serialization</h4>
+
+    <div class="info-box">
+        <pre>                 REQUEST
+                    |
+                    v
+              Kiểm tra Cache
+                    |
+          +---------+---------+
+          |                   |
+          v                   v
+      CACHE MISS           CACHE HIT
+          |                   |
+          v                   v
+        MySQL               Redis
+          |                   |
+          v                   v
+   AppointmentDTO         JSON / Bytes
+          |                   |
+          v                   v
+    Serialization       Deserialization
+          |                   |
+          v                   v
+        Redis            AppointmentDTO
+          |                   |
+          v                   v
+     TTL 10 phút            Client</pre>
+    </div>
+
+    <h3>TỔNG KẾT PHẦN 5</h3>
+    <p>Sau phần này, học viên cần nắm được các thành phần quan trọng:</p>
+
+    <ul>
+        <li><code>RedisCacheManager</code></li>
+        <li><code>RedisCacheConfiguration</code></li>
+        <li>TTL</li>
+        <li><code>RedisSerializer</code></li>
+        <li><code>StringRedisSerializer</code></li>
+        <li><code>GenericJacksonJsonRedisSerializer</code></li>
+        <li><code>PolymorphicTypeValidator</code></li>
+        <li>Key Prefix</li>
+        <li>Cache Name</li>
+        <li>Null Value</li>
+        <li>Serialization và Deserialization</li>
+    </ul>
+
+    <h4>1. RedisCacheManager</h4>
+    <p>Quản lý các Cache của ứng dụng:</p>
+
+    <div class="info-box">
+        <pre>appointment
+patientList
+doctorList</pre>
+    </div>
+
+    <p>Một <code>RedisCacheManager</code> có thể quản lý nhiều Cache.</p>
+
+    <h4>2. RedisCacheConfiguration</h4>
+    <p>Quy định cách Cache hoạt động, bao gồm:</p>
+
+    <div class="info-box">
+        <pre>TTL
+Serializer
+Key Prefix
+Null Value</pre>
+    </div>
+
+    <h4>3. TTL</h4>
+    <p>Xác định thời gian tồn tại của dữ liệu trong Redis.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>appointment -> 10 phút
+patientList -> 5 phút
+doctorList  -> 30 phút</pre>
+    </div>
+
+    <p>TTL giúp Cache tự động hết hạn nhưng không thay thế hoàn toàn việc đồng bộ dữ liệu giữa database và Redis.</p>
+
+    <h4>4. Serialization</h4>
+    <p>Chuyển đổi dữ liệu giữa Java và Redis:</p>
+
+    <div class="info-box">
+        <pre>Java Object
+     |
+     v
+Serialization
+     |
+     v
+Redis Data</pre>
+    </div>
+
+    <p>Và chiều ngược lại:</p>
+
+    <div class="info-box">
+        <pre>Redis Data
+     |
+     v
+Deserialization
+     |
+     v
+Java Object</pre>
+    </div>
+
+    <h4>5. Serializer</h4>
+    <p>Mô hình sử dụng trong dự án:</p>
+
+    <div class="info-box">
+        <pre>Key
+ |
+ v
+StringRedisSerializer
+
+Value
+ |
+ v
+GenericJacksonJsonRedisSerializer</pre>
+    </div>
+
+    <p>Cấu hình serializer cần tương thích với phiên bản Spring Data Redis và Jackson đang sử dụng.</p>
+
+    <h4>6. Cache Entity và DTO</h4>
+    <p>Có thể Cache Entity nhưng cần chú ý:</p>
+
+    <ul>
+        <li>Lazy Loading.</li>
+        <li>Hibernate Proxy.</li>
+        <li>Relationship.</li>
+        <li>Circular Reference.</li>
+    </ul>
+
+    <p>Trong nhiều trường hợp, Cache DTO giúp kiểm soát dữ liệu rõ ràng hơn.</p>
+
+    <h4>7. Nhiều Cache</h4>
+    <p>Một ứng dụng có thể có nhiều Cache và mỗi Cache có thể có TTL riêng.</p>
+
+    <p>Sử dụng <code>withInitialCacheConfigurations()</code> để đăng ký cấu hình ban đầu cho từng Cache.</p>
+
+    <h4>8. Kiểm tra Redis</h4>
+    <p>Các lệnh quan trọng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>PING
+SCAN 0
+EXISTS key
+TYPE key
+TTL key
+GET key</pre>
+    </div>
+
+    <p>Có thể sử dụng các lệnh này để kiểm tra sự tồn tại của Key, kiểu dữ liệu, Value và thời gian hết hạn.</p>
+
+    <h4>9. Serializer Jackson 3</h4>
+    <p>Trong dự án <code>com.example.hospitalProject</code>, sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GenericJacksonJsonRedisSerializer.builder()
+        .enableDefaultTyping(typeValidator)
+        .build();</pre>
+    </div>
+
+    <p>Không sử dụng lại <code>GenericJackson2JsonRedisSerializer</code> trong cấu hình mục tiêu này vì lớp đó đã bị deprecated trong môi trường dự án của bạn.</p>
+
+    <p><code>PolymorphicTypeValidator</code> giúp kiểm soát các kiểu được phép deserialize, nhưng cần được cấu hình theo nguyên tắc giới hạn quyền cần thiết.</p>
+
+    <h3>SƠ ĐỒ TỔNG HỢP PHẦN 5</h3>
+
+    <div class="info-box">
+        <pre>                     Spring Boot
+                          |
+                          v
+                  RedisCacheManager
+                          |
+                          v
+                RedisCacheConfiguration
+                          |
+          +---------------+----------------+
+          |               |                |
+          v               v                v
+         TTL           Serializer       Key Prefix
+                          |
+                 +--------+--------+
+                 |                 |
+                 v                 v
+         StringRedisSerializer  GenericJackson
+                 |              JsonRedisSerializer
+                 |                 |
+                 +--------+--------+
+                          |
+                          v
+                        Redis
+                          |
+             +------------+------------+
+             |            |            |
+             v            v            v
+        appointment   patientList   doctorList
+          10 phút       5 phút       30 phút</pre>
+    </div>
+
+    <p>Sau Phần 5, chúng ta đã chuyển từ việc sử dụng các annotation Cache sang cấu hình Redis Cache ở mức nâng cao hơn.</p>
+
+    <p>Phần tiếp theo có thể tập trung vào chiến lược Cache trong ứng dụng thực tế:</p>
+
+    <ul>
+        <li>Cache Aside.</li>
+        <li>Cache-Aside với CRUD.</li>
+        <li>Đồng bộ Database và Redis.</li>
+        <li>Cache Invalidation.</li>
+        <li>Xử lý dữ liệu cũ.</li>
+        <li>Cache Stampede.</li>
+    </ul>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><code>RedisCacheManager</code> quản lý tập trung các Redis Cache.</li>
+            <li><code>RedisCacheConfiguration</code> quy định TTL, serializer, Prefix và chính sách lưu <code>null</code>.</li>
+            <li>TTL giúp Cache tự động hết hạn nhưng không đảm bảo dữ liệu luôn mới nhất.</li>
+            <li>Serialization chuyển Java Object thành dữ liệu Redis; Deserialization thực hiện chiều ngược lại.</li>
+            <li>Mô hình phổ biến là Key sử dụng <code>StringRedisSerializer</code>, Value sử dụng JSON Serializer.</li>
+            <li>Cache DTO thường dễ kiểm soát hơn Cache Entity.</li>
+            <li>Dùng Prefix để tổ chức Key và phân biệt các nhóm dữ liệu.</li>
+            <li><code>disableCachingNullValues()</code> không cho phép lưu giá trị <code>null</code>; <code>unless = "#result == null"</code> có thể thể hiện rõ ý định không Cache kết quả rỗng.</li>
+            <li>Sử dụng <code>withInitialCacheConfigurations()</code> để cấu hình TTL riêng cho từng Cache.</li>
+            <li>Với cấu hình Jackson 3 của dự án, sử dụng <code>GenericJacksonJsonRedisSerializer</code> cùng <code>PolymorphicTypeValidator</code> theo các package được phép.</li>
+            <li>Kiểm tra dữ liệu thực tế bằng Redis CLI để xác nhận Key, Value và TTL.</li>
+            <li>Khi thay đổi serializer hoặc cấu trúc DTO, cần xem xét khả năng tương thích với các mục Cache đã được lưu trước đó.</li>
+        </ul>
+    </div>
 </section>
+```
+
 <section id="redis-p6" class="section">
     <h2><i class="fas fa-exchange-alt"></i> PHẦN 6. REDIS CACHE TRONG REST API THỰC TẾ</h2>
 
