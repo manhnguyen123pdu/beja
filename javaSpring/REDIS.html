@@ -8334,24 +8334,24 @@ Redis</pre>
     </ul>
 
     <h4>5.1.2. Vì sao cần cấu hình Redis Cache?</h4>
-    <p>Ví dụ, chúng ta có phương thức lấy thông tin lịch khám:</p>
+    <p>Ví dụ, chúng ta có phương thức lấy thông tin sản phẩm:</p>
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")
-public AppointmentDTO getAppointmentById(Long id) {
-    // Lấy thông tin lịch khám
+        <pre>@Cacheable(value = "products", key = "#id")
+public ProductDTO getProductById(Long id) {
+    // Lấy thông tin sản phẩm
 }</pre>
     </div>
 
-    <p>Khi phương thức được gọi, Spring Cache sẽ kiểm tra Cache có tên <code>appointment</code>.</p>
+    <p>Khi phương thức được gọi, Spring Cache sẽ kiểm tra Cache có tên <code>products</code>.</p>
 
     <p>Tuy nhiên, trong project thực tế, chúng ta còn cần quan tâm:</p>
 
     <ul>
         <li>Dữ liệu được lưu trong Redis bao lâu?</li>
         <li>Key có dạng gì?</li>
-        <li><code>AppointmentDTO</code> được chuyển thành JSON như thế nào?</li>
+        <li><code>ProductDTO</code> được chuyển thành JSON như thế nào?</li>
         <li>Khi đọc dữ liệu, Jackson có thể khôi phục đúng kiểu DTO không?</li>
         <li>Nếu dữ liệu không tồn tại, có lưu <code>null</code> không?</li>
         <li>Nếu Cache có nhiều loại dữ liệu, chúng ta quản lý cấu hình như thế nào?</li>
@@ -8369,7 +8369,7 @@ public AppointmentDTO getAppointmentById(Long id) {
     <p>Luồng hoạt động:</p>
 
     <div class="info-box">
-        <pre>@Cacheable("appointment")
+        <pre>@Cacheable("products")
           |
           v
    RedisCacheManager
@@ -8423,7 +8423,7 @@ public class RedisCacheConfig {
              +-----------+-----------+
              |           |           |
              v           v           v
-       appointment   patientList   doctorList
+       products   productList   catagoryList
              |           |           |
              +-----------+-----------+
                          |
@@ -8434,9 +8434,9 @@ public class RedisCacheConfig {
     <p>Trong đó:</p>
 
     <ul>
-        <li><code>appointment</code>: Cache thông tin lịch khám.</li>
-        <li><code>patientList</code>: Cache danh sách bệnh nhân.</li>
-        <li><code>doctorList</code>: Cache danh sách bác sĩ.</li>
+        <li><code>products</code>: Cache thông tin sản phẩm.</li>
+        <li><code>productList</code>: Cache danh sách sản phẩm.</li>
+        <li><code>catagoryList</code>: Cache danh sách danh mục.</li>
     </ul>
 
     <p>Một <code>RedisCacheManager</code> có thể quản lý nhiều Cache và áp dụng cấu hình tương ứng cho từng Cache.</p>
@@ -8530,19 +8530,19 @@ Dữ liệu hết hạn khoảng 10:10</pre>
     <p>TTL được áp dụng cho từng mục Cache, không phải cứ hết 10 phút là toàn bộ Redis bị xóa.</p>
 
     <h4>5.4.2. Vì sao cần TTL?</h4>
-    <p>Giả sử hệ thống bệnh viện lưu thông tin lịch khám:</p>
+    <p>Giả sử hệ thống bệnh viện lưu thông tin sản phẩm:</p>
 
     <div class="info-box">
-        <pre>Appointment ID: 10
+        <pre>Product ID: 10
 Status: SCHEDULED</pre>
     </div>
 
     <p>Thông tin này được lưu trong Redis.</p>
 
-    <p>Sau đó, trạng thái lịch khám trong database thay đổi thành:</p>
+    <p>Sau đó, trạng thái sản phẩm trong database thay đổi thành:</p>
 
     <div class="info-box">
-        <pre>Appointment ID: 10
+        <pre>Product ID: 10
 Status: COMPLETED</pre>
     </div>
 
@@ -8557,7 +8557,7 @@ Status: COMPLETED</pre>
 
     <div class="code-block">
         <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>TTL appointment::10</pre>
+        <pre>TTL products::10</pre>
     </div>
 
     <p>Nếu kết quả là:</p>
@@ -8586,7 +8586,7 @@ Status: COMPLETED</pre>
         </table>
     </div>
 
-    <p>Lưu ý: <code>appointment::10</code> chỉ là ví dụ. Key thực tế phụ thuộc vào cache name, key expression và cấu hình prefix của ứng dụng.</p>
+    <p>Lưu ý: <code>products::10</code> chỉ là ví dụ. Key thực tế phụ thuộc vào cache name, key expression và cấu hình prefix của ứng dụng.</p>
 
     <h3>5.5. Thiết lập TTL mặc định</h3>
 
@@ -8671,13 +8671,13 @@ Kiểm tra Cache
     <p>Ví dụ trong hệ thống bệnh viện:</p>
 
     <div class="info-box">
-        <pre>appointment
+        <pre>products
     TTL = 10 phút
 
-patientList
+productList
     TTL = 5 phút
 
-doctorList
+catagoryList
     TTL = 30 phút</pre>
     </div>
 
@@ -8699,20 +8699,20 @@ public class RedisCacheConfig {
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(10));
 
-        RedisCacheConfiguration patientListConfig =
+        RedisCacheConfiguration productListConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(5));
 
-        RedisCacheConfiguration doctorListConfig =
+        RedisCacheConfiguration catagoryListConfig =
                 RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(30));
 
         Map&lt;String, RedisCacheConfiguration&gt; configurations =
                 new HashMap&lt;&gt;();
 
-        configurations.put("appointment", defaultConfig);
-        configurations.put("patientList", patientListConfig);
-        configurations.put("doctorList", doctorListConfig);
+        configurations.put("products", defaultConfig);
+        configurations.put("productList", productListConfig);
+        configurations.put("catagoryList", catagoryListConfig);
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
@@ -8725,9 +8725,9 @@ public class RedisCacheConfig {
     <p>Trong ví dụ này:</p>
 
     <ul>
-        <li><code>appointment</code> sử dụng TTL 10 phút.</li>
-        <li><code>patientList</code> sử dụng TTL 5 phút.</li>
-        <li><code>doctorList</code> sử dụng TTL 30 phút.</li>
+        <li><code>products</code> sử dụng TTL 10 phút.</li>
+        <li><code>productList</code> sử dụng TTL 5 phút.</li>
+        <li><code>catagoryList</code> sử dụng TTL 30 phút.</li>
     </ul>
 
     <h4>5.6.2. Sử dụng Cache theo cấu hình</h4>
@@ -8735,35 +8735,35 @@ public class RedisCacheConfig {
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")
-public AppointmentDTO getAppointmentById(Long id) {
-    // Lấy thông tin lịch khám
+        <pre>@Cacheable(value = "products", key = "#id")
+public ProductDTO getProductById(Long id) {
+    // Lấy thông tin sản phẩm
 }</pre>
     </div>
 
-    <p>Spring sẽ sử dụng cấu hình tương ứng với Cache có tên <code>appointment</code>.</p>
+    <p>Spring sẽ sử dụng cấu hình tương ứng với Cache có tên <code>products</code>.</p>
 
     <p>Nếu phương thức sử dụng:</p>
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "patientList")</pre>
+        <pre>@Cacheable(value = "productList")</pre>
     </div>
 
-    <p>thì Cache <code>patientList</code> sẽ sử dụng cấu hình TTL 5 phút đã khai báo.</p>
+    <p>thì Cache <code>productList</code> sẽ sử dụng cấu hình TTL 5 phút đã khai báo.</p>
 
     <h4>5.6.3. Mô hình</h4>
 
     <div class="info-box">
         <pre>RedisCacheManager
        |
-       +-- appointment
+       +-- products
        |       TTL 10 phút
        |
-       +-- patientList
+       +-- productList
        |       TTL 5 phút
        |
-       +-- doctorList
+       +-- catagoryList
                TTL 30 phút</pre>
     </div>
 
@@ -8778,13 +8778,13 @@ public AppointmentDTO getAppointmentById(Long id) {
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>AppointmentDTO appointment = new AppointmentDTO();
+        <pre>ProductDTO products = new ProductDTO();
 
-appointment.setId(10L);
-appointment.setPatientName("Nguyen Van A");</pre>
+products.setId(10L);
+products.setProductName("Laptop");</pre>
     </div>
 
-    <p>Đối tượng <code>appointment</code> đang tồn tại trong bộ nhớ của JVM.</p>
+    <p>Đối tượng <code>products</code> đang tồn tại trong bộ nhớ của JVM.</p>
 
     <p>Redis không lưu trực tiếp đối tượng Java theo cách đối tượng đang tồn tại trong bộ nhớ JVM. Dữ liệu cần được chuyển thành một dạng phù hợp, thường là mảng byte.</p>
 
@@ -8840,11 +8840,11 @@ Java Object</pre>
     <h4>5.8.1. JSON Serialization là gì?</h4>
     <p>JSON Serialization là quá trình chuyển đối tượng Java thành dữ liệu JSON.</p>
 
-    <p>Ví dụ, một đối tượng lịch khám có các trường:</p>
+    <p>Ví dụ, một đối tượng sản phẩm có các trường:</p>
 
     <div class="info-box">
         <pre>id = 10
-patientName = Nguyen Van A
+productName = Nguyen Van A
 status = SCHEDULED</pre>
     </div>
 
@@ -8854,7 +8854,7 @@ status = SCHEDULED</pre>
         <div class="code-header"><span>JSON</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <pre>{
   "id": 10,
-  "patientName": "Nguyen Van A",
+  "productName": "Nguyen Van A",
   "status": "SCHEDULED"
 }</pre>
     </div>
@@ -8944,9 +8944,9 @@ Redis Value</pre>
     <p>Ví dụ, Cache Key có thể là:</p>
 
     <div class="info-box">
-        <pre>appointment::10
-appointment::20
-appointment::30</pre>
+        <pre>products::10
+products::20
+products::30</pre>
     </div>
 
     <p>Các Key này dễ đọc, dễ kiểm tra và thuận tiện khi sử dụng Redis CLI.</p>
@@ -8972,10 +8972,10 @@ appointment::30</pre>
     <p>Khi kết hợp với cấu hình Cache mặc định, Spring có thể tạo Key theo dạng:</p>
 
     <div class="info-box">
-        <pre>appointment::10</pre>
+        <pre>products::10</pre>
     </div>
 
-    <p>Trong đó, <code>appointment</code> là tên Cache và <code>10</code> là giá trị Key được tạo từ biểu thức <code>key = "#id"</code>.</p>
+    <p>Trong đó, <code>products</code> là tên Cache và <code>10</code> là giá trị Key được tạo từ biểu thức <code>key = "#id"</code>.</p>
 
     <h4>5.10.3. Ví dụ đầy đủ</h4>
 
@@ -9082,7 +9082,7 @@ import tools.jackson.databind.jsontype.PolymorphicTypeValidator;</pre>
     <p>Ví dụ:</p>
 
     <div class="info-box">
-        <pre>com.example.hospitalProject.dto.AppointmentDTO
+        <pre>com.example.hospitalProject.dto.ProductDTO
 com.example.hospitalProject.dto.PatientDTO
 com.example.hospitalProject.dto.DoctorDTO</pre>
     </div>
@@ -9150,7 +9150,7 @@ JSON Data</pre>
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <pre>@Entity
-public class Appointment {
+public class Product {
 
     @Id
     private Long id;
@@ -9163,13 +9163,13 @@ public class Appointment {
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")
-public Appointment getAppointmentById(Long id) {
+        <pre>@Cacheable(value = "products", key = "#id")
+public Product getProductById(Long id) {
     // Truy vấn database
 }</pre>
     </div>
 
-    <p>Spring cần chuyển đối tượng <code>Appointment</code> thành dữ liệu có thể lưu trong Redis.</p>
+    <p>Spring cần chuyển đối tượng <code>Product</code> thành dữ liệu có thể lưu trong Redis.</p>
 
     <p>Tuy nhiên, với Entity JPA, chúng ta cần chú ý đến quan hệ giữa các Entity và trạng thái của Hibernate.</p>
 
@@ -9188,13 +9188,13 @@ public Appointment getAppointmentById(Long id) {
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <pre>@Entity
-public class Appointment {
+public class Product {
 
     @Id
     private Long id;
 
     @ManyToOne
-    private Patient patient;
+    private Category category;
 }</pre>
     </div>
 
@@ -9218,11 +9218,11 @@ public class Appointment {
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>public class AppointmentDTO {
+        <pre>public class ProductDTO {
 
     private Long id;
 
-    private String patientName;
+    private String productName;
 
     private String status;
 
@@ -9234,24 +9234,22 @@ public class Appointment {
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")
-public AppointmentDTO getAppointmentById(Long id) {
+        <pre>@Cacheable(value = "products", key = "#id")
+public ProductDTO getProductById(Long id) {
 
-    Appointment appointment = appointmentRepository
+    Product products = productsRepository
             .findById(id)
             .orElse(null);
 
-    if (appointment == null) {
+    if (products == null) {
         return null;
     }
 
-    AppointmentDTO dto = new AppointmentDTO();
+    ProductDTO dto = new ProductDTO();
 
-    dto.setId(appointment.getId());
-    dto.setPatientName(
-            appointment.getPatient().getName()
-    );
-    dto.setStatus(appointment.getStatus());
+    dto.setId(products.getId());
+    dto.setProductName(products.getProductName());
+    dto.setStatus(products.getStatus());
 
     return dto;
 }</pre>
@@ -9259,13 +9257,12 @@ public AppointmentDTO getAppointmentById(Long id) {
 
     <p>Đây là ví dụ minh họa. Tên trường và phương thức cần được điều chỉnh theo Entity thực tế của dự án.</p>
 
-    <p>Lưu ý rằng việc truy cập <code>appointment.getPatient()</code> cần phù hợp với cách tải quan hệ của JPA và trạng thái của persistence context.</p>
 
     <h4>5.12.4. Vì sao DTO thường dễ Cache hơn?</h4>
     <p>DTO thường chỉ chứa dữ liệu cần thiết để trả về cho client.</p>
 
     <div class="info-box">
-        <pre>Appointment Entity
+        <pre>Product Entity
        |
        +-- Database Mapping
        |
@@ -9274,11 +9271,11 @@ public AppointmentDTO getAppointmentById(Long id) {
        +-- Hibernate Proxy
        |
        v
-AppointmentDTO
+ProductDTO
        |
        +-- id
        |
-       +-- patientName
+       +-- productName
        |
        +-- status
        |
@@ -9298,14 +9295,14 @@ Redis Cache</pre>
     <p>Ví dụ:</p>
 
     <div class="info-box">
-        <pre>appointment::10
-appointment::20</pre>
+        <pre>products::10
+products::20</pre>
     </div>
 
     <p>Trong đó:</p>
 
     <ul>
-        <li><code>appointment</code> là Cache Name.</li>
+        <li><code>products</code> là Cache Name.</li>
         <li><code>10</code>, <code>20</code> là các Cache Key.</li>
         <li><code>::</code> là dấu phân cách mặc định thường được sử dụng bởi Spring Cache.</li>
     </ul>
@@ -9326,8 +9323,8 @@ Queue</pre>
     <p>Có thể tổ chức theo quy ước:</p>
 
     <div class="info-box">
-        <pre>cache:appointment::10
-cache:patientList
+        <pre>cache:products::10
+cache:productList
 session:user:10
 otp:email:example</pre>
     </div>
@@ -9346,10 +9343,10 @@ otp:email:example</pre>
                 );</pre>
     </div>
 
-    <p>Khi sử dụng Cache <code>appointment</code>, Key có thể có dạng:</p>
+    <p>Khi sử dụng Cache <code>products</code>, Key có thể có dạng:</p>
 
     <div class="info-box">
-        <pre>hospital:appointment::10</pre>
+        <pre>hospital:products::10</pre>
     </div>
 
     <p>Trong trường hợp này, Prefix giúp phân biệt dữ liệu Cache của ứng dụng bệnh viện với những dữ liệu khác trong Redis.</p>
@@ -9363,22 +9360,22 @@ otp:email:example</pre>
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")</pre>
+        <pre>@Cacheable(value = "products", key = "#id")</pre>
     </div>
 
     <p>Tên Cache là:</p>
 
     <div class="info-box">
-        <pre>appointment</pre>
+        <pre>products</pre>
     </div>
 
     <h4>5.14.1. Khai báo Cache</h4>
     <p>Một ứng dụng có thể sử dụng:</p>
 
     <div class="info-box">
-        <pre>appointment
-patientList
-doctorList
+        <pre>products
+productList
+catagoryList
 departmentList</pre>
     </div>
 
@@ -9386,10 +9383,10 @@ departmentList</pre>
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment")</pre>
+        <pre>@Cacheable(value = "products")</pre>
     </div>
 
-    <p>Spring sẽ tìm Cache có tên <code>appointment</code>.</p>
+    <p>Spring sẽ tìm Cache có tên <code>products</code>.</p>
 
     <p>Tên Cache trong annotation phải thống nhất với tên được cấu hình khi cần thiết lập TTL hoặc các thuộc tính riêng.</p>
 
@@ -9397,9 +9394,9 @@ departmentList</pre>
     <p>Nên sử dụng các tên có ý nghĩa:</p>
 
     <div class="info-box">
-        <pre>appointment
-patientList
-doctorList
+        <pre>products
+productList
+catagoryList
 departmentList</pre>
     </div>
 
@@ -9420,11 +9417,11 @@ abc</pre>
     <div class="info-box">
         <pre>RedisCacheManager
        |
-       +-- appointment
+       +-- products
        |
-       +-- patientList
+       +-- productList
        |
-       +-- doctorList
+       +-- catagoryList
        |
        +-- departmentList</pre>
     </div>
@@ -9438,17 +9435,17 @@ abc</pre>
 
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>@Cacheable(value = "appointment", key = "#id")
-public AppointmentDTO getAppointmentById(Long id) {
+        <pre>@Cacheable(value = "products", key = "#id")
+public ProductDTO getProductById(Long id) {
 
-    return appointmentRepository
+    return productsRepository
             .findById(id)
             .map(this::toDTO)
             .orElse(null);
 }</pre>
     </div>
 
-    <p>Nếu lịch khám không tồn tại, phương thức trả về <code>null</code>.</p>
+    <p>Nếu sản phẩm không tồn tại, phương thức trả về <code>null</code>.</p>
 
     <p>Khi đó, chúng ta cần quyết định có nên Cache kết quả này hay không.</p>
 
@@ -9483,7 +9480,7 @@ public AppointmentDTO getAppointmentById(Long id) {
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <pre>@Cacheable(
-        value = "appointment",
+        value = "products",
         key = "#id",
         unless = "#result == null"
 )</pre>
@@ -9512,9 +9509,9 @@ Kết quả null?
     <p>Ví dụ:</p>
 
     <div class="info-box">
-        <pre>appointment
-patientList
-doctorList
+        <pre>products
+productList
+catagoryList
 departmentList</pre>
     </div>
 
@@ -9576,18 +9573,18 @@ public class RedisCacheConfig {
                                 RedisSerializationContext.SerializationPair
                                         .fromSerializer(jsonSerializer));
 
-        RedisCacheConfiguration patientListConfig =
+        RedisCacheConfiguration productListConfig =
                 defaultConfig.entryTtl(Duration.ofMinutes(5));
 
-        RedisCacheConfiguration doctorListConfig =
+        RedisCacheConfiguration catagoryListConfig =
                 defaultConfig.entryTtl(Duration.ofMinutes(30));
 
         Map&lt;String, RedisCacheConfiguration&gt; configurations =
                 new HashMap&lt;&gt;();
 
-        configurations.put("appointment", defaultConfig);
-        configurations.put("patientList", patientListConfig);
-        configurations.put("doctorList", doctorListConfig);
+        configurations.put("products", defaultConfig);
+        configurations.put("productList", productListConfig);
+        configurations.put("catagoryList", catagoryListConfig);
 
         return RedisCacheManager.builder(connectionFactory)
                 .cacheDefaults(defaultConfig)
@@ -9600,9 +9597,9 @@ public class RedisCacheConfig {
     <p>Trong ví dụ này:</p>
 
     <ul>
-        <li><code>appointment</code>: TTL 10 phút.</li>
-        <li><code>patientList</code>: TTL 5 phút.</li>
-        <li><code>doctorList</code>: TTL 30 phút.</li>
+        <li><code>products</code>: TTL 10 phút.</li>
+        <li><code>productList</code>: TTL 5 phút.</li>
+        <li><code>catagoryList</code>: TTL 30 phút.</li>
         <li>Key sử dụng <code>StringRedisSerializer</code>.</li>
         <li>Value sử dụng <code>GenericJacksonJsonRedisSerializer</code>.</li>
         <li>Các kiểu DTO được giới hạn theo <code>PolymorphicTypeValidator</code>.</li>
@@ -9619,7 +9616,7 @@ public class RedisCacheConfig {
              +-------------+-------------+
              |             |             |
              v             v             v
-        appointment   patientList    doctorList
+        products   productList    catagoryList
           10 phút       5 phút        30 phút
              |             |             |
              +-------------+-------------+
@@ -9634,13 +9631,13 @@ public class RedisCacheConfig {
     <p>Ví dụ:</p>
 
     <div class="info-box">
-        <pre>appointment
+        <pre>products
     -> 10 phút
 
-patientList
+productList
     -> 5 phút
 
-doctorList
+catagoryList
     -> 30 phút</pre>
     </div>
 
@@ -9694,9 +9691,9 @@ doctorList
     <p>Ví dụ kết quả:</p>
 
     <div class="info-box">
-        <pre>1) "appointment::10"
-2) "appointment::20"
-3) "patientList"</pre>
+        <pre>1) "products::10"
+2) "products::20"
+3) "productList"</pre>
     </div>
 
     <p>Đây là kết quả minh họa. Key thực tế phụ thuộc vào dữ liệu Cache đã được tạo và cấu hình Prefix của ứng dụng.</p>
@@ -9707,7 +9704,7 @@ doctorList
 
     <div class="code-block">
         <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>EXISTS "appointment::10"</pre>
+        <pre>EXISTS "products::10"</pre>
     </div>
 
     <p>Nếu trả về:</p>
@@ -9730,7 +9727,7 @@ doctorList
 
     <div class="code-block">
         <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>TTL "appointment::10"</pre>
+        <pre>TTL "products::10"</pre>
     </div>
 
     <p>Ví dụ:</p>
@@ -9746,7 +9743,7 @@ doctorList
 
     <div class="code-block">
         <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>TYPE "appointment::10"</pre>
+        <pre>TYPE "products::10"</pre>
     </div>
 
     <p>Spring Cache thường lưu mỗi mục Cache dưới dạng một Redis key có kiểu <code>string</code>, trong đó value là dữ liệu đã được serializer chuyển thành byte.</p>
@@ -9758,7 +9755,7 @@ doctorList
 
     <div class="code-block">
         <div class="code-header"><span>Redis</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>GET "appointment::10"</pre>
+        <pre>GET "products::10"</pre>
     </div>
 
     <p>Với JSON Serializer, dữ liệu có thể hiển thị dưới dạng JSON.</p>
@@ -9773,23 +9770,23 @@ doctorList
     <div class="code-block">
         <div class="code-header"><span>Java</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
         <pre>@Cacheable(
-        value = "appointment",
+        value = "products",
         key = "#id",
         unless = "#result == null"
 )
-public AppointmentDTO getAppointmentById(Long id) {
+public ProductDTO getProductById(Long id) {
 
     System.out.println("DATABASE QUERY");
 
-    Appointment appointment = appointmentRepository
+    Product products = productsRepository
             .findById(id)
             .orElse(null);
 
-    if (appointment == null) {
+    if (products == null) {
         return null;
     }
 
-    return toDTO(appointment);
+    return toDTO(products);
 }</pre>
     </div>
 
@@ -9801,16 +9798,16 @@ public AppointmentDTO getAppointmentById(Long id) {
 
     <div class="code-block">
         <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <pre>GET /api/appointments/10</pre>
+        <pre>GET /api/products/10</pre>
     </div>
 
     <p><strong>Lần gọi đầu tiên:</strong></p>
 
     <ol>
-        <li>Spring kiểm tra Cache <code>appointment</code> với Key tương ứng.</li>
+        <li>Spring kiểm tra Cache <code>products</code> với Key tương ứng.</li>
         <li>Nếu chưa có dữ liệu, xảy ra Cache Miss.</li>
         <li>Service truy vấn database.</li>
-        <li>Service trả về <code>AppointmentDTO</code>.</li>
+        <li>Service trả về <code>ProductDTO</code>.</li>
         <li>Spring sử dụng <code>GenericJacksonJsonRedisSerializer</code> để serialize dữ liệu.</li>
         <li>Redis lưu mục Cache với TTL đã cấu hình.</li>
     </ol>
@@ -9850,13 +9847,13 @@ public AppointmentDTO getAppointmentById(Long id) {
         MySQL               Redis
           |                   |
           v                   v
-   AppointmentDTO         JSON / Bytes
+   ProductDTO         JSON / Bytes
           |                   |
           v                   v
     Serialization       Deserialization
           |                   |
           v                   v
-        Redis            AppointmentDTO
+        Redis            ProductDTO
           |                   |
           v                   v
      TTL 10 phút            Client</pre>
@@ -9883,9 +9880,9 @@ public AppointmentDTO getAppointmentById(Long id) {
     <p>Quản lý các Cache của ứng dụng:</p>
 
     <div class="info-box">
-        <pre>appointment
-patientList
-doctorList</pre>
+        <pre>products
+productList
+catagoryList</pre>
     </div>
 
     <p>Một <code>RedisCacheManager</code> có thể quản lý nhiều Cache.</p>
@@ -9906,9 +9903,9 @@ Null Value</pre>
     <p>Ví dụ:</p>
 
     <div class="info-box">
-        <pre>appointment -> 10 phút
-patientList -> 5 phút
-doctorList  -> 30 phút</pre>
+        <pre>products -> 10 phút
+productList -> 5 phút
+catagoryList  -> 30 phút</pre>
     </div>
 
     <p>TTL giúp Cache tự động hết hạn nhưng không thay thế hoàn toàn việc đồng bộ dữ liệu giữa database và Redis.</p>
@@ -10031,7 +10028,7 @@ GET key</pre>
              +------------+------------+
              |            |            |
              v            v            v
-        appointment   patientList   doctorList
+        products   productList   catagoryList
           10 phút       5 phút       30 phút</pre>
     </div>
 
