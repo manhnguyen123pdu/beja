@@ -9549,38 +9549,30 @@ public class RedisCacheConfig {
     public RedisCacheManager redisCacheManager(
             RedisConnectionFactory connectionFactory) {
 
-        PolymorphicTypeValidator typeValidator =
-                BasicPolymorphicTypeValidator.builder()
-                        .allowIfSubType(
-                                "com.example.hospitalProject.dto.")
+        PolymorphicTypeValidator typeValidator =BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType("com.example.hospitalProject.dto.")
                         .allowIfSubType("java.util.")
                         .build();
 
-        GenericJacksonJsonRedisSerializer jsonSerializer =
-                GenericJacksonJsonRedisSerializer.builder()
+        GenericJacksonJsonRedisSerializer jsonSerializer =GenericJacksonJsonRedisSerializer.builder()
                         .enableDefaultTyping(typeValidator)
                         .build();
 
-        RedisCacheConfiguration defaultConfig =
-                RedisCacheConfiguration.defaultCacheConfig()
+        RedisCacheConfiguration defaultConfig =RedisCacheConfiguration.defaultCacheConfig()
                         .entryTtl(Duration.ofMinutes(10))
                         .disableCachingNullValues()
                         .serializeKeysWith(
-                                RedisSerializationContext.SerializationPair
-                                        .fromSerializer(
-                                                new StringRedisSerializer()))
+                            RedisSerializationContext.SerializationPair
+                                        .fromSerializer(new StringRedisSerializer()))
                         .serializeValuesWith(
-                                RedisSerializationContext.SerializationPair
+                            RedisSerializationContext.SerializationPair
                                         .fromSerializer(jsonSerializer));
 
-        RedisCacheConfiguration productListConfig =
-                defaultConfig.entryTtl(Duration.ofMinutes(5));
+        RedisCacheConfiguration productListConfig =defaultConfig.entryTtl(Duration.ofMinutes(5));
 
-        RedisCacheConfiguration catagoryListConfig =
-                defaultConfig.entryTtl(Duration.ofMinutes(30));
+        RedisCacheConfiguration catagoryListConfig =defaultConfig.entryTtl(Duration.ofMinutes(30));
 
-        Map&lt;String, RedisCacheConfiguration&gt; configurations =
-                new HashMap&lt;&gt;();
+        Map&lt;String, RedisCacheConfiguration&gt; configurations =new HashMap&lt;&gt;();
 
         configurations.put("products", defaultConfig);
         configurations.put("productList", productListConfig);
