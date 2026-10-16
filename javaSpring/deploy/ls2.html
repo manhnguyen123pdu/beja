@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEPLOY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            /* padding: 30px; */
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: 85vh;
+        }
+
+        .sidebar {
+            background: var(--light);
+            padding: 20px;
+            border-right: 3px solid var(--secondary);
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .nav-list {
+            list-style: none;
+            position: sticky;
+            top: 20px;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--secondary);
+            color: white;
+            transform: translateX(5px);
+            border-color: var(--secondary);
+        }
+
+        .main-content {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 85vh;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--accent);
+            margin: 25px 0 15px;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent);
+        }
+
+        h4 {
+            color: var(--info);
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul,
+        ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            line-height: 1.4;
+            border: 2px solid #444;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #666;
+        }
+
+        .keyword {
+            color: #569cd6;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .class-name {
+            color: #4ec9b0;
+        }
+
+        .method {
+            color: #dcdcaa;
+        }
+
+        .annotation {
+            color: #c586c0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: var(--secondary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:nth-child(even) {
+            
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 992px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 3px solid var(--secondary);
+                max-height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .code-block {
+                padding: 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+        pre {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .syntax {
+            
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-family: 'Consolas', monospace;
+            border-left: 4px solid var(--info);
+        }
+
+        .diagram {
+            
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+        }
+
+        .original-content {
+            white-space: pre-wrap;
+            font-family: inherit;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-lock"></i> DEPLOY SPRING BOOT BẰNG PLATFORM (RENDER)</h1>
+        </header>
+        <div class="content-wrapper">
+            <nav class="sidebar">
+                <ul class="nav-list">
+
+<li class="nav-item"><a href="#deploy-aiven-m3" class="nav-link">Đưa source code lên GitHub</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m4" class="nav-link">Tạo Web Service trên Render</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m5" class="nav-link">Cấu hình Build Command và Start Command</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m6" class="nav-link">Deploy ứng dụng Spring Boot</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m7" class="nav-link">Cấu hình biến môi trường</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m8" class="nav-link">Kết nối MySQL trên môi trường triển khai</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m9" class="nav-link">Kiểm thử API bằng Postman</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m10" class="nav-link">Cấu hình CORS để kết nối Frontend</a></li>
+<li class="nav-item"><a href="#deploy-aiven-m11" class="nav-link">Đọc log và xử lý lỗi</a></li>
+<!-- <li class="nav-item"><a href="#deploy-aiven-m12" class="nav-link">Cập nhật ứng dụng khi push code mới lên GitHub</a></li> -->
+                   </ul>
+            </nav>
+
+<div class="main-content">
+
+
+<section id="deploy-aiven-m3" class="section active">
+    <h2><i class="fas fa-info-circle"></i> 1. Tổng quan về triển khai ứng dụng</h2>
+
+    <h3>1.1. Deploy là gì?</h3>
+    <p>Trong quá trình phát triển phần mềm, lập trình viên thường chạy Spring Boot trên máy tính cá nhân, chẳng hạn tại địa chỉ:</p>
+
+    <div class="info-box">
+        <pre>http://localhost:8080</pre>
+    </div>
+
+    <p>Địa chỉ này chỉ có thể được truy cập trong môi trường phù hợp trên máy tính đang chạy ứng dụng. Người dùng ở thiết bị khác không thể mặc nhiên truy cập ứng dụng qua địa chỉ <code>localhost</code> của máy lập trình viên.</p>
+
+    <p>Deploy là quá trình đưa ứng dụng từ môi trường phát triển lên máy chủ hoặc nền tảng đám mây để người dùng có thể truy cập qua Internet.</p>
+
+    <p>Ví dụ, sau khi deploy thành công, ứng dụng có thể có địa chỉ:</p>
+
+    <div class="info-box">
+        <pre>https://demodeploy.onrender.com</pre>
+    </div>
+
+    <p>Đây là URL minh họa; URL thực tế do Render cấp khi tạo dịch vụ.</p>
+
+    <h3>1.2. Các thành phần sử dụng trong bài học</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Vai trò</th>
+                    <th>Mô tả</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>GitHub</td><td>Lưu trữ mã nguồn</td><td>Chứa source code Spring Boot, <code>pom.xml</code>, <code>Dockerfile</code> và các file cấu hình cần thiết.</td></tr>
+                <tr><td>Docker</td><td>Đóng gói ứng dụng</td><td>Tạo image chứa môi trường Java Runtime và file JAR để ứng dụng có thể chạy nhất quán trên máy chủ.</td></tr>
+                <tr><td>Render</td><td>Nền tảng chạy backend</td><td>Nhận mã nguồn từ GitHub, build Docker image, khởi động ứng dụng và cung cấp URL công khai.</td></tr>
+                <tr><td>Aiven</td><td>Máy chủ MySQL trên đám mây</td><td>Lưu trữ dữ liệu độc lập với ứng dụng Spring Boot. Backend kết nối đến database thông qua thông tin kết nối do Aiven cung cấp.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>1.3. Kiến trúc hệ thống sau khi deploy</h3>
+
+    <div class="info-box">
+        <pre>Client / Frontend
+Trình duyệt, React, Postman
+        |
+        v
+Render Web Service
+Docker Container
+Java Runtime → Spring Boot → REST API
+        |
+        v
+Aiven Cloud MySQL
+Database: quanlybanhang
+Lưu trữ dữ liệu sản phẩm, khách hàng, hóa đơn...</pre>
+    </div>
+
+    <p>Điểm quan trọng: Render chạy ứng dụng backend, còn Aiven lưu trữ dữ liệu. Hai dịch vụ này độc lập nhưng được kết nối với nhau thông qua cấu hình JDBC.</p>
+</section>
+
+<section id="deploy-aiven-m4" class="section">
+    <h2><i class="fas fa-book"></i> 2. Kiến thức nền tảng cần nắm</h2>
+
+    <h3>2.1. Phân biệt Local và Production</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tiêu chí</th>
+                    <th>Local</th>
+                    <th>Production</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Nơi chạy Spring Boot</td><td>Máy tính cá nhân</td><td>Render</td></tr>
+                <tr><td>Database</td><td>MySQL cài trên máy</td><td>MySQL trên Aiven</td></tr>
+                <tr><td>Địa chỉ backend</td><td><code>localhost:8080</code></td><td>URL Render</td></tr>
+                <tr><td>Địa chỉ database</td><td><code>localhost:3306</code></td><td>Host và port Aiven</td></tr>
+                <tr><td>Cấu hình</td><td><code>application-local.properties</code></td><td><code>application-prod.properties</code></td></tr>
+                <tr><td>Thông tin bí mật</td><td>Có thể cấu hình riêng trên máy</td><td>Lưu trong Environment Variables</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Ví dụ cấu hình Local:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Properties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>spring.datasource.url=jdbc:mysql://localhost:3306/quanlybanhang
+spring.datasource.username=root
+spring.datasource.password=1234</pre>
+    </div>
+
+    <p>Khi triển khai lên Render, không thể tiếp tục sử dụng <code>localhost:3306</code> để kết nối đến MySQL trên máy tính cá nhân.</p>
+
+    <p>Lý do: bên trong môi trường chạy ứng dụng trên Render, <code>localhost</code> trỏ đến chính môi trường đó, không phải máy tính cá nhân của lập trình viên.</p>
+
+    <h3>2.2. JAR là gì?</h3>
+    <p>JAR (Java Archive) là gói chứa các thành phần cần thiết của ứng dụng Java. Với Spring Boot, file JAR được đóng gói để có thể khởi chạy bằng lệnh:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>java -jar app.jar</pre>
+    </div>
+
+    <p>Tuy nhiên, bài học này sử dụng Docker để chạy file JAR trên Render. Vì vậy, file JAR sẽ được đưa vào Docker image.</p>
+
+    <h3>2.3. Dockerfile là gì?</h3>
+    <p>Dockerfile là file chứa các chỉ dẫn để Docker tạo image.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Dockerfile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>FROM eclipse-temurin:25-jre
+
+WORKDIR /app
+
+COPY app.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]</pre>
+    </div>
+
+    <p>Ý nghĩa:</p>
+
+    <ul>
+        <li><code>FROM</code>: chọn image nền có Java Runtime.</li>
+        <li><code>WORKDIR</code>: thiết lập thư mục làm việc trong container.</li>
+        <li><code>COPY</code>: sao chép file JAR vào container.</li>
+        <li><code>ENTRYPOINT</code>: xác định lệnh khởi động ứng dụng.</li>
+    </ul>
+
+    <p>Lưu ý: Phiên bản Java trong Docker phải tương thích với phiên bản Java dùng để biên dịch dự án. Nếu dự án được biên dịch bằng Java 17, nên chọn image Java 17; nếu dùng Java 25, chọn image tương ứng.</p>
+
+    <h3>2.4. Environment Variables là gì?</h3>
+    <p>Environment Variables là các biến môi trường dùng để truyền cấu hình cho ứng dụng mà không cần ghi trực tiếp giá trị vào mã nguồn.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Properties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}</pre>
+    </div>
+
+    <p>Khi chạy trên Render, Spring Boot lấy giá trị từ các biến <code>DB_URL</code>, <code>DB_USERNAME</code> và <code>DB_PASSWORD</code> đã được khai báo trong phần Environment.</p>
+
+    <p>Cách này giúp tránh đưa mật khẩu database lên GitHub.</p>
+</section>
+
+<section id="deploy-aiven-m5" class="section">
+    <h2><i class="fas fa-database"></i> PHẦN I. CHUẨN BỊ DATABASE TRÊN AIVEN</h2>
+
+    <h3>3. Tạo MySQL service</h3>
+
+    <h4>Bước 3.1. Đăng ký và đăng nhập</h4>
+    <p>Truy cập trang chủ Aiven:</p>
+
+    <p><a href="https://console.aiven.io/" target="_blank" rel="noopener">Mở Aiven Console</a></p>
+
+    <p>Đăng nhập hoặc tạo tài khoản mới.</p>
+
+    <h4>Bước 3.2. Tạo dịch vụ MySQL</h4>
+    <p>Trong giao diện Aiven:</p>
+
+    <ol>
+        <li>Chọn tạo service mới.</li>
+        <li>Chọn loại dịch vụ MySQL.</li>
+        <li>Chọn gói dịch vụ phù hợp với ngân sách.</li>
+        <li>Chọn khu vực triển khai, ưu tiên khu vực gần ứng dụng nếu có thể.</li>
+        <li>Đặt tên service, ví dụ <code>mysql-quanlybanhang</code>.</li>
+        <li>Nhấn tạo service và chờ dịch vụ khởi tạo.</li>
+    </ol>
+
+    <p>Lưu ý về chi phí: Gói miễn phí và điều kiện sử dụng của Aiven có thể thay đổi theo thời điểm, tài khoản và khu vực. Hãy kiểm tra giá hiển thị trong Console trước khi tạo dịch vụ; không mặc định rằng mọi tài khoản đều có MySQL miễn phí.</p>
+
+    <h3>4. Lấy thông tin kết nối MySQL</h3>
+    <p>Sau khi service hoạt động, mở trang Overview hoặc phần Connection information.</p>
+
+    <p>Thông tin cần ghi lại:</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thuộc tính</th>
+                    <th>Ví dụ minh họa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Host</td><td><code>mysql-xxxxx.b.aivencloud.com</code></td></tr>
+                <tr><td>Port</td><td><code>22510</code></td></tr>
+                <tr><td>Username</td><td><code>avnadmin</code></td></tr>
+                <tr><td>Password</td><td>Mật khẩu Aiven cấp</td></tr>
+                <tr><td>Database</td><td><code>defaultdb</code> hoặc database riêng</td></tr>
+                <tr><td>SSL</td><td>Theo cấu hình Aiven yêu cầu</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Các giá trị trên chỉ để minh họa. Phải sử dụng thông tin thực tế của service đang tạo.</p>
+
+    <h4>4.1. Vì sao port không phải 3306?</h4>
+    <p>MySQL thường sử dụng port <code>3306</code> khi chạy trên máy tính cá nhân. Tuy nhiên, dịch vụ MySQL được quản lý trên Aiven có thể cấp một port khác, chẳng hạn <code>22510</code>.</p>
+
+    <p>Nếu cấu hình sai port, ứng dụng có thể không kết nối được database.</p>
+
+    <h4>4.2. Tạo database riêng</h4>
+    <p>Trong Aiven, mở mục Databases và tạo database, ví dụ:</p>
+
+    <div class="info-box">
+        <pre>quanlybanhang</pre>
+    </div>
+
+    <p>Database này sẽ chứa các bảng của dự án.</p>
+
+    <p>Nếu bạn đã có file SQL ở máy tính cá nhân, cần nhập dữ liệu và cấu trúc bảng lên Aiven. Tạo database trên Aiven không tự động sao chép dữ liệu từ MySQL Workbench ở máy tính cá nhân.</p>
+
+    <p>Có thể sử dụng MySQL Workbench để kết nối đến Aiven và import file <code>.sql</code>.</p>
+
+    <h3>5. Cấu hình mạng và SSL</h3>
+
+    <h4>5.1. Cho phép ứng dụng kết nối</h4>
+    <p>Kiểm tra phần Networking hoặc IP filter của dịch vụ Aiven.</p>
+
+    <p>Cần đảm bảo kết nối từ Render đến Aiven được cho phép theo cơ chế mạng mà gói dịch vụ hỗ trợ.</p>
+
+    <p>Không nên mặc định thêm <code>0.0.0.0/0</code> nếu không cần thiết. Cấu hình này cho phép mọi địa chỉ IP có thể thử kết nối đến dịch vụ, làm tăng nguy cơ bị dò quét. Nếu phải sử dụng để kiểm thử, hãy kết hợp mật khẩu mạnh, SSL và các giới hạn truy cập phù hợp.</p>
+
+    <h4>5.2. SSL là gì?</h4>
+    <p>SSL/TLS mã hóa dữ liệu truyền giữa ứng dụng Spring Boot và máy chủ MySQL, giảm nguy cơ thông tin bị đọc trộm trên đường truyền.</p>
+
+    <p>Với Aiven, hãy dùng chế độ SSL được dịch vụ yêu cầu. Nếu cần xác minh chứng chỉ máy chủ, hãy cấu hình CA certificate theo tài liệu của Aiven thay vì tắt kiểm tra chứng chỉ.</p>
+
+    <p>Ví dụ tham số JDBC thường dùng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>?sslMode=REQUIRED</pre>
+    </div>
+
+    <p><code>REQUIRED</code> yêu cầu kết nối SSL, nhưng không tương đương với việc xác minh danh tính máy chủ bằng CA. Khi triển khai thực tế, cần lựa chọn chế độ SSL phù hợp với khả năng hỗ trợ và hướng dẫn hiện hành của Aiven.</p>
+</section>
+
+<section id="deploy-aiven-m6" class="section">
+    <h2><i class="fas fa-cogs"></i> PHẦN II. CẤU HÌNH DỰ ÁN SPRING BOOT</h2>
+
+    <h3>6. Tổ chức cấu hình theo Profile</h3>
+    <p>Spring Boot hỗ trợ Profile để sử dụng cấu hình khác nhau tùy môi trường chạy.</p>
+
+    <p>Ví dụ:</p>
+
+    <ul>
+        <li><code>local</code>: chạy trên máy cá nhân.</li>
+        <li><code>prod</code>: chạy trên môi trường Production.</li>
+    </ul>
+
+    <h4>6.1. Cấu trúc file</h4>
+
+    <div class="info-box">
+        <pre>src/
+└── main/
+    └── resources/
+        ├── application.properties
+        ├── application-local.properties
+        └── application-prod.properties</pre>
+    </div>
+
+    <p>Mỗi file đảm nhiệm một vai trò riêng.</p>
+
+    <h3>7. Cấu hình application.properties</h3>
+    <p>File này chứa các cấu hình chung, áp dụng cho mọi môi trường.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Properties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>spring.application.name=deploy
+
+spring.profiles.active=${SPRING_PROFILES_ACTIVE:local}
+
+server.port=${PORT:8080}
+
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl</pre>
+    </div>
+
+    <p>Giải thích:</p>
+
+    <ul>
+        <li><code>spring.application.name</code>: tên ứng dụng.</li>
+        <li><code>spring.profiles.active</code>: chọn Profile đang hoạt động; mặc định là <code>local</code>.</li>
+        <li><code>server.port</code>: cổng ứng dụng sử dụng. Render có thể cung cấp biến <code>PORT</code>, vì vậy ứng dụng nên đọc giá trị này.</li>
+        <li><code>spring.datasource.driver-class-name</code>: tên JDBC driver của MySQL.</li>
+        <li><code>spring.jpa.hibernate.naming.physical-strategy</code>: chiến lược ánh xạ tên bảng và cột; chỉ giữ cấu hình này nếu dự án thực sự cần.</li>
+    </ul>
+
+    <p>Không bắt buộc phải tách mọi cấu hình thành ba file. Đây là cách tổ chức dễ học và dễ quản lý khi dự án có nhiều môi trường.</p>
+
+    <h3>8. Cấu hình application-local.properties</h3>
+    <p>File này dùng khi chạy dự án trên máy tính cá nhân.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Properties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>spring.datasource.url=jdbc:mysql://localhost:3306/quanlybanhang?serverTimezone=Asia/Ho_Chi_Minh&amp;characterEncoding=UTF-8
+spring.datasource.username=root
+spring.datasource.password=${LOCAL_DB_PASSWORD:1234}
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true</pre>
+    </div>
+
+    <p>Giải thích:</p>
+
+    <ul>
+        <li><code>localhost:3306</code>: địa chỉ MySQL trên máy tính cá nhân.</li>
+        <li><code>quanlybanhang</code>: tên database.</li>
+        <li><code>LOCAL_DB_PASSWORD</code>: biến môi trường tùy chọn để lưu mật khẩu MySQL local.</li>
+        <li><code>ddl-auto=update</code>: cho phép Hibernate cập nhật cấu trúc bảng dựa trên entity.</li>
+    </ul>
+
+    <p>Trong môi trường học tập, <code>update</code> có thể thuận tiện. Với production, không nên dựa vào Hibernate để tự động thay đổi cấu trúc database một cách thiếu kiểm soát.</p>
+
+    <h3>9. Cấu hình application-prod.properties</h3>
+    <p>File này dùng khi chạy ứng dụng trên Render.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Properties</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=true</pre>
+    </div>
+
+    <p>Ba biến kết nối sẽ được khai báo trên Render:</p>
+
+    <ul>
+        <li><code>DB_URL</code>: JDBC URL của MySQL Aiven.</li>
+        <li><code>DB_USERNAME</code>: tên tài khoản database.</li>
+        <li><code>DB_PASSWORD</code>: mật khẩu database.</li>
+    </ul>
+
+    <p>Lưu ý: <code>ddl-auto=update</code> phù hợp với một số dự án học tập, nhưng với ứng dụng thực tế nên quản lý schema bằng công cụ migration như Flyway hoặc Liquibase. Nếu database đã được tạo bảng đầy đủ bằng file SQL, hãy kiểm tra entity và schema trước khi bật <code>update</code>.</p>
+
+    <h3>10. Kiểm tra pom.xml</h3>
+
+    <h4>10.1. MySQL Connector</h4>
+    <p>Đảm bảo dự án có dependency sau:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>XML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>&lt;dependency&gt;
+    &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</pre>
+    </div>
+
+    <p>Nếu dự án sử dụng Spring Boot Parent hoặc dependency management, thông thường không cần tự khai báo phiên bản Connector riêng, trừ khi có yêu cầu tương thích đặc biệt.</p>
+
+    <h4>10.2. Spring Boot Maven Plugin</h4>
+    <p>Đảm bảo có plugin đóng gói Spring Boot:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>XML</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+        &lt;/plugin&gt;
+    &lt;/plugins&gt;
+&lt;/build&gt;</pre>
+    </div>
+
+    <p>Nếu thiếu dependency hoặc plugin cần thiết, quá trình đóng gói hoặc khởi chạy ứng dụng có thể thất bại.</p>
+</section>
+
+<section id="deploy-aiven-m7" class="section">
+    <h2><i class="fab fa-docker"></i> PHẦN III. ĐÓNG GÓI SPRING BOOT BẰNG DOCKER</h2>
+
+    <h3>11. Build file JAR</h3>
+    <p>Mở Terminal tại thư mục gốc dự án, nơi có file <code>pom.xml</code>.</p>
+
+    <h4>Windows</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Batch</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>mvnw.cmd clean package -DskipTests</pre>
+    </div>
+
+    <p>Nếu dự án không có Maven Wrapper, có thể sử dụng:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Batch</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>mvn clean package -DskipTests</pre>
+    </div>
+
+    <h4>macOS/Linux</h4>
+
+    <div class="code-block">
+        <div class="code-header"><span>Bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>./mvnw clean package -DskipTests</pre>
+    </div>
+
+    <p>Nếu thành công, Maven sẽ hiển thị:</p>
+
+    <div class="info-box">
+        <pre>BUILD SUCCESS</pre>
+    </div>
+
+    <p>File JAR thường nằm trong thư mục <code>target</code>.</p>
+
+    <p>Ví dụ:</p>
+
+    <div class="info-box">
+        <pre>target/deploy-0.0.1-SNAPSHOT.jar</pre>
+    </div>
+
+    <p>Tên file thực tế phụ thuộc vào <code>artifactId</code> và <code>version</code> trong <code>pom.xml</code>.</p>
+
+    <h4>11.1. Vì sao dùng <code>-DskipTests</code>?</h4>
+    <p>Tùy chọn này bỏ qua việc chạy test trong quá trình build, giúp build nhanh hơn. Tuy nhiên, nó không đảm bảo ứng dụng hoạt động đúng. Trong quy trình chuyên nghiệp, nên chạy test trước khi triển khai.</p>
+
+    <h3>12. Đưa JAR vào thư mục gốc</h3>
+    <p>Có thể sao chép JAR vào thư mục gốc dự án và đổi tên thành <code>app.jar</code>.</p>
+
+    <p>Cấu trúc sau khi sao chép:</p>
+
+    <div class="info-box">
+        <pre>deploy/
+├── src/
+├── target/
+├── app.jar
+├── Dockerfile
+├── pom.xml
+└── .gitignore</pre>
+    </div>
+
+    <p>Nếu dùng phương án này, cần build lại và sao chép lại <code>app.jar</code> mỗi khi thay đổi source code.</p>
+
+    <p>Để tránh quên cập nhật JAR, một lựa chọn khác là để Docker tự build ứng dụng từ source code. Bài này sử dụng cách đóng gói JAR trước để người mới dễ theo dõi.</p>
+
+    <h3>13. Tạo Dockerfile</h3>
+    <p>Tạo file tên chính xác là <code>Dockerfile</code>, không có phần mở rộng <code>.txt</code>, tại thư mục gốc dự án.</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Dockerfile</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>FROM eclipse-temurin:25-jre
+
+WORKDIR /app
+
+COPY app.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]</pre>
+    </div>
+
+    <p>Trong ví dụ trên, Java 25 được sử dụng minh họa. Hãy đổi <code>25-jre</code> thành phiên bản tương thích với dự án của bạn nếu cần.</p>
+
+    <h4>13.1. Giải thích Dockerfile</h4>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Chỉ dẫn</th>
+                    <th>Ý nghĩa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>FROM</code></td><td>Chọn image có Java Runtime</td></tr>
+                <tr><td><code>WORKDIR</code></td><td>Tạo/chọn thư mục làm việc</td></tr>
+                <tr><td><code>COPY</code></td><td>Sao chép JAR vào image</td></tr>
+                <tr><td><code>EXPOSE</code></td><td>Khai báo cổng dự kiến của ứng dụng</td></tr>
+                <tr><td><code>ENTRYPOINT</code></td><td>Chạy ứng dụng khi container khởi động</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Điểm cần nhớ: <code>EXPOSE 10000</code> không tự động khiến Spring Boot lắng nghe trên cổng 10000. Cổng thực tế phải phù hợp với cấu hình <code>server.port</code> và cách Render cấp biến <code>PORT</code>. Vì vậy, ví dụ trên sử dụng <code>EXPOSE 8080</code>, còn Spring Boot vẫn đọc <code>PORT</code> do Render cung cấp.</p>
+
+    <h3>14. Đưa source code lên GitHub</h3>
+    <p>Nếu dự án chưa có Git repository:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/USERNAME/REPOSITORY.git
+git push -u origin main</pre>
+    </div>
+
+    <p>Nếu repository đã tồn tại, thông thường chỉ cần:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Bash</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>git add .
+git commit -m "Prepare Spring Boot deployment"
+git push origin main</pre>
+    </div>
+
+    <p>Thay <code>USERNAME</code> và <code>REPOSITORY</code> bằng thông tin thực tế.</p>
+
+    <h4>14.1. Kiểm tra bảo mật trước khi push</h4>
+    <p>Không đưa các thông tin sau lên GitHub công khai:</p>
+
+    <ul>
+        <li>Mật khẩu MySQL.</li>
+        <li>API key và secret.</li>
+        <li>File chứa thông tin bí mật.</li>
+        <li>Các biến môi trường dùng cho Production.</li>
+    </ul>
+
+    <p>Trong ví dụ giáo trình, file cấu hình Local có mật khẩu minh họa. Khi làm dự án thật, nên chuyển mật khẩu sang biến môi trường và bảo đảm không commit bí mật vào repository.</p>
+</section>
+
+<section id="deploy-aiven-m8" class="section">
+    <h2><i class="fas fa-cloud-upload-alt"></i> PHẦN IV. TRIỂN KHAI LÊN RENDER</h2>
+
+    <h3>15. Tạo Web Service</h3>
+    <p>Truy cập:</p>
+
+    <p><a href="https://dashboard.render.com/" target="_blank" rel="noopener">Mở Render Dashboard</a></p>
+
+    <p>Thực hiện các bước:</p>
+
+    <ol>
+        <li>Đăng nhập Render.</li>
+        <li>Chọn New → Web Service.</li>
+        <li>Kết nối tài khoản GitHub nếu chưa kết nối.</li>
+        <li>Chọn repository chứa dự án Spring Boot.</li>
+        <li>Chọn branch muốn triển khai, ví dụ <code>main</code>.</li>
+        <li>Chọn runtime Docker nếu giao diện cung cấp lựa chọn này.</li>
+        <li>Đặt tên dịch vụ, ví dụ <code>demodeploy</code>.</li>
+        <li>Chọn khu vực và gói dịch vụ phù hợp.</li>
+        <li>Kiểm tra đường dẫn Dockerfile nếu Render yêu cầu.</li>
+        <li>Tiến hành tạo dịch vụ.</li>
+    </ol>
+
+    <p>Tên menu, các lựa chọn gói và điều kiện sử dụng có thể thay đổi theo giao diện Render hiện tại.</p>
+
+    <h3>16. Khai báo biến môi trường</h3>
+    <p>Trong trang Web Service, mở mục Environment và thêm các biến cần thiết.</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>SPRING_PROFILES_ACTIVE</code></td><td><code>prod</code></td></tr>
+                <tr><td><code>DB_URL</code></td><td>JDBC URL của MySQL Aiven</td></tr>
+                <tr><td><code>DB_USERNAME</code></td><td>Username Aiven</td></tr>
+                <tr><td><code>DB_PASSWORD</code></td><td>Password Aiven</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Ví dụ JDBC URL:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>jdbc:mysql://mysql-xxxxx.b.aivencloud.com:22510/quanlybanhang?sslMode=REQUIRED</pre>
+    </div>
+
+    <p>Đây chỉ là URL mẫu. Hãy thay host, port và tên database bằng thông tin của dịch vụ thực tế.</p>
+
+    <h4>16.1. Tại sao phải có SPRING_PROFILES_ACTIVE=prod?</h4>
+    <p>Khi khai báo:</p>
+
+    <div class="info-box">
+        <pre>SPRING_PROFILES_ACTIVE=prod</pre>
+    </div>
+
+    <p>Spring Boot sẽ sử dụng cấu hình chung trong <code>application.properties</code> và nạp thêm cấu hình từ <code>application-prod.properties</code>.</p>
+
+    <p>Luồng đọc cấu hình:</p>
+
+    <div class="info-box">
+        <pre>SPRING_PROFILES_ACTIVE=prod
+        |
+        v
+application.properties
+        |
+        v
+application-prod.properties
+        |
+        v
+Spring Boot kết nối MySQL Aiven</pre>
+    </div>
+
+    <p>Nếu không kích hoạt Profile <code>prod</code>, ứng dụng có thể tiếp tục sử dụng cấu hình Local và cố kết nối đến <code>localhost:3306</code>.</p>
+
+    <h4>16.2. Cách kiểm tra DB_URL</h4>
+    <p>Đảm bảo URL có đủ thành phần:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>Text</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>jdbc:mysql://HOST:PORT/DATABASE?sslMode=REQUIRED</pre>
+    </div>
+
+    <p>Trong đó:</p>
+
+    <ul>
+        <li><code>HOST</code>: hostname của Aiven.</li>
+        <li><code>PORT</code>: port Aiven cấp.</li>
+        <li><code>DATABASE</code>: tên database thực tế.</li>
+        <li><code>sslMode</code>: chế độ SSL theo yêu cầu kết nối.</li>
+    </ul>
+
+    <p>Không nhập nguyên các giá trị minh họa như <code>mysql-xxxxx...</code> vào Render.</p>
+
+    <h3>17. Deploy ứng dụng</h3>
+    <p>Sau khi lưu biến môi trường:</p>
+
+    <ol>
+        <li>Kiểm tra branch và cấu hình Docker.</li>
+        <li>Nhấn tạo Web Service hoặc triển khai bản commit mới nhất.</li>
+        <li>Mở tab Logs.</li>
+        <li>Theo dõi quá trình build image và khởi động ứng dụng.</li>
+        <li>Nếu deploy thất bại, đọc dòng lỗi đầu tiên có ý nghĩa thay vì chỉ xem dòng cuối cùng.</li>
+    </ol>
+
+    <p>Các dấu hiệu thường gặp khi khởi động thành công:</p>
+
+    <div class="info-box">
+        <pre>Tomcat started on port ...
+Started DeployApplication in ... seconds</pre>
+    </div>
+
+    <p>Render có thể hiển thị thông báo dịch vụ hoạt động và URL công khai.</p>
+
+    <p>Không nhất thiết Tomcat phải khởi động trên port <code>10000</code>. Hãy kiểm tra giá trị <code>PORT</code> được Render cung cấp và cấu hình mà ứng dụng thực sự sử dụng.</p>
+</section>
+
+<section id="deploy-aiven-m9" class="section">
+    <h2><i class="fas fa-vial"></i> PHẦN V. KIỂM TRA ỨNG DỤNG SAU KHI DEPLOY</h2>
+
+    <h3>18. Kiểm tra URL Render</h3>
+    <p>Render cấp một URL dạng:</p>
+
+    <div class="info-box">
+        <pre>https://ten-dich-vu.onrender.com</pre>
+    </div>
+
+    <p>Mở URL trên trình duyệt để kiểm tra.</p>
+
+    <p>Nếu ứng dụng không khai báo API ở đường dẫn <code>/</code>, việc truy cập URL gốc có thể trả về <code>404 Not Found</code>. Điều đó chưa đủ để kết luận rằng deploy thất bại.</p>
+
+    <p>Hãy kiểm tra một endpoint thực sự có trong dự án, ví dụ:</p>
+
+    <div class="code-block">
+        <div class="code-header"><span>HTTP</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <pre>GET https://ten-dich-vu.onrender.com/api/products</pre>
+    </div>
+
+    <p>Đường dẫn <code>/api/products</code> chỉ là ví dụ; hãy thay bằng endpoint đang tồn tại trong ứng dụng.</p>
+
+    <h3>19. Kiểm tra bằng Postman</h3>
+    <p>Ví dụ nếu dự án có API lấy danh sách sản phẩm:</p>
+
+    <ol>
+        <li>Mở Postman.</li>
+        <li>Chọn phương thức <code>GET</code>.</li>
+        <li>Nhập URL API Render.</li>
+        <li>Nhấn Send.</li>
+        <li>Kiểm tra HTTP status và response body.</li>
+    </ol>
+
+    <p>Các mã trạng thái thường gặp:</p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Ý nghĩa</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>200 OK</code></td><td>Yêu cầu thành công</td></tr>
+                <tr><td><code>400 Bad Request</code></td><td>Request không hợp lệ</td></tr>
+                <tr><td><code>401 Unauthorized</code></td><td>Chưa xác thực hoặc thông tin xác thực không hợp lệ</td></tr>
+                <tr><td><code>403 Forbidden</code></td><td>Không có quyền truy cập</td></tr>
+                <tr><td><code>404 Not Found</code></td><td>Không tìm thấy đường dẫn hoặc tài nguyên</td></tr>
+                <tr><td><code>500 Internal Server Error</code></td><td>Có lỗi xử lý phía server</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>20. Kiểm tra dữ liệu trên Aiven</h3>
+    <p>Sau khi API tạo hoặc cập nhật dữ liệu trả về thành công:</p>
+
+    <ol>
+        <li>Mở MySQL Workbench.</li>
+        <li>Kết nối đến MySQL Aiven.</li>
+        <li>Chọn database <code>quanlybanhang</code>.</li>
+        <li>Kiểm tra bảng tương ứng.</li>
+        <li>Xác nhận dữ liệu đã được lưu.</li>
+    </ol>
+
+    <p>Nếu API trả về thành công nhưng không thấy dữ liệu, hãy kiểm tra ứng dụng có đang kết nối đúng database và đúng schema hay không.</p>
+</section>
+
+<section id="deploy-aiven-m10" class="section">
+    <h2><i class="fas fa-bug"></i> PHẦN VI. XỬ LÝ LỖI KHI DEPLOY</h2>
+
+    <h3>21. Các lỗi phổ biến</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Lỗi</th>
+                    <th>Nguyên nhân có thể xảy ra</th>
+                    <th>Cách kiểm tra</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>UnknownHostException</code></td><td>Hostname sai hoặc không phân giải được DNS</td><td>Sao chép lại host từ Aiven</td></tr>
+                <tr><td><code>Connection refused</code></td><td>Sai host/port hoặc dịch vụ chưa nhận kết nối</td><td>Kiểm tra trạng thái MySQL và thông tin mạng</td></tr>
+                <tr><td><code>SocketTimeoutException</code></td><td>Kết nối bị chặn hoặc sai port</td><td>Kiểm tra port và IP filter</td></tr>
+                <tr><td><code>Access denied for user</code></td><td>Username hoặc password sai</td><td>Kiểm tra lại thông tin đăng nhập</td></tr>
+                <tr><td><code>Unknown database</code></td><td>Database chưa tồn tại hoặc tên sai</td><td>Kiểm tra mục Databases trên Aiven</td></tr>
+                <tr><td>Lỗi SSL</td><td>JDBC URL hoặc cấu hình chứng chỉ không phù hợp</td><td>Kiểm tra <code>sslMode</code> và CA certificate</td></tr>
+                <tr><td><code>Could not resolve placeholder</code></td><td>Biến môi trường chưa được khai báo hoặc sai tên</td><td>So sánh tên biến trong properties với Render</td></tr>
+                <tr><td><code>No open ports detected</code></td><td>Ứng dụng chưa chạy hoặc không lắng nghe đúng port</td><td>Đọc log khởi động, kiểm tra <code>server.port</code></td></tr>
+                <tr><td><code>Table doesn't exist</code></td><td>Bảng chưa được import hoặc tên bảng sai</td><td>Kiểm tra schema, entity và SQL</td></tr>
+                <tr><td><code>Unknown column</code></td><td>Schema không khớp với entity</td><td>Kiểm tra cấu trúc bảng và migration</td></tr>
+                <tr><td><code>UnsupportedClassVersionError</code></td><td>Phiên bản Java chạy thấp hơn phiên bản biên dịch</td><td>Đồng bộ phiên bản JDK và Docker image</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3>22. Quy trình debug theo thứ tự</h3>
+    <p>Khi deploy thất bại, không nên sửa tất cả cấu hình cùng lúc. Hãy làm theo thứ tự:</p>
+
+    <ol>
+        <li>Kiểm tra build: Docker image có được build thành công không?</li>
+        <li>Kiểm tra Java: phiên bản Java trong image có tương thích với ứng dụng không?</li>
+        <li>Kiểm tra khởi động: Spring Boot có đọc đúng Profile và lắng nghe đúng port không?</li>
+        <li>Kiểm tra biến môi trường: <code>DB_URL</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code> có được khai báo đầy đủ không?</li>
+        <li>Kiểm tra database: Aiven có hoạt động, host/port đúng và kết nối được qua SSL không?</li>
+        <li>Kiểm tra schema: database có đúng bảng và cột mà ứng dụng yêu cầu không?</li>
+        <li>Kiểm tra API: endpoint có hoạt động khi gọi từ Postman không?</li>
+    </ol>
+
+    <p>Lưu ý: Không chia sẻ công khai log chứa mật khẩu, token hoặc thông tin nhạy cảm khi nhờ hỗ trợ.</p>
+</section>
+
+<section id="deploy-aiven-m11" class="section">
+    <h2><i class="fas fa-money-bill-wave"></i> PHẦN VII. CHI PHÍ VÀ VẬN HÀNH</h2>
+
+    <h3>23. Những khoản cần quan tâm</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Thành phần</th>
+                    <th>Nội dung cần kiểm tra</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>GitHub</td><td>Gói lưu trữ repository</td></tr>
+                <tr><td>Render</td><td>Loại instance, hạn mức sử dụng và chính sách ngủ dịch vụ</td></tr>
+                <tr><td>Aiven</td><td>Gói MySQL, giới hạn tài nguyên và điều kiện miễn phí</td></tr>
+                <tr><td>Domain</td><td>Tùy chọn nếu muốn sử dụng tên miền riêng</td></tr>
+                <tr><td>Backup</td><td>Chính sách sao lưu và khả năng khôi phục database</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p>Không nên mặc định Aiven hoặc Render luôn có gói miễn phí. Các gói, giới hạn và điều kiện có thể thay đổi. Trước khi đưa ứng dụng vào sử dụng thực tế, cần kiểm tra chi phí hiện hành và thiết lập phương án sao lưu database.</p>
+
+    <p>Với dịch vụ Render miễn phí nếu được cung cấp cho tài khoản của bạn, ứng dụng có thể tạm ngừng sau một khoảng thời gian không hoạt động và cần thời gian khởi động lại khi có request. Điều này không đồng nghĩa database Aiven cũng ngừng hoạt động theo cùng cách.</p>
+
+    <p>Không nên xem việc ping dịch vụ liên tục là giải pháp đảm bảo uptime hoặc vượt qua các giới hạn của gói miễn phí.</p>
+</section>
+
+<section id="deploy-aiven-m12" class="section">
+    <h2><i class="fas fa-check-square"></i> PHẦN VIII. CHECKLIST HOÀN THÀNH</h2>
+
+    <h3>Checklist triển khai</h3>
+
+    <h4>1. Chuẩn bị Aiven</h4>
+    <ul>
+        <li>[ ] Tạo MySQL service và kiểm tra trạng thái hoạt động</li>
+        <li>[ ] Tạo database và import các bảng cần thiết</li>
+        <li>[ ] Lưu đúng hostname, port, username và password</li>
+        <li>[ ] Kiểm tra cấu hình mạng và SSL</li>
+    </ul>
+
+    <h4>2. Cấu hình Spring Boot</h4>
+    <ul>
+        <li>[ ] Tạo application.properties và Profile phù hợp</li>
+        <li>[ ] Cấu hình application-prod.properties bằng biến môi trường</li>
+        <li>[ ] Kiểm tra MySQL Connector và Maven Plugin</li>
+        <li>[ ] Đồng bộ phiên bản Java của dự án với Docker image</li>
+    </ul>
+
+    <h4>3. Docker và GitHub</h4>
+    <ul>
+        <li>[ ] Build JAR thành công</li>
+        <li>[ ] Tạo Dockerfile đúng tại thư mục gốc</li>
+        <li>[ ] Kiểm tra không commit mật khẩu lên GitHub</li>
+        <li>[ ] Push source code và Dockerfile lên branch cần deploy</li>
+    </ul>
+
+    <h4>4. Render và kiểm thử</h4>
+    <ul>
+        <li>[ ] Tạo Web Service từ repository</li>
+        <li>[ ] Khai báo DB_URL, DB_USERNAME và DB_PASSWORD</li>
+        <li>[ ] Đặt SPRING_PROFILES_ACTIVE=prod</li>
+        <li>[ ] Deploy thành công và kiểm tra log</li>
+        <li>[ ] Gọi API bằng Postman</li>
+        <li>[ ] Xác nhận dữ liệu được lưu trên Aiven</li>
+    </ul>
+</section>
+
+<section id="deploy-aiven-m13" class="section">
+    <h2><i class="fas fa-tasks"></i> PHẦN IX. BÀI TẬP THỰC HÀNH</h2>
+
+    <h3>Bài tập 1. Triển khai API sản phẩm</h3>
+    <p>Sử dụng dự án Spring Boot quản lý sản phẩm có các chức năng:</p>
+
+    <ul>
+        <li>Thêm sản phẩm.</li>
+        <li>Xem danh sách sản phẩm.</li>
+        <li>Xem chi tiết sản phẩm.</li>
+        <li>Cập nhật sản phẩm.</li>
+        <li>Xóa sản phẩm.</li>
+    </ul>
+
+    <p>Yêu cầu:</p>
+
+    <ol>
+        <li>Tạo database MySQL trên Aiven.</li>
+        <li>Đưa cấu trúc bảng và dữ liệu mẫu lên Aiven.</li>
+        <li>Cấu hình Spring Boot theo Profile <code>prod</code>.</li>
+        <li>Đóng gói ứng dụng bằng Docker.</li>
+        <li>Deploy lên Render.</li>
+        <li>Dùng Postman kiểm tra toàn bộ API CRUD.</li>
+        <li>Xác minh dữ liệu thay đổi trên MySQL Aiven.</li>
+    </ol>
+
+    <h3>Bài tập 2. Thực hành xử lý lỗi</h3>
+    <p>Lần lượt mô phỏng các tình huống trong môi trường kiểm thử:</p>
+
+    <ul>
+        <li>Đặt sai tên biến <code>DB_URL</code>.</li>
+        <li>Sử dụng sai port database.</li>
+        <li>Nhập sai tên database.</li>
+        <li>Chạy ứng dụng bằng Profile <code>local</code> trên Render.</li>
+        <li>Sử dụng Docker image không tương thích với phiên bản Java.</li>
+    </ul>
+
+    <p>Với mỗi tình huống, hãy ghi lại:</p>
+
+    <ol>
+        <li>Triệu chứng.</li>
+        <li>Dòng log quan trọng.</li>
+        <li>Nguyên nhân.</li>
+        <li>Cách sửa.</li>
+        <li>Kết quả sau khi sửa.</li>
+    </ol>
+
+    <h3>Bài tập 3. Câu hỏi củng cố</h3>
+    <ol>
+        <li>Deploy là gì? Khác gì với chạy Spring Boot trên máy cá nhân?</li>
+        <li>Vì sao không thể dùng <code>localhost:3306</code> để kết nối MySQL trên Aiven?</li>
+        <li>Dockerfile có nhiệm vụ gì?</li>
+        <li>Vì sao nên sử dụng biến môi trường cho mật khẩu database?</li>
+        <li><code>SPRING_PROFILES_ACTIVE=prod</code> có tác dụng gì?</li>
+        <li><code>DB_URL</code> gồm những thành phần nào?</li>
+        <li><code>EXPOSE 8080</code> có tự động đổi port mà Spring Boot lắng nghe không?</li>
+        <li>Tại sao build JAR thành công nhưng ứng dụng vẫn có thể deploy thất bại?</li>
+        <li>Phân biệt lỗi kết nối database với lỗi schema.</li>
+        <li>Vì sao cần kiểm tra dữ liệu trên Aiven sau khi gọi API thành công?</li>
+    </ol>
+
+    <h3>Kết luận</h3>
+    <p>Quy trình triển khai hoàn chỉnh của bài học là:</p>
+
+    <div class="info-box">
+        <pre>Spring Boot → Build JAR → Docker image → GitHub → Render Web Service → MySQL Aiven → Kiểm thử API</pre>
+    </div>
+
+    <p>Trong đó, ba nội dung quan trọng nhất cần nắm vững là cấu hình Profile theo môi trường, quản lý thông tin kết nối bằng biến môi trường và đọc log để xử lý lỗi. Khi hiểu rõ ba nội dung này, bạn có thể áp dụng quy trình tương tự cho các dự án Spring Boot thực tế khác.</p>
+
+    <div class="success-box">
+        <h5>Ghi nhớ trọng tâm</h5>
+        <ul>
+            <li><strong>Deploy</strong> là đưa ứng dụng từ máy cá nhân lên máy chủ/nền tảng để người dùng truy cập qua Internet.</li>
+            <li>Kiến trúc bài học: <strong>Client → Render (Docker + Spring Boot) → Aiven MySQL</strong>.</li>
+            <li>Phân biệt <strong>Local</strong> (localhost:8080, MySQL local) với <strong>Production</strong> (URL Render, MySQL Aiven).</li>
+            <li>Đóng gói JAR bằng <code>mvnw clean package -DskipTests</code>, sau đó đưa vào Docker image với <code>Dockerfile</code>.</li>
+            <li>Dùng <strong>Profile</strong> <code>local</code> và <code>prod</code> để tách cấu hình; kích hoạt bằng <code>SPRING_PROFILES_ACTIVE=prod</code>.</li>
+            <li>Dùng <strong>Environment Variables</strong> <code>DB_URL</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code> để bảo vệ thông tin kết nối.</li>
+            <li>Aiven cấp <strong>host, port riêng</strong> (không phải 3306) và yêu cầu <strong>SSL</strong>.</li>
+            <li>Kiểm thử bằng <strong>Postman</strong> và <strong>xác minh dữ liệu trên Aiven</strong>, không chỉ dựa vào response API.</li>
+            <li>Khi lỗi, debug theo thứ tự: build → Java → khởi động → biến môi trường → database → schema → API.</li>
+            <li>Không commit mật khẩu lên GitHub; không mặc định có gói miễn phí; cần kiểm tra chi phí và backup.</li>
+        </ul>
+    </div>
+</section>
+</div>
+
+        </div>
+        <footer>
+            <p>GV: Nguyễn Đình Mạnh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Điều hướng
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+            sections[0].classList.add('active');
+            navLinks[0].classList.add('active');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    navLinks.forEach(item => item.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    this.classList.add('active');
+                    const targetId = this.getAttribute('href').substring(1);
+                    document.getElementById(targetId).classList.add('active');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        });
+        // Copy code (nếu có)
+        function copyCode(button) {
+            const codeBlock = button.parentElement.parentElement;
+            const text = codeBlock.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Đã copy!';
+                button.style.background = '#27ae60';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
